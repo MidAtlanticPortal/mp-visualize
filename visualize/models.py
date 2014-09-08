@@ -1,8 +1,8 @@
 from django.db import models
 from django.conf import settings
 from django.contrib.gis.db import models
-from madrona.features import register
-from madrona.features.models import Feature
+from features import register
+from features.models import Feature
 
 
 @register
