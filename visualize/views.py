@@ -5,8 +5,11 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from querystring_parser import parser
 import json
-from madrona.features import get_feature_by_uid
-import settings
+from features.registry import user_sharing_groups
+from functools import cmp_to_key
+import locale
+from features.registry import get_feature_by_uid
+from django.conf import settings
 from models import *
 from data_manager.models import *
 
@@ -35,9 +38,6 @@ def show_mobile_map(request, template='mobile-map.html'):
     return render_to_response(template, RequestContext(request, context)) 
     
 def get_sharing_groups(request):
-    from madrona.features import user_sharing_groups
-    from functools import cmp_to_key
-    import locale
     locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
     data = []
     sharing_groups = user_sharing_groups(request.user)
