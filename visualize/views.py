@@ -4,8 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from querystring_parser import parser
-import simplejson
-from simplejson import dumps
+import json
 from madrona.features import get_feature_by_uid
 import settings
 from models import *
@@ -40,7 +39,7 @@ def get_sharing_groups(request):
     from functools import cmp_to_key
     import locale
     locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-    json = []
+    data = []
     sharing_groups = user_sharing_groups(request.user)
     for group in sharing_groups:
         members = []
@@ -50,12 +49,12 @@ def get_sharing_groups(request):
             else:
                 members.append(user.username)
         sorted_members = sorted(members, key=cmp_to_key(locale.strcoll))
-        json.append({
+        data.append({
             'group_name': group.name,
             'group_slug': slugify(group.name)+'-sharing',
             'members': sorted_members
         })
-    return HttpResponse(dumps(json))    
+    return HttpResponse(json.dumps(data))    
      
 '''
 '''    
@@ -102,7 +101,7 @@ def get_bookmarks(request):
                 continue
     
         #grab all bookmarks belonging to this user 
-        #serialize bookmarks into 'name', 'hash' objects and return simplejson dump 
+        #serialize bookmarks into 'name', 'hash' objects and return json dump 
         content = []
         bookmark_list = Bookmark.objects.filter(user=request.user)
         for bookmark in bookmark_list:
@@ -127,7 +126,7 @@ def get_bookmarks(request):
                     'shared_by_username': username,
                     'shared_by_name': actual_name
                 })
-        return HttpResponse(simplejson.dumps(content), mimetype="application/json", status=200)
+        return HttpResponse(json.dumps(content), mimetype="application/json", status=200)
     except:
         return HttpResponse(status=304)
     
@@ -158,7 +157,7 @@ def add_bookmark(request):
             'sharing_groups': sharing_groups
         })
         print 'returning content'
-        return HttpResponse(simplejson.dumps(content), mimetype="application/json", status=200)
+        return HttpResponse(json.dumps(content), mimetype="application/json", status=200)
     except:
         return HttpResponse(status=304)
         
