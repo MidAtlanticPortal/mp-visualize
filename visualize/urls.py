@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, url
-from views import *
+from views import (get_bookmarks, remove_bookmark, add_bookmark, 
+                   get_sharing_groups, share_bookmark, show_embedded_map,
+                   show_mafmc_map, show_mobile_map, show_planner)
 
 urlpatterns = patterns('',
     url(r'^get_bookmarks$', get_bookmarks),

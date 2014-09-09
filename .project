@@ -3,6 +3,7 @@
 	<name>mp-visualize</name>
 	<comment></comment>
 	<projects>
+		<project>madrona-features</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
