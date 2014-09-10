@@ -11,6 +11,7 @@ setup(
     version='0.0.1',
     packages=['visualize'],
     install_requires=[
+        'mp_profile',
         'features',
     ],
     include_package_data=True,

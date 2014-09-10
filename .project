@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>madrona-features</project>
+		<project>mp-profile</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
