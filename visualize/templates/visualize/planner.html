@@ -689,19 +689,19 @@
             {% if user.is_authenticated %} app.is_authenticated = true; app.session = "{{ session }}" {% endif %}
         </script>
 
-        <script src="{{MEDIA_URL}}/marco/js/fixtures.js"></script>
-        <script src="{{MEDIA_URL}}/marco/js/map.js"></script>
-        <script src="{{MEDIA_URL}}/marco/js/state.js"></script>
-        <script src="{{MEDIA_URL}}/marco/js/models.js"></script>
-        <script src="{{MEDIA_URL}}/marco/js/bookmarks.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/fixtures.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/map.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/state.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/models.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/bookmarks.js"></script>
         {% if user.is_authenticated %}
-            <script src="{{MEDIA_URL}}/marco/js/scenarios.js"></script>
-            <script src="{{MEDIA_URL}}/marco/js/reports.js"></script>
-            <script src="{{MEDIA_URL}}/marco/js/drawing.js"></script>
+            <script src="{{ STATIC_URL }}visualize/js/scenarios.js"></script>
+            <script src="{{ STATIC_URL }}visualize/js/reports.js"></script>
+            <script src="{{ STATIC_URL }}visualize/js/drawing.js"></script>
         {% endif %}
-        <script src="{{MEDIA_URL}}/marco/js/server.js"></script>
-        <script src="{{MEDIA_URL}}/marco/js/printing.js"></script>
-        <script src="{{MEDIA_URL}}/marco/js/app.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/server.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/printing.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/app.js"></script>
         <script src="{{ STATIC_URL }}visualize/js/pageguide.js"></script>
 
         <!--[if gt IE 8]><!-->
