@@ -13,7 +13,7 @@ from django.conf import settings
 from models import *
 from data_manager.models import *
 
-def show_planner(request, template='planner.html'):
+def show_planner(request, template='visualize/planner.html'):
     try:
         socket_url = settings.SOCKET_URL
     except AttributeError:

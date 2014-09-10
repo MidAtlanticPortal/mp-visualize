@@ -96,16 +96,16 @@
     
         
         <!-- modals -->
-        {% include "modals.html" %}
-        {% include "bookmark-modals.html" %}
+        {% include "visualize/modals.html" %}
+        {% include "visualize/bookmark-modals.html" %}
         <!-- end modals -->
 
         <!-- TOUR -->
-        {% include "tour.html" %}
+        {% include "visualize/tour.html" %}
         <!-- END TOURS -->
         
         <!-- REGISTRATION MODALS -->
-        {% include "account-modals.html" %}
+        {% include "visualize/account-modals.html" %}
         <!-- SIGN IN MODAL -->
                 
         <!-- END REGISTRATION MODALS -->
@@ -282,7 +282,7 @@
                             
                             <!-- DESIGNS TAB -->
                             {% if user.is_authenticated %}
-                              {% include "scenarios.html" %}
+                              {% include "visualize/scenarios.html" %}
                             {% endif %}
                             <!-- END DESIGNS TAB -->
                             
@@ -638,9 +638,9 @@
             </div>
         </div>-->
         
-        {% include "bookmarks.html" %}
+        {% include "visualize/bookmarks.html" %}
         
-        {% include "printing.html" %}
+        {% include "visualize/printing.html" %}
 
         
         <!-- Le javascript -->
@@ -702,7 +702,7 @@
         <script src="{{MEDIA_URL}}/marco/js/server.js"></script>
         <script src="{{MEDIA_URL}}/marco/js/printing.js"></script>
         <script src="{{MEDIA_URL}}/marco/js/app.js"></script>
-        <script src="{{MEDIA_URL}}/marco/js/pageguide.js"></script>
+        <script src="{{ STATIC_URL }}visualize/js/pageguide.js"></script>
 
         <!--[if gt IE 8]><!-->
         <script src="{{MEDIA_URL}}/marco/assets/jquery/jquery.mousewheel.min.js"></script>
