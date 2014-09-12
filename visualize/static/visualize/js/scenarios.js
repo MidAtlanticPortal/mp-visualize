@@ -777,7 +777,7 @@ function selectionFormModel(options) {
     self.leaseBlockSelectionLayer = new layerModel({
         name: 'Selectable OCS Lease Blocks Layer',
         type: 'Vector',
-        url: '/media/data_manager/geojson/OCSBlocks20130920.json',
+        url: '/static/data_manager/geojson/OCSBlocks20130920.json',
         opacity: .5
     });
     
@@ -2110,8 +2110,8 @@ function scenariosModel(options) {
                 displayInLayerSwitcher: false,
                 strategies: [new OpenLayers.Strategy.Fixed()],
                 protocol: new OpenLayers.Protocol.HTTP({
-                    //url: '/media/data_manager/geojson/LeaseBlockWindSpeedOnlySimplifiedNoDecimal.json',
-                    url: '/media/data_manager/geojson/OCSBlocks20130920.json',
+                    //url: '/static/data_manager/geojson/LeaseBlockWindSpeedOnlySimplifiedNoDecimal.json',
+                    url: '/static/data_manager/geojson/OCSBlocks20130920.json',
                     format: new OpenLayers.Format.GeoJSON()
                 }),
                 //styleMap: new OpenLayers.StyleMap( { 

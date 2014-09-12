@@ -8,6 +8,21 @@ app.init = function () {
         projection: "EPSG:3857"
     });
     
+    map.addControl(new P97.Controls.LayerLoadProgress({
+        map: map,
+        element: null,
+        onStartLoading: function() {
+            this.element.show();
+        },
+        onLoading: function(num, max, percentStr) {
+            this.element.text(percentStr);
+        },
+        onFinishLoading: function() {
+            this.element.hide();
+        }
+        
+    }));
+    
     esriOcean = new OpenLayers.Layer.XYZ("ESRI Ocean", "http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
