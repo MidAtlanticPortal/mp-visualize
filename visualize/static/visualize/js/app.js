@@ -4,18 +4,19 @@ app.hash = window.location.hash;
 app.onResize = function(percent) {
 
   var height = $(window).height() * (percent || 0.855);
+  var fullheight = $(window).height() - 54; // cater for the top Nav
   var width = $(window).width();
   // when fullscreen be odd?
   if (height) {
     //if (!app.embeddedMap) {
     if ( width > 767 && !app.embeddedMap ) {
-        $("#map").height(height);
-        $("#map-wrapper").height(height);
+        $("#map").height(fullheight);
+        $("#map-wrapper").height(fullheight);
         $(".tabs").height(height);
         $("#legend-wrapper").height(height - 20);
-        $("#data-accordion").height(height - (($.browser.msie && $.browser.version < 9)? 130: 96));
-        $("#designs-accordion").height(height - 20 - (($.browser.msie && $.browser.version < 9)? 130: 96));
-        $("#active").height(height + 20 - (($.browser.msie && $.browser.version < 9)? 130: 96));
+        $("#data-accordion").height(height - 96);
+        $("#designs-accordion").height(height - 20 - 96);
+        $("#active").height(height + 20 - 96);
     } 
     app.map.render('map');
   }
@@ -75,10 +76,10 @@ app.viewModel.loadLayersFromServer().done(function() {
     source: app.typeAheadSource
   });
 
-  if ( ! ($.browser.msie && $.browser.version < 9) && ! app.embeddedMap ) {
+  if ( ! (true) && ! app.embeddedMap ) {
     $("#data-accordion").jScrollPane();
   }
-    //$("#legend-wrapper").jScrollPane();
+  $("#legend-wrapper").jScrollPane();
   // }
 });
 
@@ -260,28 +261,28 @@ $(document).ready(function() {
     } else if ( $(e.relatedTarget).hasClass('basey') ) { //handler for ff
         $('#basemaps').addClass('open');
     } else {
-        $('#SimpleLayerSwitcher_28').hide();
+        $('#SimpleLayerSwitcher_29').hide();
     }
   });
   
   //hide basemaps drop-down on mouseout
-  $('#SimpleLayerSwitcher_28').mouseleave( function() {
-    $('#SimpleLayerSwitcher_28').hide();
+  $('#SimpleLayerSwitcher_29').mouseleave( function() {
+    $('#SimpleLayerSwitcher_29').hide();
     if (app.mafmc || !app.pageguide.preventBasemapsClose) {
         $('#basemaps').removeClass('open');
     }
   });
   
   //hide basemaps drop-down on mouseout
-  $('#SimpleLayerSwitcher_28').mousedown( function() {
+  $('#SimpleLayerSwitcher_29').mousedown( function() {
     if (app.mafmc || !app.pageguide.preventBasemapsClose) {
         $('#basemaps').removeClass('open');
     }
   });
   
   //hide basemaps drop-down on mouseout
-  $('#SimpleLayerSwitcher_28').mouseenter( function() {
-    $('#basemaps').addClass('open');
+  $('#SimpleLayerSwitcher_29').mouseenter( function() {
+    //$('#basemaps').addClass('open');
   });
   
   $('#overview-overlay-dropdown').mouseleave( function() {
@@ -379,7 +380,7 @@ $(document).mousedown(function(e) {
   }
   
   //ensure layer switcher is removed
-  $('#SimpleLayerSwitcher_28').hide();
+  $('#SimpleLayerSwitcher_29').hide();
 
   //removing layer tooltip popover from view
   var layer_pvr_event = $(e.target).closest(".layer-popover").length;

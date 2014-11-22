@@ -42,7 +42,7 @@ var LayerLoadProgress = OpenLayers.Class(OpenLayers.Control, {
                 bottom: '10%',
                 left: '50%',
                 'margin-left': '-128px',
-                height: '1.5em',
+                height: '50px',
                 width: '224px',
                 padding: '8px',
                 overflow: 'hidden',
