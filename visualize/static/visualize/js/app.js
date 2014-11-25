@@ -4,7 +4,7 @@ app.hash = window.location.hash;
 app.onResize = function(percent) {
 
   var height = $(window).height() * (percent || 0.855);
-  var fullheight = $(window).height() - 54; // cater for the top Nav
+  var fullheight = $(window).height() - ($(".navbar").height() +2); // cater for the top Nav
   var width = $(window).width();
   // when fullscreen be odd?
   if (height) {
@@ -268,16 +268,16 @@ $(document).ready(function() {
   //hide basemaps drop-down on mouseout
   $('#SimpleLayerSwitcher_29').mouseleave( function() {
     $('#SimpleLayerSwitcher_29').hide();
-    if (app.mafmc || !app.pageguide.preventBasemapsClose) {
-        $('#basemaps').removeClass('open');
-    }
+    // if (app.mafmc || !app.pageguide.preventBasemapsClose) {
+    //     $('#basemaps').removeClass('open');
+    // }
   });
   
   //hide basemaps drop-down on mouseout
   $('#SimpleLayerSwitcher_29').mousedown( function() {
-    if (app.mafmc || !app.pageguide.preventBasemapsClose) {
-        $('#basemaps').removeClass('open');
-    }
+    // if (app.mafmc || !app.pageguide.preventBasemapsClose) {
+    //     $('#basemaps').removeClass('open');
+    // }
   });
   
   //hide basemaps drop-down on mouseout
