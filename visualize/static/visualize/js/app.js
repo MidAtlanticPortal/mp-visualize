@@ -1,10 +1,10 @@
 // save the initial load hash so we can use it if set
 app.hash = window.location.hash;
-
 app.onResize = function(percent) {
 
   var height = $(window).height() * (percent || 0.855);
   var fullheight = $(window).height() - ($(".navbar").height() +2); // cater for the top Nav
+  var tabheight = fullheight * (percent || 0.75); // cater for the top Nav
   var width = $(window).width();
   // when fullscreen be odd?
   if (height) {
@@ -12,11 +12,11 @@ app.onResize = function(percent) {
     if ( width > 767 && !app.embeddedMap ) {
         $("#map").height(fullheight);
         $("#map-wrapper").height(fullheight);
-        $(".tabs").height(height);
+        $(".tabs").height(tabheight);
         $("#legend-wrapper").height(height - 20);
-        $("#data-accordion").height(height - 96);
-        $("#designs-accordion").height(height - 20 - 96);
-        $("#active").height(height + 20 - 96);
+        $("#data-accordion").height(tabheight - 96);
+        $("#designs-accordion").height(tabheight - 20 - 96);
+        $("#active").height(tabheight + 20 - 96);
     } 
     app.map.render('map');
   }
@@ -369,6 +369,10 @@ $('#feedback-form').on('submit', function (event) {
       //$('#thankyou-modal').modal('show');
    });
    $form.closest('.modal').modal('hide');
+});
+
+$('#left-panel h4 a').click(function(){
+  $(this).find('i').toggleClass('fa-angle-double-left fa-angle-double-right')
 });
 
 $(document).mousedown(function(e) {
