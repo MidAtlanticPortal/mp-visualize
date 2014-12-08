@@ -14,7 +14,7 @@ app.onResize = function(percent) {
         $("#map-wrapper").height(fullheight);
         $(".tabs").height(tabheight);
         $("#legend-wrapper").height(height - 20);
-        $("#data-accordion").height(tabheight - 96);
+        $("#data-accordion").height(tabheight - 20);
         $("#designs-accordion").height(tabheight - 20 - 96);
         $("#active").height(tabheight + 20 - 96);
     } 
@@ -51,6 +51,7 @@ if (!Array.prototype.indexOf) {
 app.state = {
   //list of active layer ids in order they appear on the map
   activeLayers: [],
+  totalLayers: 0,
   location: {}
 };
 
@@ -371,8 +372,15 @@ $('#feedback-form').on('submit', function (event) {
    $form.closest('.modal').modal('hide');
 });
 
-$('#left-panel h4 a').click(function(){
-  $(this).find('i').toggleClass('fa-angle-double-left fa-angle-double-right')
+$('#left-panel .panel-heading h4 a').click(function(){
+  $(this).find('i').toggleClass('fa-angle-double-left fa-angle-double-right');
+  $("#left-minimized").toggle();
+  $("#left-maximized").toggle();
+  if( $("#left-minimized").is( ":visible" ) ){
+    $('#left-panel').width('200px')
+  }else{
+    $('#left-panel').width('')
+  }
 });
 
 $(document).mousedown(function(e) {
