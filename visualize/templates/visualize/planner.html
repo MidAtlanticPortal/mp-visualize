@@ -1,26 +1,28 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}Marine Planner{% endblock %}
 
 {% block extra_css %}
-
-{% endblock%}
-{% block content %}
-
         <link href="{% static 'visualize/css/scalebar-thin.css' %}" rel="stylesheet">
         <link href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="{% static 'visualize/deps/openlayers/theme/default/style.css' %}">
+        <link href="{% static 'bower_components/jscrollpane/style/jquery.jscrollpane.css' %}" rel="stylesheet">
+        <link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui-1.9.1.custom.css' %}" rel="stylesheet">
 <!--
         <link href="{% static 'js/bootstrap/bootstrap.css' %}" rel="stylesheet">
         <link href="{% static 'css/marco_style.css' %}" rel="stylesheet">
         <link href="{% static 'css/style.css' %}" rel="stylesheet">
         <link href="{% static 'js/jquery/pageguide.css' %}" rel="stylesheet">
-        <link href="{% static 'js/jquery/smoothness/jquery-ui-1.9.1.custom.css' %}" rel="stylesheet">
         <link href="{% static 'bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css' %}" rel="stylesheet">
         <link href="{% static 'js/jquery/jquery.jscrollpane.css' %}" rel="stylesheet">
 -->
         <!--<link href="{{MEDIA_URL}}/marco-proto/assets/css/jScrollPane.css" rel="stylesheet">-->
         <!--<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/base/jquery-ui.css"
         type="text/css" media="all" />-->
+
+{% endblock%}
+{% block content %}
 
         <!-- Check for Mobile Client -->
         <script type="text/javascript">
@@ -30,7 +32,6 @@
                 window.location.pathname = "/mobile/mobile/";
             }
         </script>
-    </head>
 
     <body class="{% block body_class %}template-visualize{% endblock %}">
         <!-- modals -->
@@ -59,7 +60,7 @@
                     <div class="row">
                         <div id="map-wrapper">
                             <div id="map"></div>
-                            <div id="basemaps"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
+                            <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
                                 <div class="btn-group btn-group-vertical">
                                   <!--Hide/Show Legends Button-->
                                   <a class="btn" data-bind="click: toggleLegend">
@@ -112,7 +113,7 @@
                                 -->
                             </div>
                             <!-- the following container is used to estimate width for the actual Aggregated Attribution Overlay -->
-                            <div id="aggregated-attribute-overlay-test" style="position: absolute; visibility: hidden; height: auto; width: auto">
+                            <div id="aggregated-attribute-overlay-test" style="position: absolute; visibility: hidden; height: auto; width: auto; top:0px">
                                 <div data-bind="foreach: attributeLayers()">
                                     <div data-bind="css: {display: $root.aggregatedAttributes()[featureAttributionName] ? 'block' : 'none'}">
                                       <h4 data-bind="text: featureAttributionName"></h4>
@@ -209,11 +210,13 @@
                                                         <span data-bind="text: activeInfoLayer().name"></span>
                                                     </a>
                                                 </li>
+                                                <ul>
                                                 <li data-bind="foreach: activeInfoLayer().subLayers">
                                                     <a data-bind="click: toggleSublayerDescription">
                                                         <span data-bind="text: name"></span>
                                                     </a>
                                                 </li>
+                                                </ul>
                                             </ul>
                                         </span>
                                         <span class="title" data-bind="text: activeInfoLayer().name, visible: !activeInfoSelector()"></span>
@@ -287,21 +290,37 @@
                 <div class="row col-md-4 panel panel-default" data-bind="visible: showLayers()" id="left-panel">
                     <div class="panel-heading">
                         <h4 class="panel-title">
-                            <div class="col-md-6 ">
-                                <form class="form-search" data-bind="submit: layerSearch">
-                                    <div class="col-md-12">
-                                        <input type="text" class="search-box" data-provide="typeahead" data-bind="value: searchTerm, event: { keyup: keySearch }" style="overflow: hidden; text-overflow: ellipsis;" placeholder="Search">
-
-                                        <a class="btn">
-                                            <i class="icon-remove icon-large"></i>
-                                        </a>
-                                    </div>
-                                </form>
+                            <div id="left-maximized">
+                                <div class="col-md-11">
+                                    <form class="form-search" data-bind="submit: layerSearch">
+                                        <div class="col-md-12">
+                                            <div class="input-group">
+                                                <input type="text" class="search-box form-control" data-provide="typeahead" data-bind="value: searchTerm, event: { keyup: keySearch }" style="overflow: hidden; text-overflow: ellipsis;" placeholder="Search">
+                                                <span class="input-group-btn">
+                                                    <a class="btn">
+                                                        <i class="fa fa-search"></i>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
                             <a data-toggle="collapse" data-target="#collapseTwo">
                                 <i class="fa fa-angle-double-left"></i>
                             </a>
                         </h4>
+                        <span class="panel-title">
+                            <div style="display:none" id="left-minimized" >
+                            <h4>
+                                Data Layers
+                            </h4>
+
+                                <span data-bind="visible: activeLayers().length > 0">
+                                    <span data-bind="text: activeLayers().length">0</span> Active
+                                </span>
+                        </div>
+                        </span>
                     </div>
                     <div id="collapseTwo" class="panel-collapse collapse in">
                       <div class="panel-body">
@@ -320,14 +339,14 @@
                                 <h4>
                                     <a href="#active" data-toggle="tab" id="activeTab">Active
                                         <span data-bind="visible: activeLayers().length > 0">
-                                            (<span  data-bind="text: activeLayers().length">0</span>)
+                                            &#8226;&nbsp;<span data-bind="text: activeLayers().length">0</span>
                                         </span>
                                     </a>
                                 </h4>
                             </li>
                             <li data-tab="data">
                                 <h4>
-                                    <a href="#data" data-toggle="tab" id="dataTab">Data</a>
+                                    <a href="#data" data-toggle="tab" id="dataTab">Data Catalog</a>
                                 </h4>
                             </li>
                             {% if user.is_authenticated %}
@@ -362,20 +381,21 @@
                                         <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
                                             <li>
                                                 <div class="btn-group">
-                                                    <button class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}"><i class="icon-info-sign icon-large"></i></button>
+                                                    <button class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}"><i class="fa fa-info-circle"></i></button>
                                                     <a class="btn btn-layer" data-bind="css: { 'active': visible() }, click: toggleVisible">
-                                                        <div data-bind="text: name"></div>
-                                                        <span rel="tooltip" data-bind="attr: {title: sharedBy}">
+                                                        <div class="btn-text" data-bind="text: name"></div>
+<!--                                                         <span rel="tooltip" data-bind="attr: {title: sharedBy}">
                                                             <i class="icon-signin" data-bind="visible: shared" style="padding-left: 10px"></i>
                                                         </span>
                                                         <span rel="tooltip" data-bind="attr: {title: sharedWith}">
                                                             <i class="icon-signout" data-bind="visible: selectedGroups().length" style="padding-left: 10px"></i>
-                                                        </span>
-                                                        <span ><i class="icon-large check" data-bind="css: { 'icon-check': visible(), 'icon-check-empty': ! visible() }"></i></span>
+                                                        </span> -->
+                                                        <span class="layer-toggle"><i class="fa" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
                                                     </a>
-                                                    <a class="btn opacity-button" data-bind="click: $parent.showOpacity"><i class="icon-adjust icon-large"></i></a>
+                                                    <a class="btn opacity-button" data-bind="click: $parent.showOpacity">   <i class="fa fa-adjust"></i>
+                                                    </a>
                                                     <button class="btn" data-bind="click: toggleActive">
-                                                        <i class="icon-remove">
+                                                        <i class="fa fa-times-circle">
                                                         </i>
                                                     </button>
                                                 </div>
@@ -389,7 +409,7 @@
                             <div class="tab-pane active in fade" id="data">
                                 <div class="row-fluid">
 
-                                    <div class="row-fluid" style="margin-top: 20px">
+                                    <div class="row-fluid">
                                         <div class="col-md-12 accordion-wrapper">
                                             <!-- data accordion -->
                                             <div id="data-accordion">
@@ -407,7 +427,7 @@
                                                                     <li class="layer" data-bind="css: { nosublayers: subLayers.length === 0 }">
                                                                         <div class="btn-group btn-group-layer" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
                                                                             <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive() }">
-                                                                                <i class="icon-info-sign icon-large"></i>
+                                                                                <i class="fa fa-info-circle"></i>
                                                                             </a>
                                                                             <a class="btn btn-layer" data-bind="css: { 'active': active(), 'not-active': ! active(), 'disabled': isDisabled() }, click: toggleActive, attr: { 'data-content': disabledMessage() }" rel="popover" data-placement="right" data-container="body">
                                                                                 <div style="font-weight: normal">
@@ -423,10 +443,7 @@
                                                                                 <li data-bind="foreach: subLayers">
                                                                                     <a data-bind="click: toggleActive">
                                                                                         <!--<span data-bind="style: {visibility: active() ? 'visible': 'hidden' }">• </span>-->
-                                                                                        <span style="margin-left: -10px" data-bind="style: {visibility: active() ? 'visible': 'hidden' }">
-                                                                                            <i class="icon-ok-circle"></i>
-                                                                                        </span>
-                                                                                        <i class="icon-ok" data-bind="style: {visibility: active() ? 'visible': 'hidden' }"></i>
+                                                                                        <span><i class="fa" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
                                                                                         <span data-bind="text: name"></span>
                                                                                     </a>
                                                                                 </li>
@@ -436,10 +453,7 @@
                                                                             <ul class="dropdown-menu layer-menu" data-bind="event: { mouseleave: closeMenu }">
                                                                                 <li data-bind="foreach: subLayers">
                                                                                     <a data-bind="click: toggleActive" style="padding-left: 15px">
-                                                                                        <span style="margin-left: -10px">
-                                                                                            <i class="icon-check" data-bind="style: {display: active() ? 'inline': 'none' }"></i>
-                                                                                            <i style="opacity: .4" class="icon-check-empty" data-bind="style: {display: ! active() ? 'inline': 'none' }"></i>
-                                                                                        </span>
+                                                                                        <span><i class="fa" data-bind="css: { 'fa-check-square-o': visible(), 'fa-square-o': ! visible() }"></i></span>
                                                                                         <span data-bind="text: name"></span>
                                                                                     </a>
                                                                                 </li>
@@ -519,11 +533,12 @@
 
     {% block extra_js %}
         <script src="{% static 'bower_components/amplify/lib/amplify.min.js' %}"></script>
+        <script src="{% static 'bower_components/jquery-migrate/jquery-migrate.min.js' %}"></script>
         <script src="{% static 'bower_components/jquery.bbq/jquery.ba-bbq.js' %}"></script>
         <script src="{% static 'bower_components/bootstrap3-typeahead/bootstrap3-typeahead.min.js' %}"></script>
         <!--<script src="{{MEDIA_URL}}/marco/js/jquery-ui-1.9.1.custom.js"></script>-->
         <script src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
-        <script src="{% static 'bower_components/lodash/dist/lodash-min.js' %}"></script>
+        <script src="{% static 'bower_components/lodash/dist/lodash.min.js' %}"></script>
         <script src="{% static 'bower_components/knockout/build/output/knockout-latest.js' %}"></script>
         <script src="{% static 'visualize/js/knockout-bindings.js' %}"></script>
         <script src="{% static 'bower_components/knockout-mapping/build/output/knockout.mapping-latest.js' %}"></script>
@@ -539,6 +554,8 @@
         <script src="{% static 'bower_components/bigscreen/bigscreen.js' %}"></script>
         <script src="{% static 'bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min.js' %}"></script>
         <script src="{% static 'bower_components/jscrollpane/script/jquery.jscrollpane.min.js' %}"></script>
+
+        <script src="{% static 'bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js' %}"></script>
 
         <script src="{{SOCKET_URL}}/socket.io/socket.io.js"></script>
         <!--<script src="http://www.transportparadise.co.uk/layerswitcher/simplelayerswitcher.js"></script>-->
