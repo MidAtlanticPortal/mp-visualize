@@ -30,8 +30,8 @@ div.olLayerDiv {
 }
 .olControlAttribution {
     font-size: smaller;
-    right: 3px;
-    bottom: 4.5em;
+    left: 80px;
+    bottom: 0px;
     position: absolute;
     display: block;
 }
@@ -431,46 +431,47 @@ span.olGoogleAttribution.hybrid a, span.olGoogleAttribution.satellite a {
 
 div.olControlZoom {
     position: absolute;
-    top: 8px;
-    left: 8px;
-    background: rgba(255,255,255,0.4);
-    border-radius: 4px;
+    bottom: 29px;
+    right: 30px;
+    /*background: rgba(255,255,255,0.4);*/
+    border-radius: 0px;
     padding: 2px;
 }
 div.olControlZoom a {
     display: block;
-    margin: 1px;
-    padding: 0;
-    color: white;
     font-size: 18px;
-    font-family: 'Lucida Grande', Verdana, Geneva, Lucida, Arial, Helvetica, sans-serif;
     font-weight: bold;
+    margin: 2px;
+    padding: 2px 0px 0px 2px;
+    color: #58585b;
     text-decoration: none;
     text-align: center;
-    height: 22px;
-    width:22px;
+    height: 24px;
+    width: 24px;
     line-height: 19px;
-    background: #130085; /* fallback for IE - IE6 requires background shorthand*/
-    background: rgba(0, 60, 136, 0.5);
-    filter: alpha(opacity=80);
+    background: #e7e7e8;
+    margin-bottom: 10px;
+    border-bottom-left-radius: 0px;
 }
+
 div.olControlZoom a:hover {
-    background: #130085; /* fallback for IE */
-    background: rgba(0, 60, 136, 0.7);
-    filter: alpha(opacity=100);
+/*    background: #130085; /* fallback for IE */
+/*    background: rgba(0, 60, 136, 0.7);
+    filter: alpha(opacity=100);*/*/
+    color: red;
 }
 @media only screen and (max-width: 600px) {
     div.olControlZoom a:hover {
         background: rgba(0, 60, 136, 0.5);
     }
 }
-a.olControlZoomIn {
+/*a.olControlZoomIn {
     border-radius: 4px 4px 0 0;
 }
 a.olControlZoomOut {
     border-radius: 0 0 4px 4px;
 }
-
+*/
 
 /**
  * Animations
