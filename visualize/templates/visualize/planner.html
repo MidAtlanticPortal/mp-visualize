@@ -8,7 +8,7 @@
         <link href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{% static 'visualize/deps/openlayers/theme/default/style.css' %}">
         <link href="{% static 'bower_components/jscrollpane/style/jquery.jscrollpane.css' %}" rel="stylesheet">
-        <link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui-1.9.1.custom.css' %}" rel="stylesheet">
+        <link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css' %}" rel="stylesheet">
 <!--
         <link href="{% static 'js/bootstrap/bootstrap.css' %}" rel="stylesheet">
         <link href="{% static 'css/marco_style.css' %}" rel="stylesheet">
@@ -62,21 +62,26 @@
                             <div id="map"></div>
                             <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
                                 <div class="btn-group btn-group-vertical">
+                                  <!-- Print Button -->
+                                  <a class="btn" id="btn-print" data-bind="click: printing.showPrintDialog, visible: printing.enabled">
+                                      <i class="fa fa-print" id="print-icon" data-toggle="tooltip" data-placement="left" title="Print/Export" ></i>
+                                  </a>
+
                                   <!--Hide/Show Legends Button-->
-                                  <a class="btn" data-bind="click: toggleLegend">
-                                      <i class="fa fa-list-ul"></i>
+                                  <a class="btn"  data-bind="click: toggleLegend"  >
+                                      <i class="fa fa-list-ul" id="popoverData" data-trigger="hover" data-placement="left" data-toggle="popover" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."></i>
 <!--                                               <span data-bind="text: legendButtonText()"></span>
                                       <span data-bind="visible: hasActiveLegends() > 0">
                                       (<span data-bind="text: activeLegendLayers().length"></span>) </span> -->
                                   </a>
                                   <!--Hide/Show Layers Button-->
-                                  <a class="btn" data-bind="click: toggleLayers">
-                                      <i class="fa fa-align-justify" data-bind="css: {'icon-indent-right': showLayers(), 'icon-indent-left': ! showLayers()}"></i>
+                                  <a class="btn" data-bind="click: toggleLayers" >
+                                      <i class="fa fa-align-justify" id="tooltipData" data-toggle="tooltip" data-placement="left" title="Toggle Layer Picker" data-bind="css: {'icon-indent-right': showLayers(), 'icon-indent-left': ! showLayers()}"></i>
 <!--                                               <span data-bind="text: showLayersText()"></span>
--->                                          </a>
+-->                                </a>
                                   <!--Bookmarks Button-->
                                   <a id="bookmarks-button" class="btn" data-bind="click: showBookmarks">
-                                      <i class="fa fa-bookmark"></i>
+                                      <i class="fa fa-bookmark" data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" ></i>
 <!--                                  <span>Bookmarks</span>
                                       <span data-bind="visible: bookmarks.bookmarksList().length > 0">
                                           (<span data-bind="text: bookmarks.bookmarksList().length"></span>)
@@ -84,19 +89,15 @@
                                   </a>
                                   <!--Map Links Button-->
                                   <a id="basemap-button" class="btn" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
-                                      <i class="fa fa-link"></i>
-<!--                                               <span>Share this Map</span>
--->                                          </a>
-                                  <!-- Print Button -->
-                                  <a class="btn" id="btn-print" data-bind="click: printing.showPrintDialog, visible: printing.enabled">
-                                      <i class="fa fa-print"></i>
-<!--                                               <span>Print/Export</span>
--->                                          </a>
+                                      <i class="fa fa-link" data-toggle="tooltip" data-placement="left" title="Share this Map" ></i>
+<!--                                  <span>Share this Map</span>
+-->                               </a>
+
                                   <!--Fullscreen Button-->
                                   <a class="btn" id="btn-fullscreen">
-                                      <i class="fa fa-arrows-alt"></i>
-<!--                                               <span>Fullscreen</span>
--->                                          </a>
+                                      <i class="fa fa-arrows-alt" data-toggle="tooltip" data-placement="left" title="Full Screen"></i>
+<!--                                  <span>Fullscreen</span>
+-->                               </a>
                                 </div>
                             </div>
                             <div id="baselayers">
@@ -380,24 +381,40 @@
                                         </div>
                                         <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
                                             <li>
-                                                <div class="btn-group">
-                                                    <button class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}"><i class="fa fa-info-circle"></i></button>
-                                                    <a class="btn btn-layer" data-bind="css: { 'active': visible() }, click: toggleVisible">
-                                                        <div class="btn-text" data-bind="text: name"></div>
-<!--                                                         <span rel="tooltip" data-bind="attr: {title: sharedBy}">
-                                                            <i class="icon-signin" data-bind="visible: shared" style="padding-left: 10px"></i>
-                                                        </span>
-                                                        <span rel="tooltip" data-bind="attr: {title: sharedWith}">
-                                                            <i class="icon-signout" data-bind="visible: selectedGroups().length" style="padding-left: 10px"></i>
-                                                        </span> -->
-                                                        <span class="layer-toggle"><i class="fa" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
-                                                    </a>
-                                                    <a class="btn opacity-button" data-bind="click: $parent.showOpacity">   <i class="fa fa-adjust"></i>
-                                                    </a>
-                                                    <button class="btn" data-bind="click: toggleActive">
-                                                        <i class="fa fa-times-circle">
-                                                        </i>
-                                                    </button>
+                                                <div class="row-fluid" style="display:inline-block; width: 99%;">
+                                                    <div class="col-md-12" style="display:block; width:99%">
+                                                            <div class="col-md-1">
+                                                                <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}"><i class="fa fa-info-circle"></i></a>
+                                                            </div>
+                                                            <div class="col-md-8">
+                                                                <a class="btn btn-layer" data-bind="css: { 'active': visible() }, click: toggleVisible">
+                                                                    <div class="btn-text" data-bind="text: name"></div>
+                                                                <!--
+                                                                    <span rel="tooltip" data-bind="attr: {title: sharedBy}">
+                                                                        <i class="icon-signin" data-bind="visible: shared" style="padding-left: 10px"></i>
+                                                                    </span>
+                                                                    <span rel="tooltip" data-bind="attr: {title: sharedWith}">
+                                                                        <i class="icon-signout" data-bind="visible: selectedGroups().length" style="padding-left: 10px"></i>
+                                                                    </span>
+                                                                -->
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <a class="btn btn-layer" >
+                                                                    <i class="fa" data-bind="css: { 'fa-check-circle-o active': visible(), 'fa-circle-o': ! visible() }, click: toggleVisible" data-toggle="tooltip" data-placement="left" title="Show/Hide layer"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                                <a class="btn opacity-button" data-bind="click: $parent.showOpacity">
+                                                                    <i class="fa fa-adjust" data-toggle="tooltip" data-placement="left" title="Adjust opacity"></i>
+                                                                </a>
+                                                            </div>
+                                                            <div class="col-md-1">
+                                                            <a class="btn" data-bind="click: toggleActive">
+                                                                <i class="fa fa-times-circle" data-toggle="tooltip" data-placement="left" title="Remove layer"></i>
+                                                            </a>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </li>
                                         </ul>
@@ -493,17 +510,6 @@
                     </div>
                   </div>
                 </div>
-
-                  <!-- Data Panel (left panel) -->
-<!--                 <div class="row col-md-3" data-bind="visible: showLayers()" id="left-panel">
-                    <div class="col-md-12 panel-collapse collapse in">
-                        <div class="sidebar-nav" data-bind="">
-                            <h1>Panel!</h1>
-                        </div>
-                    </div>
-                </div> -->
-
-
                 <!-- Legends Panel (right panel) -->
                 <!-- /Legends Panel -->
             </div>
@@ -557,7 +563,7 @@
 
         <script src="{% static 'bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js' %}"></script>
 
-        <script src="{{SOCKET_URL}}/socket.io/socket.io.js"></script>
+        <script src="{% static 'visualize/deps/socket.io/socket.io.js' %}"></script>
         <!--<script src="http://www.transportparadise.co.uk/layerswitcher/simplelayerswitcher.js"></script>-->
         <script>
             var app = {
