@@ -307,7 +307,7 @@
                                     </form>
                                 </div>
                             </div>
-                            <a data-toggle="collapse" data-target="#collapseTwo">
+                            <a data-toggle="collapse" data-target="#collapsible-left-panel">
                                 <i class="fa fa-angle-double-left"></i>
                             </a>
                         </h4>
@@ -323,7 +323,7 @@
                         </div>
                         </span>
                     </div>
-                    <div id="collapseTwo" class="panel-collapse collapse in">
+                    <div id="collapsible-left-panel" class="panel-collapse collapse in">
                       <div class="panel-body">
                <!-- Data Panel (left panel) -->
 
@@ -345,18 +345,19 @@
                                     </a>
                                 </h4>
                             </li>
+                            {% if user.is_authenticated %}
+                            <li data-tab="designs" >
+                                <h4>
+                                    <a href="#designs" data-toggle="tab" id="designsTab">Custom</a>
+                                </h4>
+                            </li>
+                            {% endif %}                            
                             <li data-tab="data">
                                 <h4>
                                     <a href="#data" data-toggle="tab" id="dataTab">Data Catalog</a>
                                 </h4>
                             </li>
-                            {% if user.is_authenticated %}
-                            <li data-tab="designs" >
-                                <h4>
-                                    <a href="#designs" data-toggle="tab" id="designsTab">Designs</a>
-                                </h4>
-                            </li>
-                            {% endif %}
+
 
 
                         </ul>
