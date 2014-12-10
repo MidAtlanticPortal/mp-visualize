@@ -10,36 +10,39 @@
         <div class="popover-content">
             <div data-bind="visible: isGoogle() === false">
                 <div class="row-fluid">
-                    <div class="span6">
+                    <div class="col-md-12">
                         <strong>Format</strong>
                         <div class="control-group">
-                            <label class="radio control-label">
-                                <input type="radio" value=".pdf" name="format" data-bind="checked: format">PDF
+                            <input type="radio" value=".pdf" id="print-pdf" name="format" data-bind="checked: format">
+                            <label class="radio control-label" for"print-pdf">PDF
                             </label>
-                            <label class="radio control-label">
-                                <input type="radio" name="format" value=".png" checked data-bind="checked: format">PNG
+                            <input type="radio" name="format" id="print-png" value=".png" checked data-bind="checked: format">
+                            <label class="radio control-label" for"print-png">
+                                PNG
                             </label>
-                            <label class="radio control-label">
-                                <input type="radio" name="format" value=".jpg" data-bind="checked: format">JPG
+                            <input type="radio" name="format" id="print-jpg" value=".jpg" data-bind="checked: format">
+                            <label class="radio control-label" for"print-jpg">
+                                JPG
                             </label>
                            <!-- <label class="radio control-label">
                                 <input type="radio" value=".tiff" name="format" data-bind="checked: format">Georeferenced TIFF
                             </label> -->
-                            
                         </div>
-                        <strong>Options</strong>
-                        <label class="checkbox">
-                            <input type="checkbox" data-bind="checked: borderLess">Borderless Map
+                        <strong>Options</strong><br>
+                        <label class="checkbox" id="chkBorderless">
+                            Borderless Map
                         </label>
-                        <label class="checkbox">
-                            <input type="checkbox" data-bind="checked: showLegend, disable: borderLess">Show Legend
+                        <input type="checkbox" for="chkBorderless"data-bind="checked: borderLess">
+                        <label class="checkbox" for="chkLedgend" id="chkBorderless">
+                            Show Legend
                         </label>
+                        <input type="checkbox" id="chkLedgend" data-bind="checked: showLegend, disable: borderLess">
                     </div>
-                    <div class="span6">
+                    <div class="col-md-12">
                         <div class="well">
 
                             <fieldset data-bind="visible: format() !== '.pdf'">
-                                <strong>Image Size</strong> 
+                                <strong>Image Size</strong><br>
                                 <label>Width (<span data-bind="text: units">inches</span>)</label>
                                 <input type="text" class="spinner" data-bind="spinner: shotWidthDisplay, spinnerOptions: { step: .1 }">
                                 <label>Height (<span data-bind="text: units">inches</span>)</label>
@@ -51,27 +54,36 @@
                                 </select>
                             </fieldset>
                             <fieldset data-bind="visible: format() === '.pdf'">
-                                <strong>Paper Size</strong>
-                                    <label class="radio control-label">
-                                        <input type="radio" name="paperSize" value='letter' data-bind="checked: paperSize">Letter (8.5" x 11")
+                                <strong>Paper Size</strong><br>
+                                    <input type="radio" id="chkLetter" name="paperSize" value='letter' data-bind="checked: paperSize">
+                                    <label class="radio control-label" for="chkLetter">
+                                        Letter (8.5" x 11")
                                     </label>
-                                    <label class="radio control-label">
-                                        <input type="radio"  name="paperSize" value='ledger' data-bind="checked: paperSize">Ledger (11" x 17")
+                                    <br>
+                                    <input type="radio" id="chkLedger" name="paperSize" value='ledger' data-bind="checked: paperSize">
+                                    <label class="radio control-label" for="chkLedger">
+                                        Ledger (11" x 17")
                                     </label>
-                                    <label class="radio control-label">
-                                        <input type="radio" name="paperSize"  value='A4' data-bind="checked: paperSize">A4 (297mm x 210mm)
+                                    <br>
+                                    <input type="radio" id="chkA4" name="paperSize" value='A4' data-bind="checked: paperSize">
+                                    <label class="radio control-label" for="chkA4">
+                                        A4 (297mm x 210mm)
                                     </label>
-                                    <label class="radio control-label">
-                                        <input type="radio" name="paperSize"  value='A3' data-bind="checked: paperSize">A3 (420mm x 297mm)
+                                    <br>
+                                    <input type="radio" id="chkA3" name="paperSize"  value='A3' data-bind="checked: paperSize">
+                                    <label class="radio control-label" for="chkA3">
+                                        A3 (420mm x 297mm)
                                     </label>
                             </fieldset>
                         </div>
                     </div>
                 </div>
+                <div class="col-md-12">
                 <fieldset>
                     <label><strong data-bind="css: { disabled: borderLess }">Title</strong></label>
                     <input class="print-title" type="text" data-bind="value: title, valueUpdate: 'afterkeydown', disable: borderLess" placeholder="Optional title for map...">
                 </fieldset>
+                </div>
             </div>
 
             <div data-bind="visible: isGoogle">
