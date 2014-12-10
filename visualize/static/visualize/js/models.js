@@ -1817,11 +1817,11 @@ function viewModel() {
     
     //if toggling legend or layers panel during default pageguide, then correct step 4 position
     self.correctTourPosition = function() {
-        if ( $.pageguide('isOpen') ) {
-            if ($.pageguide().guide().id === 'default-guide') {
-                $.pageguide('showStep', $.pageguide().guide().steps.length-1);
-            }
-        }
+        // if ( $.pageguide('isOpen') ) {
+        //     if ($.pageguide().guide().id === 'default-guide') {
+        //         $.pageguide('showStep', $.pageguide().guide().steps.length-1);
+        //     }
+        // }
     };
     
     self.showMapAttribution = function() {
