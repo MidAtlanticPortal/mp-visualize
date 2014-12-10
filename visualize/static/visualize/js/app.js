@@ -81,6 +81,8 @@ app.viewModel.loadLayersFromServer().done(function() {
     $("#data-accordion").jScrollPane();
   }
   $("#legend-wrapper").jScrollPane();
+
+  $('[data-toggle="tooltip"]').tooltip()
   // }
 });
 
@@ -342,6 +344,8 @@ $(document).ready(function() {
     app.updateUrl();
   });
   
+  $('[data-toggle="tooltip"]').tooltip()
+
 });
 
 $('#bookmark-form').on('submit', function(event) {
