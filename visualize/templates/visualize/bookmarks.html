@@ -51,6 +51,7 @@
                 Create new bookmark
             </h5>
             <form data-bind="submit: saveBookmark" style="margin-bottom: 0px">
+            {% csrf_token %}
                 <input type="text" data-bind="value: newBookmarkName" class="input">
                 <div class="pull-right">
                     <button class="btn" type="submit">save</button>
