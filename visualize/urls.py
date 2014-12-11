@@ -12,5 +12,5 @@ urlpatterns = patterns('',
     (r'^map', show_embedded_map),
     (r'^mafmc', show_mafmc_map),
     (r'^mobile', show_mobile_map),
-    (r'', show_planner),
+    (r'^$', show_planner),
 )
