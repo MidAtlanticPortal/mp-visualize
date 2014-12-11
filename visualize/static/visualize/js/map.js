@@ -23,7 +23,7 @@ app.init = function () {
         
     }));
     
-    esriOcean = new OpenLayers.Layer.XYZ("ESRI Ocean", "http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/${z}/${y}/${x}", {
+    esriOcean = new OpenLayers.Layer.XYZ("Ocean", "http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
@@ -35,18 +35,18 @@ app.init = function () {
         isBaseLayer: true,
         numZoomLevels: 13
     });
-    googleStreet = new OpenLayers.Layer.Google("Google Streets", {
+    googleStreet = new OpenLayers.Layer.Google("Streets", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13
     });
-    googleTerrain = new OpenLayers.Layer.Google("Google Physical", {
+    googleTerrain = new OpenLayers.Layer.Google("Physical", {
         type: google.maps.MapTypeId.TERRAIN,
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13
     });
-    googleSatellite = new OpenLayers.Layer.Google("Google Satellite", {
+    googleSatellite = new OpenLayers.Layer.Google("Satellite", {
         type: google.maps.MapTypeId.SATELLITE,
         sphericalMercator: true,
         isBaseLayer: true,
