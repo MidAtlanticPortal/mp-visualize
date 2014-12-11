@@ -1,2 +1,3 @@
 mp_visualize.egg-info
 *.pyc
+.DS_Store
