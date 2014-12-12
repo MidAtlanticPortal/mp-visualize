@@ -22,7 +22,9 @@
         type="text/css" media="all" />-->
 
 {% endblock%}
-{% block content %}
+
+{% block body_class %}template-visualize{% endblock %}
+{% block outer_content %}
 
         <!-- Check for Mobile Client -->
         <script type="text/javascript">
@@ -32,8 +34,6 @@
                 window.location.pathname = "/mobile/mobile/";
             }
         </script>
-
-    <body class="{% block body_class %}template-visualize{% endblock %}">
         <!-- modals -->
         {% include "visualize/modals.html" %}
         {% if user.is_authenticated %}
