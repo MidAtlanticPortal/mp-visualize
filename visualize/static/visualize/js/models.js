@@ -649,12 +649,14 @@ function layerModel(options, parent) {
         // app.viewModel.updateCustomScrollbar('#overview-overlay-text');
         //app.viewModel.updateDropdownScrollbar('#overview-overlay-dropdown');
         //app.viewModel.hideMapAttribution();
+        app.viewModel.updateScrollBars();
     };
     
     self.hideDescription = function(layer) {
         app.viewModel.showOverview(false);
         app.viewModel.activeInfoSublayer(false);
         //app.viewModel.showMapAttribution();
+        app.viewModel.updateScrollBars();
     };
     
     self.toggleDescriptionMenu = function(layer) {
