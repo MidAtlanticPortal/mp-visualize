@@ -12,6 +12,7 @@ from features.registry import get_feature_by_uid
 from django.conf import settings
 from models import *
 from data_manager.models import *
+from django.views.decorators.csrf import csrf_exempt
 
 def show_planner(request, template='visualize/planner.html'):
     try:
@@ -78,8 +79,7 @@ def share_bookmark(request):
     
     return HttpResponse("", status=200)
     
-'''
-'''    
+@csrf_exempt
 def get_bookmarks(request):
     #sync the client-side bookmarks with the server side bookmarks
     #update the server-side bookmarks and return the new list
@@ -130,6 +130,7 @@ def get_bookmarks(request):
     except:
         return HttpResponse(status=304)
     
+@csrf_exempt
 def remove_bookmark(request): 
     try:
         bookmark_uid = request.POST['uid']
@@ -144,6 +145,7 @@ def remove_bookmark(request):
     except:
         return HttpResponse(status=304)
 
+@csrf_exempt
 def add_bookmark(request):
     try:
         bookmark = Bookmark(user=request.user, name=request.POST.get('name'), url_hash=request.POST.get('hash'))

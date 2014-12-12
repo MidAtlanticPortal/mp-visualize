@@ -36,7 +36,9 @@
     <body class="{% block body_class %}template-visualize{% endblock %}">
         <!-- modals -->
         {% include "visualize/modals.html" %}
+        {% if user.is_authenticated %}
         {% include "visualize/bookmark-modals.html" %}
+        {% endif %}
         <!-- end modals -->
 
         <!-- REGISTRATION MODALS -->
@@ -75,10 +77,12 @@
                                   <a class="btn" data-bind="click: toggleLayers" >
                                       <i class="fa fa-align-justify" id="tooltipData" data-toggle="tooltip" data-placement="left" title="Toggle Layer Picker" data-bind="css: {'icon-indent-right': showLayers(), 'icon-indent-left': ! showLayers()}"></i>
 -->                                </a>
+                                  {% if user.is_authenticated %}
                                   <!--Bookmarks Button-->
                                   <a id="bookmarks-button" class="btn" data-bind="click: showBookmarks">
                                       <i class="fa fa-bookmark" data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" ></i>
                                   </a>
+                                  {% endif %}
                                   <!--Map Links Button-->
                                   <a id="basemap-button" class="btn" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
                                       <i class="fa fa-link" data-toggle="tooltip" data-placement="left" title="Share this Map" ></i>
