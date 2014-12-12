@@ -70,6 +70,19 @@ ko.bindingHandlers.jqSlider = {
     }
 };
 
+ko.bindingHandlers.truncatedText = {
+    update: function (element, valueAccessor, allBindingsAccessor) {
+        var originalText = ko.utils.unwrapObservable(valueAccessor()) || "",
+            // 30 is a default maximum length
+            length = ko.utils.unwrapObservable(allBindingsAccessor().maxTextLength) || 30,
+            truncatedText = originalText.length > length ? originalText.substring(0, length) + "..." : originalText;
+        // updating text binding handler to show truncatedText
+        ko.bindingHandlers.text.update(element, function () {
+            return truncatedText; 
+        });
+    }
+};
+
 // set up protected observables
 ko.protectedObservable = function(initialValue) {
     //private variables
