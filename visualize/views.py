@@ -132,9 +132,9 @@ def get_bookmarks(request):
     
 @csrf_exempt
 def remove_bookmark(request): 
-        bookmark_uid = request.POST['uid']
+    bookmark_uid = request.POST['uid']
     bookmark = get_object_or_404(Bookmark, uid=bookmark_uid, user=request.user)
-        bookmark.delete()
+    bookmark.delete()
     return HttpResponse(status=204)
 
 @csrf_exempt
