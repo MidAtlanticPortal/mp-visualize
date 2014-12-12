@@ -7,6 +7,7 @@ function layerModel(options, parent) {
     self.name = options.name || null;
     self.featureAttributionName = self.name;
     self.url = options.url || null;
+    self.data_url = options.data_url || null;
     self.arcgislayers = options.arcgis_layers || 0;
     self.type = options.type || null;
     self.utfurl = options.utfurl || false;
@@ -634,25 +635,26 @@ function layerModel(options, parent) {
     };
     
     self.showDescription = function(layer) {
+        //console.log("layer", layer)
         app.viewModel.showOverview(false);
         app.viewModel.activeInfoSublayer(false);
         app.viewModel.activeInfoLayer(layer);
         self.infoActive(true);
-        if (layer.subLayers.length > 0) {
-            $('#overview-overlay').height(195);
-        } else {
-            $('#overview-overlay').height(186);
-        }
+        // if (layer.subLayers.length > 0) {
+        //     $('#overview-overlay').height(195);
+        // } else {
+        //     $('#overview-overlay').height(186);
+        // }
         app.viewModel.showOverview(true);
-        app.viewModel.updateCustomScrollbar('#overview-overlay-text');
+        // app.viewModel.updateCustomScrollbar('#overview-overlay-text');
         //app.viewModel.updateDropdownScrollbar('#overview-overlay-dropdown');
-        app.viewModel.hideMapAttribution();
+        //app.viewModel.hideMapAttribution();
     };
     
     self.hideDescription = function(layer) {
         app.viewModel.showOverview(false);
         app.viewModel.activeInfoSublayer(false);
-        app.viewModel.showMapAttribution();
+        //app.viewModel.showMapAttribution();
     };
     
     self.toggleDescriptionMenu = function(layer) {
