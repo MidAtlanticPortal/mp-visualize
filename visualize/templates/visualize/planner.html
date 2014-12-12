@@ -10,10 +10,6 @@
         <link href="{% static 'bower_components/jscrollpane/style/jquery.jscrollpane.css' %}" rel="stylesheet">
         <link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css' %}" rel="stylesheet">
 <!--
-        <link href="{% static 'js/bootstrap/bootstrap.css' %}" rel="stylesheet">
-        <link href="{% static 'css/marco_style.css' %}" rel="stylesheet">
-        <link href="{% static 'css/style.css' %}" rel="stylesheet">
-        <link href="{% static 'js/jquery/pageguide.css' %}" rel="stylesheet">
         <link href="{% static 'bower_components/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.css' %}" rel="stylesheet">
         <link href="{% static 'js/jquery/jquery.jscrollpane.css' %}" rel="stylesheet">
 -->
@@ -76,7 +72,7 @@
                                   <!--Hide/Show Layers Button-->
                                   <a class="btn" data-bind="click: toggleLayers" >
                                       <i class="fa fa-align-justify" id="tooltipData" data-toggle="tooltip" data-placement="left" title="Toggle Layer Picker" data-bind="css: {'icon-indent-right': showLayers(), 'icon-indent-left': ! showLayers()}"></i>
--->                                </a>
+                                  </a>
                                   {% if user.is_authenticated %}
                                   <!--Bookmarks Button-->
                                   <a id="bookmarks-button" class="btn" data-bind="click: showBookmarks">
@@ -341,7 +337,9 @@
                                                     <div class="row-fluid">
                                                         <div class="col-md-12" style="display:block; width:99%">
                                                             <div class="col-md-1">
-                                                                <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}"><i class="fa fa-info-circle"></i></a>
+                                                                <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" title="More Info">
+                                                                    <i class="fa fa-info-circle"></i>
+                                                                </a>
                                                             </div>
                                                             <div class="col-md-8">
                                                                 <a class="btn btn-layer" data-bind="css: { 'active': visible() }, click: toggleVisible">
@@ -368,37 +366,33 @@
                                                         <div class="layer-info col-md-12" data-bind="visible: infoActive()">
                                                             <div class="row-fluid">
                                                                 <div class="link-bar">
-                                                                    <div class="col-md-3">
+                                                                    <span data-toggle="tooltip" data-placement="bottom" title="Download for Google Maps">
                                                                         <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
-                                                                            kml <i class="fa fa-arrow-down" data-toggle="tooltip" data-placement="left" title="Download for Google Maps"></i>
+                                                                            kml <i class="fa fa-arrow-down" ></i>
                                                                         </a>
-                                                                    </div>
-                                                                    <span class="col-md-3">
+                                                                    </span>
+                                                                    <span data-toggle="tooltip" data-placement="bottom" title="Download ESRI Formatted Dataset">
                                                                         <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
-                                                                            data <i class="fa fa-arrow-down" data-toggle="tooltip" data-placement="left" title="Download ESRI Formatted Dataset"></i>
+                                                                            data <i class="fa fa-arrow-down" ></i>
                                                                         </a>
                                                                     </span>
-                                                                    <span class="col-md-3">
+                                                                    <span data-toggle="tooltip" data-placement="bottom" title="Download Metadata">
                                                                         <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
-                                                                            <span rel="tooltip" title="Download Metadata">
-                                                                                metadata <i class="fa fa-arrow-down"></i>
-                                                                            </span>
+                                                                            metadata <i class="fa fa-arrow-down" ></i>
                                                                         </a>
                                                                     </span>
-                                                                    <span class="col-md-3">
+                                                                    <span data-toggle="tooltip" data-placement="bottom" title="Link to Dataset Source Provider">
                                                                         <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
-                                                                            <span rel="tooltip" title="Link to Dataset Source Provider">
-                                                                                source <i class="fa fa-external-link-square"></i>
-                                                                            </span>
+                                                                            source <i class="fa fa-external-link-square"></i>
                                                                         </a>
                                                                     </span>
                                                                 </div>
-                                                                </div>
-                                                                <div class="row-fluid">
+                                                            </div>
+                                                            <div class="row-fluid">
                                                                 <div class="layer-text col-md-10">
                                                                     <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
                                                                 </div>
-                                                                </div>
+                                                            </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -466,40 +460,36 @@
                                                                             <!-- /ko -->
                                                                         </div>
                                                                         <div class="layer-info col-md-12" data-bind="visible: infoActive()">
-                                                                            <div class="link-bar col-md-10">
-                                                                                <span class="col-md-3">
-                                                                                    <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
-                                                                                        <span rel="tooltip" title="Download for Google Maps">
-                                                                                            kml <i class="fa fa-arrow-down"></i>
-                                                                                        </span>
-                                                                                    </a>
-                                                                                </span>
-                                                                                <span class="col-md-3">
-                                                                                    <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
-                                                                                        <span rel="tooltip" title="Download ESRI Formatted Dataset">
-                                                                                            data <i class="fa fa-arrow-down"></i>
-                                                                                        </span>
-                                                                                    </a>
-                                                                                </span>
-                                                                                <span class="col-md-3">
-                                                                                    <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
-                                                                                        <span rel="tooltip" title="Download Metadata">
-                                                                                            metadata <i class="fa fa-arrow-down"></i>
-                                                                                        </span>
-                                                                                    </a>
-                                                                                </span>
-                                                                                <span class="col-md-3">
-                                                                                    <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
-                                                                                        <span rel="tooltip" title="Link to Dataset Source Provider">
-                                                                                            source <i class="fa fa-external-link-square"></i>
-                                                                                        </span>
-                                                                                    </a>
-                                                                                </span>
-                                                                            </div>
-                                                                            <div class="layer-text col-md-10" style="margin-top: 5px">
-                                                                                <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
-                                                                            </div>
-                                                                        </div>
+                                                            <div class="row-fluid">
+                                                                <div class="link-bar">
+                                                                    <span data-toggle="tooltip" data-placement="bottom" title="Download for Google Maps">
+                                                                        <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
+                                                                            kml <i class="fa fa-arrow-down" ></i>
+                                                                        </a>
+                                                                    </span>
+                                                                    <span data-toggle="tooltip" data-placement="bottom" title="Download ESRI Formatted Dataset">
+                                                                        <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
+                                                                            data <i class="fa fa-arrow-down" ></i>
+                                                                        </a>
+                                                                    </span>
+                                                                    <span data-toggle="tooltip" data-placement="bottom" title="Download Metadata">
+                                                                        <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
+                                                                            metadata <i class="fa fa-arrow-down" ></i>
+                                                                        </a>
+                                                                    </span>
+                                                                    <span data-toggle="tooltip" data-placement="bottom" title="Link to Dataset Source Provider">
+                                                                        <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
+                                                                            source <i class="fa fa-external-link-square"></i>
+                                                                        </a>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row-fluid">
+                                                                <div class="layer-text col-md-10">
+                                                                    <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
+                                                                </div>
+                                                            </div>
+                                                            </div>
                                                                     </li>
                                                                 </ul>
                                                             </div>
