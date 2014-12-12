@@ -233,11 +233,11 @@ function bookmarksModel(options) {
     // handle the bookmark submit
     self.saveBookmark = function() {
         // add to the list of bookmarks
-        var bookmarkState = app.getState(),
-            bookmark = new bookmarkModel( { 
-                state: bookmarkState,
-                name: self.newBookmarkName()
-            });
+        var bookmarkState = app.getState();
+        var bookmark = new bookmarkModel({ 
+            state: bookmarkState,
+            name: self.newBookmarkName()
+        });
             
         //if the user is logged in, ajax call to add bookmark to server 
         if (app.is_authenticated) { 
@@ -313,11 +313,11 @@ function bookmarksModel(options) {
     // method for loading existing bookmarks
     self.getBookmarks = function() {
         //get bookmarks from local storage
-        var existingBookmarks = amplify.store("marco-bookmarks"),
-            local_bookmarks = [];
+        var existingBookmarks = amplify.store("marco-bookmarks");
+        var local_bookmarks = [];
         if (existingBookmarks) {
-            for (var i=0; i < existingBookmarks.length; i++) {
-                local_bookmarks.push( {
+            for (var i = 0; i < existingBookmarks.length; i++) {
+                local_bookmarks.push({
                     'name': existingBookmarks[i].name,
                     'hash': existingBookmarks[i].hash,
                     'sharing_groups': existingBookmarks[i].sharingGroups

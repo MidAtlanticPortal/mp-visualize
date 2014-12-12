@@ -13,6 +13,7 @@ from django.conf import settings
 from models import *
 from data_manager.models import *
 from django.views.decorators.csrf import csrf_exempt
+from django.http.response import JsonResponse
 
 def show_planner(request, template='visualize/planner.html'):
     try:
@@ -83,75 +84,74 @@ def share_bookmark(request):
 def get_bookmarks(request):
     #sync the client-side bookmarks with the server side bookmarks
     #update the server-side bookmarks and return the new list
-    try:        
-        bookmark_dict = parser.parse(request.POST.urlencode())['bookmarks']
-    except:
-        bookmark_dict = {}
-    try:
-        #loop through the list from the client
-        #if user, bm_name, and bm_state match then skip 
-        #otherwise, add to the db
-        for key,bookmark in bookmark_dict.items():
-            try:
-                Bookmark.objects.get(user=request.user, name=bookmark['name'], url_hash=bookmark['hash'])
-            except Bookmark.DoesNotExist:
-                new_bookmark = Bookmark(user=request.user, name=bookmark['name'], url_hash=bookmark['hash'])
-                new_bookmark.save()
-            except: 
-                continue
     
-        #grab all bookmarks belonging to this user 
-        #serialize bookmarks into 'name', 'hash' objects and return json dump 
-        content = []
-        bookmark_list = Bookmark.objects.filter(user=request.user)
-        for bookmark in bookmark_list:
-            sharing_groups = [group.name for group in bookmark.sharing_groups.all()]
-            content.append({ 
-                'uid': bookmark.uid, 
+    # Note: It appears that the only place get_bookmarks is called is in the 
+    # initial load of visualize, i.e., prior to there being any bookmarks stored
+    # on the client side, so POST is always empty.  
+    if 'bookmarks' in request.POST:
+        bookmark_dict = request.POST['bookmarks']
+        # bookmark_dict = parser.parse(request.POST.urlencode())['bookmarks']
+    else:
+        bookmark_dict = {}
+    
+    #loop through the list from the client
+    #if user, bm_name, and bm_state match then skip 
+    #otherwise, add to the db
+    for bookmark in bookmark_dict.values():
+        Bookmark.objects.get_or_create(user=request.user, name=bookmark['name'],
+                                       url_hash=bookmark['hash'])
+
+    #grab all bookmarks belonging to this user 
+    #serialize bookmarks into 'name', 'hash' objects and return json dump 
+    content = []
+    bookmark_list = Bookmark.objects.filter(user=request.user)
+    for bookmark in bookmark_list:
+        sharing_groups = [group.name for group in bookmark.sharing_groups.all()]
+        content.append({ 
+            'uid': bookmark.uid, 
+            'name': bookmark.name,
+            'hash': bookmark.url_hash, 
+            'sharing_groups': sharing_groups
+        })
+    
+    shared_bookmarks = Bookmark.objects.shared_with_user(request.user)
+    for bookmark in shared_bookmarks:
+        if bookmark not in bookmark_list:
+            username = bookmark.user.username
+            actual_name = bookmark.user.first_name + ' ' + bookmark.user.last_name
+            content.append({
+                'uid': bookmark.uid,
                 'name': bookmark.name,
                 'hash': bookmark.url_hash, 
-                'sharing_groups': sharing_groups
+                'shared': True,
+                'shared_by_username': username,
+                'shared_by_name': actual_name
             })
-        
-        shared_bookmarks = Bookmark.objects.shared_with_user(request.user)
-        for bookmark in shared_bookmarks:
-            if bookmark not in bookmark_list:
-                username = bookmark.user.username
-                actual_name = bookmark.user.first_name + ' ' + bookmark.user.last_name
-                content.append({
-                    'uid': bookmark.uid,
-                    'name': bookmark.name,
-                    'hash': bookmark.url_hash, 
-                    'shared': True,
-                    'shared_by_username': username,
-                    'shared_by_name': actual_name
-                })
-        return HttpResponse(json.dumps(content), mimetype="application/json", status=200)
-    except:
-        return HttpResponse(status=304)
-    
+    # safe is false because we're returning a list
+    return JsonResponse(content, safe=False)
+
+
 @csrf_exempt
 def remove_bookmark(request): 
-        bookmark_uid = request.POST['uid']
+    bookmark_uid = request.POST['uid']
     bookmark = get_object_or_404(Bookmark, uid=bookmark_uid, user=request.user)
-        bookmark.delete()
+    bookmark.delete()
     return HttpResponse(status=204)
 
 @csrf_exempt
 def add_bookmark(request):
-    try:
-        bookmark = Bookmark(user=request.user, name=request.POST.get('name'), url_hash=request.POST.get('hash'))
-        bookmark.save()
-        sharing_groups = [group.name for group in bookmark.sharing_groups.all()]
-        content = []
-        content.append({
-            'uid': bookmark.uid,
-            'name': bookmark.name, 
-            'hash': bookmark.url_hash, 
-            'sharing_groups': sharing_groups
-        })
-        print 'returning content'
-        return HttpResponse(json.dumps(content), mimetype="application/json", status=200)
-    except:
-        return HttpResponse(status=304)
+    name = request.POST['name']
+    url_hash = request.POST['hash']
+
+    bookmark = Bookmark(user=request.user, name=name, url_hash=url_hash)
+    bookmark.save()
+    sharing_groups = [group.name for group in bookmark.sharing_groups.all()]
+    content = [{
+        'uid': bookmark.uid,
+        'name': bookmark.name, 
+        'hash': bookmark.url_hash, 
+        'sharing_groups': sharing_groups,
+    }]
+
+    return JsonResponse(content, safe=False)
         
