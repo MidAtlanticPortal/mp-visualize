@@ -132,18 +132,10 @@ def get_bookmarks(request):
     
 @csrf_exempt
 def remove_bookmark(request): 
-    try:
         bookmark_uid = request.POST['uid']
-        bookmark = get_feature_by_uid(bookmark_uid)
-        
-        viewable, response = bookmark.is_viewable(request.user)
-        if not viewable:
-            return response
-        
+    bookmark = get_object_or_404(Bookmark, uid=bookmark_uid, user=request.user)
         bookmark.delete()
-        return HttpResponse(status=200)
-    except:
-        return HttpResponse(status=304)
+    return HttpResponse(status=204)
 
 @csrf_exempt
 def add_bookmark(request):
