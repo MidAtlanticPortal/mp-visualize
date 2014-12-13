@@ -2163,7 +2163,7 @@ function scenariosModel(options) {
 
 app.viewModel.scenarios = new scenariosModel();
 
-$('#designsTab').on('show', function (e) {
+$('#designsTab').on('show.bs.tab', function (e) {
     //if ( app.viewModel.scenarios.reports && app.viewModel.scenarios.reports.showingReport() ) {
     //    app.viewModel.scenarios.reports.updateChart();
     //}
