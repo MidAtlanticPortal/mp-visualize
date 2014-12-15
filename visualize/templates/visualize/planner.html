@@ -329,63 +329,66 @@
                                         </div>
                                         <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
                                             <li>
-                                                <div style="display:inline-block; width: 99%;">
-                                                    <div class="row-fluid">
-                                                        <div  style="display:block; width:99%">
-                                                            <div class="col-md-1">
-                                                                <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" title="More Info">
-                                                                    <i class="fa fa-info-circle"></i>
-                                                                </a>
-                                                            </div>
-                                                            <div class="col-md-8">
-                                                                <a class="btn btn-layer" data-bind="css: { 'active': visible() }, click: toggleVisible">
-                                                                    <div class="btn-text" data-bind="text: name"></div>
-                                                                </a>
-                                                            </div>
-                                                            <div class="col-md-1">
-                                                                <a class="btn btn-layer" >
-                                                                    <i class="fa" data-bind="css: { 'fa-check-circle-o active': visible(), 'fa-circle-o': ! visible() }, click: toggleVisible" data-toggle="tooltip" data-placement="left" title="Show/Hide layer"></i>
-                                                                </a>
-                                                            </div>
-                                                            <div class="col-md-1">
-                                                                <a class="btn opacity-button" data-bind="click: $parent.showOpacity">
-                                                                    <i class="fa fa-adjust" data-toggle="tooltip" data-placement="left" title="Adjust opacity"></i>
-                                                                </a>
-                                                            </div>
-                                                            <div class="col-md-1">
+                                            <div class="active-wrapper">
+                                                <table width="380px">
+                                                    <tr>
+                                                        <td width="10%">
+                                                            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" title="More Info">
+                                                                <i class="fa fa-info-circle"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td width="60%">
+                                                            <a class="btn btn-layer" data-bind="css: { 'active': visible() }, click: toggleVisible">
+                                                                <div class="btn-text" data-bind="text: name"></div>
+                                                            </a>
+                                                        </td>
+                                                        <td width="10%">
+                                                            <a class="btn btn-layer" >
+                                                                <i class="fa" data-bind="css: { 'fa-check-circle-o active': visible(), 'fa-circle-o': ! visible() }, click: toggleVisible" data-toggle="tooltip" data-placement="left" title="Show/Hide layer"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td width="10%">
+                                                            <a class="btn opacity-button" data-bind="click: $parent.showOpacity">
+                                                                <i class="fa fa-adjust" data-toggle="tooltip" data-placement="left" title="Adjust opacity"></i>
+                                                            </a>
+                                                        </td>
+                                                        <td width="10%">
                                                             <a class="btn" data-bind="click: toggleActive">
                                                                 <i class="fa fa-times-circle" data-toggle="tooltip" data-placement="left" title="Remove layer"></i>
                                                             </a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="layer-info " data-bind="visible: infoActive()">
-                                                        <div class="link-bar">
-                                                            <span data-toggle="tooltip" data-placement="bottom" title="Download for Google Maps">
-                                                                <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
-                                                                    kml <i class="fa fa-arrow-down" ></i>
-                                                                </a>
-                                                            </span>
-                                                            <span data-toggle="tooltip" data-placement="bottom" title="Download ESRI Formatted Dataset">
-                                                                <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
-                                                                    data <i class="fa fa-arrow-down" ></i>
-                                                                </a>
-                                                            </span>
-                                                            <span data-toggle="tooltip" data-placement="bottom" title="Download Metadata">
-                                                                <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
-                                                                    metadata <i class="fa fa-arrow-down" ></i>
-                                                                </a>
-                                                            </span>
-                                                            <span data-toggle="tooltip" data-placement="bottom" title="Link to Dataset Source Provider">
-                                                                <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
-                                                                    source <i class="fa fa-external-link-square"></i>
-                                                                </a>
-                                                            </span>
-                                                        </div>
-                                                        <div class="layer-text">
-                                                            <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                                        </td>
+                                                    </tr>
+                                                    <tr class="layer-info " data-bind="visible: infoActive()">
+                                                        <td colspan="5">
+                                                            <div class="link-bar">
+                                                                <span data-toggle="tooltip" data-placement="bottom" title="Download for Google Maps">
+                                                                    <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
+                                                                        kml <i class="fa fa-arrow-down" ></i>
+                                                                    </a>
+                                                                </span>
+                                                                <span data-toggle="tooltip" data-placement="bottom" title="Download ESRI Formatted Dataset">
+                                                                    <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
+                                                                        data <i class="fa fa-arrow-down" ></i>
+                                                                    </a>
+                                                                </span>
+                                                                <span data-toggle="tooltip" data-placement="bottom" title="Download Metadata">
+                                                                    <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
+                                                                        metadata <i class="fa fa-arrow-down" ></i>
+                                                                    </a>
+                                                                </span>
+                                                                <span data-toggle="tooltip" data-placement="bottom" title="Link to Dataset Source Provider">
+                                                                    <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
+                                                                        source <i class="fa fa-external-link-square"></i>
+                                                                    </a>
+                                                                </span>
+                                                            </div>
+                                                            <div class="layer-text">
+                                                                <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
                                             </li>
                                         </ul>
                                     </div>
