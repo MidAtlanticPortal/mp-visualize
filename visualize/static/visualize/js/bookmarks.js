@@ -302,12 +302,12 @@ function bookmarksModel(options) {
     };
     
     self.updateBookmarkScrollBar = function() {
-        var bookmarkScrollpane = $('#bookmarks-table').data('jsp');
-        if (bookmarkScrollpane === undefined) {
-            $('#bookmarks-table').jScrollPane();
-        } else {
-            bookmarkScrollpane.reinitialise();
-        }
+        // var bookmarkScrollpane = $('#bookmarks-table').data('jsp');
+        // if (bookmarkScrollpane === undefined) {
+        //     $('#bookmarks-table').jScrollPane();
+        // } else {
+        //     bookmarkScrollpane.reinitialise();
+        // }
     };
 
     // method for loading existing bookmarks
