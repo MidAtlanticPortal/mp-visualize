@@ -425,6 +425,17 @@
                                                                                                 <span data-bind="text: name"></span>
                                                                                                 <span class="caret" style="display:none" data-bind="visible: subLayers.length > 0"></span>
                                                                                         </a>
+
+                                                                                        
+                                                                                    </td>
+                                                                                    <td width="10%">
+                                                                                        <a class="btn btn-layer" data-bind="css: { 'active': active(), 'not-active': ! active(), 'disabled': isDisabled() }, click: toggleActive, attr: { 'data-content': disabledMessage() }" rel="popover" data-placement="right" data-container="body">
+                                                                                            <i class="fa" data-bind="css: { 'fa-check-circle-o active': visible(), 'fa-circle-o': ! visible() }, click: toggleVisible" data-toggle="tooltip" data-placement="left" title="Show/Hide layer"></i>
+                                                                                         </a>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </table>
+
                                                                             <!-- ko if: subLayers.length > 0 -->
                                                                             <!-- ko if: !isCheckBoxLayer() -->
                                                                             <ul class="dropdown-menu layer-menu" data-bind="event: { mouseleave: closeMenu }">
@@ -448,17 +459,6 @@
                                                                             </ul>
                                                                             <!-- /ko -->
                                                                             <!-- /ko -->
-                                                                                        
-                                                                                    </td>
-                                                                                    <td width="10%">
-                                                                                        <a class="btn btn-layer" data-bind="css: { 'active': active(), 'not-active': ! active(), 'disabled': isDisabled() }, click: toggleActive, attr: { 'data-content': disabledMessage() }" rel="popover" data-placement="right" data-container="body">
-                                                                                            <i class="fa" data-bind="css: { 'fa-check-circle-o active': visible(), 'fa-circle-o': ! visible() }, click: toggleVisible" data-toggle="tooltip" data-placement="left" title="Show/Hide layer"></i>
-                                                                                         </a>
-                                                                                    </td>
-                                                                                </tr>
-                                                                            </table>
-
-
 
                                                                         </div>
                                                                         <div class="layer-info col-md-12" data-bind="visible: infoActive()">
