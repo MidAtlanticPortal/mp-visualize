@@ -473,7 +473,7 @@ function layerModel(options, parent) {
     self.showSublayers.subscribe(function () {
         setTimeout(function () {
             if ( app.viewModel.activeLayer().subLayers.length > 1 ) {
-                $('.layer').find('.open .layer-menu').jScrollPane();
+                //$('.layer').find('.open .layer-menu').jScrollPane();
             }
         });
     });
@@ -490,10 +490,10 @@ function layerModel(options, parent) {
             app.viewModel.activeParentLayer(layer);
             if ( app.embeddedMap ) { // if data viewer is mobile app
                 $('.carousel').carousel('prev');
-                var api = $("#sublayers-div").jScrollPane({}).data('jsp');
-                if ( api ) {
-                    api.destroy();
-                }
+                //var api = $("#sublayers-div").jScrollPane({}).data('jsp');
+                //if ( api ) {
+                //    api.destroy();
+                //}
                 $('#mobile-data-right-button').show();
                 $('#mobile-map-right-button').hide(); 
             } /*else if (!layer.activeSublayer()) { //if layer does not have an active sublayer, then show/hide drop down menu
@@ -1276,52 +1276,52 @@ function viewModel() {
     self.updateScrollBars = function() {
     
         if ( app.mafmc || !app.embeddedMap ) {
-            var dataScrollpane = $('#data-accordion').data('jsp');
-            if (dataScrollpane === undefined) {
-                $('#data-accordion').jScrollPane();
-            } else {
-                dataScrollpane.reinitialise();
-            }
+            // var dataScrollpane = $('#data-accordion').data('jsp');
+            // if (dataScrollpane === undefined) {
+            //     $('#data-accordion').jScrollPane();
+            // } else {
+            //     dataScrollpane.reinitialise();
+            // }
             
-            var activeScrollpane = $('#active').data('jsp');
-            if (activeScrollpane === undefined) {
-                $('#active').jScrollPane();
-            } else {
-                activeScrollpane.reinitialise();
-            }
-            if ($('#mafmc-active-content')) {
-                var mafmcActiveScrollpane = $('#mafmc-active-content').data('jsp');
-                if (mafmcActiveScrollpane === undefined) {
-                    $('#mafmc-active-content').jScrollPane();
-                } else {
-                    setTimeout(function() {
-                        mafmcActiveScrollpane.reinitialise();
-                        $('.jspScrollable').css("outline", "none"); 
-                    },100);
-                }
-            }
-            var legendScrollpane = $('#legend-content').data('jsp');
-            if (legendScrollpane === undefined) {
-                $('#legend-content').jScrollPane();
-            } else {
-                setTimeout(function() {legendScrollpane.reinitialise();},100);
-            }
-            if ($('#mafmc-legend')) {
-                var mafmcLegendScrollpane = $('#mafmc-legend').data('jsp');
-                if (mafmcLegendScrollpane === undefined) {
-                    $('#mafmc-legend').jScrollPane();
-                } else {
-                    setTimeout(function() {
-                        mafmcLegendScrollpane.reinitialise();
-                        $('.jspScrollable').css("outline", "none"); 
-                    },100);
-                }
-            }
-            if (app.viewModel.scenarios) {
-                app.viewModel.scenarios.updateDesignsScrollBar();
-            }
+            // var activeScrollpane = $('#active').data('jsp');
+            // if (activeScrollpane === undefined) {
+            //     $('#active').jScrollPane();
+            // } else {
+            //     activeScrollpane.reinitialise();
+            // }
+            // if ($('#mafmc-active-content')) {
+            //     var mafmcActiveScrollpane = $('#mafmc-active-content').data('jsp');
+            //     if (mafmcActiveScrollpane === undefined) {
+            //         $('#mafmc-active-content').jScrollPane();
+            //     } else {
+            //         setTimeout(function() {
+            //             mafmcActiveScrollpane.reinitialise();
+            //             $('.jspScrollable').css("outline", "none"); 
+            //         },100);
+            //     }
+            // }
+            // var legendScrollpane = $('#legend-content').data('jsp');
+            // if (legendScrollpane === undefined) {
+            //     $('#legend-content').jScrollPane();
+            // } else {
+            //     setTimeout(function() {legendScrollpane.reinitialise();},100);
+            // }
+            // if ($('#mafmc-legend')) {
+            //     var mafmcLegendScrollpane = $('#mafmc-legend').data('jsp');
+            //     if (mafmcLegendScrollpane === undefined) {
+            //         $('#mafmc-legend').jScrollPane();
+            //     } else {
+            //         setTimeout(function() {
+            //             mafmcLegendScrollpane.reinitialise();
+            //             $('.jspScrollable').css("outline", "none"); 
+            //         },100);
+            //     }
+            // }
+            // if (app.viewModel.scenarios) {
+            //     app.viewModel.scenarios.updateDesignsScrollBar();
+            // }
         }
-        $('.jspScrollable').css("outline", "none");
+        // $('.jspScrollable').css("outline", "none");
         
     };
 

@@ -78,9 +78,9 @@ app.viewModel.loadLayersFromServer().done(function() {
   });
 
   if ( ! (true) && ! app.embeddedMap ) {
-    $("#data-accordion").jScrollPane();
+    //$("#data-accordion").jScrollPane();
   }
-  $("#legend-wrapper").jScrollPane();
+  //$("#legend-wrapper").jScrollPane();
 
   $('[data-toggle="tooltip"]').tooltip()
   // }
@@ -411,4 +411,7 @@ $(document).mousedown(function(e) {
     //$('#opacity-popover').hide();
     app.viewModel.hideOpacity();
   }
+
+
+  
 });

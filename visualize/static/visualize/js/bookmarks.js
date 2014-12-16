@@ -64,6 +64,36 @@ function bookmarkModel(options) {
     self.getBookmarkHash = function() {
         return $.param(self.getBookmarkState());
     };
+
+    self.showBookmarkSettings = function(bookmark, event) {
+        var $button = $(event.target).closest('a'),
+            $popover = $('.bookmark-settings-popover');
+
+        bookmarksModel.activeBookmark = bookmark;
+
+        if ($button.hasClass('active')) {
+            self.hideBookmarkSettings();
+        } else {
+            $popover.show().position({
+                "my": "center top",
+                "at": "center bottom",
+                "of": $button,
+                "offset": "0px 10px"
+            }).on("mouseleave", function () {
+                var _this = this;
+                $popover.hide();
+                setTimeout(function () {
+                    $(_this).popover('hide');
+                }, 200);
+            });
+            //$button.addClass('active');
+        }
+    };
+    self.hideBookmarkSettings = function(self, event) {
+        $('.bookmark-settings-popover').hide();
+        $('.bookmark-settings.active').removeClass('active');
+        app.updateUrl();
+    };
     
     return self;
 } // end of bookmarkModel
@@ -149,6 +179,8 @@ function bookmarksModel(options) {
         $('#short-url').text = self.getCurrentBookmarkURL();
         self.setBookmarkIFrameHTML();
     };
+
+    self.shareBookmark = function(){}
     
     self.useLongBookmarkURL = function() {
         $('#bookmark-short-url')[0].value = self.sharingBookmark().getBookmarkUrl();
@@ -302,12 +334,12 @@ function bookmarksModel(options) {
     };
     
     self.updateBookmarkScrollBar = function() {
-        var bookmarkScrollpane = $('#bookmarks-table').data('jsp');
-        if (bookmarkScrollpane === undefined) {
-            $('#bookmarks-table').jScrollPane();
-        } else {
-            bookmarkScrollpane.reinitialise();
-        }
+        // var bookmarkScrollpane = $('#bookmarks-table').data('jsp');
+        // if (bookmarkScrollpane === undefined) {
+        //     $('#bookmarks-table').jScrollPane();
+        // } else {
+        //     bookmarkScrollpane.reinitialise();
+        // }
     };
 
     // method for loading existing bookmarks
