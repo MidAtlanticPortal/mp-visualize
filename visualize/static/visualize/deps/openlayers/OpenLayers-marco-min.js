@@ -1,3 +1,4 @@
+/* MP-537 Prevent openlayers from loading more than once */ if (typeof _openlayers_marco_min == 'undefined'){_openlayers_marco_min = true;
 /*
 
   OpenLayers.js -- OpenLayers Map Viewer Library
@@ -1594,3 +1595,6 @@ if(i==this.map.controls.length){var args=this.getParameters();if(args.layers){th
 if(args.lat&&args.lon){this.center=new OpenLayers.LonLat(parseFloat(args.lon),parseFloat(args.lat));if(args.zoom){this.zoom=parseFloat(args.zoom);}
 this.map.events.register('changebaselayer',this,this.setCenter);this.setCenter();}}},setCenter:function(){if(this.map.baseLayer){this.map.events.unregister('changebaselayer',this,this.setCenter);if(this.displayProjection){this.center.transform(this.displayProjection,this.map.getProjectionObject());}
 this.map.setCenter(this.center,this.zoom);}},configureLayers:function(){if(this.layers.length==this.map.layers.length){this.map.events.unregister('addlayer',this,this.configureLayers);for(var i=0,len=this.layers.length;i<len;i++){var layer=this.map.layers[i];var c=this.layers.charAt(i);if(c=="B"){this.map.setBaseLayer(layer);}else if((c=="T")||(c=="F")){layer.setVisibility(c=="T");}}}},CLASS_NAME:"OpenLayers.Control.ArgParser"});
+
+
+/* end MP-537 */}else{}
