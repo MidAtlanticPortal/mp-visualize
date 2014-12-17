@@ -855,8 +855,6 @@ function mapLinksModel() {
 function viewModel() {
     var self = this;
 
-    self.modernBrowser = ko.observable( false );
-    
     // list of active layermodels
     self.activeLayers = ko.observableArray();
 
