@@ -43,10 +43,11 @@ function bookmarkModel(options) {
     };
     
     self.showSharingModal = function() {
-        app.viewModel.bookmarks.sharingBookmark(self);
+        app.viewModel.bookmarks.sharingBookmark(app.viewModel.bookmarks.activeBookmark);
         self.temporarilySelectedGroups.removeAll();
         self.temporarilySelectedGroups(self.selectedGroups());
         $('#bookmark-share-modal').modal('show');
+        $('#bookmark-popover').hide();
     };
     
     // get the url from a bookmark
@@ -69,7 +70,7 @@ function bookmarkModel(options) {
         var $button = $(event.target).closest('a'),
             $popover = $('.bookmark-settings-popover');
 
-        bookmarksModel.activeBookmark = bookmark;
+        app.viewModel.bookmarks.activeBookmark = bookmark;
 
         if ($button.hasClass('active')) {
             self.hideBookmarkSettings();
@@ -176,24 +177,29 @@ function bookmarksModel(options) {
     self.resetBookmarkMapLinks = function(bookmark) {
         self.sharingBookmark(bookmark);
         self.shrinkBookmarkURL(false);
-        $('#short-url').text = self.getCurrentBookmarkURL();
+        $('.in #short-url').text = self.getCurrentBookmarkURL();
         self.setBookmarkIFrameHTML();
     };
 
-    self.shareBookmark = function(){}
-    
+    self.shareBookmark = function(){
+        //$('#bookmark-share-modal').modal('hide');
+        self.sharingBookmark(app.viewModel.bookmarks.activeBookmark);
+        $('#bookmark-share-modal').modal('show');
+
+    }
+
     self.useLongBookmarkURL = function() {
-        $('#bookmark-short-url')[0].value = self.sharingBookmark().getBookmarkUrl();
+        $('.in #short-url')[0].value = self.sharingBookmark().getBookmarkUrl();
     };
-        
+
     self.useShortBookmarkURL = function() {
         var bitly_login = "ecofletch",
             bitly_api_key = 'R_d02e03290041107b75e3720d7e3c4b95',
             long_url = self.sharingBookmark().getBookmarkUrl();
-            
-        $.getJSON( 
-            "http://api.bitly.com/v3/shorten?callback=?", 
-            { 
+
+        $.getJSON(
+            "http://api.bitly.com/v3/shorten?callback=?",
+            {
                 "format": "json",
                 "apiKey": bitly_api_key,
                 "login": bitly_login,
@@ -201,18 +207,18 @@ function bookmarksModel(options) {
             },
             function(response)
             {
-                $('#bookmark-short-url')[0].value = response.data.url;
+                $('.in #short-url')[0].value = response.data.url;
             }
         );
     };
-    
+
     self.setBookmarkIFrameHTML = function() {
         var bookmarkState = self.sharingBookmark().getBookmarkHash();
-        $('#bookmark-iframe-html')[0].value = app.viewModel.mapLinks.getIFrameHTML(bookmarkState);
-        
+        $('.in #bookmark-iframe-html')[0].value = app.viewModel.mapLinks.getIFrameHTML(bookmarkState);
+
         /*var urlOrigin = window.location.origin,
             urlHash = $.param(self.sharingBookmark().state);
-        
+
         if ( !urlOrigin ) {
             urlOrigin = 'http://' + window.location.host;
         }
@@ -221,10 +227,10 @@ function bookmarksModel(options) {
                                      'src="' + embedURL + '">' + '</iframe>' + '<br />';
         */
     };
-    
+
     self.openBookmarkIFrameExample = function() {
         app.viewModel.mapLinks.openIFrameExample('bookmark');
-        
+
         /*var windowName = "newMapWindow",
             windowSize = "width=650, height=550",
             mapWindow = window.open('', windowName, windowSize);
@@ -237,11 +243,11 @@ function bookmarksModel(options) {
         mapWindow.document.close();
         */
     };
-    
-    self.removeBookmark = function(bookmark) {
-        self.bookmarksList.remove(bookmark);
-        
-        //if the user is logged in, ajax call to add bookmark to server 
+
+    self.removeBookmark = function() {
+        var bookmark = app.viewModel.bookmarks.activeBookmark;
+        // if the user is logged in, ajax call to add bookmark to server
+
         if (app.is_authenticated) { 
             $.ajax({ 
                 url: '/visualize/remove_bookmark', 
@@ -249,17 +255,20 @@ function bookmarksModel(options) {
                 type: 'POST',
                 dataType: 'json',
                 success: function() {
-                    self.updateBookmarkScrollBar();
+                    //self.updateBookmarkScrollBar();
+                    // Only remove the bookmark locally, if the server request was successful
+                    self.bookmarksList.remove(bookmark);
                 },
                 error: function(result) { 
                     //debugger;
-                } 
+                    alert("You cannot delete a bookmark you didn't create!");
+                }
             });
-        } 
-        
+        }
+
         // store the bookmarks locally
-        self.storeBookmarks();        
-        
+        self.storeBookmarks();
+
     };
 
     // handle the bookmark submit
@@ -288,7 +297,7 @@ function bookmarksModel(options) {
                     self.bookmarksList.unshift(newBookmark);
                     var bms = self.bookmarksList();
                     self.bookmarksList(_.sortBy(bms, 'name'));
-                    self.updateBookmarkScrollBar();
+                    //self.updateBookmarkScrollBar();
                 },
                 error: function(result) { 
                     //debugger;
