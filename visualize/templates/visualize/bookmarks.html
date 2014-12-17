@@ -22,19 +22,19 @@
                             <td style="padding-left: 0px; width: 35px">
 
                                 {% if user.is_authenticated %}
-                                <a rel="tooltip" data-bind="attr: {title: sharedBy}, visible: shared()" style="text-decoration: none; cursor: default;">
+                                <a data-bind="attr: {title: sharedBy}, visible: shared()" style="text-decoration: none; cursor: default;" data-toggle="tooltip" data-placement="left" >
                                     <i class="fa fa-group" style="padding-left: 10px"></i>
                                 </a>
                                 {% endif %}
-                                <a class="btn btn-mini bookmark-settings" data-bind="click: showBookmarkSettings">
-                                    <span rel="tooltip" title="Settings"><span class="fa fa-cog"></span></span>
+                                <a class="btn btn-mini bookmark-settings" data-bind="click: showBookmarkSettings, visible: !shared()">
+                                    <span title="Settings" data-toggle="tooltip" data-placement="left"><span class="fa fa-cog"></span></span>
                                 </a>
                                     <!-- settings popover -->
                                 <div style="display:none" class="popover fade bottom in bookmark-settings-popover">
                                     <div class="popover-inner">
                                         <div class="popover-content" >
                                             <div>
-                                                <a data-bind="click: $parent.shareBookmark">
+                                                <a data-bind="click: showSharingModal" >
                                                     <span><i class="fa fa-link"></i></span>
                                                     <span>Share Bookmark</span>
                                                 </a>
