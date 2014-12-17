@@ -74,8 +74,6 @@ function drawingModel(options) {
         }
         //remove from selectionList
         app.viewModel.scenarios.drawingList.remove(drawing);
-        //update scrollbar
-        app.viewModel.scenarios.updateDesignsScrollBar();
         
         //remove from server-side db (this should provide error message to the user on fail)
         $.ajax({

@@ -161,8 +161,6 @@ function scenarioFormModel(options) {
             self.change_wind_message(value);
             $('#wind_speed_widget').css('display', 'block');
         }
-        //update scrollbar
-        self.updateDesignScrollBar();
         //Update Remaining Leaseblocks 
         self.updateFiltersAndLeaseBlocks();
         self.updateRemainingBlocks();
@@ -180,8 +178,6 @@ function scenarioFormModel(options) {
             self.distanceToShoreParameter(true);
             $('#distance_to_shore_widget').css('display', 'block');
         }
-        //update scrollbar
-        self.updateDesignScrollBar();
         //Update Remaining Leaseblocks 
         self.updateFiltersAndLeaseBlocks();
         self.updateRemainingBlocks();
@@ -199,8 +195,6 @@ function scenarioFormModel(options) {
             self.depthRangeParameter(true);
             $('#depth_widget').css('display', 'block');
         }
-        //update scrollbar
-        self.updateDesignScrollBar();
         //Update Remaining Leaseblocks 
         self.updateFiltersAndLeaseBlocks();
         self.updateRemainingBlocks();
@@ -217,8 +211,6 @@ function scenarioFormModel(options) {
             self.distanceToSubstationParameter(true);
             $('#distance_to_substation_widget').css('display', 'block');
         }
-        //update scrollbar
-        self.updateDesignScrollBar();
         //Update Remaining Leaseblocks 
         self.updateFiltersAndLeaseBlocks();
         self.updateRemainingBlocks();
@@ -235,8 +227,6 @@ function scenarioFormModel(options) {
             self.distanceToAWCParameter(true);
             $('#distance_to_awc_widget').css('display', 'block');
         }
-        //update scrollbar
-        self.updateDesignScrollBar();
         //Update Remaining Leaseblocks 
         self.updateFiltersAndLeaseBlocks();
         self.updateRemainingBlocks();
@@ -253,8 +243,6 @@ function scenarioFormModel(options) {
             self.distanceToShippingParameter(true);
             $('#distance_to_shipping_widget').css('display', 'block');
         }
-        //update scrollbar
-        self.updateDesignScrollBar();
         //Update Remaining Leaseblocks 
         self.updateFiltersAndLeaseBlocks();
         self.updateRemainingBlocks();
@@ -269,8 +257,6 @@ function scenarioFormModel(options) {
             self.shipTrafficDensityParameter(true);
             $('#id_input_filter_ais_density').attr('checked', 'checked');
         }
-        //update scrollbar
-        self.updateDesignScrollBar();
         //Update Remaining Leaseblocks 
         self.updateFiltersAndLeaseBlocks();
         self.updateRemainingBlocks();
@@ -284,8 +270,6 @@ function scenarioFormModel(options) {
             self.uxoParameter(true);
             $('#id_input_filter_uxo').attr('checked', 'checked');
         }
-        //update scrollbar
-        self.updateDesignScrollBar();
         //Update Remaining Leaseblocks 
         self.updateFiltersAndLeaseBlocks();
         self.updateRemainingBlocks();
@@ -588,15 +572,6 @@ function scenarioFormModel(options) {
         app.viewModel.updateAttributeLayers();
     }
     
-    self.updateDesignScrollBar = function() {
-        var designsWizardScrollpane = $('#wind-design-form').data('jsp');
-        if (designsWizardScrollpane === undefined) {
-            $('#wind-design-form').jScrollPane();
-        } else {
-            setTimeout(function() {designsWizardScrollpane.reinitialise();},100);
-        }
-    };
-    
     self.windSpeedLayer = app.viewModel.getLayerById(7);
     self.toggleWindSpeedLayer = function(formModel, event) {
         if ( self.windSpeedLayer.active() ) {
@@ -742,8 +717,6 @@ function selectionModel(options) {
         }
         //remove from selectionList
         app.viewModel.scenarios.selectionList.remove(selection);
-        //update scrollbar
-        app.viewModel.scenarios.updateDesignsScrollBar();
         
         //remove from server-side db (this should provide error message to the user on fail)
         $.ajax({
@@ -1292,8 +1265,6 @@ function scenarioModel(options) {
         }
         //remove from scenarioList
         app.viewModel.scenarios.scenarioList.remove(scenario);
-        //update scrollbar
-        app.viewModel.scenarios.updateDesignsScrollBar();
         
         //remove from server-side db (this should provide error message to the user on fail)
         $.ajax({
@@ -1409,7 +1380,6 @@ function scenariosModel(options) {
         setTimeout(function() {
             app.viewModel.scenarios.reportsVisible(false);
             $('#designs-slide').show('slide', {direction: 'left'}, 300);
-            self.updateDesignsScrollBar();
         }, 420);
     };
     
@@ -1565,7 +1535,6 @@ function scenariosModel(options) {
                 self.isScenariosOpen(true);
             }
         }
-        self.updateDesignsScrollBar();
     };       
     self.isCollectionsOpen = ko.observable(false);
     self.toggleCollectionsOpen = function(force) {
@@ -1583,7 +1552,6 @@ function scenariosModel(options) {
                 self.isCollectionsOpen(true);
             }
         }
-        self.updateDesignsScrollBar();
     };           
     self.isDrawingsOpen = ko.observable(false);
     self.toggleDrawingsOpen = function(force) {
@@ -1600,16 +1568,6 @@ function scenariosModel(options) {
             } else {
                 self.isDrawingsOpen(true);
             }
-        }
-        self.updateDesignsScrollBar();
-    };      
-    
-    self.updateDesignsScrollBar = function() {
-        var designsScrollpane = $('#designs-accordion').data('jsp');
-        if (designsScrollpane === undefined) {
-            $('#designs-accordion').jScrollPane();
-        } else {
-            designsScrollpane.reinitialise();
         }
     }; 
     
@@ -1636,8 +1594,6 @@ function scenariosModel(options) {
         //remove the key/value pair from aggregatedAttributes
         app.viewModel.removeFromAggregatedAttributes(self.leaseblockLayer().name);
         app.viewModel.updateAttributeLayers();
-        
-        self.updateDesignsScrollBar();
     };
         
     self.removeDrawingForm = function(obj) {    
@@ -1709,8 +1665,7 @@ function scenariosModel(options) {
                 $('#scenario-form').html(data);
                 self.scenarioFormModel = new scenarioFormModel();
                 ko.applyBindings(self.scenarioFormModel, document.getElementById('scenario-form'));
-                self.scenarioFormModel.updateDesignScrollBar();
-                if ( ! self.leaseblockLayer() && app.viewModel.modernBrowser() ) {
+                if (!self.leaseblockLayer()) {
                     self.loadLeaseblockLayer();
                 }
             },
@@ -1747,7 +1702,6 @@ function scenariosModel(options) {
                 $('#drawing-form').html(data);
                 app.viewModel.scenarios.drawingFormModel = new polygonFormModel();
                 ko.applyBindings(app.viewModel.scenarios.drawingFormModel, document.getElementById('drawing-form'));
-                //self.polygonFormModel.updateDesignScrollBar();
             },
             error: function (result) { 
                 //debugger; 
