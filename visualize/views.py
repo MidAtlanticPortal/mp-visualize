@@ -60,6 +60,8 @@ def get_sharing_groups(request):
      
 '''
 '''    
+
+@csrf_exempt
 def share_bookmark(request):
     group_names = request.POST.getlist('groups[]')
     bookmark_uid = request.POST['bookmark']
