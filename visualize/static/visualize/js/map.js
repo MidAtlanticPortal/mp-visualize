@@ -322,7 +322,7 @@ app.init = function () {
         
     }; //end utfGridClickHandling
       
-    app.map.events.register("featureclick", null, function(e, test) {
+    app.map.events.register(layerModel && "featureclick", null, function(e, test) {
         var layer = e.feature.layer.layerModel || e.feature.layer.scenarioModel;
         if (layer) {
             var text = [],
@@ -364,7 +364,7 @@ app.init = function () {
         var feature = e.feature,
             layerModel = e.feature.layer.layerModel;
 
-        if (layerModel.attributeEvent === 'mouseover') {
+        if (layerModel && layerModel.attributeEvent === 'mouseover') {
                 if (app.map.popups.length) {
 
                     if ( feature.layer.getZIndex() >= app.map.currentPopupFeature.layer.getZIndex() ) {
@@ -389,7 +389,7 @@ app.init = function () {
         var feature = e.feature,
             layerModel = e.feature.layer.layerModel;
 
-        if (layerModel.attributeEvent === 'mouseover') {
+        if (layerModel && layerModel.attributeEvent === 'mouseover') {
             //app.map.destroyPopup(feature);
             app.map.removePopup(feature.popup);
             if (app.map.popups.length && !app.map.anyVisiblePopups()) {
