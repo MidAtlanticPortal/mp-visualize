@@ -1268,7 +1268,7 @@ function viewModel() {
     self.updateAllScrollBars = function() {
         self.updateScrollBars();
         if (self.scenarios) {
-            self.scenarios.updateDesignsScrollBar();
+
         }
     };
     
@@ -1316,9 +1316,6 @@ function viewModel() {
             //             $('.jspScrollable').css("outline", "none"); 
             //         },100);
             //     }
-            // }
-            // if (app.viewModel.scenarios) {
-            //     app.viewModel.scenarios.updateDesignsScrollBar();
             // }
         }
         // $('.jspScrollable').css("outline", "none");
