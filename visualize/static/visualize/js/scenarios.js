@@ -1091,7 +1091,7 @@ function scenarioModel(options) {
             $(layerID).css('display', 'block');
         }
         //update scrollbar
-        app.viewModel.updateAggregatedAttributesOverlayScrollbar();
+        // app.viewModel.updateAggregatedAttributesOverlayScrollbar();
     };
     
     //self.overview = self.description || 'no description was provided';
