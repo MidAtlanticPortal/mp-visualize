@@ -593,7 +593,7 @@ function layerModel(options, parent) {
     
     self.showingLayerAttribution = ko.observable(true);
     self.toggleLayerAttribution = function() {
-        var layerID = '#' + app.viewModel.convertToSlug(self.name);
+        var layerID = '#' + app.viewModel.convertToSlug(self.featureAttributionName);
         if ( self.showingLayerAttribution() ) {
             self.showingLayerAttribution(false);
             $(layerID).css('display', 'none');
@@ -601,8 +601,6 @@ function layerModel(options, parent) {
             self.showingLayerAttribution(true);
             $(layerID).css('display', 'block');
         }
-        //update scrollbar
-        app.viewModel.updateAggregatedAttributesOverlayScrollbar();
     };
     
     self.toggleSublayerDescription = function(layer) {
@@ -1007,11 +1005,8 @@ function viewModel() {
                 width = overlayWidth < 380 ? overlayWidth : 380;
             //console.log('setting overlay width to ' + width);
             self.aggregatedAttributesWidth(width + 'px');
-            self.updateCustomScrollbar('#aggregated-attribute-content');
+            //self.updateCustomScrollbar('#aggregated-attribute-content');
         }, 500);
-    };
-    self.updateAggregatedAttributesOverlayScrollbar = function() {
-        self.updateCustomScrollbar('#aggregated-attribute-content');
     };
 
     // title for print view
