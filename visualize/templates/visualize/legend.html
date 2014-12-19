@@ -1,0 +1,50 @@
+<!-- Legends Panel (right panel) -->
+<div data-bind="visible: showLegend(), css: {'fullscreen-legend': isFullScreen() }" class="popover fade left in" class="span3" id="legend-popover" style="display:none;">
+
+    <div class="popover-inner">
+        <h3 class="popover-title" style="font-size: 16px; font-weight: bold">
+            Legends (<span data-bind="text: activeLegendLayers().length"></span>)
+        </h3>
+        <a data-bind="click: toggleLegend" class="btn close-popup">
+            <i class="fa fa-close"></i>
+        </a>
+        </div>
+<!--          
+<div id="legend-header">
+            <span class="pull-right">
+                <a href="#" style="margin-left: 10px; margin-top: -2px; opacity: .6;" class="btn btn-mini close" data-bind="click: toggleLegend"> x </a> 
+            </span>
+            
+        </div>    -->
+
+        <div id="legend-wrapper">
+
+        <div id="legend-content">
+          <div data-bind="foreach: activeLegendLayers">
+          <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
+            <div style="padding-bottom: 10px;">
+                <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
+                <p style="margin: 0px -5px 3px; text-align: left;font-size: 12px;" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
+                <span data-bind="if: legend">
+                    <div data-bind="if: legend['elements']">
+                        <div data-bind="foreach: legend['elements']">
+                            <div>
+                                <img data-bind="attr: {src: swatch}" />
+                                <span data-bind="text: label" style="font-size: 11px; font-weight: bold;"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div data-bind="if: !legend['elements']">
+                        <div data-bind="css: { 'in': legendVisibility }" style="padding-top: 5px;">
+                            <img data-bind="attr: { src: legend }" />
+                        </div>
+                    </div>
+                </span>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- /Legends Panel -->
