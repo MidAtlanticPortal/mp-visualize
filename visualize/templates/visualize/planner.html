@@ -59,18 +59,16 @@
 
                                   <!--Hide/Show Legends Button-->
                                   <a class="btn"  data-bind="click: toggleLegend">
-                                      <i class="fa fa-list-ul" id="popoverData" data-trigger="hover" data-placement="left" data-toggle="popover" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus."></i>
+                                      <i class="fa fa-list-ul" data-trigger="hover" data-placement="left" data-toggle="tooltip" title="Toggle Legends"></i>
                                   </a>
                                   <!--Hide/Show Layers Button-->
                                   <a class="btn" data-bind="click: toggleLayers" >
-                                      <i class="fa fa-align-justify" id="tooltipData" data-toggle="tooltip" data-placement="left" title="Toggle Layer Picker" data-bind="css: {'icon-indent-right': showLayers(), 'icon-indent-left': ! showLayers()}"></i>
+                                      <i class="fa fa-align-justify" data-toggle="tooltip" data-placement="left" title="Toggle Layer Picker" data-bind="css: {'icon-indent-right': showLayers(), 'icon-indent-left': ! showLayers()}"></i>
                                   </a>
-                                  {% if user.is_authenticated %}
                                   <!--Bookmarks Button-->
                                   <a id="bookmarks-button" class="btn" data-bind="click: showBookmarks">
                                       <i class="fa fa-bookmark" data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" ></i>
                                   </a>
-                                  {% endif %}
                                   <!--Map Links Button-->
                                   <a id="basemap-button" class="btn" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
                                       <i class="fa fa-link" data-toggle="tooltip" data-placement="left" title="Share this Map" ></i>
@@ -284,16 +282,13 @@
                                 </h4>
                                 </div>
                             </li>
-                            {% if user.is_authenticated %}
-                            <li data-tab="designs" >
+                            <li data-tab="designs" {% if not user.is_authenticated %} class="disabled" {% endif %}>
                             <div class="row col-md-12">
-
                                 <h4>
                                     <a href="#designs" data-toggle="tab" id="designsTab">Custom</a>
                                 </h4> 
                                 </div>
                             </li>
-                            {% endif %}
                             <li data-tab="data">
                             <div class="row col-md-12">
 
@@ -522,8 +517,6 @@
                     </div>
                   </div>
                 </div>
-                <!-- Legends Panel (right panel) -->
-                <!-- /Legends Panel -->
             </div>
             <span class="timestamp" data-bind="visible: mapTitle"><span data-bind="text: new Date().toString('M/d/yyyy HH:mm')"></span></span>
         </div>
@@ -546,6 +539,8 @@
         {% include "visualize/bookmarks.html" %}
 
         {% include "visualize/printing.html" %}
+
+        {% include "visualize/legend.html" %}
 
     {% endblock %}
 

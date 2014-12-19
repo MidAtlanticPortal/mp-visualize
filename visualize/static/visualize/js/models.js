@@ -1224,21 +1224,15 @@ function viewModel() {
             legendScrollpane.reinitialise();
         }
     };
-    
+
     // toggle legend panel visibility
     self.toggleLegend = function() {
         self.showLegend(!self.showLegend());
         if (!self.showLegend()) {
             app.map.render('map');
         } else {
-            //update the legend scrollbar
-            //$('#legend-content').data('jsp').reinitialise();
-            self.updateScrollBars();
+            $("#legend-popover").show();
         }
-        
-        //app.map.render('map');
-        //if toggling legend during default pageguide, then correct step 4 position
-        self.correctTourPosition();
     };
 
     // determine whether app is offering legends 
@@ -1575,7 +1569,6 @@ function viewModel() {
         found.layer.activateLayer();
     };
     self.keySearch = function(_, event) {
-
         if (event.which === 13) {
             self.searchTerm($('.typeahead .active').text());
             self.layerSearch();
@@ -1585,6 +1578,7 @@ function viewModel() {
             self.layerSearch();
             //search($(this).text());
         });
+        $('#activeTab').tab('show');
     };
 
     // do this stuff when the active layers change
