@@ -3,7 +3,7 @@ app.hash = window.location.hash;
 app.onResize = function(percent) {
 
   var height = $(window).height() * (percent || 0.855);
-  var fullheight = $(window).height() - ($(".navbar").height() +2); // cater for the top Nav
+  var fullheight = $(window).height() - ($(".navbar").height() ); // cater for the top Nav
   var tabheight = fullheight * (percent || 0.75); // cater for the top Nav
   var width = $(window).width();
   // when fullscreen be odd?
