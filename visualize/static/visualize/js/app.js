@@ -13,7 +13,7 @@ app.onResize = function(percent) {
         $("#map").height(fullheight);
         $("#map-wrapper").height(fullheight);
         $(".tabs").height(tabheight);
-        $("#legend-wrapper").height(height - 20);
+        //$("#legend-wrapper").height(height - 20);
         $("#data-accordion").height(tabheight - 20);
         $("#designs-accordion").height(tabheight - 20 - 96);
         $("#active").height(tabheight + 20 - 96);
@@ -86,6 +86,11 @@ app.viewModel.loadLayersFromServer().done(function() {
 
   $('#toggleBaselayer').css({'background-image':"url(/static/visualize/img/baselayer-"+app.map.baseLayer.name.split(' ').join('_')+".png)", "color":+app.map.baseLayer.textColor});
 
+$(".nav-tabs li.disabled").on("click", function(e) {
+  console.log("SDFA");
+    e.preventDefault();
+    return false;
+});
   // }
 });
 
