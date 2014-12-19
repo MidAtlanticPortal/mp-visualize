@@ -27,30 +27,35 @@ app.init = function () {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
-        attribution: "Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others"
+        attribution: "Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others",
+        textColor: "black"
     });
     
     openStreetMap = new OpenLayers.Layer.OSM("Open Street Map", "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png", {
         sphericalMercator: true,
         isBaseLayer: true,
-        numZoomLevels: 13
+        numZoomLevels: 13,
+        textColor: "black"
     });
     googleStreet = new OpenLayers.Layer.Google("Streets", {
         sphericalMercator: true,
         isBaseLayer: true,
-        numZoomLevels: 13
+        numZoomLevels: 13,
+        textColor: "black"
     });
     googleTerrain = new OpenLayers.Layer.Google("Physical", {
         type: google.maps.MapTypeId.TERRAIN,
         sphericalMercator: true,
         isBaseLayer: true,
-        numZoomLevels: 13
+        numZoomLevels: 13,
+        textColor: "black"
     });
     googleSatellite = new OpenLayers.Layer.Google("Satellite", {
         type: google.maps.MapTypeId.SATELLITE,
         sphericalMercator: true,
         isBaseLayer: true,
-        numZoomLevels: 13
+        numZoomLevels: 13,
+        textColor: "white"
     });
     
     /*var bingHybrid = new OpenLayers.Layer.Bing( {
@@ -76,7 +81,8 @@ app.init = function () {
         {
             isBaseLayer: true,
             numZoomLevels: 13,
-            projection: "EPSG:3857"
+            projection: "EPSG:3857",
+            textColor: "black"
         }
     );
     // nauticalCharts = new OpenLayers.Layer.TMS("Nautical Charts", ["http://c3429629.r29.cf0.rackcdn.com/stache/NETiles_layer/"],
