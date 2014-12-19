@@ -83,6 +83,9 @@ app.viewModel.loadLayersFromServer().done(function() {
   //$("#legend-wrapper").jScrollPane();
 
   $('[data-toggle="tooltip"]').tooltip()
+
+  $('#toggleBaselayer').css({'background-image':"url(/static/visualize/img/baselayer-"+app.map.baseLayer.name.split(' ').join('_')+".png)", "color":+app.map.baseLayer.textColor});
+
   // }
 });
 
@@ -376,7 +379,7 @@ $('#feedback-form').on('submit', function (event) {
    $form.closest('.modal').modal('hide');
 });
 
-$('#left-panel .panel-heading h4 a').click(function(){
+$('#left-panel .panel-heading h4 a.collapse-button').click(function(){
   $(this).find('i').toggleClass('fa-angle-double-left fa-angle-double-right');
   $("#left-minimized").toggle();
   $("#left-maximized").toggle();
