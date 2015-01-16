@@ -343,6 +343,12 @@ app.updateUrl = function () {
     if (app.saveStateMode) {
         app.restoreState = state;
     }
+    // if (skipHistory) {
+    //   // http://stackoverflow.com/a/6945614
+    //   window.location.replace(('' + window.location).split('#')[0] + '#' + hash);
+    // } else {
+    //   window.location.hash = $.param(state);      
+    // }
     window.location.hash = $.param(state);
     app.viewModel.currentURL(window.location.pathname + window.location.hash);
 };

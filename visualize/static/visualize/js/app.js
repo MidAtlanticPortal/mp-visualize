@@ -348,6 +348,11 @@ $(document).ready(function() {
     app.map.mousedrag = false;
   });
   
+  app.map.events.register("moveend", null, function () {
+    // update the url when we move
+    app.updateUrl();
+  });
+
   $('a[data-toggle="tab"]').on('shown', function (e) {
     app.updateUrl();
   });

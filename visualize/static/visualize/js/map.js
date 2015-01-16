@@ -168,11 +168,6 @@ app.init = function () {
     //     element: document.getElementById('pos')
     // }));
 
-    map.events.register("moveend", null, function () {
-        // update the url when we move
-        app.updateUrl();
-    });
-
     /*
     // callback functions for vector attribution (SelectFeature Control)
     var report = function(e) {
