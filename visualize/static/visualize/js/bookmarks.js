@@ -255,7 +255,6 @@ function bookmarksModel(options) {
                 type: 'POST',
                 dataType: 'json',
                 success: function() {
-                    //self.updateBookmarkScrollBar();
                     // Only remove the bookmark locally, if the server request was successful
                     self.bookmarksList.remove(bookmark);
                 },
@@ -297,7 +296,6 @@ function bookmarksModel(options) {
                     self.bookmarksList.unshift(newBookmark);
                     var bms = self.bookmarksList();
                     self.bookmarksList(_.sortBy(bms, 'name'));
-                    //self.updateBookmarkScrollBar();
                 },
                 error: function(result) { 
                     //debugger;
@@ -342,15 +340,6 @@ function bookmarksModel(options) {
         amplify.store("marco-bookmarks", ownedBookmarks);
     };
     
-    self.updateBookmarkScrollBar = function() {
-        // var bookmarkScrollpane = $('#bookmarks-table').data('jsp');
-        // if (bookmarkScrollpane === undefined) {
-        //     $('#bookmarks-table').jScrollPane();
-        // } else {
-        //     bookmarkScrollpane.reinitialise();
-        // }
-    };
-
     // method for loading existing bookmarks
     self.getBookmarks = function() {
         //get bookmarks from local storage
