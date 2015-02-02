@@ -54,30 +54,26 @@
                             <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
                                 <div class="btn-group btn-group-vertical">
                                   <!-- Print Button -->
-                                  <a class="btn" id="btn-print" data-toggle="tooltip" data-placement="left" title="Print/Export" onclick="window.print();">
+                                  <a class="btn" id="btn-print" onclick="window.print();" data-toggle="tooltip" data-placement="left" title="Print/Export">
                                     <i class="fa fa-print" id="print-icon"> </i>
                                   </a>
 
                                   <!--Hide/Show Legends Button-->
-                                  <a class="btn"  data-bind="click: toggleLegend">
-                                      <i class="fa fa-list-ul" data-trigger="hover" data-placement="left" data-toggle="tooltip" title="Toggle Legends"></i>
-                                  </a>
-                                  <!--Hide/Show Layers Button-->
-                                  <a class="btn" data-bind="click: toggleLayers" >
-                                      <i class="fa fa-align-justify" data-toggle="tooltip" data-placement="left" title="Toggle Layer Picker" data-bind="css: {'icon-indent-right': showLayers(), 'icon-indent-left': ! showLayers()}"></i>
+                                  <a id="btn-legend" class="btn" data-toggle="tooltip" title="Toggle Legends" data-placement="left" data-bind="click: toggleLegend">
+                                      <i class="fa fa-list-ul"></i>
                                   </a>
                                   <!--Bookmarks Button-->
-                                  <a id="bookmarks-button" class="btn" data-bind="click: showBookmarks">
-                                      <i class="fa fa-bookmark" data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" ></i>
+                                  <a id="bookmarks-button"  class="btn"  data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" data-bind="click: showBookmarks">
+                                     <i class="fa fa-bookmark"></i>
                                   </a>
                                   <!--Map Links Button-->
-                                  <a id="basemap-button" class="btn" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
-                                      <i class="fa fa-link" data-toggle="tooltip" data-placement="left" title="Share this Map" ></i>
-                                 </a>
+                                  <a id="basemap-button" class="btn" data-toggle="tooltip" data-placement="left" title="Share&nbsp;this&nbsp;Map" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
+                                      <i class="fa fa-link"></i>
+                                  </a>
 
                                   <!--Fullscreen Button-->
-                                  <a class="btn" id="btn-fullscreen">
-                                      <i class="fa fa-arrows-alt" data-toggle="tooltip" data-placement="left" title="Full Screen"></i>
+                                  <a class="btn" id="btn-fullscreen" data-toggle="tooltip" data-placement="left" title="Full Screen">
+                                      <i class="fa fa-arrows-alt"></i>
                                   </a>
                                 </div>
                             </div>
