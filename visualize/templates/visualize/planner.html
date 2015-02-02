@@ -4,6 +4,7 @@
 {% block title %}Marine Planner{% endblock %}
 
 {% block extra_css %}
+        <link href="{% static 'visualize/css/print.css' %}" rel="stylesheet" media="print">
         <link href="{% static 'visualize/css/scalebar-thin.css' %}" rel="stylesheet">
         <link href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{% static 'visualize/deps/openlayers/theme/default/style.css' %}">
@@ -53,8 +54,8 @@
                             <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
                                 <div class="btn-group btn-group-vertical">
                                   <!-- Print Button -->
-                                  <a class="btn" id="btn-print" data-bind="click: printing.showPrintDialog, visible: printing.enabled">
-                                <i class="fa fa-print" id="print-icon" data-toggle="tooltip" data-placement="left" title="Print/Export" > </i>
+                                  <a class="btn" id="btn-print" data-toggle="tooltip" data-placement="left" title="Print/Export" onclick="window.print();">
+                                    <i class="fa fa-print" id="print-icon"> </i>
                                   </a>
 
                                   <!--Hide/Show Legends Button-->
@@ -538,8 +539,6 @@
 
         {% include "visualize/bookmarks.html" %}
 
-        {% include "visualize/printing.html" %}
-
         {% include "visualize/legend.html" %}
 
     {% endblock %}
@@ -564,14 +563,7 @@
 
         <script src="{% static 'bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js' %}"></script>
 
-        <script src="{% static 'visualize/deps/socket.io/socket.io.js' %}"></script>
         <!--<script src="http://www.transportparadise.co.uk/layerswitcher/simplelayerswitcher.js"></script>-->
-        <script>
-            var app = {
-                socketUrl: "{{ SOCKET_URL }}"
-            };
-            {% if user.is_authenticated %} app.is_authenticated = true; app.session = "{{ session }}" {% endif %}
-        </script>
 
         <script src="{% static 'visualize/js/fixtures.js' %}"></script>
         <script src="{% static 'visualize/js/controls.js' %}"></script>
@@ -585,7 +577,6 @@
             <script src="{% static 'visualize/js/drawing.js' %}"></script>
         {% endif %}
         <script src="{% static 'visualize/js/server.js' %}"></script>
-        <script src="{% static 'visualize/js/printing.js' %}"></script>
         <script src="{% static 'visualize/js/app.js' %}"></script>
 
 
