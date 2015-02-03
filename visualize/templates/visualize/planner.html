@@ -4,6 +4,7 @@
 {% block title %}Marine Planner{% endblock %}
 
 {% block extra_css %}
+        <link href="{% static 'visualize/css/print.css' %}" rel="stylesheet" media="print">
         <link href="{% static 'visualize/css/scalebar-thin.css' %}" rel="stylesheet">
         <link href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{% static 'visualize/deps/openlayers/theme/default/style.css' %}">
@@ -53,30 +54,26 @@
                             <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
                                 <div class="btn-group btn-group-vertical">
                                   <!-- Print Button -->
-                                  <a class="btn" id="btn-print" data-bind="click: printing.showPrintDialog, visible: printing.enabled">
-                                <i class="fa fa-print" id="print-icon" data-toggle="tooltip" data-placement="left" title="Print/Export" > </i>
+                                  <a class="btn" id="btn-print" onclick="window.print();" data-toggle="tooltip" data-placement="left" title="Print/Export">
+                                    <i class="fa fa-print" id="print-icon"> </i>
                                   </a>
 
                                   <!--Hide/Show Legends Button-->
-                                  <a class="btn"  data-bind="click: toggleLegend">
-                                      <i class="fa fa-list-ul" data-trigger="hover" data-placement="left" data-toggle="tooltip" title="Toggle Legends"></i>
-                                  </a>
-                                  <!--Hide/Show Layers Button-->
-                                  <a class="btn" data-bind="click: toggleLayers" >
-                                      <i class="fa fa-align-justify" data-toggle="tooltip" data-placement="left" title="Toggle Layer Picker" data-bind="css: {'icon-indent-right': showLayers(), 'icon-indent-left': ! showLayers()}"></i>
+                                  <a id="btn-legend" class="btn" data-toggle="tooltip" title="Toggle Legends" data-placement="left" data-bind="click: toggleLegend">
+                                      <i class="fa fa-list-ul"></i>
                                   </a>
                                   <!--Bookmarks Button-->
-                                  <a id="bookmarks-button" class="btn" data-bind="click: showBookmarks">
-                                      <i class="fa fa-bookmark" data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" ></i>
+                                  <a id="bookmarks-button"  class="btn"  data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" data-bind="click: showBookmarks">
+                                     <i class="fa fa-bookmark"></i>
                                   </a>
                                   <!--Map Links Button-->
-                                  <a id="basemap-button" class="btn" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
-                                      <i class="fa fa-link" data-toggle="tooltip" data-placement="left" title="Share this Map" ></i>
-                                 </a>
+                                  <a id="basemap-button" class="btn" data-toggle="tooltip" data-placement="left" title="Share&nbsp;this&nbsp;Map" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
+                                      <i class="fa fa-link"></i>
+                                  </a>
 
                                   <!--Fullscreen Button-->
-                                  <a class="btn" id="btn-fullscreen">
-                                      <i class="fa fa-arrows-alt" data-toggle="tooltip" data-placement="left" title="Full Screen"></i>
+                                  <a class="btn" id="btn-fullscreen" data-toggle="tooltip" data-placement="left" title="Full Screen">
+                                      <i class="fa fa-arrows-alt"></i>
                                   </a>
                                 </div>
                             </div>
@@ -538,8 +535,6 @@
 
         {% include "visualize/bookmarks.html" %}
 
-        {% include "visualize/printing.html" %}
-
         {% include "visualize/legend.html" %}
 
     {% endblock %}
@@ -564,14 +559,7 @@
 
         <script src="{% static 'bower_components/bootstrap-sass-official/assets/javascripts/bootstrap/tooltip.js' %}"></script>
 
-        <script src="{% static 'visualize/deps/socket.io/socket.io.js' %}"></script>
         <!--<script src="http://www.transportparadise.co.uk/layerswitcher/simplelayerswitcher.js"></script>-->
-        <script>
-            var app = {
-                socketUrl: "{{ SOCKET_URL }}"
-            };
-            {% if user.is_authenticated %} app.is_authenticated = true; app.session = "{{ session }}" {% endif %}
-        </script>
 
         <script src="{% static 'visualize/js/fixtures.js' %}"></script>
         <script src="{% static 'visualize/js/controls.js' %}"></script>
@@ -585,7 +573,6 @@
             <script src="{% static 'visualize/js/drawing.js' %}"></script>
         {% endif %}
         <script src="{% static 'visualize/js/server.js' %}"></script>
-        <script src="{% static 'visualize/js/printing.js' %}"></script>
         <script src="{% static 'visualize/js/app.js' %}"></script>
 
 
