@@ -1171,7 +1171,7 @@ function viewModel() {
     self.showLegend = ko.observable(false);
     self.showLegend.subscribe(function (newVal) {
         self.updateScrollBars();
-        if (self.printing.enabled()) {
+        if (self.printing && self.printing.enabled()) {
             self.printing.showLegend(newVal);
         }
 
