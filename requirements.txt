@@ -1,2 +1,1 @@
--e git+git@bitbucket.org:point97/mp-profile.git@HEAD#egg=mp_profile-master
 -e git+git@bitbucket.org:point97/madrona-features.git@HEAD#egg=madrona_features-master
