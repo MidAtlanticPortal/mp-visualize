@@ -348,26 +348,34 @@
                                                     <tr class="layer-info " data-bind="visible: infoActive()">
                                                         <td colspan="5">
                                                             <div class="link-bar">
+                                                                <!-- ko if: $data.hasOwnProperty("kml") -->
                                                                 <span data-toggle="tooltip" data-placement="bottom" title="Download for Google Maps">
                                                                     <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
                                                                         kml <i class="fa fa-arrow-down" ></i>
                                                                     </a>
                                                                 </span>
+                                                                <!-- /ko -->
+                                                                <!-- ko if: $data.hasOwnProperty("data_download") -->
                                                                 <span data-toggle="tooltip" data-placement="bottom" title="Download ESRI Formatted Dataset">
                                                                     <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
                                                                         data <i class="fa fa-arrow-down" ></i>
                                                                     </a>
                                                                 </span>
+                                                                <!-- /ko -->
+                                                                <!-- ko if: $data.hasOwnProperty("metadata") -->
                                                                 <span data-toggle="tooltip" data-placement="bottom" title="Download Metadata">
                                                                     <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
                                                                         metadata <i class="fa fa-arrow-down" ></i>
                                                                     </a>
                                                                 </span>
+                                                                <!-- /ko -->
+                                                                <!-- ko if: $data.hasOwnProperty("source") -->
                                                                 <span data-toggle="tooltip" data-placement="bottom" title="Link to Dataset Source Provider">
                                                                     <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
                                                                         source <i class="fa fa-external-link-square"></i>
                                                                     </a>
                                                                 </span>
+                                                                <!-- /ko -->
                                                             </div>
                                                             <div class="layer-text">
                                                                 <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
