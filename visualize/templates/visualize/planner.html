@@ -349,24 +349,52 @@
                                                         <td colspan="5">
                                                             <div class="link-bar">
                                                                 <span data-toggle="tooltip" data-placement="bottom" title="Download for Google Maps">
+                                                                    <!-- ko if: $data.hasOwnProperty("kml") -->
                                                                     <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
                                                                         kml <i class="fa fa-arrow-down" ></i>
                                                                     </a>
+                                                                    <!-- /ko -->
+                                                                    <!-- ko ifnot: $data.hasOwnProperty("kml") -->
+                                                                    <a class="btn btn-mini disabled">
+                                                                        kml <i class="fa fa-arrow-down" ></i>
+                                                                    </a>
+                                                                    <!-- /ko -->
                                                                 </span>
                                                                 <span data-toggle="tooltip" data-placement="bottom" title="Download ESRI Formatted Dataset">
+                                                                    <!-- ko if: $data.hasOwnProperty("data_download") -->
                                                                     <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
                                                                         data <i class="fa fa-arrow-down" ></i>
                                                                     </a>
+                                                                    <!-- /ko -->
+                                                                    <!-- ko ifnot: $data.hasOwnProperty("data_download") -->
+                                                                    <a class="btn btn-mini disabled">
+                                                                        data <i class="fa fa-arrow-down" ></i>
+                                                                    </a>
+                                                                    <!-- /ko -->
                                                                 </span>
                                                                 <span data-toggle="tooltip" data-placement="bottom" title="Download Metadata">
+                                                                    <!-- ko if: $data.hasOwnProperty("metadata") -->
                                                                     <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
                                                                         metadata <i class="fa fa-arrow-down" ></i>
                                                                     </a>
+                                                                    <!-- /ko -->
+                                                                    <!-- ko ifnot: $data.hasOwnProperty("metadata") -->
+                                                                    <a class="btn btn-mini disabled">
+                                                                        metadata <i class="fa fa-arrow-down" ></i>
+                                                                    </a>
+                                                                    <!-- /ko -->
                                                                 </span>
                                                                 <span data-toggle="tooltip" data-placement="bottom" title="Link to Dataset Source Provider">
+                                                                    <!-- ko if: $data.hasOwnProperty("source") -->
                                                                     <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
                                                                         source <i class="fa fa-external-link-square"></i>
                                                                     </a>
+                                                                    <!-- /ko -->
+                                                                    <!-- ko ifnot: $data.hasOwnProperty("source") -->
+                                                                    <a class="btn btn-mini disabled">
+                                                                        source <i class="fa fa-external-link-square"></i>
+                                                                    </a>
+                                                                    <!-- /ko -->
                                                                 </span>
                                                             </div>
                                                             <div class="layer-text">
