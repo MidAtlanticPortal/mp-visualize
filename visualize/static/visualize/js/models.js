@@ -894,9 +894,14 @@ function viewModel() {
         }
         
         $.each(self.visibleLayers(), function(index, layer) {
-            //special case for Benthic habitats -- make sure it doesn't exist already so it doesn't produce 2 attribute outputs when both layers are active
-            if ( ! app.utils.getObjectFromList(attributeLayersList, 'featureAttributionName', 'Benthic Habitats') ) {
-                attributeLayersList.push(layer);
+            // special case for Benthic habitats
+            // make sure it doesn't exist already so it doesn't produce 
+            // two attribute outputs when both layers are active
+            var ignoreDup = layer.featureAttributionName == 'Benthic Habitats' &&
+                         app.utils.getObjectFromList(attributeLayersList, 'featureAttributionName', 'Benthic Habitats');
+
+            if (!ignoreDup) {
+               attributeLayersList.push(layer);
             }
         });
         self.attributeLayers(attributeLayersList);
