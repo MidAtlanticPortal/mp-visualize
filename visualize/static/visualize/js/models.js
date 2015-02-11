@@ -193,11 +193,6 @@ function layerModel(options, parent) {
 
     // is description active
     self.infoActive = ko.observable(false);
-    app.viewModel.showOverview.subscribe( function() {
-        if ( app.viewModel.showOverview() === false ) {
-            self.infoActive(false);
-        }
-    });
     
     // is the layer a checkbox layer
     self.isCheckBoxLayer = ko.observable(false);
@@ -611,13 +606,9 @@ function layerModel(options, parent) {
     };
     
     self.showSublayerDescription = function(layer) {
-        app.viewModel.showOverview(false);
         app.viewModel.activeInfoSublayer(layer);
         layer.infoActive(true);
         layer.parent.infoActive(true);
-        app.viewModel.showOverview(true);
-        app.viewModel.updateCustomScrollbar('#overview-overlay-text');
-        //app.viewModel.updateDropdownScrollbar('#overview-overlay-dropdown');
         app.viewModel.hideMapAttribution();
     };
     
@@ -636,11 +627,6 @@ function layerModel(options, parent) {
         app.viewModel.activeInfoSublayer(false);
         app.viewModel.activeInfoLayer(layer);
         self.infoActive(true);
-        // if (layer.subLayers.length > 0) {
-        //     $('#overview-overlay').height(195);
-        // } else {
-        //     $('#overview-overlay').height(186);
-        // }
         app.viewModel.showOverview(true);
         //app.viewModel.hideMapAttribution();
     };
@@ -986,7 +972,6 @@ function viewModel() {
         } else {
             //because the subscription on aggregatedAttributes is not triggered by this delete process
             self.updateAggregatedAttributesOverlayWidthAndScrollbar();
-            //self.updateCustomScrollbar('#aggregated-attribute-content');
         }
     };
     self.updateAggregatedAttributesOverlayWidthAndScrollbar = function() {
@@ -995,7 +980,6 @@ function viewModel() {
                 width = overlayWidth < 380 ? overlayWidth : 380;
             //console.log('setting overlay width to ' + width);
             self.aggregatedAttributesWidth(width + 'px');
-            //self.updateCustomScrollbar('#aggregated-attribute-content');
         }, 500);
     };
 
@@ -1202,82 +1186,6 @@ function viewModel() {
     self.closeAlert = function(self, event) {
         app.viewModel.error(null);
         $('#fullscreen-error-overlay').hide();
-    };
-    
-    // expand data description overlay
-    self.expandDescription = function(self, event) {
-        if ( ! self.showOverview() ) {
-            self.showOverview(true);
-            self.updateCustomScrollbar('#overview-overlay-text');
-        } else {
-            self.showOverview(false);
-        }
-    };
-    
-    self.scrollBarElements = [];
-    
-    self.updateCustomScrollbar = function(elem) {
-        if (app.viewModel.scrollBarElements.indexOf(elem) == -1) {
-            app.viewModel.scrollBarElements.push(elem);
-            $(elem).mCustomScrollbar({
-                scrollInertia:250,
-                mouseWheel: 6
-            });
-        }
-        //$(elem).mCustomScrollbar("update");
-        //$(elem).mCustomScrollbar("scrollTo", "top"); 
-        setTimeout( function() { 
-            $(elem).mCustomScrollbar("update"); 
-            $(elem).mCustomScrollbar("scrollTo", "top"); 
-        }, 500);
-    };
-    
-    // close layer description
-    self.closeDescription = function() {
-        //self.showDescription(false);
-        app.viewModel.showOverview(false);
-        if ( ! app.pageguide.tourIsActive ) {
-            app.viewModel.showMapAttribution();
-        }
-    };
-    
-    self.activateOverviewDropdown = function(model, event) {
-        var $btnGroup = $(event.target).closest('.btn-group');
-        if ( $btnGroup.hasClass('open') ) {
-            $btnGroup.removeClass('open');
-        } else {
-            //$('#overview-dropdown-button').dropdown('toggle');  
-            $btnGroup.addClass('open');
-            if (app.viewModel.scrollBarElements.indexOf('#overview-overlay-dropdown') == -1) {
-                app.viewModel.scrollBarElements.push('#overview-overlay-dropdown');
-                $('#overview-overlay-dropdown').mCustomScrollbar({
-                    scrollInertia:250,
-                    mouseWheel: 6
-                });
-            }
-            //debugger;
-            //setTimeout( $('#overview-overlay-dropdown').mCustomScrollbar("update"), 1000);
-            $('#overview-overlay-dropdown').mCustomScrollbar("update");
-        }
-    }; 
-    
-    self.getOverviewText = function() {
-        //activeInfoSublayer() ? activeInfoSublayer().overview : activeInfoLayer().overview
-        if ( self.activeInfoSublayer() ) {
-            if ( self.activeInfoSublayer().overview === null ) {
-                return '';
-            } else {
-                return self.activeInfoSublayer().overview;
-            }   
-        } else if (self.activeInfoLayer() ) {
-            if ( self.activeInfoLayer().overview === null ) {
-                return '';
-            } else {
-                return self.activeInfoLayer().overview;
-            }  
-        } else {
-            return '';
-        }
     };
     
     self.activeKmlLink = function() {

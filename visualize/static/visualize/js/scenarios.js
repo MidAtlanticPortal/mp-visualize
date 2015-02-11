@@ -1296,12 +1296,6 @@ function scenarioModel(options) {
 
     // is description active
     self.infoActive = ko.observable(false);
-    app.viewModel.showOverview.subscribe( function() {
-        if ( app.viewModel.showOverview() === false ) {
-            self.infoActive(false);
-        }
-    });
-    
     // display descriptive text below the map
     self.toggleDescription = function(scenario) {
         if ( ! scenario.infoActive() ) {
@@ -1312,18 +1306,13 @@ function scenarioModel(options) {
     };
     
     self.showDescription = function(scenario) {
-        app.viewModel.showOverview(false);
         app.viewModel.activeInfoSublayer(false);
         app.viewModel.activeInfoLayer(scenario);
         self.infoActive(true);
-        $('#overview-overlay').height(186);
-        app.viewModel.showOverview(true);
-        app.viewModel.updateCustomScrollbar('#overview-overlay-text');
         app.viewModel.hideMapAttribution();
     };
     
     self.hideDescription = function(scenario) {
-        app.viewModel.showOverview(false);
         app.viewModel.activeInfoSublayer(false);
         app.viewModel.showMapAttribution();
     };

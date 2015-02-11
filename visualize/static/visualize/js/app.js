@@ -131,17 +131,6 @@ $(document).ready(function() {
   
   //the following appears to handle the bookmark sharing, while the earlier popover activation handles the design sharing
   setTimeout(function() {$('.group-members-popover').popover({html: true, trigger: 'hover'});}, 2000); 
-    
-  //resizable behavior for overview-overlay
-  //might not use the following after all... 
-  //(having problems setting minHeight, losing resizing ability 
-  /*
-  $("#overview-overlay").resizable({
-    handles: 'n',
-    containment: 'parent'
-    }
-  })
-  */
 
   setTimeout(function() {
     $('.disabled').popover({
@@ -268,10 +257,6 @@ $(document).ready(function() {
   //hide basemaps drop-down on mouseout
   $('#SimpleLayerSwitcher_29').mouseenter( function() {
     //$('#basemaps').addClass('open');
-  });
-  
-  $('#overview-overlay-dropdown').mouseleave( function() {
-    $('#overview-overlay-dropdown').closest('.btn-group').removeClass('open');
   });
   
   $('#opacity-popover').mouseleave( function() {
