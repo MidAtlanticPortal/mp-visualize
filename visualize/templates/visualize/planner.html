@@ -214,7 +214,7 @@
                                 </h4>
                                 </div>
                             </li>
-                            <li data-tab="designs" {% if not user.is_authenticated %} class="disabled" {% endif %}>
+                            <li data-tab="designs">
                             <div class="row col-md-12">
                                 <h4>
                                     <a href="#designs" data-toggle="tab" id="designsTab">Custom</a>
@@ -464,6 +464,19 @@
                             <!-- DESIGNS TAB -->
                             {% if user.is_authenticated %}
                               {% include "visualize/scenarios.html" %}
+                            {% else %}
+                            <div class="tab-pane in fade" id="designs">
+                                <div class="row-fluid">
+                                    <div class="col-md-12">
+                                        <div style="padding: 10px;">
+                                            <p>
+                                             View requires authentication.
+                                             <a href="/account">Join</a> to create an account!
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             {% endif %}
                             <!-- END DESIGNS TAB -->
                         </div>
