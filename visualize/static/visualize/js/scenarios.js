@@ -1306,15 +1306,11 @@ function scenarioModel(options) {
     };
     
     self.showDescription = function(scenario) {
-        app.viewModel.activeInfoSublayer(false);
-        app.viewModel.activeInfoLayer(scenario);
         self.infoActive(true);
-        app.viewModel.hideMapAttribution();
     };
     
     self.hideDescription = function(scenario) {
-        app.viewModel.activeInfoSublayer(false);
-        app.viewModel.showMapAttribution();
+        self.infoActive(false);
     };
     
     return self;
