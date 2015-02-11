@@ -545,6 +545,9 @@
         <script src="{% static 'bower_components/jquery.bbq/jquery.ba-bbq.js' %}"></script>
         <script src="{% static 'bower_components/bootstrap3-typeahead/bootstrap3-typeahead.min.js' %}"></script>
         <script src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
+        <<script charset="utf-8">
+          $.widget.bridge('uitooltip', $.ui.tooltip);
+        </script>
         <script src="{% static 'bower_components/lodash/dist/lodash.min.js' %}"></script>
         <script src="{% static 'bower_components/knockout/build/output/knockout-latest.js' %}"></script>
         <script src="{% static 'visualize/js/knockout-bindings.js' %}"></script>
