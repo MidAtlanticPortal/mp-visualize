@@ -6,10 +6,9 @@
 {% block extra_css %}
         <link href="{% static 'visualize/css/print.css' %}" rel="stylesheet" media="print">
         <link href="{% static 'visualize/css/scalebar-thin.css' %}" rel="stylesheet">
-        <link href="{% static 'bower_components/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{% static 'visualize/deps/openlayers/theme/default/style.css' %}">
-        <link href="{% static 'bower_components/jscrollpane/style/jquery.jscrollpane.css' %}" rel="stylesheet">
         <link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css' %}" rel="stylesheet">
+        <link href="{% static 'bower_components/jscrollpane/style/jquery.jscrollpane.css' %}" rel="stylesheet">
 {% endblock%}
 
 {% block body_class %}template-visualize{% endblock %}
@@ -162,61 +161,6 @@
 
                                     </span>
                                     <span>We're sorry, the Fullscreen option is not supported in all browsers at this time...If it's important, you might try Firefox or Chrome.</span>
-                                </div>
-                            </div>
-
-                          <!-- Description Overlay  style="display:none"-->
-                            <div id ="description-overlay" class="row" style="display: none" data-bind="visible: showDescription() && !showOverview()" >
-                                <div class="col-md-11">
-                                    <span class="title" data-bind="text: activeInfoLayer().name"></span> --
-                                    <span class="text" data-bind="text: activeInfoLayer().description"></span>
-                                    <div class="pull-right"><a class="btn btn-mini" data-bind="click: expandDescription, text: 'Show More...'"></a></div>
-                                </div>
-                                <div class="col-md-1">
-                                    <a href="#" style="margin-left: 10px; opacity: .6;" class="btn btn-mini pull-right close" data-bind="click: closeDescription"> x </a>
-                                </div>
-                            </div>
-
-                            <div id="overview-overlay" class="row" style="display: none" data-bind="visible: showOverview()" >
-                                <div id="overview-overlay-content" class="col-md-12">
-                                    <div id="overview-overlay-header" >
-                                        <span class="btn-group" data-bind="visible: activeInfoSelector()">
-                                            <a id="overview-dropdown-button" class="btn dropdown-toggle" href="#" name="description-dropdown" data-bind="click: activateOverviewDropdown">
-                                                <span data-bind="text: activeInfoSublayer().name ? activeInfoSublayer().name : activeInfoLayer().name"></span>
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ul id="overview-overlay-dropdown" class="dropdown-menu">
-                                                <li>
-                                                    <a data-bind="click: activeInfoLayer().toggleSublayerDescription">
-                                                        <span data-bind="text: activeInfoLayer().name"></span>
-                                                    </a>
-                                                </li>
-                                                <ul>
-                                                <li data-bind="foreach: activeInfoLayer().subLayers">
-                                                    <a data-bind="click: toggleSublayerDescription">
-                                                        <span data-bind="text: name"></span>
-                                                    </a>
-                                                </li>
-                                                </ul>
-                                            </ul>
-                                        </span>
-                                        <span class="title" data-bind="text: activeInfoLayer().name, visible: !activeInfoSelector()"></span>
-                                        <!--<span class="caret" style="display:none" data-bind="visible: activeInfoLayer().subLayers"></span>-->
-                                        <span><a href="#" style="margin-left: 10px; opacity: .8;" class="btn btn-mini pull-right close" data-bind="click: closeDescription"> x </a> </span>
-                                    </div>
-                                    <div id="overview-overlay-text" style="margin-top: 5px">
-                                        <span class="text" data-bind="text: getOverviewText()" style="white-space: pre-wrap"></span>
-                                        <div class="notes">
-                                            <div data-bind="visible: activeInfoSublayer() ? activeInfoSublayer().data_source : activeInfoLayer().data_source">
-                                                Source:
-                                                <span data-bind="text: activeInfoSublayer() ? activeInfoSublayer().data_source : activeInfoLayer().data_source"></span>
-                                            </div>
-                                            <div style="margin-top: 5px" data-bind="visible: activeInfoSublayer() ? activeInfoSublayer().data_notes : activeInfoLayer().data_notes">
-                                                Notes:
-                                                <span data-bind="text: activeInfoSublayer() ? activeInfoSublayer().data_notes : activeInfoLayer().data_notes"></span>
-                                            </div>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -422,7 +366,7 @@
                                                     <div class="accordion-group">
                                                         <div class="accordion-heading" data-bind="click: setOpenTheme, css: { 'active': isOpenTheme() }">
                                                             <div>
-                                                                <a class="accordion-toggle"> <!--event: {'hover': showDescription}-->
+                                                                <a class="accordion-toggle">
                                                                     <span data-bind="text: name">Themes</span></a>
                                                             </div>
                                                         </div>
@@ -586,10 +530,6 @@
         <script src="{% static 'visualize/deps/openlayers/OpenLayers-marco-min.js' %}"></script>
         <script src="{% static 'bower_components/bigscreen/bigscreen.js' %}"></script>
         <script src="{% static 'bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min.js' %}"></script>
-        <script src="{% static 'bower_components/jscrollpane/script/jquery.jscrollpane.min.js' %}"></script>
-
-
-        <!--<script src="http://www.transportparadise.co.uk/layerswitcher/simplelayerswitcher.js"></script>-->
 
         <script src="{% static 'visualize/js/fixtures.js' %}"></script>
         <script src="{% static 'visualize/js/controls.js' %}"></script>
@@ -605,22 +545,5 @@
         <script src="{% static 'visualize/js/server.js' %}"></script>
         <script src="{% static 'visualize/js/app.js' %}"></script>
 
-
-        <!--[if gt IE 8]><!-->
-        <script src="{% static 'bower_components/jscrollpane/script/jquery.mousewheel.js' %}"></script>
-        <!--<![endif]-->
-
-        <script>
-        !
-        function(d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (!d.getElementById(id)) {
-                js = d.createElement(s);
-                js.id = id;
-                js.src = "//platform.twitter.com/widgets.js";
-                fjs.parentNode.insertBefore(js, fjs);
-            }
-        }(document, "script", "twitter-wjs");
-        </script>
 
 {% endblock %}

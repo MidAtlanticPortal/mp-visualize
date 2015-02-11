@@ -21,8 +21,6 @@ app.onResize = function(percent) {
     app.map.render('map');
   }
   
-  app.viewModel.updateAllScrollBars();
-  
   if (width < 946) {
     app.viewModel.hideTours(true);
   } else {
@@ -77,11 +75,6 @@ app.viewModel.loadLayersFromServer().done(function() {
     source: app.typeAheadSource
   });
 
-  if ( ! (true) && ! app.embeddedMap ) {
-    //$("#data-accordion").jScrollPane();
-  }
-  //$("#legend-wrapper").jScrollPane();
-
   $('[data-toggle="tooltip"]').tooltip()
 
   $('#toggleBaselayer').css({'background-image':"url(/static/visualize/img/baselayer-"+app.map.baseLayer.name.split(' ').join('_')+".png)", "color":+app.map.baseLayer.textColor});
@@ -132,42 +125,12 @@ $(document).ready(function() {
      $(event.target).closest('form').find('input').val(null).focus();
   });
   
-  //fixes a problem in which the data accordion scrollbar was reinitialized before the app switched back to the data tab
-  //causing the data tab to appear empty
-  //the following appears to fix that problem
-  $('#dataTab[data-toggle="tab"]').on('shown', function(e) {
-    app.viewModel.updateScrollBars();
-  });
-  $('#activeTab[data-toggle="tab"]').on('shown', function(e) {
-    app.viewModel.updateScrollBars();
-  });
   $('#designsTab[data-toggle="tab"]').on('shown', function(e) {
-    app.viewModel.updateAllScrollBars();
     setTimeout(function() {$('.group-members-popover').popover({html: true, trigger: 'hover'});}, 2000); 
   });
-  if ( $('#legendTab') ) {
-      $('#legendTab[data-toggle="tab"]').on('shown', function(e) {
-        app.viewModel.updateScrollBars();
-      });
-  }
   
   //the following appears to handle the bookmark sharing, while the earlier popover activation handles the design sharing
   setTimeout(function() {$('.group-members-popover').popover({html: true, trigger: 'hover'});}, 2000); 
-    
-  //format the legend scrollbar
-  //setTimeout(function() { $('#legend-content').jScrollPane(); }, 500);
-  //setTimeout(function() { app.viewModel.updateScrollBars(); }, 500);
-  
-  //resizable behavior for overview-overlay
-  //might not use the following after all... 
-  //(having problems setting minHeight, losing resizing ability 
-  /*
-  $("#overview-overlay").resizable({
-    handles: 'n',
-    containment: 'parent'
-    }
-  })
-  */
 
   setTimeout(function() {
     $('.disabled').popover({
@@ -294,10 +257,6 @@ $(document).ready(function() {
   //hide basemaps drop-down on mouseout
   $('#SimpleLayerSwitcher_29').mouseenter( function() {
     //$('#basemaps').addClass('open');
-  });
-  
-  $('#overview-overlay-dropdown').mouseleave( function() {
-    $('#overview-overlay-dropdown').closest('.btn-group').removeClass('open');
   });
   
   $('#opacity-popover').mouseleave( function() {

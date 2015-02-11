@@ -193,11 +193,6 @@ function layerModel(options, parent) {
 
     // is description active
     self.infoActive = ko.observable(false);
-    app.viewModel.showOverview.subscribe( function() {
-        if ( app.viewModel.showOverview() === false ) {
-            self.infoActive(false);
-        }
-    });
     
     // is the layer a checkbox layer
     self.isCheckBoxLayer = ko.observable(false);
@@ -587,8 +582,6 @@ function layerModel(options, parent) {
             //$(legendID).collapse('show');
             //$(legendID).slideDown(200);
         }
-        //update scrollbar
-        setTimeout( function() { app.viewModel.updateScrollBars(); }, 200 );
     };      
     
     self.showingLayerAttribution = ko.observable(true);
@@ -613,13 +606,9 @@ function layerModel(options, parent) {
     };
     
     self.showSublayerDescription = function(layer) {
-        app.viewModel.showOverview(false);
         app.viewModel.activeInfoSublayer(layer);
         layer.infoActive(true);
         layer.parent.infoActive(true);
-        app.viewModel.showOverview(true);
-        app.viewModel.updateCustomScrollbar('#overview-overlay-text');
-        //app.viewModel.updateDropdownScrollbar('#overview-overlay-dropdown');
         app.viewModel.hideMapAttribution();
     };
     
@@ -638,29 +627,15 @@ function layerModel(options, parent) {
         app.viewModel.activeInfoSublayer(false);
         app.viewModel.activeInfoLayer(layer);
         self.infoActive(true);
-        // if (layer.subLayers.length > 0) {
-        //     $('#overview-overlay').height(195);
-        // } else {
-        //     $('#overview-overlay').height(186);
-        // }
         app.viewModel.showOverview(true);
-        // app.viewModel.updateCustomScrollbar('#overview-overlay-text');
-        //app.viewModel.updateDropdownScrollbar('#overview-overlay-dropdown');
         //app.viewModel.hideMapAttribution();
-        app.viewModel.updateScrollBars();
     };
     
     self.hideDescription = function(layer) {
         app.viewModel.showOverview(false);
         app.viewModel.activeInfoSublayer(false);
         //app.viewModel.showMapAttribution();
-        app.viewModel.updateScrollBars();
     };
-    
-    self.toggleDescriptionMenu = function(layer) {
-        //console.dir(layer);
-    };
-    
     
     self.showTooltip = function(layer, event) {
         var layerActual;
@@ -710,11 +685,8 @@ function themeModel(options) {
         if (self.isOpenTheme(theme)) {
             //app.viewModel.activeTheme(null);
             app.viewModel.openThemes.remove(theme);
-            app.viewModel.updateScrollBars();
         } else {
             app.viewModel.openThemes.push(theme);
-            //setTimeout( app.viewModel.updateScrollBar(), 1000);
-            app.viewModel.updateScrollBars();
         }
     };
     
@@ -918,7 +890,6 @@ function viewModel() {
     // toggle layer panel visibility
     self.toggleLayers = function() {
         self.showLayers(!self.showLayers());
-        self.updateScrollBars();
         app.map.render('map');
         if (self.showLayers()) {
             app.map.render('map'); //doing this again seems to prevent the vector wandering effect
@@ -1001,7 +972,6 @@ function viewModel() {
         } else {
             //because the subscription on aggregatedAttributes is not triggered by this delete process
             self.updateAggregatedAttributesOverlayWidthAndScrollbar();
-            //self.updateCustomScrollbar('#aggregated-attribute-content');
         }
     };
     self.updateAggregatedAttributesOverlayWidthAndScrollbar = function() {
@@ -1010,7 +980,6 @@ function viewModel() {
                 width = overlayWidth < 380 ? overlayWidth : 380;
             //console.log('setting overlay width to ' + width);
             self.aggregatedAttributesWidth(width + 'px');
-            //self.updateCustomScrollbar('#aggregated-attribute-content');
         }, 500);
     };
 
@@ -1048,7 +1017,6 @@ function viewModel() {
             $('#mafmc-tabs').hide();
             $('#mafmc-active-content').hide();
             $('#mafmc-layer-list').hide();
-            // $('#myTabContent').hide();
         } else {
             $('#mafmc-layer-switcher').animate( {height: '350px'}, 400 );
             setTimeout( function() {
@@ -1056,33 +1024,11 @@ function viewModel() {
                 $('#mafmc-active-content').show();
                 $('#mafmc-layer-list').show();
                 $('#mafmc-tab-content').show();
-                // $('#myTabContent').show();
             }, 200);
-            setTimeout( function() {
-                self.updateAllScrollBars();
-            }, 400);
         }
         self.minimized = !self.minimized;
     };
     
-    
-    /*
-    self.getAttributeHTML = function() {
-        var html = "";
-        $.each(self.activeLayers(), function(i, layer) {
-            if (self.aggregatedAttributes()[layer.name]) {
-                html += "<h4>"+layer.name+".<h4>";
-                html += "<dl>";
-                $.each(self.aggregatedAttributes()[layer.name], function(j, attrs) {
-                    html += "<dt><span>"+attrs.display+"</span>:";
-                    html += "<span>"+attrs.data+"</span></dt>";
-                });
-                html += "</dl>";
-            }
-        });
-        return html;
-    };
-    */
     // hide tours for smaller screens
     self.hideTours = ko.observable(false);
 
@@ -1174,15 +1120,6 @@ function viewModel() {
 
     // is the legend panel visible?
     self.showLegend = ko.observable(false);
-    self.showLegend.subscribe(function (newVal) {
-        self.updateScrollBars();
-        if (self.printing && self.printing.enabled()) {
-            self.printing.showLegend(newVal);
-        }
-
-        //app.reCenterMap();
-
-    });
 
     self.activeLegendLayers = ko.computed(function() {
         var layers = $.map(self.visibleLayers(), function(layer) {
@@ -1212,12 +1149,6 @@ function viewModel() {
 
     // is the legend panel visible?
     self.showEmbeddedLegend = ko.observable(false);
-    /*self.showEmbeddedLegend.subscribe(function (newVal) {
-        self.updateScrollBars();
-        if (self.printing.enabled()) {
-            self.printing.showLegend(newVal);
-        }
-    });*/
 
     // toggle embedded legend (on embedded maps)
     self.toggleEmbeddedLegend = function() {
@@ -1255,139 +1186,6 @@ function viewModel() {
     self.closeAlert = function(self, event) {
         app.viewModel.error(null);
         $('#fullscreen-error-overlay').hide();
-    };
-    
-    self.updateAllScrollBars = function() {
-        self.updateScrollBars();
-        if (self.scenarios) {
-
-        }
-    };
-    
-    //update jScrollPane scrollbar
-    self.updateScrollBars = function() {
-    
-        if ( app.mafmc || !app.embeddedMap ) {
-            // var dataScrollpane = $('#data-accordion').data('jsp');
-            // if (dataScrollpane === undefined) {
-            //     $('#data-accordion').jScrollPane();
-            // } else {
-            //     dataScrollpane.reinitialise();
-            // }
-            
-            // var activeScrollpane = $('#active').data('jsp');
-            // if (activeScrollpane === undefined) {
-            //     $('#active').jScrollPane();
-            // } else {
-            //     activeScrollpane.reinitialise();
-            // }
-            // if ($('#mafmc-active-content')) {
-            //     var mafmcActiveScrollpane = $('#mafmc-active-content').data('jsp');
-            //     if (mafmcActiveScrollpane === undefined) {
-            //         $('#mafmc-active-content').jScrollPane();
-            //     } else {
-            //         setTimeout(function() {
-            //             mafmcActiveScrollpane.reinitialise();
-            //             $('.jspScrollable').css("outline", "none"); 
-            //         },100);
-            //     }
-            // }
-            // var legendScrollpane = $('#legend-content').data('jsp');
-            // if (legendScrollpane === undefined) {
-            //     $('#legend-content').jScrollPane();
-            // } else {
-            //     setTimeout(function() {legendScrollpane.reinitialise();},100);
-            // }
-            // if ($('#mafmc-legend')) {
-            //     var mafmcLegendScrollpane = $('#mafmc-legend').data('jsp');
-            //     if (mafmcLegendScrollpane === undefined) {
-            //         $('#mafmc-legend').jScrollPane();
-            //     } else {
-            //         setTimeout(function() {
-            //             mafmcLegendScrollpane.reinitialise();
-            //             $('.jspScrollable').css("outline", "none"); 
-            //         },100);
-            //     }
-            // }
-        }
-        // $('.jspScrollable').css("outline", "none");
-        
-    };
-
-    // expand data description overlay
-    self.expandDescription = function(self, event) {
-        if ( ! self.showOverview() ) {
-            self.showOverview(true);
-            self.updateCustomScrollbar('#overview-overlay-text');
-        } else {
-            self.showOverview(false);
-        }
-    };
-    
-    self.scrollBarElements = [];
-    
-    self.updateCustomScrollbar = function(elem) {
-        if (app.viewModel.scrollBarElements.indexOf(elem) == -1) {
-            app.viewModel.scrollBarElements.push(elem);
-            $(elem).mCustomScrollbar({
-                scrollInertia:250,
-                mouseWheel: 6
-            });
-        }
-        //$(elem).mCustomScrollbar("update");
-        //$(elem).mCustomScrollbar("scrollTo", "top"); 
-        setTimeout( function() { 
-            $(elem).mCustomScrollbar("update"); 
-            $(elem).mCustomScrollbar("scrollTo", "top"); 
-        }, 500);
-    };
-    
-    // close layer description
-    self.closeDescription = function() {
-        //self.showDescription(false);
-        app.viewModel.showOverview(false);
-        if ( ! app.pageguide.tourIsActive ) {
-            app.viewModel.showMapAttribution();
-        }
-    };
-    
-    self.activateOverviewDropdown = function(model, event) {
-        var $btnGroup = $(event.target).closest('.btn-group');
-        if ( $btnGroup.hasClass('open') ) {
-            $btnGroup.removeClass('open');
-        } else {
-            //$('#overview-dropdown-button').dropdown('toggle');  
-            $btnGroup.addClass('open');
-            if (app.viewModel.scrollBarElements.indexOf('#overview-overlay-dropdown') == -1) {
-                app.viewModel.scrollBarElements.push('#overview-overlay-dropdown');
-                $('#overview-overlay-dropdown').mCustomScrollbar({
-                    scrollInertia:250,
-                    mouseWheel: 6
-                });
-            }
-            //debugger;
-            //setTimeout( $('#overview-overlay-dropdown').mCustomScrollbar("update"), 1000);
-            $('#overview-overlay-dropdown').mCustomScrollbar("update");
-        }
-    }; 
-    
-    self.getOverviewText = function() {
-        //activeInfoSublayer() ? activeInfoSublayer().overview : activeInfoLayer().overview
-        if ( self.activeInfoSublayer() ) {
-            if ( self.activeInfoSublayer().overview === null ) {
-                return '';
-            } else {
-                return self.activeInfoSublayer().overview;
-            }   
-        } else if (self.activeInfoLayer() ) {
-            if ( self.activeInfoLayer().overview === null ) {
-                return '';
-            } else {
-                return self.activeInfoLayer().overview;
-            }  
-        } else {
-            return '';
-        }
     };
     
     self.activeKmlLink = function() {
@@ -1465,7 +1263,6 @@ function viewModel() {
                 "of": $button,
                 offset: "-10px 0px"
             });
-            self.bookmarks.updateBookmarkScrollBar();
         }
     };
     
@@ -1607,10 +1404,6 @@ function viewModel() {
             return a.getZIndex() - b.getZIndex();
         });
 
-        //update the legend scrollbar
-        //setTimeout(function() {$('#legend-content').data('jsp').reinitialise();}, 200);
-        setTimeout(function() { app.viewModel.updateScrollBars(); }, 200);
-        
         // update the url hash
         app.updateUrl();
         
@@ -1629,16 +1422,8 @@ function viewModel() {
         for (var i=0; i< numOpenThemes; i++) {
             self.openThemes.remove(self.openThemes()[0]);
         }
-        self.updateScrollBars();
     };
 
-    // do this stuff when the visible layers change
-    /*self.visibleLayers.subscribe(function() {
-        if (!self.hasActiveLegends()) {
-            self.showLegend(false);
-        }
-    });*/
-    
     /* DESIGNS */
     
     self.showCreateButton = ko.observable(true);
@@ -1802,7 +1587,6 @@ function viewModel() {
         
         //adding delay to ensure the message will load 
         setTimeout( function() { $.pageguide('open'); }, 700 );
-        //$('#help-tab').click();
         
         app.pageguide.togglingTours = false;
     };

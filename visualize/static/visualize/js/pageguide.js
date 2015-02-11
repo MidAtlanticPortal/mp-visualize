@@ -211,8 +211,6 @@ var dataGuideOverrides = {
                     layer.showDescription(layer);
                 }
             }
-            //app.viewModel.themes()[0].layers()[3].showDescription(app.viewModel.themes()[0].layers()[3]);
-            $('#overview-overlay').height(246);
         }
       }
     }
@@ -384,8 +382,6 @@ app.pageguide.defaultCloseStuff = function() {
       app.saveStateMode = true;
     }
       
-    $('#overview-overlay').height(186);
-      
     app.pageguide.tourIsActive = false;
       
     $.pageguide(defaultGuide, defaultGuideOverrides);
@@ -421,4 +417,3 @@ $(function() {
   
   
 });
-

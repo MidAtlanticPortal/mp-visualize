@@ -79,11 +79,6 @@ app.viewModel.loadLayers = function(data) {
             return keys;
     })();
     
-    //re-initialise the legend scrollbar 
-    //if ( ! app.embeddedMap ) {
-    if ( $(window).width() > 767 && !app.embeddedMap ) {
-    } 
-
 };
 app.viewModel.loadLayersFromFixture = function() {
 	app.viewModel.loadLayers(app.fixture);

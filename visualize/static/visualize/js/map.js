@@ -824,21 +824,3 @@ app.reCenterMap = function () {
     app.map.setCenter(new OpenLayers.LonLat(app.state.x, app.state.y).transform(
         new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 7);
 };
-
-// block mousehweel when over overlay
-$("#overview-overlay-text").hover(
-    // mouseenter
-    function () {
-        var controls = app.map.getControlsByClass('OpenLayers.Control.Navigation');
-        for(var i = 0; i < controls.length; ++i) {
-            controls[i].disableZoomWheel();
-        }
-            
-    }, 
-    function () {
-        var controls = app.map.getControlsByClass('OpenLayers.Control.Navigation');
-        for(var i = 0; i < controls.length; ++i) {
-            controls[i].enableZoomWheel();
-        }
-    }
-);
