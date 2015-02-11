@@ -97,13 +97,13 @@
                                                     <a style="font-weight: normal" class="btn btn-layer" data-bind="css: { 'active': active(), 'not-active': ! active() }, click: toggleActive">
                                                         <div data-bind="text: name"></div>
                                                         <span rel="tooltip" data-bind="attr: {title: sharedBy}">
-                                                            <i class="icon-signin" data-bind="visible: shared" style="padding-left: 10px"></i>
+                                                            <i class="fa fa-user" data-bind="visible: shared" style="padding-left: 10px"></i>
                                                         </span>
                                                         <span rel="tooltip" data-bind="attr: {title: sharedWith}">
-                                                            <i class="icon-signout" data-bind="visible: selectedGroups().length" style="padding-left: 10px"></i>
+                                                            <i class="fa fa-group" data-bind="visible: selectedGroups().length" style="padding-left: 10px"></i>
                                                         </span>
-                                                        <i class="check icon-large icon-check" data-bind="visible: active() && visible()"></i>
-                                                        <i class="check icon-large icon-check-empty" data-bind="visible: active() && ! visible()"></i>
+                                                        <i class="check fa fa-check-circle"  data-bind="visible: active() && visible()"></i>
+                                                        <i class="check fa fa-circle-o" data-bind="visible: (!active()) || (!visible())"></i>
                                                     </a>
                                                     <a class="btn btn-group dropdown-toggle" data-toggle="dropdown" href="#">
                                                         <span class="caret"></span>
