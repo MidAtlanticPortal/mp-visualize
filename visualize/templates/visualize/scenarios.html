@@ -25,7 +25,7 @@
                     <div id="view-reports-button" class="btn pull-right" data-bind="click: showComparisonReports">
                         View Reports
                     </div>
-                    <div id="create-new-design" class="btn-group pull-left" style="padding-bottom: 10px;">
+                    <div id="create-new-design" class="btn-group" style="padding-bottom: 10px;">
                         <a id="create-new-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
                             Create New
                             <span class="caret"></span>
@@ -90,33 +90,7 @@
                                     
                                         <ul class="unstyled list" data-bind="foreach: drawingList ">
                                             <li class="layer">
-                                                <div class="btn-group btn-group-layer">
-                                                    <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive() }">
-                                                        <i class="icon-info-sign icon-large"></i>
-                                                    </a>
-                                                    <a style="font-weight: normal" class="btn btn-layer" data-bind="css: { 'active': active(), 'not-active': ! active() }, click: toggleActive">
-                                                        <div data-bind="text: name"></div>
-                                                        <span rel="tooltip" data-bind="attr: {title: sharedBy}">
-                                                            <i class="icon-signin" data-bind="visible: shared" style="padding-left: 10px"></i>
-                                                        </span>
-                                                        <span rel="tooltip" data-bind="attr: {title: sharedWith}">
-                                                            <i class="icon-signout" data-bind="visible: selectedGroups().length" style="padding-left: 10px"></i>
-                                                        </span>
-                                                        <i class="check icon-large icon-check" data-bind="visible: active() && visible()"></i>
-                                                        <i class="check icon-large icon-check-empty" data-bind="visible: active() && ! visible()"></i>
-                                                    </a>
-                                                    <a class="btn btn-group dropdown-toggle" data-toggle="dropdown" href="#">
-                                                        <span class="caret"></span>
-                                                    </a>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a data-bind="visible: ! shared(), click: editDrawing">Edit</a></li>
-                                                        <li><a id="share-option" data-bind="visible: ! shared() && $parent.hasSharingGroups, click: $parent.showSharingModal">Share</a></li>
-                                                        <li><a data-bind="click: $parent.zoomToScenario">Zoom To</a></li>
-                                                        <li class="divider"></li>
-                                                        <li><a data-bind="visible: ! shared(), click: deleteDrawing">Delete</a></li>
-                                                        <li><a data-bind="visible: shared, click: createCopyDrawing">Create Copy</a></li>
-                                                    </ul>
-                                                </div>
+                                                {% include "visualize/includes/custom-layer-row.html" %}
                                             </li>  
                                         </ul>
                                     </div>
@@ -158,33 +132,7 @@
                                     
                                         <ul class="unstyled list" data-bind="foreach: selectionList ">
                                             <li class="layer">
-                                                <div class="btn-group btn-group-layer">
-                                                    <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive() }">
-                                                        <i class="icon-info-sign icon-large"></i>
-                                                    </a>
-                                                    <a style="font-weight: normal" class="btn btn-layer" data-bind="css: { 'active': active(), 'not-active': ! active() }, click: toggleActive">
-                                                        <div data-bind="text: name"></div>
-                                                        <span rel="tooltip" data-bind="attr: {title: sharedBy}">
-                                                            <i class="icon-signin" data-bind="visible: shared" style="padding-left: 10px"></i>
-                                                        </span>
-                                                        <span rel="tooltip" data-bind="attr: {title: sharedWith}">
-                                                            <i class="icon-signout" data-bind="visible: selectedGroups().length" style="padding-left: 10px"></i>
-                                                        </span>
-                                                        <i class="check icon-large icon-check" data-bind="visible: active() && visible()"></i>
-                                                        <i class="check icon-large icon-check-empty" data-bind="visible: active() && ! visible()"></i>
-                                                    </a>
-                                                    <a class="btn btn-group dropdown-toggle" data-toggle="dropdown" href="#">
-                                                        <span class="caret"></span>
-                                                    </a>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a data-bind="visible: ! shared(), click: editSelection">Edit</a></li>
-                                                        <li><a id="share-option" data-bind="visible: ! shared() && $parent.hasSharingGroups, click: $parent.showSharingModal">Share</a></li>
-                                                        <li><a data-bind="click: $parent.zoomToScenario">Zoom To</a></li>
-                                                        <li class="divider"></li>
-                                                        <li><a data-bind="visible: ! shared(), click: deleteSelection">Delete</a></li>
-                                                        <li><a data-bind="visible: shared, click: createCopySelection">Create Copy</a></li>
-                                                    </ul>
-                                                </div>
+                                                {% include "visualize/includes/custom-layer-row.html" %}
                                             </li>  
                                         </ul>
                                     </div>
@@ -222,35 +170,7 @@
                                         
                                         <ul class="unstyled list" data-bind="foreach: scenarioList ">
                                             <li class="layer">
-                                                <div class="btn-group btn-group-layer">
-                                                    <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive() }">
-                                                        <i class="icon-info-sign icon-large"></i>
-                                                    </a>
-                                                    <a style="font-weight: normal" class="btn btn-layer" data-bind="css: { 'active': active(), 'not-active': ! active() }, click: toggleActive">
-                                                        <div data-bind="text: name"></div>
-                                                        <span rel="tooltip" data-bind="attr: {title: sharedBy}">
-                                                            <i class="icon-signin" data-bind="visible: shared" style="padding-left: 10px"></i>
-                                                        </span>
-                                                        <span rel="tooltip" data-bind="attr: {title: sharedWith}">
-                                                            <i class="icon-signout" data-bind="visible: selectedGroups().length" style="padding-left: 10px"></i>
-                                                        </span>
-                                                        <i class="check icon-large icon-check" data-bind="visible: visible()"></i>
-                                                        <i class="check icon-large icon-check-empty" data-bind="visible: active() && ! visible()"></i>
-                                                    </a>
-                                                    <a class="btn btn-group dropdown-toggle"data-toggle="dropdown" href="#">
-                                                        <span class="caret"></span>
-                                                    </a>
-                                                    <ul class="dropdown-menu">
-                                                        <li><a data-bind="visible: ! shared(), click: editScenario">Edit</a></li>
-                                                        <!--<li><a id="share-option" href="#share-modal" data-toggle="modal">Share</a></li>-->
-                                                        <li><a id="share-option" data-bind="visible: ! shared() && $parent.hasSharingGroups, click: $parent.showSharingModal">Share</a></li>
-                                                        <li><a data-bind="click: $parent.zoomToScenario">Zoom To</a></li>
-                                                        <li class="divider"></li>
-                                                        <li><a data-bind="visible: ! shared(), click: deleteScenario">Delete</a></li>
-                                                        <li><a data-bind="visible: shared, click: createCopyScenario">Create Copy</a></li>
-                                                    </ul>
-                                                    <!-- style="height: 20px; padding: 4px 12px; border-left-width: 0px" -->
-                                                </div>
+                                                {% include "visualize/includes/custom-layer-row.html" %}
                                             </li>  
                                         </ul>
                                     </div>

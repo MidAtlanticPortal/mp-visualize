@@ -596,22 +596,6 @@ function layerModel(options, parent) {
         }
     };
     
-    self.toggleSublayerDescription = function(layer) {
-        if ( ! self.infoActive() ) {
-            self.showSublayerDescription(self);
-        } else if (layer === app.viewModel.activeInfoSublayer()) {
-        } else {
-            self.showDescription(self);
-        }
-    };
-    
-    self.showSublayerDescription = function(layer) {
-        app.viewModel.activeInfoSublayer(layer);
-        layer.infoActive(true);
-        layer.parent.infoActive(true);
-        app.viewModel.hideMapAttribution();
-    };
-    
     // display descriptive text below the map
     self.toggleDescription = function(layer) {
         if ( ! layer.infoActive() ) {
@@ -622,19 +606,11 @@ function layerModel(options, parent) {
     };
     
     self.showDescription = function(layer) {
-        //console.log("layer", layer)
-        app.viewModel.showOverview(false);
-        app.viewModel.activeInfoSublayer(false);
-        app.viewModel.activeInfoLayer(layer);
         self.infoActive(true);
-        app.viewModel.showOverview(true);
-        //app.viewModel.hideMapAttribution();
     };
     
     self.hideDescription = function(layer) {
-        app.viewModel.showOverview(false);
-        app.viewModel.activeInfoSublayer(false);
-        //app.viewModel.showMapAttribution();
+        self.infoActive(false);
     };
     
     self.showTooltip = function(layer, event) {
