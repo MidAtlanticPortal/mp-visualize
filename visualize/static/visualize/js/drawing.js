@@ -10,7 +10,7 @@ function drawingModel(options) {
     //self.lineControl = new OpenLayers.Control.DrawFeature(lineLayer, OpenLayers.Handler.Path);
     
     //will need to distinguish between drawing types...
-    self.editDrawing = function() {
+    self.edit = function() {
         self.drawing = this;
         if ( ! self.drawing.active() ) {
             self.drawing.activateLayer();
@@ -46,7 +46,7 @@ function drawingModel(options) {
         });
     }; 
         
-    self.createCopyDrawing = function() {
+    self.createCopy = function() {
         var drawing = this;
     
         //create a copy of this shape to be owned by the user
@@ -63,7 +63,7 @@ function drawingModel(options) {
             }
         });
     };
-    self.deleteDrawing = function() {
+    self.deleteScenario = function() {
         var drawing = this;
         
         //remove from activeLayers

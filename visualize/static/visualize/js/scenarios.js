@@ -657,7 +657,7 @@ function selectionModel(options) {
     
     self.isSelectionModel = true;
         
-    self.editSelection = function() {
+    self.edit = function() {
         var selection = this;
         app.viewModel.scenarios.zoomToScenario(selection);
         return $.ajax({
@@ -685,7 +685,7 @@ function selectionModel(options) {
         });
     }; 
         
-    self.createCopySelection = function() {
+    self.createCopy = function() {
         var selection = this;
     
         //create a copy of this shape to be owned by the user
@@ -703,7 +703,7 @@ function selectionModel(options) {
         })
     };
             
-    self.deleteSelection = function() {
+    self.deleteScenario = function() {
         var selection = this;
         
         //first deactivate the layer 
@@ -1188,7 +1188,7 @@ function scenarioModel(options) {
         */
     };
     
-    self.editScenario = function() {
+    self.edit = function() {
         var scenario = this;
         return $.ajax({
             url: '/features/scenario/' + scenario.uid + '/form/', 
@@ -1233,7 +1233,7 @@ function scenarioModel(options) {
         });
     }; 
     
-    self.createCopyScenario = function() {
+    self.createCopy = function() {
         var scenario = this;
     
         //create a copy of this shape to be owned by the user
