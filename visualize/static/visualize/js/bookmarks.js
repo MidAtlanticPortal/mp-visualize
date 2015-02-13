@@ -316,7 +316,7 @@ function bookmarksModel(options) {
     // get bookmark sharing groups for this user
     self.getSharingGroups = function() {
         $.ajax({
-            url: '/visualize/get_sharing_groups',
+            url: '/g/rpc/get_sharing_groups',
             type: 'GET',
             dataType: 'json',
             success: function (groups) {

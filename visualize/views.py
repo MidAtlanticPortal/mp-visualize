@@ -36,28 +36,6 @@ def show_mafmc_map(request, template='mafmc.html'):
 def show_mobile_map(request, template='mobile-map.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
     return render_to_response(template, RequestContext(request, context)) 
-    
-def get_sharing_groups(request):
-    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
-    data = []
-    sharing_groups = user_sharing_groups(request.user)
-    for group in sharing_groups:
-        members = []
-        for user in group.user_set.all():
-            if user.first_name.replace(' ', '') != '' and user.last_name.replace(' ', '') != '':
-                members.append(user.first_name + ' ' + user.last_name)
-            else:
-                members.append(user.username)
-        sorted_members = sorted(members, key=cmp_to_key(locale.strcoll))
-        data.append({
-            'group_name': group.name,
-            'group_slug': slugify(group.name)+'-sharing',
-            'members': sorted_members
-        })
-    return HttpResponse(json.dumps(data))    
-     
-'''
-'''    
 
 @csrf_exempt
 def share_bookmark(request):
