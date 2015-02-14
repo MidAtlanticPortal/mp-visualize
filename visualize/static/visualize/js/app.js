@@ -67,9 +67,23 @@ app.viewModel.loadLayersFromServer().done(function() {
   if (app.hash) {
     app.loadStateFromHash(app.hash);
   }
+
   // autocomplete for filter
   $('.search-box').typeahead({
-    source: app.typeAheadSource
+    source: app.typeAheadSource,
+    displayText: function(a) {return a.name;},
+    matcher: function (item) {
+      // custom search matching
+      var it = item.searchText;
+      return ~it.toLowerCase().indexOf(this.query.toLowerCase());
+    },
+    afterSelect: function() { 
+      // clear the search box
+      $('#data-search-input').val(app.viewModel.searchTermInput());
+    },
+    autoSelect: true,
+    items: 15,
+    minLength: 1
   });
 
   $('[data-toggle="tooltip"]').tooltip()

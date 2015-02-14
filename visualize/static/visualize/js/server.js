@@ -24,32 +24,48 @@ app.viewModel.loadLayers = function(data) {
             $.each(themeFixture.layers, function(j, layer_id) {
                 // create a layerModel and add it to the list of layers
                 var layer = self.layerIndex[layer_id],
-                    searchTerm = layer.name + ' (' + themeFixture.display_name + ')';
+                    searchText = layer.name + '| ' + 
+                        themeFixture.display_name + ' ' +
+                        themeFixture.description + ' ' +
+                        layer.description + ' ' + 
+                        layer.overview;
+                    searchKey = searchText.split("|")[0];
                 layer.themes.push(theme);
                 theme.layers.push(layer);
                 
                 if (!layer.subLayers.length) { //if the layer does not have sublayers
-                    self.layerSearchIndex[searchTerm] = {
+                    self.layerSearchIndex[searchKey] = {
                         layer: layer,
+                        searchText: searchText,
                         theme: theme
                     };
                 } else { //if the layer has sublayers
                     $.each(layer.subLayers, function(i, subLayer) {
-                        //var searchTerm = subLayer.name + ' (' + themeFixture.display_name + ')';
-                        var searchTerm = subLayer.name + ' (' + themeFixture.display_name + ' / ' + subLayer.parent.name + ')';
+                        var searchText = subLayer.name + '| ' + 
+                                themeFixture.display_name + ' / ' +
+                                themeFixture.description + ' ' +
+                                subLayer.parent.name + ' ' +
+                                subLayer.parent.overview + ' ' +
+                                subLayer.parent.description;
+                        var searchKey = searchText.split("|")[0];
                         if (subLayer.name !== 'Data Under Development') {
-                            self.layerSearchIndex[searchTerm] = {
+                            self.layerSearchIndex[searchKey] = {
                                 layer: subLayer,
+                                searchText: searchText,
                                 theme: theme
                             };
                         }
                     });  
-                    layer.subLayers.sort( function(a,b) { return a.name.toUpperCase().localeCompare(b.name.toUpperCase()); } );
+                    layer.subLayers.sort( function(a,b) { 
+                        return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
+                    });
                 } 
 
             });
             //sort by name
-            theme.layers.sort( function(a,b) { return a.name.toUpperCase().localeCompare(b.name.toUpperCase()); } );
+            theme.layers.sort( function(a,b) { 
+                return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
+            });
             
             self.themes.push(theme);
         } else {
@@ -72,9 +88,8 @@ app.viewModel.loadLayers = function(data) {
 	app.typeAheadSource = (function () {
             var keys = [];
             for (var searchTerm in app.viewModel.layerSearchIndex) {
-                if (app.viewModel.layerSearchIndex.hasOwnProperty(searchTerm)) {
-                    keys.push(searchTerm);
-                }
+                var text = app.viewModel.layerSearchIndex[searchTerm].searchText;
+                keys.push({'searchText': text, 'name': searchTerm});
             }
             return keys;
     })();

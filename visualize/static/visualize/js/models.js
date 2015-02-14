@@ -1340,13 +1340,24 @@ function viewModel() {
 
     // handle the search form
     self.searchTerm = ko.observable();
+    self.searchTermInput = ko.observable();
     self.layerSearch = function() {
         var found = self.layerSearchIndex[self.searchTerm()];
+        if (!found) {
+            console.log("Did not find search term", self.searchTerm())
+            return false;
+        }
         //self.activeTheme(theme);
-        self.openThemes.push(found.theme);
+        if (self.openThemes.indexOf(found.theme) === -1) {
+            self.openThemes.push(found.theme);
+        }
         found.layer.activateLayer();
+        self.searchTerm($('.typeahead .active').text());
     };
     self.keySearch = function(_, event) {
+        // Capture user input before it gets wiped
+        self.searchTermInput($("#data-search-input").val());
+
         if (event.which === 13) {
             self.searchTerm($('.typeahead .active').text());
             self.layerSearch();
@@ -1356,7 +1367,11 @@ function viewModel() {
             self.layerSearch();
             //search($(this).text());
         });
-        $('#activeTab').tab('show');
+        // Activate the "Active" tab if not already
+        // beware naming confusion
+        if (! $("ul#myTab li[data-tab='active']").hasClass('active')) {
+            $('#activeTab').tab('show');
+        }
     };
 
     // do this stuff when the active layers change
