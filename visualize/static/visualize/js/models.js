@@ -1341,6 +1341,9 @@ function viewModel() {
     // handle the search form
     self.searchTerm = ko.observable();
     self.searchTermInput = ko.observable();
+    self.clearSearch = function() {
+        self.searchTermInput(undefined);
+    }
     self.layerSearch = function() {
         var found = self.layerSearchIndex[self.searchTerm()];
         if (!found) {

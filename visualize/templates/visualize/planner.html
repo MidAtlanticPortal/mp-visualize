@@ -168,9 +168,13 @@
                                         <!-- data-provide="typeahead"  -->
                                         <input type="text" class="search-box form-control" 
                                         data-bind="value: searchTerm, event: { keyup: keySearch }" style="overflow: hidden; text-overflow: ellipsis;" placeholder="Search data" id="data-search-input">
-                                        <span class="input-group-btn">
-                                            <a class="btn">
-                                                <i class="fa fa-search"></i> </a>
+                                        <span>
+                                            <a class="btn" data-bind="visible: ! searchTermInput()">
+                                                <i class="fa fa-search search-icon"></i>
+                                            </a>
+                                            <a class="btn" data-bind="visible: searchTermInput(), click: clearSearch">
+                                                <i class="fa fa-close"></i>
+                                            </a>
                                         </span>
                                     </div>
                                     <p class="search-instructions"> Start typing any phrase or keyword </p>

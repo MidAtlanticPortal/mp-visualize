@@ -23,13 +23,16 @@ app.viewModel.loadLayers = function(data) {
         if (theme.is_visible) {
             $.each(themeFixture.layers, function(j, layer_id) {
                 // create a layerModel and add it to the list of layers
-                var layer = self.layerIndex[layer_id],
-                    searchText = layer.name + '| ' + 
+                var layer = self.layerIndex[layer_id];
+
+                // Construct the text document to be searched
+                var searchText = layer.name + ' ' + 
                         themeFixture.display_name + ' ' +
                         themeFixture.description + ' ' +
                         layer.description + ' ' + 
                         layer.overview;
-                    searchKey = searchText.split("|")[0];
+                var searchKey = layer.name;
+
                 layer.themes.push(theme);
                 theme.layers.push(layer);
                 
@@ -39,15 +42,18 @@ app.viewModel.loadLayers = function(data) {
                         searchText: searchText,
                         theme: theme
                     };
-                } else { //if the layer has sublayers
+                } else { 
+                    //if the layer has sublayers
                     $.each(layer.subLayers, function(i, subLayer) {
-                        var searchText = subLayer.name + '| ' + 
+                        // Construct the text document to be searched
+                        var searchText = subLayer.name + ' ' + 
                                 themeFixture.display_name + ' / ' +
                                 themeFixture.description + ' ' +
                                 subLayer.parent.name + ' ' +
                                 subLayer.parent.overview + ' ' +
                                 subLayer.parent.description;
-                        var searchKey = searchText.split("|")[0];
+                        var searchKey = subLayer.name; 
+
                         if (subLayer.name !== 'Data Under Development') {
                             self.layerSearchIndex[searchKey] = {
                                 layer: subLayer,
@@ -86,12 +92,15 @@ app.viewModel.loadLayers = function(data) {
     });
     
 	app.typeAheadSource = (function () {
-            var keys = [];
+            var items = [];
             for (var searchTerm in app.viewModel.layerSearchIndex) {
                 var text = app.viewModel.layerSearchIndex[searchTerm].searchText;
-                keys.push({'searchText': text, 'name': searchTerm});
+                items.push({
+                    'searchText': text, // for full-text search
+                    'name': searchTerm  // for display
+                });
             }
-            return keys;
+            return items;
     })();
     
 };
