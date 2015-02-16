@@ -280,30 +280,7 @@
                                                             <div class="accordion-inner">
                                                                 <ul  class="unstyled" data-bind="foreach: layers ">
                                                                     <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
-                                                                        {% include "visualize/includes/layer-row.html" %}
-
-                                                                        <!-- ko if: subLayers.length > 0 -->
-                                                                          <!-- ko if: !isCheckBoxLayer() -->
-                                                                          <ul class="dropdown-menu dropdown-menu-right layer-menu" data-bind="event: { mouseleave: closeMenu }">
-                                                                              <li data-bind="foreach: subLayers">
-                                                                                  <a data-bind="click: toggleActive">
-                                                                                      <span><i class="fa" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
-                                                                                      <span data-bind="text: name"></span>
-                                                                                  </a>
-                                                                              </li>
-                                                                          </ul>
-                                                                          <!-- /ko -->
-                                                                          <!-- ko if: isCheckBoxLayer() -->
-                                                                          <ul class="dropdown-menu dropdown-menu-right layer-menu" data-bind="event: { mouseleave: closeMenu }">
-                                                                              <li data-bind="foreach: subLayers">
-                                                                                  <a data-bind="click: toggleActive" style="padding-left: 15px">
-                                                                                      <span><i class="fa" data-bind="css: { 'fa-check-square-o': visible(), 'fa-square-o': ! visible() }"></i></span>
-                                                                                      <span data-bind="text: name"></span>
-                                                                                  </a>
-                                                                              </li>
-                                                                          </ul>
-                                                                          <!-- /ko -->
-                                                                        <!-- /ko -->
+                                                                        {% include "visualize/includes/catalog-layer-row.html" %}
                                                                     </li>
                                                                 </ul>
                                                             </div>
@@ -380,7 +357,7 @@
         <script src="{% static 'bower_components/jquery.bbq/jquery.ba-bbq.js' %}"></script>
         <script src="{% static 'bower_components/bootstrap3-typeahead/bootstrap3-typeahead.min.js' %}"></script>
         <script src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
-        <<script charset="utf-8">
+        <script charset="utf-8">
           $.widget.bridge('uitooltip', $.ui.tooltip);
         </script>
         <script src="{% static 'bower_components/lodash/dist/lodash.min.js' %}"></script>

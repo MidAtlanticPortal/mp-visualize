@@ -1,13 +1,16 @@
 {% extends "visualize/includes/layer-row.html" %}
 
+{% block "nameAction" %}toggleVisible{% endblock %}
+
 {% block "controls" %}
+<td>
     <a class="btn opacity-button" data-bind="click: $parent.showOpacity">
         <i class="fa fa-adjust" data-toggle="tooltip" data-placement="left" title="Adjust opacity"></i>
     </a>
-    <a class="btn btn-layer" >
-        <i class="fa" data-bind="css: { 'fa-check-circle-o active': visible(), 'fa-circle-o': ! visible() }, click: toggleVisible" data-toggle="tooltip" data-placement="left" title="Show/Hide layer"></i>
-    </a>
+</td>
+<td>
     <a class="btn" data-bind="click: toggleActive">
         <i class="fa fa-times-circle" data-toggle="tooltip" data-placement="left" title="Remove layer"></i>
     </a>
+</td>
 {% endblock %}

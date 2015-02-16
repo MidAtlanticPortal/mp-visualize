@@ -1,25 +1,29 @@
 {% extends "visualize/includes/layer-row.html" %}
 
 
+{% block "text-pre" %}
+    <span rel="tooltip" data-bind="visible: shared, attr: {title: sharedBy}">
+        <i class="fa fa-user"></i>
+    </span>
+    <span rel="tooltip" data-bind="visible: selectedGroups().length, attr: {title: sharedWith}">
+        <i class="fa fa-group"></i>
+    </span>
+{% endblock %}
 {% block "controls" %}
-    <span rel="tooltip" data-bind="attr: {title: sharedBy}">
-        <i class="fa fa-user" data-bind="visible: shared"></i>
-    </span>
-    <span rel="tooltip" data-bind="attr: {title: sharedWith}">
-        <i class="fa fa-group" data-bind="visible: selectedGroups().length"></i>
-    </span>
-    <span class="dropdown" style="display:inline-block;">
-      <a class="btn btn-group dropdown-toggle" data-toggle="dropdown" href="#">
-        <i class="fa fa-gear"></i>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-right">
-          <li><a data-bind="visible: ! shared(), click: edit">Edit</a></li>
-          <li><a id="share-option" data-bind="visible: ! shared() && $parent.hasSharingGroups, click: $parent.showSharingModal">Share</a></li>
-          <li><a data-bind="click: $parent.zoomToScenario">Zoom To</a></li>
-          <li class="divider"></li>
-          <li><a data-bind="visible: ! shared(), click: deleteScenario">Delete</a></li>
-          <li><a data-bind="visible: shared, click: createCopy">Create Copy</a></li>
-      </ul>
-    </span>
+    <td>
+      <span class="dropdown" style="display:inline-block;">
+        <a class="btn btn-group dropdown-toggle" data-toggle="dropdown" href="#">
+          <i class="fa fa-gear"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-right">
+            <li><a data-bind="visible: ! shared(), click: edit">Edit</a></li>
+            <li><a id="share-option" data-bind="visible: ! shared() && $parent.hasSharingGroups, click: $parent.showSharingModal">Share</a></li>
+            <li><a data-bind="click: $parent.zoomToScenario">Zoom To</a></li>
+            <li class="divider"></li>
+            <li><a data-bind="visible: ! shared(), click: deleteScenario">Delete</a></li>
+            <li><a data-bind="visible: shared, click: createCopy">Create Copy</a></li>
+        </ul>
+      </span>
+    </td>
     {{ block.super }}
 {% endblock %}
