@@ -1,7 +1,7 @@
 <table class="layer-row">
     <tr>
         <td>
-            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" title="More Info">
+            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
                 <i class="fa fa-info-circle"></i>
             </a>
         </td>
@@ -20,8 +20,8 @@
     </tr>
 </table>
 <div class="layer-info" data-bind="visible: infoActive()">
-    <div class="link-bar">
-        <span data-toggle="tooltip" data-placement="bottom" title="Download for Google Maps">
+    <div class="link-bar" data-bind="visible: kml || data_download || metadata || source">
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Download for Google Maps">
             <!-- ko if: $data.hasOwnProperty("kml") -->
             <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
                 kml <i class="fa fa-arrow-down" ></i>
@@ -33,7 +33,7 @@
             </a>
             <!-- /ko -->
         </span>
-        <span data-toggle="tooltip" data-placement="bottom" title="Download ESRI Formatted Dataset">
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Download ESRI Formatted Dataset">
             <!-- ko if: $data.hasOwnProperty("data_download") -->
             <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
                 data <i class="fa fa-arrow-down" ></i>
@@ -45,7 +45,7 @@
             </a>
             <!-- /ko -->
         </span>
-        <span data-toggle="tooltip" data-placement="bottom" title="Download Metadata">
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Download Metadata">
             <!-- ko if: $data.hasOwnProperty("metadata") -->
             <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
                 metadata <i class="fa fa-external-link-square" ></i>
@@ -57,7 +57,7 @@
             </a>
             <!-- /ko -->
         </span>
-        <span data-toggle="tooltip" data-placement="bottom" title="Link to Dataset Source Provider">
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Link to Dataset Source Provider">
             <!-- ko if: $data.hasOwnProperty("source") -->
             <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
                 source <i class="fa fa-external-link-square"></i>
