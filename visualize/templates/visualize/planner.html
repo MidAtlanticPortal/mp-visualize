@@ -204,7 +204,6 @@
                         <!-- tab controls -->
                         <ul id="myTab" class="nav nav-tabs">
                             <li data-tab="active">
-                                <div class="row col-md-12">
                                 <h4>
                                     <a href="#active" data-toggle="tab" id="activeTab">Active
                                         <span data-bind="visible: activeLayers().length > 0">
@@ -212,111 +211,71 @@
                                         </span>
                                     </a>
                                 </h4>
-                                </div>
                             </li>
                             <li data-tab="designs">
-                            <div class="row col-md-12">
                                 <h4>
                                     <a href="#designs" data-toggle="tab" id="designsTab">Custom</a>
                                 </h4> 
-                                </div>
                             </li>
                             <li class="active" data-tab="data" >
-                            <div class="row col-md-12">
-
                                 <h4>
                                     <a href="#data" data-toggle="tab" id="dataTab">Data Catalog</a>
                                 </h4>
-                            </div>
                             </li>
                         </ul>
                         <!-- tab body -->
                         <div id="myTabContent" class="tab-content">
                             <!-- ACTIVE TAB -->
                             <div class="tab-pane fade" id="active">
-                                <div class="row-fluid">
-                                    <div class="col-md-12">
-                                        <div data-bind="visible: activeLayers().length === 0">
-                                            <div style="padding: 10px;">
-                                                <p>
-                                                    You currently have no activated data layers.
-                                                </p>
-                                                <p>
-                                                    Data layers that are activated in the Data panel will appear in this Active panel.
-                                                </p>
-                                                <p>
-                                                    Data layers in the Active panel can be adjusted in terms of their transparency and their ordering on the map.
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
-                                            <li>
-                                            <div class="active-wrapper">
-                                                {% include "visualize/includes/active-layer-row.html" %}
-                                            </div>
-                                            </li>
-                                        </ul>
+                                <div data-bind="visible: activeLayers().length === 0">
+                                    <div style="padding: 10px;">
+                                        <p>
+                                            You currently have no activated data layers.
+                                        </p>
+                                        <p>
+                                            Data layers that are activated in the Data panel will appear in this Active panel.
+                                        </p>
+                                        <p>
+                                            Data layers in the Active panel can be adjusted in terms of their transparency and their ordering on the map.
+                                        </p>
                                     </div>
                                 </div>
+                                <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
+                                    <li>
+                                    <div class="active-wrapper">
+                                        {% include "visualize/includes/active-layer-row.html" %}
+                                    </div>
+                                    </li>
+                                </ul>
                             </div>
                             <!-- END ACTIVE TAB -->
                             <!-- DATA TAB -->
                             <div class="tab-pane active in fade" id="data">
-                                <div class="row-fluid">
-
-                                    <div class="row-fluid">
-                                        <div class="col-md-12 accordion-wrapper">
-                                            <!-- data accordion -->
-                                            <div id="data-accordion">
-                                                <div class="accordion" data-bind="foreach: themes">
-                                                    <div class="accordion-group">
-                                                        <div class="accordion-heading" data-bind="click: setOpenTheme, css: { 'active': isOpenTheme() }">
-                                                            <div>
-                                                                <a class="accordion-toggle">
-                                                                    <span data-bind="text: name">Themes</span></a>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-body collapse" data-bind="css: { 'in': isOpenTheme() }">
-                                                            <div class="accordion-inner">
-                                                                <ul  class="unstyled" data-bind="foreach: layers ">
-                                                                    <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
-                                                                        {% include "visualize/includes/layer-row.html" %}
-
-                                                                        <!-- ko if: subLayers.length > 0 -->
-                                                                          <!-- ko if: !isCheckBoxLayer() -->
-                                                                          <ul class="dropdown-menu dropdown-menu-right layer-menu" data-bind="event: { mouseleave: closeMenu }">
-                                                                              <li data-bind="foreach: subLayers">
-                                                                                  <a data-bind="click: toggleActive">
-                                                                                      <span><i class="fa" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
-                                                                                      <span data-bind="text: name"></span>
-                                                                                  </a>
-                                                                              </li>
-                                                                          </ul>
-                                                                          <!-- /ko -->
-                                                                          <!-- ko if: isCheckBoxLayer() -->
-                                                                          <ul class="dropdown-menu dropdown-menu-right layer-menu" data-bind="event: { mouseleave: closeMenu }">
-                                                                              <li data-bind="foreach: subLayers">
-                                                                                  <a data-bind="click: toggleActive" style="padding-left: 15px">
-                                                                                      <span><i class="fa" data-bind="css: { 'fa-check-square-o': visible(), 'fa-square-o': ! visible() }"></i></span>
-                                                                                      <span data-bind="text: name"></span>
-                                                                                  </a>
-                                                                              </li>
-                                                                          </ul>
-                                                                          <!-- /ko -->
-                                                                        <!-- /ko -->
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
+                                <div class="accordion-wrapper">
+                                    <!-- data accordion -->
+                                    <div id="data-accordion">
+                                        <div class="accordion" data-bind="foreach: themes">
+                                            <div class="accordion-group">
+                                                <div class="accordion-heading" data-bind="click: setOpenTheme, css: { 'active': isOpenTheme() }">
+                                                    <div>
+                                                        <a class="accordion-toggle">
+                                                            <span data-bind="text: name">Themes</span></a>
+                                                    </div>
+                                                </div>
+                                                <div class="accordion-body collapse" data-bind="css: { 'in': isOpenTheme() }">
+                                                    <div class="accordion-inner">
+                                                        <ul  class="unstyled" data-bind="foreach: layers ">
+                                                            <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
+                                                                {% include "visualize/includes/catalog-layer-row.html" %}
+                                                            </li>
+                                                        </ul>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <!-- /data-accordion -->
                                         </div>
                                     </div>
-                                    <!-- /span -->
+                                    <!-- /data-accordion -->
                                 </div>
-                                <!-- /row -->
                             </div>
                             <!-- END DATA TAB -->
 
@@ -380,7 +339,7 @@
         <script src="{% static 'bower_components/jquery.bbq/jquery.ba-bbq.js' %}"></script>
         <script src="{% static 'bower_components/bootstrap3-typeahead/bootstrap3-typeahead.min.js' %}"></script>
         <script src="{% static 'bower_components/jquery-ui/jquery-ui.min.js' %}"></script>
-        <<script charset="utf-8">
+        <script charset="utf-8">
           $.widget.bridge('uitooltip', $.ui.tooltip);
         </script>
         <script src="{% static 'bower_components/lodash/dist/lodash.min.js' %}"></script>
