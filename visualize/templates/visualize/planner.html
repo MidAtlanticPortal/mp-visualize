@@ -288,8 +288,10 @@
                                     <div class="col-md-12">
                                         <div style="padding: 10px;">
                                             <p>
-                                             View requires authentication.
-                                             <a href="{% url 'account:register' %}">Join</a> to create an account!
+                                                <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in</a>
+                                                or
+                                                <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>join</a>
+                                                to access custom designs.
                                             </p>
                                         </div>
                                     </div>
