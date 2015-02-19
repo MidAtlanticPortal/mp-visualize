@@ -67,9 +67,29 @@ app.viewModel.loadLayersFromServer().done(function() {
   if (app.hash) {
     app.loadStateFromHash(app.hash);
   }
+
   // autocomplete for filter
+  // See bootstrap3-typeahead docs
   $('.search-box').typeahead({
-    source: app.typeAheadSource
+    source: app.typeAheadSource,
+    displayText: function(item) {
+      return item.name;
+    },
+    matcher: function (item) {
+      // custom search matching
+      // for now, we just do a full text search on the "searchText" property of each item
+      // eventually we could do multiple, prioritized search fields
+      var it = item.searchText;
+      return ~it.toLowerCase().indexOf(this.query.toLowerCase());
+    },
+    afterSelect: function() { 
+      // replace the search box contents with the user's actual input
+      // otherwise it will be replaced by the display text of the chosen item
+      $('#data-search-input').val(app.viewModel.searchTermInput());
+    },
+    autoSelect: true,
+    items: 15,
+    minLength: 1
   });
 
   $('[data-toggle="tooltip"]').tooltip()

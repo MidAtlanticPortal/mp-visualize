@@ -23,33 +23,55 @@ app.viewModel.loadLayers = function(data) {
         if (theme.is_visible) {
             $.each(themeFixture.layers, function(j, layer_id) {
                 // create a layerModel and add it to the list of layers
-                var layer = self.layerIndex[layer_id],
-                    searchTerm = layer.name + ' (' + themeFixture.display_name + ')';
+                var layer = self.layerIndex[layer_id];
+
+                // Construct the text document to be searched
+                var searchText = layer.name + ' ' + 
+                        themeFixture.display_name + ' ' +
+                        themeFixture.description + ' ' +
+                        layer.description + ' ' + 
+                        layer.overview;
+                var searchKey = layer.name;
+
                 layer.themes.push(theme);
                 theme.layers.push(layer);
                 
                 if (!layer.subLayers.length) { //if the layer does not have sublayers
-                    self.layerSearchIndex[searchTerm] = {
+                    self.layerSearchIndex[searchKey] = {
                         layer: layer,
+                        searchText: searchText,
                         theme: theme
                     };
-                } else { //if the layer has sublayers
+                } else { 
+                    //if the layer has sublayers
                     $.each(layer.subLayers, function(i, subLayer) {
-                        //var searchTerm = subLayer.name + ' (' + themeFixture.display_name + ')';
-                        var searchTerm = subLayer.name + ' (' + themeFixture.display_name + ' / ' + subLayer.parent.name + ')';
+                        // Construct the text document to be searched
+                        var searchText = subLayer.name + ' ' + 
+                                themeFixture.display_name + ' / ' +
+                                themeFixture.description + ' ' +
+                                subLayer.parent.name + ' ' +
+                                subLayer.parent.overview + ' ' +
+                                subLayer.parent.description;
+                        var searchKey = subLayer.name; 
+
                         if (subLayer.name !== 'Data Under Development') {
-                            self.layerSearchIndex[searchTerm] = {
+                            self.layerSearchIndex[searchKey] = {
                                 layer: subLayer,
+                                searchText: searchText,
                                 theme: theme
                             };
                         }
                     });  
-                    layer.subLayers.sort( function(a,b) { return a.name.toUpperCase().localeCompare(b.name.toUpperCase()); } );
+                    layer.subLayers.sort( function(a,b) { 
+                        return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
+                    });
                 } 
 
             });
             //sort by name
-            theme.layers.sort( function(a,b) { return a.name.toUpperCase().localeCompare(b.name.toUpperCase()); } );
+            theme.layers.sort( function(a,b) { 
+                return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
+            });
             
             self.themes.push(theme);
         } else {
@@ -70,13 +92,15 @@ app.viewModel.loadLayers = function(data) {
     });
     
 	app.typeAheadSource = (function () {
-            var keys = [];
+            var items = [];
             for (var searchTerm in app.viewModel.layerSearchIndex) {
-                if (app.viewModel.layerSearchIndex.hasOwnProperty(searchTerm)) {
-                    keys.push(searchTerm);
-                }
+                var text = app.viewModel.layerSearchIndex[searchTerm].searchText;
+                items.push({
+                    'searchText': text, // for full-text search
+                    'name': searchTerm  // for display
+                });
             }
-            return keys;
+            return items;
     })();
     
 };
