@@ -14,14 +14,6 @@
 {% block body_class %}template-visualize{% endblock %}
 {% block outer_content %}
 
-        <!-- Check for Mobile Client -->
-        <script type="text/javascript">
-            var width = window.innerWidth;
-            if (width < 768) {
-                window.location.pathname = "/mobile/mobile/";
-            }
-        </script>
-
         {% include "visualize/modals.html" %}
         {% if user.is_authenticated %}
             {% include "visualize/bookmark-modals.html" %}
@@ -29,258 +21,240 @@
 
         <div class="container-fluid" id="primary-content">
             <div id="fullscreen">
+                <div id="map-wrapper">
+                    <div id="map"></div>
+                    <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
+                        <div class="btn-group btn-group-vertical">
+                          <!-- Print Button -->
+                          <a class="btn" id="btn-print" onclick="window.print();" data-toggle="tooltip" data-placement="left" title="Print/Export">
+                            <i class="fa fa-print" id="print-icon"> </i>
+                          </a>
 
-                <!-- Map Panel (center panel) -->
-                <div id="map-panel">
-                    <div id="map-wrapper">
-                        <div id="map"></div>
-                        <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
-                            <div class="btn-group btn-group-vertical">
-                              <!-- Print Button -->
-                              <a class="btn" id="btn-print" onclick="window.print();" data-toggle="tooltip" data-placement="left" title="Print/Export">
-                                <i class="fa fa-print" id="print-icon"> </i>
-                              </a>
+                          <!--Hide/Show Legends Button-->
+                          <a id="btn-legend" class="btn" data-toggle="tooltip" title="Toggle Legends" data-placement="left" data-bind="click: toggleLegend">
+                              <i class="fa fa-list-ul"></i>
+                          </a>
+                          <!--Bookmarks Button-->
+                          <a id="bookmarks-button"  class="btn"  data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" data-bind="click: showBookmarks">
+                             <i class="fa fa-bookmark"></i>
+                          </a>
+                          <!--Map Links Button-->
+                          <a id="basemap-button" class="btn" data-toggle="tooltip" data-placement="left" title="Share&nbsp;this&nbsp;Map" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
+                              <i class="fa fa-link"></i>
+                          </a>
 
-                              <!--Hide/Show Legends Button-->
-                              <a id="btn-legend" class="btn" data-toggle="tooltip" title="Toggle Legends" data-placement="left" data-bind="click: toggleLegend">
-                                  <i class="fa fa-list-ul"></i>
-                              </a>
-                              <!--Bookmarks Button-->
-                              <a id="bookmarks-button"  class="btn"  data-toggle="tooltip" data-placement="left" title="Toggle Bookmarks" data-bind="click: showBookmarks">
-                                 <i class="fa fa-bookmark"></i>
-                              </a>
-                              <!--Map Links Button-->
-                              <a id="basemap-button" class="btn" data-toggle="tooltip" data-placement="left" title="Share&nbsp;this&nbsp;Map" href="#map-links-modal" data-toggle="modal" data-bind="click: resetMapLinks">
-                                  <i class="fa fa-link"></i>
-                              </a>
-
-                              <!--Fullscreen Button-->
-                              <a class="btn" id="btn-fullscreen" data-toggle="tooltip" data-placement="left" title="Full Screen">
-                                  <i class="fa fa-arrows-alt"></i>
-                              </a>
+                          <!--Fullscreen Button-->
+                          <a class="btn" id="btn-fullscreen" data-toggle="tooltip" data-placement="left" title="Full Screen">
+                              <i class="fa fa-arrows-alt"></i>
+                          </a>
+                        </div>
+                    </div>
+                    <div id="baselayers">
+                        <div id="toggleBaselayer" data-bind="click: showBasemaps">
+                          <!--Baselayers Button-->
+                              Basemaps
+                        </div>
+                    </div>
+                    <!-- the following container is used to estimate width for the actual Aggregated Attribution Overlay -->
+                    <div id="aggregated-attribute-overlay-test" style="position: absolute; visibility: hidden; height: auto; width: auto; top:0px">
+                        <div data-bind="foreach: attributeLayers()" style="overflow: hidden; max-height: 10px;">
+                            <div data-bind="css: {display: $root.aggregatedAttributes()[featureAttributionName] ? 'block' : 'none'}">
+                              <h4 data-bind="text: featureAttributionName"></h4>
+                              <dl data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
+                                <dt>
+                                    <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
+                                    <span style="font-weight: normal" data-bind="text: data"></span>
+                                </dt>
+                              </dl>
                             </div>
                         </div>
-                        <div id="baselayers">
-                            <div id="toggleBaselayer" data-bind="click: showBasemaps">
-                              <!--Baselayers Button-->
-                                  Basemaps
-                            </div>
+                    </div>
+                    <!-- Aggregated Attribution Overlay -->
+                    <div id="aggregated-attribute-overlay" data-bind="visible: aggregatedAttributes && showFeatureAttribution, style: {width: aggregatedAttributesWidth}" style="display: none">
+                        <div id="aggregated-attribute-heading">
+                            <h4>Available Information</h4>
                         </div>
-                        <!-- the following container is used to estimate width for the actual Aggregated Attribution Overlay -->
-                        <div id="aggregated-attribute-overlay-test" style="position: absolute; visibility: hidden; height: auto; width: auto; top:0px">
-                            <div data-bind="foreach: attributeLayers()" style="overflow: hidden; max-height: 10px;">
-                                <div data-bind="css: {display: $root.aggregatedAttributes()[featureAttributionName] ? 'block' : 'none'}">
-                                  <h4 data-bind="text: featureAttributionName"></h4>
-                                  <dl data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
-                                    <dt>
-                                        <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
-                                        <span style="font-weight: normal" data-bind="text: data"></span>
-                                    </dt>
-                                  </dl>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Aggregated Attribution Overlay -->
-                        <div data-bind="visible: showFeatureAttribution">
-                            <div id="aggregated-attribute-overlay" class="scrollpane" data-bind="visible: aggregatedAttributes, style: {width: aggregatedAttributesWidth}" style="display: none">
-                                <div id="aggregated-attribute-heading">
-                                    <h4>Available Information</h4>
-                                </div>
-                                <div id="aggregated-attribute-content" class="accordion">
-                                    <div data-bind="foreach: attributeLayers()">
-                                        <div class="accordion-group">
-                                            <div data-bind="visible: $root.aggregatedAttributes()[featureAttributionName]">
-                                                <div class="accordion-heading" data-bind="click: toggleLayerAttribution">
-                                                    <a class="accordion-toggle">
-                                                        <span data-bind="text: featureAttributionName"></span>
-                                                    </a>
-                                                </div>
-                                                <div class="accordion-body collapse in" data-bind="attr: { id: $root.convertToSlug(featureAttributionName) }" >
-                                                    <div class="accordion-inner">
-                                                        <dl data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
-                                                            <dt>
-                                                                <!-- ko if: $data.hasOwnProperty("tab") -->
-                                                                <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                                <!-- /ko -->
-                                                                <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
-                                                                <span style="font-weight: normal" data-bind="text: data"></span>
-                                                            </dt>
-                                                        </dl>
-                                                    </div>
-                                                </div>
+                        <div id="aggregated-attribute-content" class="accordion">
+                            <div data-bind="foreach: attributeLayers()">
+                                <div class="accordion-group">
+                                    <div data-bind="visible: $root.aggregatedAttributes()[featureAttributionName]">
+                                        <div class="accordion-heading" data-bind="click: toggleLayerAttribution">
+                                            <a class="accordion-toggle">
+                                                <span data-bind="text: featureAttributionName"></span>
+                                            </a>
+                                        </div>
+                                        <div class="accordion-body collapse in" data-bind="attr: { id: $root.convertToSlug(featureAttributionName) }" >
+                                            <div class="accordion-inner">
+                                                <dl data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
+                                                    <dt>
+                                                        <!-- ko if: $data.hasOwnProperty("tab") -->
+                                                        <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                        <!-- /ko -->
+                                                        <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
+                                                        <span style="font-weight: normal" data-bind="text: data"></span>
+                                                    </dt>
+                                                </dl>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <span id="close-attribute-overlay" class="pull-right"><a href="#" style="position: absolute; top: 0px; right: 0px; opacity: .6;" class="btn btn-mini close" data-bind="click: closeAttribution"> x </a> </span>
                             </div>
                         </div>
+                        <span id="close-attribute-overlay" class="pull-right"><a href="#" style="position: absolute; top: 0px; right: 0px; opacity: .6;" class="btn btn-mini close" data-bind="click: closeAttribution"> x </a> </span>
+                    </div>
 
-                        <!-- Bookmark Message -->
-                        <div id="error-overlay" data-bind="visible: error() === 'restoreState'" style="display:none">
-                            <div>
-                                <span class="pull-right">
-                                    <a href="#" style="margin-left: 10px; opacity: .6;" class="close btn btn-mini" data-bind="click: closeAlert"> x </a>
-                                    <a class="btn btn-mini" data-bind="click: bookmarks.restoreState">
-                                        Return to Previous View
-                                    </a>
-                                </span>
-                                <span data-bind="text: bookmarks.activeBookmark"></span>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-
-                        <!-- FullScreen Fail Message -->
-                        <div id="fullscreen-error-overlay" style="display:none">
-                            <div>
-                                <span class="pull-right">
-                                    <a href="#" style="margin-left: 10px; opacity: .6;" class="close btn btn-mini" data-bind="click: closeAlert"> x </a>
-
-                                </span>
-                                <span>We're sorry, the Fullscreen option is not supported in all browsers at this time...If it's important, you might try Firefox or Chrome.</span>
-                            </div>
+                    <!-- Bookmark Message -->
+                    <div id="error-overlay" data-bind="visible: error() === 'restoreState'" style="display:none">
+                        <div>
+                            <span class="pull-right">
+                                <a href="#" style="margin-left: 10px; opacity: .6;" class="close btn btn-mini" data-bind="click: closeAlert"> x </a>
+                                <a class="btn btn-mini" data-bind="click: bookmarks.restoreState">
+                                    Return to Previous View
+                                </a>
+                            </span>
+                            <span data-bind="text: bookmarks.activeBookmark"></span>
+                            <div class="clearfix"></div>
                         </div>
                     </div>
-                </div>
 
+                    <!-- FullScreen Fail Message -->
+                    <div id="fullscreen-error-overlay" style="display:none">
+                        <div>
+                            <span class="pull-right">
+                                <a href="#" style="margin-left: 10px; opacity: .6;" class="close btn btn-mini" data-bind="click: closeAlert"> x </a>
 
-                <div class="row panel panel-default" data-bind="visible: showLayers()" id="left-panel">
+                            </span>
+                            <span>We're sorry, the Fullscreen option is not supported in all browsers at this time...If it's important, you might try Firefox or Chrome.</span>
+                        </div>
+                    </div>
+
+                <div id="left-panel" class="panel panel-default collapsible" data-bind="css: { collapsed: !showLayers() }">
                     <div class="panel-heading">
                         <div class="panel-title">
-                            <div id="left-maximized">
-                                <form class="form-search" data-bind="submit: layerSearch">
-                                    <div class="input-group">
-                                        <!-- data-provide="typeahead"  -->
-                                        <input type="text" class="search-box form-control" 
-                                        data-bind="value: searchTerm, event: { keyup: keySearch }" style="overflow: hidden; text-overflow: ellipsis;" placeholder="Search data" id="data-search-input">
-                                        <span>
-                                            <a class="btn" data-bind="visible: ! searchTermInput()">
-                                                <i class="fa fa-search search-icon"></i>
-                                            </a>
-                                            <a class="btn" data-bind="visible: searchTermInput(), click: clearSearch">
-                                                <i class="fa fa-close"></i>
-                                            </a>
-                                        </span>
-                                    </div>
-                                    <p class="search-instructions"> Start typing any phrase or keyword </p>
-                                </form>
-                            </div>
-                            <a data-toggle="collapse" data-target="#collapsible-left-panel" class="collapse-button">
-                                <i class="fa fa-angle-double-left"></i>
-                            </a>
-                        </div>
-                        <span class="panel-title">
-                            <div style="display:none" id="left-minimized" >
-                            <h4>
-                                Data Layers
-                            </h4>
-
+                            <form class="form-search hide-collapsed" data-bind="submit: layerSearch">
+                                <div class="input-group">
+                                    <!-- data-provide="typeahead"  -->
+                                    <input type="text" class="search-box form-control" 
+                                    data-bind="value: searchTerm, event: { keyup: keySearch }" style="overflow: hidden; text-overflow: ellipsis;" placeholder="Search data" id="data-search-input">
+                                    <span>
+                                        <a class="btn" data-bind="visible: ! searchTermInput()">
+                                            <i class="fa fa-search search-icon"></i>
+                                        </a>
+                                        <a class="btn" style="display:none" data-bind="visible: searchTermInput(), click: clearSearch">
+                                            <i class="fa fa-close"></i>
+                                        </a>
+                                    </span>
+                                </div>
+                                <p class="search-instructions">Start typing any phrase or keyword</p>
+                            </form>
+                            <div class="show-collapsed" style="display:none">
+                                <h4>Data Layers</h4>
                                 <span data-bind="visible: activeLayers().length > 0">
                                     <span data-bind="text: activeLayers().length">0</span> Active
                                 </span>
+                            </div>
+                            <a data-bind="click: toggleLayers" class="collapse-button">
+                                <i class="fa fa-angle-double-left"></i>
+                            </a>
                         </div>
-                        </span>
                     </div>
-                    <div id="collapsible-left-panel" class="panel-collapse collapse in">
-                        <div class="panel-body">
-                            <div class="frame tabs" id="data-panel" data-bind="visible: showLayers(), css: {'fullscreen-data{% if user.is_authenticated %}-authenticated': isFullScreen(){% endif %}}">
-                            
-                                <div class="sidebar-nav">
-                                    <ul id="myTab" class="nav nav-tabs">
-                                        <li data-tab="active">
-                                            <h4>
-                                                <a href="#active" data-toggle="tab" id="activeTab">Active
-                                                    <span data-bind="visible: activeLayers().length > 0">
-                                                        &#8226;&nbsp;<span data-bind="text: activeLayers().length">0</span>
-                                                    </span>
-                                                </a>
-                                            </h4>
-                                        </li>
-                                        <li data-tab="designs">
-                                            <h4>
-                                                <a href="#designs" data-toggle="tab" id="designsTab">Custom</a>
-                                            </h4> 
-                                        </li>
-                                        <li class="active" data-tab="data" >
-                                            <h4>
-                                                <a href="#data" data-toggle="tab" id="dataTab">Data Catalog</a>
-                                            </h4>
-                                        </li>
-                                    </ul>
-                                    <div id="myTabContent" class="tab-content">
-                                        <!-- ACTIVE TAB -->
-                                        <div class="tab-pane fade" id="active">
-                                            <div data-bind="visible: activeLayers().length === 0">
-                                                <div style="padding: 10px;">
-                                                    <p>
-                                                        You currently have no activated data layers.
-                                                    </p>
-                                                    <p>
-                                                        Data layers that are activated in the Data panel will appear in this Active panel.
-                                                    </p>
-                                                    <p>
-                                                        Data layers in the Active panel can be adjusted in terms of their transparency and their ordering on the map.
-                                                    </p>
-                                                </div>
+                    <div class="panel-body">
+                        <div class="frame tabs" id="data-panel" data-bind="visible: showLayers(), css: {'fullscreen-data{% if user.is_authenticated %}-authenticated': isFullScreen(){% endif %}}">
+                        
+                            <div class="sidebar-nav">
+                                <ul id="myTab" class="nav nav-tabs">
+                                    <li data-tab="active">
+                                        <h4>
+                                            <a href="#active" data-toggle="tab" id="activeTab">Active
+                                                <span data-bind="visible: activeLayers().length > 0">
+                                                    &#8226;&nbsp;<span data-bind="text: activeLayers().length">0</span>
+                                                </span>
+                                            </a>
+                                        </h4>
+                                    </li>
+                                    <li data-tab="designs">
+                                        <h4>
+                                            <a href="#designs" data-toggle="tab" id="designsTab">Custom</a>
+                                        </h4> 
+                                    </li>
+                                    <li class="active" data-tab="data" >
+                                        <h4>
+                                            <a href="#data" data-toggle="tab" id="dataTab">Data Catalog</a>
+                                        </h4>
+                                    </li>
+                                </ul>
+                                <div id="myTabContent" class="tab-content">
+                                    <!-- ACTIVE TAB -->
+                                    <div class="tab-pane fade" id="active">
+                                        <div data-bind="visible: activeLayers().length === 0">
+                                            <div style="padding: 10px;">
+                                                <p>
+                                                    You currently have no activated data layers.
+                                                </p>
+                                                <p>
+                                                    Data layers that are activated in the Data panel will appear in this Active panel.
+                                                </p>
+                                                <p>
+                                                    Data layers in the Active panel can be adjusted in terms of their transparency and their ordering on the map.
+                                                </p>
                                             </div>
-                                            <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
-                                                <li>
-                                                <div class="active-wrapper">
-                                                    {% include "visualize/includes/active-layer-row.html" %}
-                                                </div>
-                                                </li>
-                                            </ul>
                                         </div>
-                                        <!-- END ACTIVE TAB -->
-                                        <!-- DATA TAB -->
-                                        <div class="tab-pane active in fade" id="data">
-                                            <div class="accordion-wrapper">
-                                                <!-- data accordion -->
-                                                <div id="data-accordion">
-                                                    <div class="accordion" data-bind="foreach: themes">
-                                                        <div class="accordion-group">
-                                                            <div class="accordion-heading" data-bind="click: setOpenTheme, css: { 'active': isOpenTheme() }">
-                                                                <div>
-                                                                    <a class="accordion-toggle">
-                                                                        <span data-bind="text: name">Themes</span></a>
-                                                                </div>
+                                        <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
+                                            <li>
+                                            <div class="active-wrapper">
+                                                {% include "visualize/includes/active-layer-row.html" %}
+                                            </div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <!-- END ACTIVE TAB -->
+                                    <!-- DATA TAB -->
+                                    <div class="tab-pane active in fade" id="data">
+                                        <div class="accordion-wrapper">
+                                            <!-- data accordion -->
+                                            <div id="data-accordion">
+                                                <div class="accordion" data-bind="foreach: themes">
+                                                    <div class="accordion-group">
+                                                        <div class="accordion-heading" data-bind="click: setOpenTheme, css: { 'active': isOpenTheme() }">
+                                                            <div>
+                                                                <a class="accordion-toggle">
+                                                                    <span data-bind="text: name">Themes</span></a>
                                                             </div>
-                                                            <div class="accordion-body collapse" data-bind="css: { 'in': isOpenTheme() }">
-                                                                <div class="accordion-inner">
-                                                                    <ul  class="unstyled" data-bind="foreach: layers ">
-                                                                        <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
-                                                                            {% include "visualize/includes/catalog-layer-row.html" %}
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
+                                                        </div>
+                                                        <div class="accordion-body collapse" data-bind="css: { 'in': isOpenTheme() }">
+                                                            <div class="accordion-inner">
+                                                                <ul  class="unstyled" data-bind="foreach: layers ">
+                                                                    <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
+                                                                        {% include "visualize/includes/catalog-layer-row.html" %}
+                                                                    </li>
+                                                                </ul>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- /data-accordion -->
                                             </div>
+                                            <!-- /data-accordion -->
                                         </div>
-                                        <!-- END DATA TAB -->
-
-                                        <!-- DESIGNS TAB -->
-                                        {% if user.is_authenticated %}
-                                          {% include "visualize/scenarios.html" %}
-                                        {% else %}
-                                        <div class="tab-pane in fade" id="designs">
-                                            <p>
-                                                <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in</a>
-                                                or
-                                                <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>join</a>
-                                            </p>
-                                        </div>
-                                        {% endif %}
-                                        <!-- END DESIGNS TAB -->
                                     </div>
+                                    <!-- END DATA TAB -->
+
+                                    <!-- DESIGNS TAB -->
+                                    {% if user.is_authenticated %}
+                                      {% include "visualize/scenarios.html" %}
+                                    {% else %}
+                                    <div class="tab-pane in fade" id="designs">
+                                        <p>
+                                            <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in</a>
+                                            or
+                                            <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>join</a>
+                                        </p>
+                                    </div>
+                                    {% endif %}
+                                    <!-- END DESIGNS TAB -->
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
             <span class="timestamp" data-bind="visible: mapTitle"><span data-bind="text: new Date().toString('M/d/yyyy HH:mm')"></span></span>
