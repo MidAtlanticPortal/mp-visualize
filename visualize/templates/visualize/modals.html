@@ -74,40 +74,41 @@
 
 <!-- DESIGN MAP LINKS MODAL -->
 
-<div style="display:none; width: 450px;" id="map-links-modal" class="modal hide fade" data-bind="with: app.viewModel.mapLinks">
-    <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Map Links</h3>
-    </div>
-    
-    <div class="modal-body" style="height: 165px; overflow: hidden"> 
-        <div class="row-fluid" style="padding-top: 5px">
-            <div>
-                URL  
-                <span class="pull-right">
-                    <label> 
-                        <input class="short-url-checkbox" type="checkbox" data-bind="checked: shrinkURL" style="margin-top: 0px; margin-bottom: 3px"> 
-                        Short URL 
-                    </label>
-                </span>
+<div id="map-links-modal" class="modal fade" data-bind="with: app.viewModel.mapLinks" tabindex="-1" role="dialog" aria-labelledby="map-links-modal-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="map-links-modal-label">Map Links</h3>
             </div>
-            <div>
-                <input id="short-url" type="text" style="width: 96%" data-bind="attr: {value: getURL()}"> 
+            
+            <div class="modal-body"> 
+                <div>URL  
+                    <span class="pull-right">
+                        <label> 
+                            <input class="short-url-checkbox" type="checkbox" data-bind="checked: shrinkURL" style="margin-top: 0px; margin-bottom: 3px"> 
+                            Short URL 
+                        </label>
+                    </span>
+                </div>
+                <div>
+                    <input id="short-url" type="text" style="width: 96%" data-bind="attr: {value: getURL()}"> 
+                </div>
+                <div style="padding-top: 12px; padding-bottom: 5px"> 
+                    Embedded Map
+                </div> 
+                <div> 
+                    <input id="iframe-html" type="text" style="width: 96%" data-bind="attr: {value: getIFrameHTML}"> 
+                </div> 
+                <div> 
+                    <a href="#" data-bind="click: openIFrameExample"> 
+                        Preview embedded map 
+                    </a> 
+                </div>
             </div>
-            <div style="padding-top: 12px; padding-bottom: 5px"> 
-                Embedded Map
-            </div> 
-            <div> 
-                <input id="iframe-html" type="text" style="width: 96%" data-bind="attr: {value: getIFrameHTML}"> 
-            </div> 
-            <div style="margin-top: -4px"> 
-                <a href="#" data-bind="click: openIFrameExample"> 
-                    Preview embedded map 
-                </a> 
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
-    </div>
-    <div class="modal-footer">
-        <button href="#" class="btn" data-dismiss="modal">Close</button>
     </div>
 </div>
