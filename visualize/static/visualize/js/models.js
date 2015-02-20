@@ -1242,30 +1242,12 @@ function viewModel() {
         }
     };
     
-    //show Map Links
-    /*
-    self.showMapLinks = function(self, event) {
-        var $button = $(event.target).closest('.btn'),
-            $popover = $('#map-links-popover');
-
-        if ($popover.is(":visible")) {
-            $popover.hide();
-        } else {
-            self.resetMapLinks();
-            $popover.show().position({
-                "my": "top",
-                "at": "top",
-                "of": $('#map'),
-                offset: "0px 10px"
-            });
-        }
-    };
-    */
-    
-    self.resetMapLinks = function() {
+    self.showMapLinks = function() {
         self.mapLinks.shrinkURL(false);
         $('#short-url').text = self.mapLinks.getURL();
         self.mapLinks.setIFrameHTML();
+        $('#map-links-modal').modal()
+        
     };
     
     self.selectedLayer = ko.observable();
