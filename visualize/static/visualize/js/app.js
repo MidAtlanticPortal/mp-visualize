@@ -1,32 +1,7 @@
 // save the initial load hash so we can use it if set
 app.hash = window.location.hash;
 app.onResize = function(percent) {
-
-  var height = $(window).height() * (percent || 0.855);
-  var fullheight = $(window).height() - ($(".navbar").height() ); // cater for the top Nav
-  var tabheight = fullheight * (percent || 0.75); // cater for the top Nav
-  var width = $(window).width();
-  // when fullscreen be odd?
-  if (height) {
-    //if (!app.embeddedMap) {
-    if ( width > 767 && !app.embeddedMap ) {
-        $("#map").height(fullheight);
-        $("#map-wrapper").height(fullheight);
-        $(".tabs").height(tabheight);
-        //$("#legend-wrapper").height(height - 20);
-        $("#data-accordion").height(tabheight - 20);
-        $("#designs-accordion").height(tabheight - 20 - 96);
-        $("#active").height(tabheight + 20 - 96);
-    } 
     app.map.render('map');
-  }
-  
-  if (width < 946) {
-    app.viewModel.hideTours(true);
-  } else {
-    app.viewModel.hideTours(false);
-  }
-
 };
 
 $(window).on('resize', function() {
