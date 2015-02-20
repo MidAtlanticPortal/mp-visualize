@@ -20,42 +20,37 @@
     
     <div class="form-container" data-bind="visible: ! (loadingMessage() || errorMessage())">
         <div id="designs-data" data-bind="visible: !scenarioForm() && !selectionForm() && !reportsVisible() && !drawingForm()">
-            <div class="row-fluid">
-                <div class="span12">
-                    <div id="view-reports-button" class="btn pull-right" data-bind="click: showComparisonReports">
-                        View Reports
-                    </div>
-                    <div id="create-new-design" class="btn-group" style="padding-bottom: 10px;">
-                        <a id="create-new-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                            Create New
-                            <span class="caret"></span>
-                        </a>
-                        <ul class="dropdown-menu" style="min-width: 115px;">
-                            <li id="create-new-drawing"><a data-bind="click: createPolygonDesign" style="padding-left: 15px">Drawing</a></li>
-                            <li id="create-new-selection"><a data-bind="click: createSelectionDesign" style="padding-left: 15px">Lease Block Collection</a></li>
-                            {% load in_group %}
-                            {% if user|in_group:"Designers" %}
-                            <li><a data-bind="click: createWindScenario" style="padding-left: 15px">Wind Energy Siting</a></li>
-                            {% endif %}
-                            <!--
-                            <li class="dropdown-submenu">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sketch of the Sea</a>
-                                <ul class="dropdown-menu">
-                                    <li><a data-bind="click: createPointDesign">Point</a></li>
-                                    <li><a data-bind="click: createLineDesign">Line</a></li>
-                                    <li><a data-bind="click: createPolygonDesign">Polygon</a></li>
-                                </ul>                                
-                            </li>
-                            -->
-                        </ul>
-                    </div>
-                    
-                </div>
+            <div id="view-reports-button" class="btn pull-right" data-bind="click: showComparisonReports">
+                View Reports
             </div>
-            
+            <div id="create-new-design" class="btn-group" style="padding-bottom: 10px;">
+                <a id="create-new-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                    Create New
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" style="min-width: 115px;">
+                    <li id="create-new-drawing"><a data-bind="click: createPolygonDesign" style="padding-left: 15px">Drawing</a></li>
+                    <li id="create-new-selection"><a data-bind="click: createSelectionDesign" style="padding-left: 15px">Lease Block Collection</a></li>
+                    {% load in_group %}
+                    {% if user|in_group:"Designers" %}
+                    <li><a data-bind="click: createWindScenario" style="padding-left: 15px">Wind Energy Siting</a></li>
+                    {% endif %}
+                    <!--
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sketch of the Sea</a>
+                        <ul class="dropdown-menu">
+                            <li><a data-bind="click: createPointDesign">Point</a></li>
+                            <li><a data-bind="click: createLineDesign">Line</a></li>
+                            <li><a data-bind="click: createPolygonDesign">Polygon</a></li>
+                        </ul>                                
+                    </li>
+                    -->
+                </ul>
+            </div>
+                    
             <div id="design-list" class="row-fluid">
                 <div id="designs-accordion" class="designs">
-                    <div class="accordion" style="padding-bottom: 110px">                    
+                    <div class="accordion">                    
                         
                         <!-- DRAWINGS -->
                         <div>
