@@ -2130,7 +2130,7 @@ $('#designsTab').on('show.bs.tab', function (e) {
         });
         
         $.ajax({
-            url: '/scenario/get_sharing_groups',
+            url: '/g/rpc/get_sharing_groups',
             type: 'GET',
             dataType: 'json',
             success: function (groups) {
