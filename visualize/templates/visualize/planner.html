@@ -185,7 +185,7 @@
                                 </ul>
                                 <div id="myTabContent" class="tab-content">
                                     <!-- ACTIVE TAB -->
-                                    <div class="tab-pane fade" id="active">
+                                    <div class="tab-pane " id="active">
                                         <div data-bind="visible: activeLayers().length === 0">
                                             <div style="padding: 10px;">
                                                 <p>
@@ -209,7 +209,7 @@
                                     </div>
                                     <!-- END ACTIVE TAB -->
                                     <!-- DATA TAB -->
-                                    <div class="tab-pane active in fade" id="data">
+                                    <div class="tab-pane active " id="data">
                                         <div class="accordion-wrapper">
                                             <!-- data accordion -->
                                             <div id="data-accordion">
@@ -242,7 +242,7 @@
                                     {% if user.is_authenticated %}
                                       {% include "visualize/scenarios.html" %}
                                     {% else %}
-                                    <div class="tab-pane in fade" id="designs">
+                                    <div class="tab-pane " id="designs">
                                         <p>
                                             <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in</a>
                                             or
