@@ -93,6 +93,51 @@
                             </div>
                         </div>
                         <!-- end drawings -->
+
+                        <div>
+                            <div class="accordion-group">
+                                <div id="bookmarks-header"
+                                     class="accordion-heading"
+                                     data-bind="click: toggleBookmarksOpen, css: {'active': isBookmarksOpen()}">
+                                    <div>
+                                        <a class="accordion-toggle">
+                                            <span>Map View Bookmarks</span>
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <div class="accordion-body collapse" data-bind="css: {'in': isBookmarksOpen()}">
+                                    <div class="accordion-inner">
+                                        <div data-bind="visible: !bookmarkList().length"
+                                             style="font-weight: normal">
+                                            <div style="padding: 10px;">
+                                                <p>
+                                                    You currently have no Map View Bookmarks.
+                                                </p>
+                                                <p>
+                                                    To create a new bookmark,
+                                                    choose 'Bookmark' from
+                                                    the <b>Create New</b> menu
+                                                    above.
+                                                </p>
+                                                <p>
+                                                    Note: you may, at any time,
+                                                    edit, share, or remove any
+                                                    of the bookmarks that you
+                                                    have created.
+                                                    Any bookmarks shared with
+                                                    you can also be copied so
+                                                    that they too can be edited,
+                                                    shared, or removed.
+                                                </p>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         
                         <!-- LEASE BLOCK COLLECTIONS -->
                         <div>

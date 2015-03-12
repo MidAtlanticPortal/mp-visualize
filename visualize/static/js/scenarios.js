@@ -1554,7 +1554,23 @@ function scenariosModel(options) {
                 self.isDrawingsOpen(true);
             }
         }
-    }; 
+    };
+
+    self.bookmarkList = ko.observableArray();
+    self.isBookmarksOpen = ko.observable(false);
+    self.toggleBookmarksOpen = function(force) {
+        $('#designsTab').tab('show');
+
+        if (force == 'open') {
+            self.isBookmarksOpen(true);
+        }
+        else if (force == 'close') {
+            self.isBookmarksOpen(false);
+        }
+        else {
+            self.isBookmarksOpen(!self.isBookmarksOpen());
+        }
+    }
     
     //restores state of Designs tab to the initial list of designs
     self.reset = function (obj) {
