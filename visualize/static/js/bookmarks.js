@@ -248,7 +248,7 @@ function bookmarksModel(options) {
         var bookmark = app.viewModel.bookmarks.activeBookmark;
         // if the user is logged in, ajax call to add bookmark to server
 
-        if (app.is_authenticated) { 
+        if (true) {
             $.ajax({ 
                 url: '/visualize/remove_bookmark', 
                 data: { name: bookmark.name, hash: bookmark.getBookmarkHash(), uid: bookmark.uid }, 
@@ -280,7 +280,7 @@ function bookmarksModel(options) {
         });
             
         //if the user is logged in, ajax call to add bookmark to server 
-        if (app.is_authenticated) { 
+        if (true) {
             $.ajax({ 
                 url: '/visualize/add_bookmark', 
                 data: { name: self.newBookmarkName(), hash: window.location.hash.slice(1) }, 
@@ -357,7 +357,7 @@ function bookmarksModel(options) {
         
         // load bookmarks from server while syncing with client 
         //if the user is logged in, ajax call to sync bookmarks with server 
-        if (app.is_authenticated) { 
+        if (true) {
             $.ajax({ 
                 url: '/visualize/get_bookmarks', 
                 data: { bookmarks: local_bookmarks }, 
