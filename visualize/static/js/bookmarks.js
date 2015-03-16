@@ -357,44 +357,42 @@ function bookmarksModel(options) {
         
         // load bookmarks from server while syncing with client 
         //if the user is logged in, ajax call to sync bookmarks with server 
-        if (true) {
+        $.jsonrpc('get_bookmarks', [], {
+            success: function(result) {
+                var bookmarks = result || [];
+                var blist = [];
+                for (var i=0; i < bookmarks.length; i++) {
+                    var bookmark = new bookmarkModel( {
+                        state: $.deparam(bookmarks[i].hash),
+                        name: bookmarks[i].name,
+                        uid: bookmarks[i].uid,
+                        shared: bookmarks[i].shared,
+                        sharedByUsername: bookmarks[i].shared_by_username,
+                        sharedByName: bookmarks[i].shared_by_name,
+                        sharingGroups: bookmarks[i].sharing_groups
+                    });   
+                    console.debug('bookmark_state = ',bookmark.state);
+                    blist.push(bookmark);
+                }
+                if (blist.length > 0) {
+                    //self.bookmarksList(blist);
+                    self.bookmarksList(_.sortBy(blist, 'name'));
+                    //self.storeBookmarks();
+                }
+            },
+            error: function(result) {
+                
+            }
+        });
+        /*
             $.ajax({ 
                 url: '/visualize/get_bookmarks', 
                 data: { bookmarks: local_bookmarks }, 
                 type: 'POST',
                 dataType: 'json',
                 success: function(result) {
-                    var bookmarks = result || [],
-                        blist = [];
-                    for (var i=0; i < bookmarks.length; i++) {
-                        var bookmark = new bookmarkModel( {
-                            state: $.deparam(bookmarks[i].hash),
-                            name: bookmarks[i].name,
-                            uid: bookmarks[i].uid,
-                            shared: bookmarks[i].shared,
-                            sharedByUsername: bookmarks[i].shared_by_username,
-                            sharedByName: bookmarks[i].shared_by_name,
-                            sharingGroups: bookmarks[i].sharing_groups
-                        });   
-                        blist.push(bookmark);
-                    }
-                    if (blist.length > 0) {
-                        //self.bookmarksList(blist);
-                        self.bookmarksList(_.sortBy(blist, 'name'));
-                        //self.storeBookmarks();
-                    }
                 },
                 error: function(result) { 
-                    if (existingBookmarks) {
-                        for (var i=0; i < existingBookmarks.length; i++) {
-                            self.bookmarksList.push( new bookmarkModel( {
-                                name: existingBookmarks[i].name,
-                                state: existingBookmarks[i].state,
-                                sharing_groups: existingBookmarks[i].sharingGroups
-                            }));
-                        }
-                        //self.bookmarksList = ko.observableArray(existingBookmarks);
-                    } 
                 } 
             });
         } else if (existingBookmarks) {
@@ -406,7 +404,7 @@ function bookmarksModel(options) {
                 }));
             }
             //self.bookmarksList = ko.observableArray(existingBookmarks);
-        } 
+        } */
         self.getSharingGroups();
     };
     

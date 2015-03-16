@@ -23,19 +23,12 @@ def add_bookmark(name, url_hash, **kwargs):
 
 
 @rpcmethod()
-def get_bookmarks(bookmarks, **kwargs):
+def get_bookmarks(**kwargs):
+    """Return a list of bookmark object for the current user.
+    """
     request = kwargs['request']
-    #sync the client-side bookmarks with the server side bookmarks
-    #update the server-side bookmarks and return the new list
 
-    # Note: It appears that the only place get_bookmarks is called is in the
-    # initial load of visualize, i.e., prior to there being any bookmarks stored
-    # on the client side, so POST is always empty.
-    if 'bookmarks' in request.POST:
-        bookmark_dict = request.POST['bookmarks']
-        # bookmark_dict = parser.parse(request.POST.urlencode())['bookmarks']
-    else:
-        bookmark_dict = {}
+    bookmark_dict = {}
 
     #loop through the list from the client
     #if user, bm_name, and bm_state match then skip
