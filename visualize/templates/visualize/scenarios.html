@@ -88,7 +88,7 @@
                             <div class="accordion-group">
                                 <div id="bookmarks-header"
                                      class="accordion-heading"
-                                     data-bind="click: toggleBookmarksOpen, css: {'active': isBookmarksOpen()}">
+                                     data-bind="click: app.viewModel.toggleBookmarksOpen, css: {'active': app.viewModel.isBookmarksOpen()}">
                                     <div>
                                         <a class="accordion-toggle">
                                             <span>Map View Bookmarks</span>
@@ -96,9 +96,9 @@
                                     </div>
                                 </div>
 
-                                <div class="accordion-body collapse" data-bind="css: {'in': isBookmarksOpen()}">
-                                    <div class="accordion-inner" data-bind="with: bookmarks">
-                                        <div data-bind="visible: !bookmarkList().length"
+                                <div class="accordion-body collapse" data-bind="css: {'in': app.viewModel.isBookmarksOpen()}">
+                                    <div class="accordion-inner" data-bind="with: app.viewModel.bookmarks">
+                                        <div data-bind="visible: !bookmarksList().length"
                                              style="font-weight: normal">
                                             <div style="padding: 10px;">
                                                 <p>
@@ -123,7 +123,7 @@
 
                                             </div>
                                         </div>
-                                        <div data-bind="visible: bookmarkList().length > 0">
+                                        <div data-bind="visible: bookmarksList().length > 0">
                                             
                                             <div id="bookmarks-table">
                                                 <table class="table table-condensed" style="margin-bottom: 5px;">

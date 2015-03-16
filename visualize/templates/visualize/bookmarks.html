@@ -10,53 +10,6 @@
             <i class="fa fa-close"></i>
         </a>
         <div class="popover-content">
-            <div id="bookmarks-table">
-                <table class="table table-condensed" style="margin-bottom: 5px;">
-                    <tbody data-bind="foreach: bookmarksList">
-                        <tr style="border-bottom: 1px solid #dddddd;">
-                            <td>
-                                <span data-bind="click: loadBookmark">
-                                    <a data-bind="text: name, attr: {href: getBookmarkUrl}">name</a>
-                                </span>
-                            </td>
-                            <td style="padding-left: 0px; width: 35px">
-
-                                {% if user.is_authenticated %}
-                                <a data-bind="attr: {title: sharedBy}, visible: shared()" style="text-decoration: none; cursor: default;" data-toggle="tooltip" data-placement="left" >
-                                    <i class="fa fa-group" style="padding-left: 10px"></i>
-                                </a>
-                                {% endif %}
-                                <a class="btn btn-mini bookmark-settings" data-bind="click: showBookmarkSettings, visible: !shared()">
-                                    <span title="Settings" data-toggle="tooltip" data-placement="left"><span class="fa fa-cog"></span></span>
-                                </a>
-                                    <!-- settings popover -->
-                                <div style="display:none" class="popover fade bottom in bookmark-settings-popover">
-                                    <div class="popover-inner">
-                                        <div class="popover-content" >
-                                            <div>
-                                                <a data-bind="click: showSharingModal" >
-                                                    <span><i class="fa fa-link"></i></span>
-                                                    <span>Share Bookmark</span>
-                                                </a>
-                                           </div>
-                                           <div>
-                                                <a data-bind="click: $parent.removeBookmark">
-                                                    <span><i class="fa fa-times-circle"></i></span>
-                                                    <span>Delete Bookmark</span>
-                                                </a>
-                                           </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                <p data-bind="visible: bookmarksList().length === 0">
-                    Bookmarks save the map and active layers. You currently have no bookmarks.
-                </p>
-            </div>
-            <hr style="margin-bottom: 10px" />
             <form data-bind="submit: saveBookmark" style="margin-bottom: 5px">
             {% csrf_token %}
                 <input type="text" data-bind="value: newBookmarkName" class="input" placeholder="Add New">
