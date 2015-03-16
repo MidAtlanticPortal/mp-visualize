@@ -913,8 +913,26 @@ function viewModel() {
     self.layerIndex = {};
     self.layerSearchIndex = {};
 
+    self.bookmarks = new bookmarksModel();
+    self.isBookmarksOpen = ko.observable(false);
     self.bookmarkEmail = ko.observable();
-        
+    self.toggleBookmarksOpen = function(force) {
+        $('#designsTab').tab('show');
+
+        if (force == 'open') {
+            self.isBookmarksOpen(true);
+        }
+        else if (force == 'close') {
+            self.isBookmarksOpen(false);
+        }
+        else {
+            self.isBookmarksOpen(!self.isBookmarksOpen());
+        }
+    }
+    
+    self.scenarios = new scenariosModel();
+    self.scenarios.reports = new reportsModel(); 
+    
     self.mapLinks = new mapLinksModel();
 
     // text for tooltip popup

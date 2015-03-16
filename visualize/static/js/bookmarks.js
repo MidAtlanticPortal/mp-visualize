@@ -445,4 +445,3 @@ function bookmarksModel(options) {
     return self;
 } // end of bookmarksModel
 
-app.viewModel.bookmarks = new bookmarksModel();

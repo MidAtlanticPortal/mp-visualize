@@ -333,9 +333,6 @@ function reportsModel(options) {
 
 }
 
-app.viewModel.scenarios.reports = new reportsModel();
-
-
 $('#reportsTab').on('show', function (e) {
     if ( !app.viewModel.scenarios.scenariosLoaded || !app.viewModel.scenarios.selectionsLoaded) {
         // load the scenarios

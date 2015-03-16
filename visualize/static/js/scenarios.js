@@ -1556,21 +1556,6 @@ function scenariosModel(options) {
         }
     };
 
-    self.bookmarkList = ko.observableArray();
-    self.isBookmarksOpen = ko.observable(false);
-    self.toggleBookmarksOpen = function(force) {
-        $('#designsTab').tab('show');
-
-        if (force == 'open') {
-            self.isBookmarksOpen(true);
-        }
-        else if (force == 'close') {
-            self.isBookmarksOpen(false);
-        }
-        else {
-            self.isBookmarksOpen(!self.isBookmarksOpen());
-        }
-    }
     
     //restores state of Designs tab to the initial list of designs
     self.reset = function (obj) {
@@ -2114,9 +2099,6 @@ function scenariosModel(options) {
     
     return self;
 } // end scenariosModel
-
-
-app.viewModel.scenarios = new scenariosModel();
 
 $('#designsTab').on('show.bs.tab', function (e) {
     //if ( app.viewModel.scenarios.reports && app.viewModel.scenarios.reports.showingReport() ) {
