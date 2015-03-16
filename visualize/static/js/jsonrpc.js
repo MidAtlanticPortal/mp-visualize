@@ -33,24 +33,25 @@ function jsonrpc_call(method, args, options) {
             return; 
         }
         
-        if (rpc_response.result && (!rpc_response.error || rpc_response.error == null)) {
+        var has_error = rpc_response.error && (rpc_response.error != null);
+        var has_result = rpc_response.result && (rpc_response.result != null);
+        
+        if (has_result && !has_error) {
             if (options.success) {
                 options.success(rpc_response.result, rpc_response);
             }
-            else {
-                console.debug("Unhandled rpc error", rpc_response);
-            }
         }
-        else if (rpc_response.error && (!rpc_response.result || rpc_response.result == null)) {
+        else if (has_error && !has_result) {
             if (options.error) {
                 options.error(rpc_response.error, rpc_response);
             }
-            else {
-                console.debug("Unhandled rpc error", rpc_response);
-            }
+        }
+        else {
+            // Either have both an error and a result, or neither. RPC fault. 
+            console.debug("Bad JSONRPC response", rpc_response)
         }
     }
-        
+    
     request = {
         'jsonrpc': '2.0',
         'method': method,
@@ -70,9 +71,6 @@ function jsonrpc_call(method, args, options) {
         complete: function() {
             if (options.complete) {
                 options.complete(); 
-            }
-            else {
-                console.debug("RPC finished")
             }
         }
     });
