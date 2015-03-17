@@ -74,7 +74,8 @@ def remove_bookmark(key, **kwargs):
     bookmark.delete()
 
 @rpcmethod()
-def share_bookmark(request):
+def share_bookmark(login_required=True):
+
     group_names = request.POST.getlist('groups[]')
     bookmark_uid = request.POST['bookmark']
     bookmark = get_feature_by_uid(bookmark_uid)

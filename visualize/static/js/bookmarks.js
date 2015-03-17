@@ -248,70 +248,23 @@ function bookmarksModel(options) {
         var bookmark = app.viewModel.bookmarks.activeBookmark;
         // if the user is logged in, ajax call to add bookmark to server
 
-        if (true) {
-            $.ajax({ 
-                url: '/visualize/remove_bookmark', 
-                data: { name: bookmark.name, hash: bookmark.getBookmarkHash(), uid: bookmark.uid }, 
-                type: 'POST',
-                dataType: 'json',
-                success: function() {
-                    // Only remove the bookmark locally, if the server request was successful
-                    self.bookmarksList.remove(bookmark);
-                },
-                error: function(result) { 
-                    //debugger;
-                    alert("You cannot delete a bookmark you didn't create!");
-                }
-            });
-        }
-
-        // store the bookmarks locally
-        self.storeBookmarks();
-
+        $.jsonrpc('remove_bookmark', [bookmark.uid], 
+                  {complete: self.getBookmarks.bind(self)});
     };
 
     // handle the bookmark submit
-    self.saveBookmark = function() {
-        // add to the list of bookmarks
-        var bookmarkState = app.getState();
-        var bookmark = new bookmarkModel({ 
-            state: bookmarkState,
-            name: self.newBookmarkName()
-        });
-            
-        //if the user is logged in, ajax call to add bookmark to server 
-        if (true) {
-            $.ajax({ 
-                url: '/visualize/add_bookmark', 
-                data: { name: self.newBookmarkName(), hash: window.location.hash.slice(1) }, 
-                type: 'POST',
-                dataType: 'json',
-                success: function(bookmark) {
-                    var newBookmark = new bookmarkModel( {
-                        state: $.deparam(bookmark[0].hash),
-                        name: bookmark[0].name,
-                        uid: bookmark[0].uid,
-                        sharingGroups: bookmark[0].sharing_groups
-                    });
-                    self.bookmarksList.unshift(newBookmark);
-                    var bms = self.bookmarksList();
-                    self.bookmarksList(_.sortBy(bms, 'name'));
-                },
-                error: function(result) { 
-                    //debugger;
-                } 
-            });
-        } else {
-            self.bookmarksList.unshift(bookmark);
-            var bms = self.bookmarksList; 
-            self.bookmarksList(_.sortBy(bms, 'name'));
-            // store the bookmarks locally
-            self.storeBookmarks();
+    self.addBookmark = function(form) {
+        var name = $(form).find('input').val();
+        if (name.length == 0) {
+            return false; 
         }
-        //$('#bookmark-popover').hide();
-        self.newBookmarkName('');
         
-    };
+        console.info("Adding new bookmark named", name);
+        $.jsonrpc('add_bookmark', 
+            [name,
+             window.location.hash.slice(1)], // TODO: self.get_location()
+            {complete: self.getBookmarks.bind(self)});
+    }
     
     // get bookmark sharing groups for this user
     self.getSharingGroups = function() {
