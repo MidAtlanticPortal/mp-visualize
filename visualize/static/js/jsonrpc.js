@@ -46,10 +46,9 @@ function jsonrpc_call(method, args, options) {
                 options.error(rpc_response.error, rpc_response);
             }
         }
-        else {
-            // Either have both an error and a result, or neither. RPC fault. 
-            console.debug("Bad JSONRPC response", rpc_response)
-        }
+        // else: if both have a result, it's an rpc fault. 
+        // otherwise there was no return value (a jsonrpc command)
+
     }
     
     request = {

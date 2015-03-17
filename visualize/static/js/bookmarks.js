@@ -249,21 +249,15 @@ function bookmarksModel(options) {
         // if the user is logged in, ajax call to add bookmark to server
 
         $.jsonrpc('remove_bookmark', [bookmark.uid], 
-                  {complete: self.getBookmarks.bind(self)});
+                  {complete: self.getBookmarks});
     };
 
     // handle the bookmark submit
-    self.addBookmark = function(form) {
-        var name = $(form).find('input').val();
-        if (name.length == 0) {
-            return false; 
-        }
-        
-        console.info("Adding new bookmark named", name);
+    self.addBookmark = function(name) {
         $.jsonrpc('add_bookmark', 
-            [name,
-             window.location.hash.slice(1)], // TODO: self.get_location()
-            {complete: self.getBookmarks.bind(self)});
+                  [name,
+                   window.location.hash.slice(1)], // TODO: self.get_location()
+                  {complete: self.getBookmarks});
     }
     
     // get bookmark sharing groups for this user
