@@ -1,3 +1,3 @@
 from __future__ import absolute_import
 
-from visualize.api import *
+from visualize.rpc import *
