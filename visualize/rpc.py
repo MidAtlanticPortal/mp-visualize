@@ -34,7 +34,8 @@ def get_bookmarks(**kwargs):
     content = []
     bookmark_list = Bookmark.objects.filter(user=request.user)
     for bookmark in bookmark_list:
-        sharing_groups = [group.name for group in bookmark.sharing_groups.all()]
+        sharing_groups = [group.mapgroup_set.get().name
+                          for group in bookmark.sharing_groups.all()]
         content.append({
             'uid': bookmark.uid,
             'name': bookmark.name,
@@ -59,6 +60,7 @@ def get_bookmarks(**kwargs):
                 map_group__permission_group__in=groups
             ).values_list('show_real_name')
 
+            shared_groups = [g.mapgroup_set.get().name for g in groups]
 
             actual_name = bookmark.user.first_name + ' ' + bookmark.user.last_name
             content.append({
@@ -67,7 +69,7 @@ def get_bookmarks(**kwargs):
                 'hash': bookmark.url_hash,
                 'shared': True,
                 'shared_by_user': bookmark.user.id,
-                'shared_to_groups': [g.mapgroup_set.get().name for g in groups],
+                'shared_to_groups': shared_groups,
                 'shared_by_name': bookmark.user.get_short_name(),
             })
     return content

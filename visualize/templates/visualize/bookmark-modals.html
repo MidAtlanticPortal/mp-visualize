@@ -37,7 +37,7 @@
                         <input id="iframe-html" type="text" style="width: 96%" data-bind="attr: {value: $parent.getIFrameHTML}"> 
                     </div>  
 
-                <div style="margin-top: -4px"> 
+                    <div style="margin-top: -4px"> 
                         <a href="#" data-bind="click: $parent.openIFrameExample"> 
                             Preview embedded map 
                         </a> 
@@ -48,12 +48,12 @@
                     <h4 class="sharing-header">Share my bookmark with the following:</h4>
                     <ul class="unstyled" id="bookmark-sharing-groups" style="margin-left: 1px; height: 165px; outline: none;">
                         <span data-bind="foreach: sharingGroups">
-                            <li><div style="text-align: left; margin-left: 50px;"><div>
-                                <!--<input type="checkbox" style="margin-top: 0px; margin-bottom: 2px; margin-right: 3px;">-->
-                                <i class="fa fa-square-o"
-                                   data-bind="css: { 'fa-check-square-o': $parent.groupIsSelected(group_name), 'fa-square-o': ! $parent.groupIsSelected(group_name) }"></i>
+                            <li><div style="text-align: left; margin-left: 50px;"><div class="share-checkbox" data-bind="click: $parent.toggleGroup">
+                                <i class="fa" data-bind="css: {'fa-check-square-o': $parent.groupIsSelected(group_name), 
+                                                               'fa-square-o': !$parent.groupIsSelected(group_name)}"
+                                   style="width: 14px;"></i>
 
-                                <span data-bind="text: group_name, click: $parent.toggleGroup"></span>
+                                <span data-bind="text: group_name"></span>
                                 <a class="group-members-popover" rel="popover"
                                    data-bind="attr: {'data-content': $parent.groupMembers(group_name)}"
                                    data-original-title="Members">

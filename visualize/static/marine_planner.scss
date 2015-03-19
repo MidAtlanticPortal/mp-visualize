@@ -882,3 +882,8 @@ body.template-visualize{
     //
     // }
 }
+
+.share-checkbox {
+    cursor: pointer;
+    @include user-select(none);
+}

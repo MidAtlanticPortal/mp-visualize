@@ -47,12 +47,21 @@ function bookmarkModel(options) {
     };
     
     self.showSharingModal = function() {
-        app.viewModel.bookmarks.sharingBookmark(app.viewModel.bookmarks.activeBookmark);
+        // app.viewModel.bookmarks.sharingBookmark(app.viewModel.bookmarks.activeBookmark);
+        app.viewModel.bookmarks.sharingBookmark(self);
         self.temporarilySelectedGroups.removeAll();
-        self.temporarilySelectedGroups(self.selectedGroups());
+        for (var i = 0; i < self.selectedGroups().length; i++) {
+            self.temporarilySelectedGroups.push(self.selectedGroups()[i]);
+        }
         $('#bookmark-share-modal').modal('show');
         $('#bookmark-popover').hide();
     };
+    
+    /** Return true if this bookmark is shared with the specified groupName
+     */
+    self.sharedWithGroup = function(groupName) {
+        return self.selectedGroups.indexOf(groupName) != -1; 
+    }
     
     // get the url from a bookmark
     self.getBookmarkUrl = function() {
@@ -129,22 +138,14 @@ function bookmarksModel(options) {
         } else { //remove group from list
             self.sharingBookmark().temporarilySelectedGroups.splice(indexOf, 1);
         }
-        /*var groupName = obj.group_name,
-            indexOf = self.sharingBookmark().selectedGroups.indexOf(groupName);
-    
-        if ( indexOf === -1 ) {  //add group to list
-            self.sharingBookmark().selectedGroups.push(groupName);
-        } else { //remove group from list
-            self.sharingBookmark().selectedGroups.splice(indexOf, 1);
-        }*/
     };
     
     self.groupIsSelected = function(groupName) {
-        if (self.sharingBookmark()) {
-            var indexOf = self.sharingBookmark().temporarilySelectedGroups.indexOf(groupName);
-            return indexOf !== -1;
+        if (!self.sharingBookmark()) {
+            return false;
         }
-        return false;
+        var indexOf = self.sharingBookmark().temporarilySelectedGroups.indexOf(groupName);
+        return indexOf !== -1;
     };
     
     self.groupMembers = function(groupName) {
@@ -271,7 +272,10 @@ function bookmarksModel(options) {
             type: 'GET',
             dataType: 'json',
             success: function (groups) {
-                self.sharingGroups(groups);
+                self.sharingGroups.removeAll();
+                for (var i = 0; i < groups.length; i++) {
+                    self.sharingGroups.push(groups[i]);
+                }
             },
             error: function (result) {
                 //console.log('error in getSharingGroups');
@@ -324,7 +328,6 @@ function bookmarksModel(options) {
                         sharingGroups: bookmarks[i].sharing_groups,
                         sharedToGroups: bookmarks[i].shared_to_groups
                     });   
-                    console.debug('bookmark_state = ',bookmark.state);
                     blist.push(bookmark);
                 }
                 if (blist.length > 0) {
