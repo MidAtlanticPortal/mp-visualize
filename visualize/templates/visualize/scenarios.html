@@ -135,12 +135,9 @@
                                                                 </span>
                                                             </td>
                                                             <td style="padding-left: 0px; width: 35px">
-
-                                                                {% if user.is_authenticated %}
                                                                 <a data-bind="attr: {title: sharedBy}, visible: shared()" style="text-decoration: none; cursor: default;" data-toggle="tooltip" data-placement="left" >
                                                                     <i class="fa fa-group" style="padding-left: 10px"></i>
                                                                 </a>
-                                                                {% endif %}
                                                                 <a class="btn btn-mini bookmark-settings" data-bind="click: showBookmarkSettings, visible: !shared()">
                                                                     <span title="Settings" data-toggle="tooltip" data-placement="left"><span class="fa fa-cog"></span></span>
                                                                 </a>
@@ -171,6 +168,7 @@
                                                     Bookmarks save the map and active layers. You currently have no bookmarks.
                                                 </p>
                                             </div>
+                                            
                                             
                                             
                                         </div>

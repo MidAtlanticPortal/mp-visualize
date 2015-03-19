@@ -8,17 +8,21 @@ function bookmarkModel(options) {
     
     self.shared = ko.observable();
     self.sharedByName = options.sharedByName || null;
-    self.sharedByUsername = options.sharedByUsername;
-    if (self.sharedByName && $.trim(self.sharedByName) !== '') {
-        self.sharedByWho = self.sharedByName + ' (' + self.sharedByUsername + ')';
-    } else {
-        self.sharedByWho = self.sharedByUsername;
-    }
+    self.sharedByUser = options.sharedByUser;
+    self.sharedByWho = self.sharedByName;
     self.sharedBy = ko.observable();
+    // The groups that this object is shared with that we are a member of
+    self.sharedToGroups = ko.observableArray(options.sharedToGroups);
+
     if (options.shared) {
         self.shared(true);
-        self.sharedBy('Shared by ' + self.sharedByWho);
-    } else {
+        var s = ['Shared By',
+                 self.sharedByWho,
+                 'to group' + (self.sharedToGroups().length == 1 ? '' : 's'),
+                 self.sharedToGroups().join(", ")];
+        self.sharedBy(s.join(" "));
+    }
+    else {
         self.shared(false);
         self.sharedBy(false);
     }
@@ -290,7 +294,8 @@ function bookmarksModel(options) {
     // method for loading existing bookmarks
     self.getBookmarks = function() {
         //get bookmarks from local storage
-        var existingBookmarks = amplify.store("marco-bookmarks");
+        // var existingBookmarks = amplify.store("marco-bookmarks");
+        var existingBookmarks = [];
         var local_bookmarks = [];
         if (existingBookmarks) {
             for (var i = 0; i < existingBookmarks.length; i++) {
@@ -314,9 +319,10 @@ function bookmarksModel(options) {
                         name: bookmarks[i].name,
                         uid: bookmarks[i].uid,
                         shared: bookmarks[i].shared,
-                        sharedByUsername: bookmarks[i].shared_by_username,
+                        sharedByUser: bookmarks[i].shared_by_user,
                         sharedByName: bookmarks[i].shared_by_name,
-                        sharingGroups: bookmarks[i].sharing_groups
+                        sharingGroups: bookmarks[i].sharing_groups,
+                        sharedToGroups: bookmarks[i].shared_to_groups
                     });   
                     console.debug('bookmark_state = ',bookmark.state);
                     blist.push(bookmark);
@@ -331,46 +337,20 @@ function bookmarksModel(options) {
                 
             }
         });
-        /*
-            $.ajax({ 
-                url: '/visualize/get_bookmarks', 
-                data: { bookmarks: local_bookmarks }, 
-                type: 'POST',
-                dataType: 'json',
-                success: function(result) {
-                },
-                error: function(result) { 
-                } 
-            });
-        } else if (existingBookmarks) {
-            for (var i=0; i < existingBookmarks.length; i++) {
-                self.bookmarksList.push( new bookmarkModel( {
-                    name: existingBookmarks[i].name,
-                    state: existingBookmarks[i].state,
-                    sharing_groups: existingBookmarks[i].sharingGroups
-                }));
-            }
-            //self.bookmarksList = ko.observableArray(existingBookmarks);
-        } */
+
         self.getSharingGroups();
     };
     
     //sharing bookmark
     self.submitShare = function() {
         self.sharingBookmark().selectedGroups(self.sharingBookmark().temporarilySelectedGroups());
-        var data = { 'bookmark': self.sharingBookmark().uid, 'groups': self.sharingBookmark().selectedGroups() };
-        $.ajax( {
-            url: '/visualize/share_bookmark',
-            data: data,
-            type: 'POST',
-            dataType: 'json',
-            success: function(result) {
-                //debugger;
-            },
-            error: function(result) {
-                //debugger;
-            }
-        });
+        var data = { 'bookmark': self.sharingBookmark().uid, 
+        'groups': self.sharingBookmark().selectedGroups() };
+
+        $.jsonrpc('share_bookmark', 
+                  [self.sharingBookmark().uid, 
+                   self.sharingBookmark().selectedGroups()],
+                  {complete: self.getBookmarks});
     };
 
     self.cancel = function() {

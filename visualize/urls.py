@@ -7,6 +7,4 @@ urlpatterns = patterns('',
     url(r'^mafmc', show_mafmc_map, name="mafmc_map"),
     url(r'^mobile', show_mobile_map, name="mobile_map"),
     url(r'^$', show_planner, name="planner"),
-
-    url('^api$', 'rpc4django.views.serve_rpc_request'),
 )

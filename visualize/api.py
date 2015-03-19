@@ -4,6 +4,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from rpc4django import rpcmethod
 from features.registry import get_feature_by_uid
+from mapgroups.models import MapGroup, MapGroupMember
 from visualize.models import Bookmark
 
 @rpcmethod(login_required=True)
@@ -28,15 +29,6 @@ def get_bookmarks(**kwargs):
     """
     request = kwargs['request']
 
-    bookmark_dict = {}
-
-    #loop through the list from the client
-    #if user, bm_name, and bm_state match then skip
-    #otherwise, add to the db
-    for bookmark in bookmark_dict.values():
-        Bookmark.objects.get_or_create(user=request.user, name=bookmark['name'],
-                                       url_hash=bookmark['hash'])
-
     #grab all bookmarks belonging to this user
     #serialize bookmarks into 'name', 'hash' objects and return json dump
     content = []
@@ -54,14 +46,29 @@ def get_bookmarks(**kwargs):
     for bookmark in shared_bookmarks:
         if bookmark not in bookmark_list:
             username = bookmark.user.username
+            groups = bookmark.sharing_groups.filter(user__in=[request.user])
+            # Fetch the bookmark owner's preference on whether to share their
+            # real name with the group. Since it is possible that the bookmark
+            # sharer, and the bookmark sharee might be common members of
+            # multiple groups, if the sharer has a "Show Real Name" preference
+            # set on _any_ of the groups, then display their real name.
+            # Otherwise show their preferred name.
+
+            show_real_name = MapGroupMember.objects.filter(
+                user=bookmark.user,
+                map_group__permission_group__in=groups
+            ).values_list('show_real_name')
+
+
             actual_name = bookmark.user.first_name + ' ' + bookmark.user.last_name
             content.append({
                 'uid': bookmark.uid,
                 'name': bookmark.name,
                 'hash': bookmark.url_hash,
                 'shared': True,
-                'shared_by_username': username,
-                'shared_by_name': actual_name
+                'shared_by_user': bookmark.user.id,
+                'shared_to_groups': [g.mapgroup_set.get().name for g in groups],
+                'shared_by_name': bookmark.user.get_short_name(),
             })
     return content
 
@@ -73,11 +80,11 @@ def remove_bookmark(key, **kwargs):
     bookmark = get_object_or_404(Bookmark, id=key, user=request.user)
     bookmark.delete()
 
-@rpcmethod()
-def share_bookmark(login_required=True):
-
-    group_names = request.POST.getlist('groups[]')
-    bookmark_uid = request.POST['bookmark']
+@rpcmethod(login_required=True)
+def share_bookmark(bookmark_uid, group_names, **kwargs):
+    request = kwargs['request']
+    # group_names = request.POST.getlist('groups[]')
+    # bookmark_uid = request.POST['bookmark']
     bookmark = get_feature_by_uid(bookmark_uid)
 
     viewable, response = bookmark.is_viewable(request.user)
@@ -89,7 +96,8 @@ def share_bookmark(login_required=True):
 
     groups = []
     for group_name in group_names:
-        groups.append(Group.objects.get(name=group_name))
+        g = Group.objects.get(mapgroup__name=group_name)
+        groups.append(g)
 
     bookmark.share_with(groups, append=False)
 
