@@ -95,7 +95,6 @@
                                         </a>
                                     </div>
                                 </div>
-
                                 <div class="accordion-body collapse" data-bind="css: {'in': app.viewModel.isBookmarksOpen()}">
                                     <div class="accordion-inner" data-bind="with: app.viewModel.bookmarks">
                                         <div data-bind="visible: !bookmarksList().length"
@@ -124,22 +123,24 @@
                                             </div>
                                         </div>
                                         <div data-bind="visible: bookmarksList().length > 0">
-                                            
                                             <div id="bookmarks-table">
                                                 <table class="table table-condensed" style="margin-bottom: 5px;">
                                                     <tbody data-bind="foreach: bookmarksList">
-                                                        <tr style="border-bottom: 1px solid #dddddd;">
-                                                            <td>
+                                                        <tr>
+                                                            <td style="vertical-align: middle; padding-left: 15px">
+                                                                <a data-bind="attr: {title: sharedBy}, visible: shared()"
+                                                                   style="text-decoration: none; cursor: default;"
+                                                                   data-toggle="tooltip" data-placement="right" >
+                                                                    <i class="fa fa-group"></i>
+                                                                </a>
+
                                                                 <span data-bind="click: loadBookmark">
                                                                     <a data-bind="text: name, attr: {href: getBookmarkUrl}">name</a>
                                                                 </span>
                                                             </td>
                                                             <td style="padding-left: 0px; width: 35px">
-                                                                <a data-bind="attr: {title: sharedBy}, visible: shared()" style="text-decoration: none; cursor: default;" data-toggle="tooltip" data-placement="left" >
-                                                                    <i class="fa fa-group" style="padding-left: 10px"></i>
-                                                                </a>
                                                                 <a class="btn btn-mini bookmark-settings" data-bind="click: showBookmarkSettings, visible: !shared()">
-                                                                    <span title="Settings" data-toggle="tooltip" data-placement="left"><span class="fa fa-cog"></span></span>
+                                                                    <span title="Settings" data-toggle="tooltip" data-placement="right"><span class="fa fa-cog"></span></span>
                                                                 </a>
                                                                     <!-- settings popover -->
                                                                 <div style="display:none" class="popover fade bottom in bookmark-settings-popover">
@@ -168,9 +169,6 @@
                                                     Bookmarks save the map and active layers. You currently have no bookmarks.
                                                 </p>
                                             </div>
-                                            
-                                            
-                                            
                                         </div>
                                     </div>
                                 </div>

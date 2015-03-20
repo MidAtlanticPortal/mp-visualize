@@ -403,13 +403,14 @@ body.template-visualize{
     #printing-popover .arrow , #bookmark-popover .arrow{
         display: none;
     }
-
+/*
     #bookmarks-table{
         padding: 0px;
         overflow-y: auto;
         height: 200px;
         overflow-x: hidden;
-    }
+    }*/
+    #bookmarks-table td { border-top: none; }
 
     #printing-popover .radio input {
         width: 20%;
