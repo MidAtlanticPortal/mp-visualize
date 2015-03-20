@@ -184,9 +184,9 @@ app.loadCompressedState = function(state) {
     
     // is url is indicating a login request then show the login modal
     // /visualize/#login=true
-    if (!app.is_authenticated && state.login) { // not sure 
-        $('#sign-in-modal').modal('show');
-    }
+//    if (!app.is_authenticated && state.login) { // not sure
+//        $('#sign-in-modal').modal('show');
+//    }
     
 };
 
@@ -321,11 +321,6 @@ app.loadState = function(state) {
     if (state.location) {
         app.map.setCenter(new OpenLayers.LonLat(state.location.x, state.location.y).transform(
         new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), state.location.zoom);
-    }
-    
-    // is url is indicating a login request then show the login modal
-    if (!app.is_authenticated && state.login) {
-        $('#sign-in-modal').modal('show');
     }
 };
 

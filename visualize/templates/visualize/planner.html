@@ -286,9 +286,11 @@
         <script charset="utf-8">
           $.widget.bridge('uitooltip', $.ui.tooltip);
         </script>
-        <script src="{% static 'js/lodash.min.js' %}"></script>
+            <script src="{% static 'js/jsonrpc.js' %}"></script>
+
+        <script src="{% static 'js/lib/lodash.min.js' %}"></script>
         <script src="{% static 'bower_components/knockout/build/output/knockout-latest.js' %}"></script>
-        <script src="{% static 'visualize/js/knockout-bindings.js' %}"></script>
+        <script src="{% static 'js/knockout-bindings.js' %}"></script>
         <script src="{% static 'bower_components/knockout-mapping/build/output/knockout.mapping-latest.js' %}"></script>
         <script src="{% static 'visualize/deps/highcharts/highcharts.js' %}" type="text/javascript"></script>
         <script src="{% static 'visualize/deps/highcharts/highcharts-more.js' %}" type="text/javascript"></script>
@@ -297,19 +299,20 @@
         <script src="{% static 'bower_components/bigscreen/bigscreen.js' %}"></script>
         <script src="{% static 'bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min.js' %}"></script>
 
-        <script src="{% static 'visualize/js/fixtures.js' %}"></script>
-        <script src="{% static 'visualize/js/controls.js' %}"></script>
-        <script src="{% static 'visualize/js/map.js' %}"></script>
-        <script src="{% static 'visualize/js/state.js' %}"></script>
-        <script src="{% static 'visualize/js/models.js' %}"></script>
-        <script src="{% static 'visualize/js/bookmarks.js' %}"></script>
+        <script src="{% static 'js/fixtures.js' %}"></script>
+        <script src="{% static 'js/controls.js' %}"></script>
+        <script src="{% static 'js/map.js' %}"></script>
+        <script src="{% static 'js/state.js' %}"></script>
+        <script src="{% static 'js/bookmarks.js' %}"></script>
         {% if user.is_authenticated %}
-            <script src="{% static 'visualize/js/scenarios.js' %}"></script>
-            <script src="{% static 'visualize/js/reports.js' %}"></script>
-            <script src="{% static 'visualize/js/drawing.js' %}"></script>
+            <script src="{% static 'js/scenarios.js' %}"></script>
+            <script src="{% static 'js/reports.js' %}"></script>
+            <script src="{% static 'js/drawing.js' %}"></script>
         {% endif %}
-        <script src="{% static 'visualize/js/server.js' %}"></script>
-        <script src="{% static 'visualize/js/app.js' %}"></script>
+        <script src="{% static 'js/models.js' %}"></script>
+        <script src="{% static 'js/server.js' %}"></script>
+        <script src="{% static 'js/app.js' %}"></script>
+
 
 
 {% endblock %}

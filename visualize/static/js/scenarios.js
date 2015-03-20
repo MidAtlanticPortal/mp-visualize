@@ -1554,7 +1554,8 @@ function scenariosModel(options) {
                 self.isDrawingsOpen(true);
             }
         }
-    }; 
+    };
+
     
     //restores state of Designs tab to the initial list of designs
     self.reset = function (obj) {
@@ -2098,9 +2099,6 @@ function scenariosModel(options) {
     
     return self;
 } // end scenariosModel
-
-
-app.viewModel.scenarios = new scenariosModel();
 
 $('#designsTab').on('show.bs.tab', function (e) {
     //if ( app.viewModel.scenarios.reports && app.viewModel.scenarios.reports.showingReport() ) {

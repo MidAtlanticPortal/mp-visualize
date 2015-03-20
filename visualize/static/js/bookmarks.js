@@ -8,17 +8,21 @@ function bookmarkModel(options) {
     
     self.shared = ko.observable();
     self.sharedByName = options.sharedByName || null;
-    self.sharedByUsername = options.sharedByUsername;
-    if (self.sharedByName && $.trim(self.sharedByName) !== '') {
-        self.sharedByWho = self.sharedByName + ' (' + self.sharedByUsername + ')';
-    } else {
-        self.sharedByWho = self.sharedByUsername;
-    }
+    self.sharedByUser = options.sharedByUser;
+    self.sharedByWho = self.sharedByName;
     self.sharedBy = ko.observable();
+    // The groups that this object is shared with that we are a member of
+    self.sharedToGroups = ko.observableArray(options.sharedToGroups);
+
     if (options.shared) {
         self.shared(true);
-        self.sharedBy('Shared by ' + self.sharedByWho);
-    } else {
+        var s = ['Shared By',
+                 self.sharedByWho,
+                 'to group' + (self.sharedToGroups().length == 1 ? '' : 's'),
+                 self.sharedToGroups().join(", ")];
+        self.sharedBy(s.join(" "));
+    }
+    else {
         self.shared(false);
         self.sharedBy(false);
     }
@@ -43,12 +47,21 @@ function bookmarkModel(options) {
     };
     
     self.showSharingModal = function() {
-        app.viewModel.bookmarks.sharingBookmark(app.viewModel.bookmarks.activeBookmark);
+        // app.viewModel.bookmarks.sharingBookmark(app.viewModel.bookmarks.activeBookmark);
+        app.viewModel.bookmarks.sharingBookmark(self);
         self.temporarilySelectedGroups.removeAll();
-        self.temporarilySelectedGroups(self.selectedGroups());
+        for (var i = 0; i < self.selectedGroups().length; i++) {
+            self.temporarilySelectedGroups.push(self.selectedGroups()[i]);
+        }
         $('#bookmark-share-modal').modal('show');
         $('#bookmark-popover').hide();
     };
+    
+    /** Return true if this bookmark is shared with the specified groupName
+     */
+    self.sharedWithGroup = function(groupName) {
+        return self.selectedGroups.indexOf(groupName) != -1; 
+    }
     
     // get the url from a bookmark
     self.getBookmarkUrl = function() {
@@ -125,22 +138,14 @@ function bookmarksModel(options) {
         } else { //remove group from list
             self.sharingBookmark().temporarilySelectedGroups.splice(indexOf, 1);
         }
-        /*var groupName = obj.group_name,
-            indexOf = self.sharingBookmark().selectedGroups.indexOf(groupName);
-    
-        if ( indexOf === -1 ) {  //add group to list
-            self.sharingBookmark().selectedGroups.push(groupName);
-        } else { //remove group from list
-            self.sharingBookmark().selectedGroups.splice(indexOf, 1);
-        }*/
     };
     
     self.groupIsSelected = function(groupName) {
-        if (self.sharingBookmark()) {
-            var indexOf = self.sharingBookmark().temporarilySelectedGroups.indexOf(groupName);
-            return indexOf !== -1;
+        if (!self.sharingBookmark()) {
+            return false;
         }
-        return false;
+        var indexOf = self.sharingBookmark().temporarilySelectedGroups.indexOf(groupName);
+        return indexOf !== -1;
     };
     
     self.groupMembers = function(groupName) {
@@ -248,70 +253,17 @@ function bookmarksModel(options) {
         var bookmark = app.viewModel.bookmarks.activeBookmark;
         // if the user is logged in, ajax call to add bookmark to server
 
-        if (app.is_authenticated) { 
-            $.ajax({ 
-                url: '/visualize/remove_bookmark', 
-                data: { name: bookmark.name, hash: bookmark.getBookmarkHash(), uid: bookmark.uid }, 
-                type: 'POST',
-                dataType: 'json',
-                success: function() {
-                    // Only remove the bookmark locally, if the server request was successful
-                    self.bookmarksList.remove(bookmark);
-                },
-                error: function(result) { 
-                    //debugger;
-                    alert("You cannot delete a bookmark you didn't create!");
-                }
-            });
-        }
-
-        // store the bookmarks locally
-        self.storeBookmarks();
-
+        $.jsonrpc('remove_bookmark', [bookmark.uid], 
+                  {complete: self.getBookmarks});
     };
 
     // handle the bookmark submit
-    self.saveBookmark = function() {
-        // add to the list of bookmarks
-        var bookmarkState = app.getState();
-        var bookmark = new bookmarkModel({ 
-            state: bookmarkState,
-            name: self.newBookmarkName()
-        });
-            
-        //if the user is logged in, ajax call to add bookmark to server 
-        if (app.is_authenticated) { 
-            $.ajax({ 
-                url: '/visualize/add_bookmark', 
-                data: { name: self.newBookmarkName(), hash: window.location.hash.slice(1) }, 
-                type: 'POST',
-                dataType: 'json',
-                success: function(bookmark) {
-                    var newBookmark = new bookmarkModel( {
-                        state: $.deparam(bookmark[0].hash),
-                        name: bookmark[0].name,
-                        uid: bookmark[0].uid,
-                        sharingGroups: bookmark[0].sharing_groups
-                    });
-                    self.bookmarksList.unshift(newBookmark);
-                    var bms = self.bookmarksList();
-                    self.bookmarksList(_.sortBy(bms, 'name'));
-                },
-                error: function(result) { 
-                    //debugger;
-                } 
-            });
-        } else {
-            self.bookmarksList.unshift(bookmark);
-            var bms = self.bookmarksList; 
-            self.bookmarksList(_.sortBy(bms, 'name'));
-            // store the bookmarks locally
-            self.storeBookmarks();
-        }
-        //$('#bookmark-popover').hide();
-        self.newBookmarkName('');
-        
-    };
+    self.addBookmark = function(name) {
+        $.jsonrpc('add_bookmark', 
+                  [name,
+                   window.location.hash.slice(1)], // TODO: self.get_location()
+                  {complete: self.getBookmarks});
+    }
     
     // get bookmark sharing groups for this user
     self.getSharingGroups = function() {
@@ -320,7 +272,10 @@ function bookmarksModel(options) {
             type: 'GET',
             dataType: 'json',
             success: function (groups) {
-                self.sharingGroups(groups);
+                self.sharingGroups.removeAll();
+                for (var i = 0; i < groups.length; i++) {
+                    self.sharingGroups.push(groups[i]);
+                }
             },
             error: function (result) {
                 //console.log('error in getSharingGroups');
@@ -343,7 +298,8 @@ function bookmarksModel(options) {
     // method for loading existing bookmarks
     self.getBookmarks = function() {
         //get bookmarks from local storage
-        var existingBookmarks = amplify.store("marco-bookmarks");
+        // var existingBookmarks = amplify.store("marco-bookmarks");
+        var existingBookmarks = [];
         var local_bookmarks = [];
         if (existingBookmarks) {
             for (var i = 0; i < existingBookmarks.length; i++) {
@@ -357,75 +313,47 @@ function bookmarksModel(options) {
         
         // load bookmarks from server while syncing with client 
         //if the user is logged in, ajax call to sync bookmarks with server 
-        if (app.is_authenticated) { 
-            $.ajax({ 
-                url: '/visualize/get_bookmarks', 
-                data: { bookmarks: local_bookmarks }, 
-                type: 'POST',
-                dataType: 'json',
-                success: function(result) {
-                    var bookmarks = result || [],
-                        blist = [];
-                    for (var i=0; i < bookmarks.length; i++) {
-                        var bookmark = new bookmarkModel( {
-                            state: $.deparam(bookmarks[i].hash),
-                            name: bookmarks[i].name,
-                            uid: bookmarks[i].uid,
-                            shared: bookmarks[i].shared,
-                            sharedByUsername: bookmarks[i].shared_by_username,
-                            sharedByName: bookmarks[i].shared_by_name,
-                            sharingGroups: bookmarks[i].sharing_groups
-                        });   
-                        blist.push(bookmark);
-                    }
-                    if (blist.length > 0) {
-                        //self.bookmarksList(blist);
-                        self.bookmarksList(_.sortBy(blist, 'name'));
-                        //self.storeBookmarks();
-                    }
-                },
-                error: function(result) { 
-                    if (existingBookmarks) {
-                        for (var i=0; i < existingBookmarks.length; i++) {
-                            self.bookmarksList.push( new bookmarkModel( {
-                                name: existingBookmarks[i].name,
-                                state: existingBookmarks[i].state,
-                                sharing_groups: existingBookmarks[i].sharingGroups
-                            }));
-                        }
-                        //self.bookmarksList = ko.observableArray(existingBookmarks);
-                    } 
-                } 
-            });
-        } else if (existingBookmarks) {
-            for (var i=0; i < existingBookmarks.length; i++) {
-                self.bookmarksList.push( new bookmarkModel( {
-                    name: existingBookmarks[i].name,
-                    state: existingBookmarks[i].state,
-                    sharing_groups: existingBookmarks[i].sharingGroups
-                }));
+        $.jsonrpc('get_bookmarks', [], {
+            success: function(result) {
+                var bookmarks = result || [];
+                var blist = [];
+                for (var i=0; i < bookmarks.length; i++) {
+                    var bookmark = new bookmarkModel( {
+                        state: $.deparam(bookmarks[i].hash),
+                        name: bookmarks[i].name,
+                        uid: bookmarks[i].uid,
+                        shared: bookmarks[i].shared,
+                        sharedByUser: bookmarks[i].shared_by_user,
+                        sharedByName: bookmarks[i].shared_by_name,
+                        sharingGroups: bookmarks[i].sharing_groups,
+                        sharedToGroups: bookmarks[i].shared_to_groups
+                    });   
+                    blist.push(bookmark);
+                }
+                if (blist.length > 0) {
+                    //self.bookmarksList(blist);
+                    self.bookmarksList(_.sortBy(blist, 'name'));
+                    //self.storeBookmarks();
+                }
+            },
+            error: function(result) {
+                
             }
-            //self.bookmarksList = ko.observableArray(existingBookmarks);
-        } 
+        });
+
         self.getSharingGroups();
     };
     
     //sharing bookmark
     self.submitShare = function() {
         self.sharingBookmark().selectedGroups(self.sharingBookmark().temporarilySelectedGroups());
-        var data = { 'bookmark': self.sharingBookmark().uid, 'groups': self.sharingBookmark().selectedGroups() };
-        $.ajax( {
-            url: '/visualize/share_bookmark',
-            data: data,
-            type: 'POST',
-            dataType: 'json',
-            success: function(result) {
-                //debugger;
-            },
-            error: function(result) {
-                //debugger;
-            }
-        });
+        var data = { 'bookmark': self.sharingBookmark().uid, 
+        'groups': self.sharingBookmark().selectedGroups() };
+
+        $.jsonrpc('share_bookmark', 
+                  [self.sharingBookmark().uid, 
+                   self.sharingBookmark().selectedGroups()],
+                  {complete: self.getBookmarks});
     };
 
     self.cancel = function() {
@@ -447,4 +375,3 @@ function bookmarksModel(options) {
     return self;
 } // end of bookmarksModel
 
-app.viewModel.bookmarks = new bookmarksModel();

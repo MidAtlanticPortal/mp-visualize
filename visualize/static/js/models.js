@@ -913,8 +913,26 @@ function viewModel() {
     self.layerIndex = {};
     self.layerSearchIndex = {};
 
+    self.bookmarks = new bookmarksModel();
+    self.isBookmarksOpen = ko.observable(false);
     self.bookmarkEmail = ko.observable();
-        
+    self.toggleBookmarksOpen = function(force) {
+        $('#designsTab').tab('show');
+
+        if (force == 'open') {
+            self.isBookmarksOpen(true);
+        }
+        else if (force == 'close') {
+            self.isBookmarksOpen(false);
+        }
+        else {
+            self.isBookmarksOpen(!self.isBookmarksOpen());
+        }
+    }
+    
+    self.scenarios = new scenariosModel();
+    self.scenarios.reports = new reportsModel(); 
+    
     self.mapLinks = new mapLinksModel();
 
     // text for tooltip popup
@@ -1241,6 +1259,20 @@ function viewModel() {
             });
         }
     };
+    
+    /** Create a new bookmark from the bookmark form */
+    self.addBookmark = function(form) {
+        var name = $(form).find('input').val();
+        if (name.length == 0) {
+            window.alert("You forgot to name your bookmark. TODO: Turn this dialog into an error message");
+            return false; 
+        }
+        
+        self.bookmarks.addBookmark(name);
+        
+        self.bookmarks.cancel();
+    }
+    
     
     self.showMapLinks = function() {
         self.mapLinks.shrinkURL(false);
@@ -1591,123 +1623,6 @@ function viewModel() {
             .toLowerCase()
             .replace(/[^\w ]+/g,'')
             .replace(/ +/g,'-');
-    };
-    
-    /* REGISTRATION */
-    self.username = ko.observable();
-    self.usernameError = ko.observable(false);
-    self.password1 = ko.observable("");
-    self.password2 = ko.observable("");
-    self.passwordWarning = ko.observable(false);
-    self.passwordError = ko.observable(false);
-    self.passwordSuccess = ko.observable(false);
-    self.inactiveError = ko.observable(false);
-    
-    self.verifyLogin = function(form) {
-        var username = $(form.username).val(),
-            password = $(form.password).val();
-        if (username && password) {
-            $.ajax({ 
-                async: false,
-                url: '/marco_profile/verify_password', 
-                data: { username: username, password: password }, 
-                type: 'POST',
-                dataType: 'json',
-                success: function(result) { 
-                    if (result.verified === 'inactive') {
-                        self.inactiveError(true);
-                    } else if (result.verified === true) {
-                        self.passwordError(false);
-                    } else {
-                        self.passwordError(true);
-                    }
-                },
-                error: function(result) { } 
-            });
-            if (self.passwordError() || self.inactiveError()) {
-                return false;
-            } else {
-                self.bookmarks.getBookmarks();
-                return true;
-            }
-        }
-        return false;
-    };
-    self.turnOffInactiveError = function() {
-        self.inactiveError(false);
-    };
-    
-    self.verifyPassword = function(form) {
-        var username = $(form.username).val(),
-            old_password = $(form.old_password).val();
-        self.password1($(form.new_password1).val());
-        self.password2($(form.new_password2).val());
-        self.checkPassword();
-        if ( ! self.passwordWarning() ) {
-            if (username && old_password) {
-                $.ajax({ 
-                    async: false,
-                    url: '/marco_profile/verify_password', 
-                    data: { username: username, password: old_password }, 
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function(result) { 
-                        if (result.verified === true) {
-                            self.passwordError(false);
-                        } else {
-                            self.passwordError(true);
-                        }
-                    },
-                    error: function(result) { } 
-                });
-                if (self.passwordError()) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-        }
-        return false;
-    };
-    self.turnOffPasswordError = function() {
-        self.passwordError(false);
-    };
-    
-    
-    self.checkPassword = function() {
-        if (self.password1() && self.password2() && self.password1() !== self.password2()) {
-            self.passwordWarning(true);
-            self.passwordSuccess(false);
-        } else if (self.password1() && self.password2() && self.password1() === self.password2()) {
-            self.passwordWarning(false);
-            self.passwordSuccess(true);
-        } else {
-            self.passwordWarning(false);
-            self.passwordSuccess(false);
-        }
-        return true;
-    };
-    
-    self.checkUsername = function() {
-        if (self.username()) {
-            $.ajax({ 
-                url: '/marco_profile/duplicate_username', 
-                data: { username: self.username() }, 
-                method: 'GET',
-                dataType: 'json',
-                success: function(result) { 
-                    if (result.duplicate === true) {
-                        self.usernameError(true);
-                    } else {
-                        self.usernameError(false);
-                    }
-                },
-                error: function(result) { } 
-            });
-        }
-    };
-    self.turnOffUsernameError = function() {
-        self.usernameError(false);
     };
     
     self.getWindPlanningAreaAttributes = function (data) {
