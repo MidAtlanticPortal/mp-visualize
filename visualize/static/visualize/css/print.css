@@ -1,12 +1,10 @@
-
 @media print {
-	html {
-		height: 100%;
-	}
-	@page {
+	html { height: 100%; }
+	/*@page {
 		size: landscape;
 		margin: 0;
-	}
+	}*/
+
 
 	#map-wrapper {
 		position: absolute;
@@ -14,29 +12,27 @@
 		width: 100% !important;
 	}
 
+    /*
 	#map {
 		height: 100% !important;
 		width: 100% !important;
-	}
+	}*/
+
 	/* override bootstrap 3 print stylesheet */
-  #map img {
-      max-width: inherit !important;
-  }
+    /*
+    #map img {
+        max-width: inherit !important;
+    }*/
 
-	#left-panel,
-	.olControlScaleBar,
-	.olControlZoom,
-	#baselayers,
-	#map-controls,
-  .SimpleLayerSwitcher,
-  #aggregated-attribute-content h4,
-  #close-attribute-overlay,
-	#bookmark-popover,
-	#pageGuideMessage {
+    /*
+    #left-panel, .olControlScaleBar, .olControlZoom, #baselayers,
+    #map-controls, .SimpleLayerSwitcher, #aggregated-attribute-content h4,
+    #close-attribute-overlay, #bookmark-popover, #pageGuideMessage {
 		display: none;
-	}
+	}*/
 
+    /*
 	.modal {
 		display: none !important;
-	}
+	}*/
 }
