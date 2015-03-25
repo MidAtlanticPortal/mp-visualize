@@ -23,7 +23,7 @@ def add_bookmark(name, url_hash, **kwargs):
     return content
 
 
-@rpcmethod()
+@rpcmethod(login_required=True)
 def get_bookmarks(**kwargs):
     """Return a list of bookmark object for the current user.
     """
