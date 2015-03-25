@@ -159,10 +159,6 @@ body.template-visualize{
         .accordion-heading{
             background-color: $light-gray;
         }
-        .accordion-toggle, .accordion-toggle:hover{
-            cursor: pointer;
-            padding: 5px 10px;
-        }
     }
 
     dl{
@@ -603,8 +599,9 @@ body.template-visualize{
     }
 
     .accordion-toggle{
+        cursor: pointer;
         padding: 10px 20px;
-        display: block;
+        display: inline-block;
         color: $dark-gray;
         font-size: 16px;
     }
@@ -887,4 +884,24 @@ body.template-visualize{
 .share-checkbox {
     cursor: pointer;
     @include user-select(none);
+}
+
+.accordion-heading.active .accordion-toggle::before {
+    content: "▾ ";
+}
+.accordion-heading .accordion-toggle::before {
+    content: "▸ ";
+}
+
+a.create-new-button {
+    cursor: pointer;
+    color: $medium-gray;
+    font-size: 12px;
+    @extend .font-medium;
+
+    &:hover {
+        color: $medium-gray;
+        text-decoration: none;
+        background-color: rgba(0, 0, 0, 0.10);
+    }
 }

@@ -52,6 +52,9 @@
                                                 <!--<span>Sketches of the Sea</span>-->
                                                 <span>Drawings</span>
                                             </a>
+                                            <a class="create-new-button" data-bind="click: createPolygonDesign, clickBubble: false">
+                                                <i class="fa fa-plus"></i>NEW
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -92,6 +95,9 @@
                                     <div>
                                         <a class="accordion-toggle">
                                             <span>Map View Bookmarks</span>
+                                        </a>
+                                        <a class="create-new-button" data-bind="">
+                                                <i class="fa fa-plus"></i>NEW
                                         </a>
                                     </div>
                                 </div>
@@ -185,6 +191,9 @@
                                                 <!--<span>Lease Block Collections</span>-->
                                                 <span>Lease Block Collections</span>
                                             </a>
+                                            <a class="create-new-button" data-bind="click: app.viewModel.scenarios.createSelectionDesign, clickBubble: false">
+                                                <i class="fa fa-plus"></i>NEW
+                                            </a>
                                         </div>
                                     </div>
                                 </div>
@@ -225,6 +234,10 @@
                                     <a class="accordion-toggle">
                                         <span>Wind Energy Sitings</span>
                                     </a>
+                                    <a class="create-new-button" data-bind="click: app.viewModel.scenarios.createWindScenario, clickBubble: false">
+                                        <i class="fa fa-plus"></i>NEW
+                                    </a>
+
                                 </div>
                                 <div class="accordion-body collapse" data-bind="css: { 'in': isScenariosOpen() }">
                                     <div class="accordion-inner">
