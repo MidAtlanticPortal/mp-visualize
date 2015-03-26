@@ -1,3 +1,4 @@
+
 body.template-visualize{
     height: 100%;
 
@@ -588,7 +589,6 @@ body.template-visualize{
 
     .tab-pane {
         height: 100%;
-        overflow-y: auto;
     }
 
     .tab-content, #data-accordion{
@@ -905,3 +905,5 @@ a.create-new-button {
         background-color: rgba(0, 0, 0, 0.10);
     }
 }
+
+@import "visualize/left-panel.scss";

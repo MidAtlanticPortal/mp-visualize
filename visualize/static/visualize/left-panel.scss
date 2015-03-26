@@ -1,0 +1,43 @@
+#drawing-form textarea,
+#drawing-form input[name="name"] {
+    width: 90%;
+}
+
+.featurepanel h4 {
+    margin-left: 1em;
+}
+
+div .step {
+    border: 1px $light-gray solid;
+    padding: 6px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    margin-left: 1em;
+    margin-right: 1em;
+    min-height: 240px;
+}
+span.form-image { float: left; margin-left: -66px; }
+span.form-image > img { width:46px; height:46px; }
+
+
+label {
+    clear: both;
+    color: #344E63;
+    display: block;
+    margin: 0 0 5px;
+    padding: 0;
+}
+p.step-text {
+    margin: 0px;
+    text-align:left;
+}
+p.instructions {
+    margin: 0px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    text-align: left;
+//        color: #47556C;
+//        font-size: 14px;
+//        font-weight: normal;
+//        font-family: sans-serif;
+}
