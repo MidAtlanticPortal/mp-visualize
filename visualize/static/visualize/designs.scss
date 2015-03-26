@@ -1,10 +1,13 @@
-#drawing-form textarea,
-#drawing-form input[name="name"] {
-    width: 90%;
+.designs-panel {}
+
+.designs-panel .design {
+    margin-left: 1em;
+    margin-right: 1em;
 }
 
-.featurepanel h4 {
-    margin-left: 1em;
+.design textarea,
+.design input[name="name"] {
+    width: 90%;
 }
 
 div .step {
@@ -12,8 +15,6 @@ div .step {
     padding: 6px;
     margin-top: 4px;
     margin-bottom: 8px;
-    margin-left: 1em;
-    margin-right: 1em;
     min-height: 240px;
 }
 span.form-image { float: left; margin-left: -66px; }
@@ -36,8 +37,4 @@ p.instructions {
     margin-top: 10px;
     margin-bottom: 0px;
     text-align: left;
-//        color: #47556C;
-//        font-size: 14px;
-//        font-weight: normal;
-//        font-family: sans-serif;
 }
