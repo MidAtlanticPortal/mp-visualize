@@ -133,12 +133,6 @@ $(document).ready(function() {
     });
   }, 2000);
 
-  $(document).keypress("n", function(e) {
-      if (e.shiftKey && e.altKey) { 
-          app.map.addLayer(nauticalCharts);
-      }
-  });
-
   app.fullscreen = {};
   // fullscreen stuff
   // for security reasons, this event listener must be bound directly
@@ -378,5 +372,4 @@ $(document).mousedown(function(e) {
   }
 
 
-  
 });
