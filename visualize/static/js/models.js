@@ -801,6 +801,9 @@ function mapLinksModel() {
 function viewModel() {
     var self = this;
 
+    // list of (func, unlessTarget) for $(doc).mouseDown
+    self._outsideClicks = [];
+
     // list of active layermodels
     self.activeLayers = ko.observableArray();
 
@@ -1301,7 +1304,18 @@ function viewModel() {
             });
             $button.addClass('active');
         }
+
+        self.onClickOutside($popover.get(0), self.hideOpacity);
     };
+
+    /* Call callback() once the next time there's a click that happens "outside"
+       the specified container. (A click that is not in a child of the
+       container).
+     */
+    self.onClickOutside = function(container, callback) {
+        self._outsideClicks.push({'container': container,
+                                  'callback': callback});
+    }
 
     self.hideOpacity = function(self, event) {
         $('#opacity-popover').hide();

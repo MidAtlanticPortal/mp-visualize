@@ -83,6 +83,7 @@ $(".nav-tabs li.disabled").on("click", function(e) {
 app.init();
 // Google.v3 uses EPSG:900913 as projection, so we have to
 // transform our coordinates
+// TODO: Make map center a configuration value
 app.map.setCenter(new OpenLayers.LonLat(-73.24, 38.93).transform(
 new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 7);
 
@@ -250,11 +251,7 @@ $(document).ready(function() {
   $('#SimpleLayerSwitcher_29').mouseenter( function() {
     //$('#basemaps').addClass('open');
   });
-  
-  $('#opacity-popover').mouseleave( function() {
-    app.viewModel.hideOpacity();
-  });  
-  
+
   $('#registration-modal').on('show', function() {
     $('.empty-input').val("");
   });
@@ -347,10 +344,19 @@ $('#left-panel .panel-heading h4 a.collapse-button').click(function(){
 });
 
 $(document).mousedown(function(e) {
-  //removing bookmark popover from view
-  if ($(e.target).closest('a').length && $(e.target).closest('a')[0].id === "bookmarks-button") {
-    //do nothing as show/hide behavior is handled in viewModel
-  } else if (!$(e.target).closest("#bookmark-popover").length) {
+
+    // Process "outside" clicks
+    if (app.viewModel._outsideClicks.length > 0) {
+        var last = app.viewModel._outsideClicks[app.viewModel._outsideClicks.length - 1];
+        if (!last.container.contains(e.target)) {
+            app.viewModel._outsideClicks.pop();
+            last.callback(e);
+        }
+    }
+
+    return;
+
+  if (!$(e.target).closest("#bookmark-popover").length) {
     $('#bookmark-popover').hide();
   }
   
