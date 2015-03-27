@@ -931,107 +931,6 @@ function selectionFormModel(options) {
     return self;
 }; // end selectionFormModel
 
-
-function IESelectionFormModel(options) {
-    var self = this;
-    
-    self.IE = true;
-    
-    self.leaseBlockLayer = app.viewModel.getLayerById(6);
-    if (self.leaseBlockLayer.active()) {
-        self.leaseBlockLayerWasActive = true;
-    }
-    self.leaseBlockLayer.activateLayer();
-    self.leaseBlockLayer.setVisible();
-    
-    self.leaseBlockLayerUtfGrid = self.leaseBlockLayer.utfgrid;
-        
-    self.selectingLeaseBlocks = ko.observable(false);
-    
-    self.selectedLeaseBlocksLayerName = 'Selected Lease Blocks';
-    
-    self.selectedLeaseBlocks = ko.observableArray();
-    self.selectedLeaseBlocks.subscribe(function(test) {
-        if (self.selectedLeaseBlocksLayer) {
-            app.map.removeLayer(self.selectedLeaseBlocksLayer);
-        }
-        $.ajax({
-            url: '/scenario/get_leaseblock_features',
-            type: 'GET',
-            dataType: 'json',
-            data: { leaseblock_ids: test },
-            success: function (feature) {
-                var layer = new OpenLayers.Layer.Vector(
-                    self.selectedLeaseBlocksLayerName,
-                    {
-                        projection: new OpenLayers.Projection('EPSG:3857'),
-                        displayInLayerSwitcher: false,
-                        styleMap: new OpenLayers.StyleMap({
-                            strokeColor: '#ff0',
-                            strokeOpacity: .8,
-                            fillOpacity: 0
-                        })//,     
-                        //scenarioModel: new selectionModel()
-                    }
-                );
-                
-                //assign leaseblock ids to hidden leaseblock ids form field
-                $('#id_leaseblock_ids').val(self.selectedLeaseBlocks().join(","));
-                
-                layer.addFeatures(new OpenLayers.Format.GeoJSON().read(feature));
-                self.selectedLeaseBlocksLayer = layer;
-                app.map.addLayer(self.selectedLeaseBlocksLayer);
-            },
-            error: function (result) {
-                //debugger;
-            }
-        })
-    });
-    
-    self.toggleSelectionProcess = function() {
-        if ( ! self.selectingLeaseBlocks() ) { // if not currently in the selection process, enable selection process
-            self.enableSelectionProcess();
-        } else { // otherwise, disable selection process
-            self.disableSelectionProcess();
-        }  
-    };
-    
-    self.enableSelectionProcess = function() {
-        //disable feature attribution
-        app.viewModel.disableFeatureAttribution();
-        //ensure lease blocks are visible
-        self.leaseBlockLayer.activateLayer();
-        self.leaseBlockLayer.setVisible();
-        //disable Show Lease Blocks checkbox 
-        $('#lease-blocks-layer-checkbox').prop('checked', true);
-        $('#lease-blocks-layer-checkbox').attr('disabled', 'disabled');
-        //change button text
-        self.selectingLeaseBlocks(true);
-    };
-    
-    self.disableSelectionProcess = function() {
-        //enable feature attribution
-        app.viewModel.enableFeatureAttribution();
-        //re-enable Show Lease Blocks checkbox
-        $('#lease-blocks-layer-checkbox').removeAttr('disabled');
-        //change button text
-        self.selectingLeaseBlocks(false);
-    };
-    
-    self.toggleLeaseBlockLayer = function(formModel, event) {
-        if ( event.target.type === "checkbox" ) {
-            if ($('#lease-blocks-layer-toggle input').is(":checked")) {
-                self.leaseBlockLayer.setVisible();
-            } else {
-                self.leaseBlockLayer.setInvisible();
-            }
-        }
-        return true;
-    };
-    
-    return self;
-}; // end IESelectionFormModel
-
 function scenarioModel(options) {
     var self = this;
 
@@ -1667,11 +1566,7 @@ function scenariosModel(options) {
             success: function(data) {
                 self.selectionForm(true);
                 $('#selection-form').html(data);
-                if ($.browser.msie && $.browser.version < 9) {
-                    self.selectionFormModel = new IESelectionFormModel(); 
-                } else {
-                    self.selectionFormModel = new selectionFormModel(); 
-                }
+                self.selectionFormModel = new selectionFormModel();
                 ko.applyBindings(self.selectionFormModel, document.getElementById('selection-form'));
             },
             error: function (result) { 
