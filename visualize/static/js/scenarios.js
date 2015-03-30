@@ -111,7 +111,7 @@ function scenarioFormModel(options) {
     self.leaseblocksLeft = ko.observable(initial_leaseblocks_left);
     self.showLeaseblockSpinner = ko.observable(false);
     
-    self.isLeaseblockLayerVisible = ko.observable(true);
+    self.isLeaseblockLayerVisible = ko.observable(false);
     self.isLeaseblockLayerVisible.subscribe( function() {
         if ( self.isLeaseblockLayerVisible() ) {
             self.showRemainingBlocks();
