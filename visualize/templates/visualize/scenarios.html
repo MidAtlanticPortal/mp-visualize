@@ -20,9 +20,7 @@
     
     <div class="form-container" data-bind="visible: ! (app.viewModel.scenarios.loadingMessage() || app.viewModel.scenarios.errorMessage())">
         <div id="designs-data" data-bind="visible: !app.viewModel.scenarios.scenarioForm() && !app.viewModel.scenarios.selectionForm() && !app.viewModel.scenarios.reportsVisible() && !app.viewModel.scenarios.drawingForm()">
-            <div id="view-reports-button" class="btn pull-right" data-bind="click: app.viewModel.scenarios.showComparisonReports">
-                View Reports
-            </div>
+        <!--
             <div id="create-new-design" class="btn-group" style="padding-bottom: 10px;">
                 <a id="create-new-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
                     Create New
@@ -36,7 +34,7 @@
                         <li><a data-bind="click: app.viewModel.scenarios.createWindScenario" style="padding-left: 15px">Wind Energy Siting</a></li>
                     {% endif %}
                 </ul>
-            </div>
+            </div> -->
                     
             <div id="design-list" class="row-fluid">
                 <div id="designs-accordion" class="designs">
@@ -96,8 +94,8 @@
                                         <a class="accordion-toggle">
                                             <span>Map View Bookmarks</span>
                                         </a>
-                                        <a class="create-new-button" data-bind="">
-                                                <i class="fa fa-plus"></i>NEW
+                                        <a class="create-new-button" data-bind="click: app.viewModel.showBookmarks, clickBubble: false">
+                                            <i class="fa fa-plus"></i>NEW
                                         </a>
                                     </div>
                                 </div>
@@ -188,7 +186,6 @@
                                     <div id="lease-block-collections-header" class="accordion-heading" data-bind="click: toggleCollectionsOpen, css: { 'active': isCollectionsOpen() }">
                                         <div>
                                             <a class="accordion-toggle">
-                                                <!--<span>Lease Block Collections</span>-->
                                                 <span>Lease Block Collections</span>
                                             </a>
                                             <a class="create-new-button" data-bind="click: app.viewModel.scenarios.createSelectionDesign, clickBubble: false">
@@ -198,8 +195,8 @@
                                     </div>
                                 </div>
                                 <div class="accordion-body collapse" data-bind="css: { 'in': isCollectionsOpen() }">
+
                                     <div class="accordion-inner">
-                                    
                                         <div data-bind="visible: !selectionList().length" style="font-weight: normal">
                                             <div style="padding: 10px;">
                                                 <p>
@@ -220,6 +217,9 @@
                                                 {% include "visualize/includes/custom-layer-row.html" %}
                                             </li>  
                                         </ul>
+                                        <div id="view-reports-button" class="btn btn-default btn-sm" data-bind="click: app.viewModel.scenarios.showComparisonReports">
+                                            View Reports
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -273,24 +273,25 @@
                 </div>
             </div>   
         </div>    
-        
-        <div data-bind="with: app.viewModel.scenarios">
+
+        <!-- designs dialogs -->
+        <div class="designs-panel" data-bind="with: app.viewModel.scenarios">
             {% if user|in_group:"Designers" %}  
             <div style="height: 100%" data-bind="visible: scenarioForm">   
-                <div id="scenario-form" class="panel-container"></div>   
+                <div id="scenario-form" class="design"></div>
             </div>
             {% endif %}
         
             <div style="height: 100%" data-bind="visible: selectionForm">   
-                <div id="selection-form" class="panel-container"></div>   
+                <div id="selection-form" class="design"></div>
             </div>
         
-            <div style="height: 100%" data-bind="visible: drawingForm">   
-                <div id="drawing-form" class="panel-container"></div> 
+            <div style="" data-bind="visible: drawingForm">
+                <div id="drawing-form" class="design"></div>
             </div>
         
             <div style="height: 100%" data-bind="visible: reportsVisible">   
-                <div id="reports" class="panel-container" data-bind="with: reports">
+                <div id="reports" class="design" data-bind="with: reports">
                     <div class="form-container">
                         <div>
                             <div class="row-fluid">
