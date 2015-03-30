@@ -898,12 +898,20 @@ a.create-new-button {
     color: $medium-gray;
     font-size: 12px;
     @extend .font-medium;
+    white-space: nowrap;
 
     &:hover {
         color: $medium-gray;
         text-decoration: none;
         background-color: rgba(0, 0, 0, 0.10);
     }
+}
+
+span.create-new-button {
+    color: $medium-gray;
+    font-size: 12px;
+    @extend .font-medium;
+    white-space: nowrap;
 }
 
 @import "visualize/designs.scss";
