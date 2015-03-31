@@ -76,12 +76,8 @@ function drawingModel(options) {
         app.viewModel.scenarios.drawingList.remove(drawing);
         
         //remove from server-side db (this should provide error message to the user on fail)
-        $.ajax({
-            url: '/drawing/delete_design/' + drawing.uid + '/',
-            type: 'POST',
-            error: function (result) {
-                //debugger;
-            }
+        $.jsonrpc('delete_drawing', [drawing.uid], {
+            //complete: drawingModel.loadDrawingList
         });
     };
 }
