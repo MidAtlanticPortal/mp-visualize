@@ -132,6 +132,7 @@
                                             <div id="bookmarks-table">
                                                 <table class="table table-condensed" style="margin-bottom: 5px;">
                                                     <tbody data-bind="foreach: bookmarksList">
+
                                                         <tr>
                                                             <td style="vertical-align: middle; padding-left: 15px">
                                                                 <a data-bind="attr: {title: sharedBy}, visible: shared()"
@@ -145,28 +146,45 @@
                                                                 </span>
                                                             </td>
                                                             <td style="padding-left: 0px; width: 35px">
-                                                                <a class="btn btn-mini bookmark-settings" data-bind="click: showBookmarkSettings, visible: !shared()">
-                                                                    <span title="Settings" data-toggle="tooltip" data-placement="right"><span class="fa fa-cog"></span></span>
-                                                                </a>
-                                                                    <!-- settings popover -->
-                                                                <div style="display:none" class="popover fade bottom in bookmark-settings-popover">
-                                                                    <div class="popover-inner">
-                                                                        <div class="popover-content" >
-                                                                            <div>
-                                                                                <a data-bind="click: showSharingModal" >
-                                                                                    <span><i class="fa fa-link"></i></span>
-                                                                                    <span>Share Bookmark</span>
-                                                                                </a>
-                                                                           </div>
-                                                                           <div>
-                                                                                <a data-bind="click: $parent.removeBookmark">
-                                                                                    <span><i class="fa fa-times-circle"></i></span>
-                                                                                    <span>Delete Bookmark</span>
-                                                                                </a>
-                                                                           </div>
-                                                                        </div>
-                                                                    </div>
+                                                                <div class="dropdown" style="position: absolute">
+                                                                    <a data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+                                                                        <i class="fa fa-cog"></i>
+                                                                    </a>
+
+                                                                    <ul style="position: absolute; z-index: 1100" class="dropdown-menu" role="menu">
+                                                                        <li>
+                                                                            <a data-bind="click: showSharingModal"><i class="fa fa-link"></i> Share Bookmark</a>
+                                                                        </li>
+                                                                        <li>
+                                                                            <a data-bind="click: $parent.removeBookmark"><i class="fa fa-times-circle"></i> Delete Bookmark</a>
+                                                                        </li>
+                                                                    </ul>
                                                                 </div>
+
+{#                                                                #}
+{#                                                                <a class="btn btn-mini bookmark-settings" data-bind="click: showBookmarkSettings, visible: !shared()">#}
+{#                                                                    <span title="Settings" data-toggle="tooltip" data-placement="right"><span class="fa fa-cog"></span></span>#}
+{#                                                                </a>#}
+{#                                                                #}
+                                                                    <!-- settings popover -->
+{#                                                                <div style="display:none" class="popover fade bottom in bookmark-settings-popover">#}
+{#                                                                    <div class="popover-inner">#}
+{#                                                                        <div class="popover-content" >#}
+{#                                                                            <div>#}
+{#                                                                                <a data-bind="click: showSharingModal" >#}
+{#                                                                                    <span><i class="fa fa-link"></i></span>#}
+{#                                                                                    <span>Share Bookmark</span>#}
+{#                                                                                </a>#}
+{#                                                                           </div>#}
+{#                                                                           <div>#}
+{#                                                                                <a data-bind="click: $parent.removeBookmark">#}
+{#                                                                                    <span><i class="fa fa-times-circle"></i></span>#}
+{#                                                                                    <span>Delete Bookmark</span>#}
+{#                                                                                </a>#}
+{#                                                                           </div>#}
+{#                                                                        </div>#}
+{#                                                                    </div>#}
+{#                                                                </div>#}
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -221,7 +239,7 @@
                                                 {% include "visualize/includes/custom-layer-row.html" %}
                                             </li>  
                                         </ul>
-                                        <div id="view-reports-button" class="btn btn-default btn-sm" data-bind="click: app.viewModel.scenarios.showComparisonReports">
+                                        <div id="view-reports-button" class="btn btn-primary btn-sm" data-bind="click: app.viewModel.scenarios.showComparisonReports">
                                             View Reports
                                         </div>
                                     </div>
