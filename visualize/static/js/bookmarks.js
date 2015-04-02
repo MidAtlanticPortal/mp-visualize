@@ -78,36 +78,6 @@ function bookmarkModel(options) {
     self.getBookmarkHash = function() {
         return $.param(self.getBookmarkState());
     };
-
-    self.showBookmarkSettings = function(bookmark, event) {
-        var $button = $(event.target).closest('a'),
-            $popover = $('.bookmark-settings-popover');
-
-        app.viewModel.bookmarks.activeBookmark = bookmark;
-
-        if ($button.hasClass('active')) {
-            self.hideBookmarkSettings();
-        } else {
-            $popover.show().position({
-                "my": "center top",
-                "at": "center bottom",
-                "of": $button,
-                "offset": "0px 10px"
-            }).on("mouseleave", function () {
-                var _this = this;
-                $popover.hide();
-                setTimeout(function () {
-                    $(_this).popover('hide');
-                }, 200);
-            });
-            //$button.addClass('active');
-        }
-    };
-    self.hideBookmarkSettings = function(self, event) {
-        $('.bookmark-settings-popover').hide();
-        $('.bookmark-settings.active').removeClass('active');
-        app.updateUrl();
-    };
     
     return self;
 } // end of bookmarkModel
