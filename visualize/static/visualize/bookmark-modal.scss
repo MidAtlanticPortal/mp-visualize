@@ -1,0 +1,18 @@
+#bookmark-share-modal div + .tab-content {
+    margin-top: 1em;
+}
+
+#bookmark-share-modal .tab-pane > div + div {
+    margin-top: 1em;
+}
+
+.form-control[readonly] {
+    background-color: inherit;
+    cursor: default;
+}
+
+#short-url {
+    vertical-align: top;
+    height: 6em;
+    word-break: break-word;
+}

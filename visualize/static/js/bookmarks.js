@@ -234,7 +234,22 @@ function bookmarksModel(options) {
     };
 
     self.openBookmarkIFrameExample = function() {
-        app.viewModel.mapLinks.openIFrameExample('bookmark');
+        var windowName = "newMapWindow";
+        var windowSize = "width=650, height=550";
+        var mapWindow = window.open('', windowName, windowSize);
+
+        var urlOrigin = window.location.origin;
+        if ( !urlOrigin ) {
+            urlOrigin = 'http://' + window.location.host;
+        }
+        var header = '<a href="/visualize"><img src="'+urlOrigin+'/media/marco/img/marco-logo_planner.jpg" style="border: 0px;"/></a>';
+        var iframeID = '#iframe-html';
+
+        mapWindow.document.write('<html><body><b>start</b><hr>');
+        mapWindow.document.write(app.viewModel.mapLinks.getIFrameHTML());
+        mapWindow.document.write('<hr><b>end</b></body></html>');
+        mapWindow.document.title = "Your MARCO Map!";
+        mapWindow.document.close();
 
         /*var windowName = "newMapWindow",
             windowSize = "width=650, height=550",

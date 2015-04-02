@@ -1,14 +1,14 @@
 
 <!-- BOOKMARK SHARE MODAL -->
 
-<div id="bookmark-share-modal" class="modal fade" data-bind="with: app.viewModel.bookmarks" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div id="bookmark-share-modal" class="modal fade" data-bind="with: app.viewModel.bookmarks" role="dialog" aria-hidden="true">
     <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             <h3>Sharing</h3>
         </div>
-        <div class="modal-body" style="text-align: center; overflow: hidden;">
+        <div class="modal-body">
             <div role="tabpanel">
                 <ul class="nav nav-tabs" role="tablist">
                     <li role="presentation" class="active"><a href="#share-link" aria-controls="share-link" role="tab" data-toggle="tab">Link</a></li>
@@ -18,29 +18,31 @@
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="share-link">
                     <div>
-                        URL  
-                        <span class="pull-right">
-                            <label> 
-                                <input class="short-url-checkbox" type="checkbox" data-bind="checked: shrinkBookmarkURL" style="margin-top: 0px; margin-bottom: 3px"> 
-                                Short URL 
+                        <label for="short-url" class="">
+                            URL
+                            <label class="pull-right">
+                                <input class="short-url-checkbox" type="checkbox" data-bind="checked: shrinkBookmarkURL" style="margin-top: 0px; margin-bottom: 3px">
+                                Short URL
                             </label>
-                        </span>
+                        </label>
+
+
+                        <input id="short-url" class="form-control" type="text" readonly data-bind="attr: {value: getCurrentBookmarkURL()}">
                     </div>
+
                     <div>
-                        <input id="short-url" type="text" style="width: 96%" data-bind="attr: {value: getCurrentBookmarkURL()}"> 
+                        <label for="iframe-html">
+                            Embedded Map
+                        </label>
+
+                        <textarea class="form-control" rows="8" data-bind="text: app.viewModel.mapLinks.getIFrameHTML()">
+                        </textarea>
                     </div>
-                    <div style="padding-top: 12px; padding-bottom: 5px"> 
-                        Embedded Map
-                    </div> 
 
-                    <div> 
-                        <input id="iframe-html" type="text" style="width: 96%" data-bind="attr: {value: $parent.getIFrameHTML}"> 
-                    </div>  
-
-                    <div style="margin-top: -4px"> 
-                        <a href="#" data-bind="click: $parent.openIFrameExample"> 
-                            Preview embedded map 
-                        </a> 
+                    <div>
+                        <button class="btn btn-default" data-bind="click: app.viewModel.bookmarks.openBookmarkIFrameExample">
+                            <i class="fa fa-globe"></i> Preview embedded map
+                        </button>
                     </div> 
 
                 </div>
