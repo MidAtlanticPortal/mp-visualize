@@ -234,11 +234,8 @@ function bookmarksModel(options) {
         */
     };
 
-    self.removeBookmark = function() {
-        var bookmark = app.viewModel.bookmarks.activeBookmark;
-        // if the user is logged in, ajax call to add bookmark to server
-
-        $.jsonrpc('remove_bookmark', [bookmark.uid], 
+    self.removeBookmark = function(bookmark, event) {
+        $.jsonrpc('remove_bookmark', [bookmark.uid],
                   {complete: self.getBookmarks});
     };
 
