@@ -246,18 +246,6 @@ $(document).ready(function() {
     //$('#basemaps').addClass('open');
   });
 
-  $('#registration-modal').on('show', function() {
-    $('.empty-input').val("");
-  });
-  
-  $('#sign-in-modal').on('show', function() {
-    $('.empty-input').val("");
-  });
-  
-  $('#reset-password-modal').on('show', function() {
-    $('.empty-input').val("");
-  });
-  
   $(document).on('click', 'a[name="start-default-tour"]', function() {
     app.viewModel.startDefaultTour();
   });
