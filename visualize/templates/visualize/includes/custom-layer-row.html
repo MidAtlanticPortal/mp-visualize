@@ -11,19 +11,27 @@
 {% endblock %}
 {% block "controls" %}
     <td>
-      <span class="dropdown" style="display:inline-block;">
-        <a class="btn btn-group dropdown-toggle" data-toggle="dropdown" href="#">
-          <i class="fa fa-gear"></i>
-        </a>
-        <ul class="dropdown-menu dropdown-menu-right">
-            <li><a data-bind="visible: ! shared(), click: edit">Edit</a></li>
-            <li><a id="share-option" data-bind="visible: ! shared() && $parent.hasSharingGroups, click: $parent.showSharingModal">Share</a></li>
-            <li><a data-bind="click: $parent.zoomToScenario">Zoom To</a></li>
-            <li class="divider"></li>
-            <li><a data-bind="visible: ! shared(), click: deleteScenario">Delete</a></li>
-            <li><a data-bind="visible: shared, click: createCopy">Create Copy</a></li>
-        </ul>
-      </span>
+        <div class="dropdown" style="position: absolute; margin-top: -16px">
+            <a class="btn" data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
+                <i class="fa fa-cog"></i>
+            </a>
+
+            <ul class="dropdown-menu" role="menu">
+                <li><a data-bind="visible: ! shared(), click: edit">
+                    <i class="fa fa-edit"></i> Edit</a>
+                </li>
+                <li><a id="share-option" data-bind="visible: ! shared() && $parent.hasSharingGroups, click: $parent.showSharingModal">
+                    <i class="fa fa-share-alt"></i> Share</a>
+                </li>
+                <li><a data-bind="click: $parent.zoomToScenario">
+                    <i class="fa fa-search-plus"></i> Zoom To</a>
+                </li>
+                <li class="divider"></li>
+                <li><a data-bind="visible: ! shared(), click: deleteScenario">
+                    <i class="fa fa-times-circle red"></i> Delete</a></li>
+                <li><a data-bind="visible: shared, click: createCopy">Create Copy</a></li>
+            </ul>
+        </div>
     </td>
     {{ block.super }}
 {% endblock %}
