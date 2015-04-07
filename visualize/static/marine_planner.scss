@@ -1,3 +1,4 @@
+
 body.template-visualize{
     height: 100%;
 
@@ -158,10 +159,6 @@ body.template-visualize{
         opacity: 0.9;
         .accordion-heading{
             background-color: $light-gray;
-        }
-        .accordion-toggle, .accordion-toggle:hover{
-            cursor: pointer;
-            padding: 5px 10px;
         }
     }
 
@@ -553,7 +550,7 @@ body.template-visualize{
         padding-top: 8px;
         font-size: 90%;
     }
-    .nav-tabs{
+    .sidebar-nav .nav-tabs{
         border-top: 1px solid #ddd;
         background-color: $gray-lighter;
         text-align: center;
@@ -565,11 +562,11 @@ body.template-visualize{
             }
         }
     }
-    .nav-tabs>li{
+    .sidebar-nav .nav-tabs>li{
         padding: 0px 15px 0px 15px;
         margin-bottom: 0px;
     }
-    .nav-tabs>li a{
+    .sidebar-nav .nav-tabs>li a{
         margin-right:0px;
         border-top: 0px ;
         border-bottom: 0px ;
@@ -579,10 +576,10 @@ body.template-visualize{
         text-decoration: none;
         color: $gray-darker;
     }
-    .nav-tabs li.active{
+    .sidebar-nav .nav-tabs li.active{
         background-color: $light-gray;
     }
-    .nav-tabs>li.active a, .nav-tabs>li.active a:hover, .nav-tabs>li.active a:focus {
+    .sidebar-nav .nav-tabs>li.active a, .nav-tabs>li.active a:hover, .nav-tabs>li.active a:focus {
         border-bottom: 2px solid $green;
         color: $green;
         border-left: 0px;
@@ -592,10 +589,9 @@ body.template-visualize{
 
     .tab-pane {
         height: 100%;
-        overflow-y: auto;
     }
 
-    .tab-content, #data-accordion{
+    .sidebar-nav .tab-content, .sidebar-nav #data-accordion {
         background-color: $gray-lighter;
     }
     .tab-content .tab-pane{
@@ -603,8 +599,9 @@ body.template-visualize{
     }
 
     .accordion-toggle{
+        cursor: pointer;
         padding: 10px 20px;
-        display: block;
+        display: inline-block;
         color: $dark-gray;
         font-size: 16px;
     }
@@ -888,3 +885,41 @@ body.template-visualize{
     cursor: pointer;
     @include user-select(none);
 }
+
+.accordion-heading.active .accordion-toggle::before {
+    content: "▾ ";
+}
+.accordion-heading .accordion-toggle::before {
+    content: "▸ ";
+}
+
+a.create-new-button {
+    cursor: pointer;
+    color: $medium-gray;
+    font-size: 12px;
+    @extend .font-medium;
+    white-space: nowrap;
+
+    &:hover {
+        color: $medium-gray;
+        text-decoration: none;
+        background-color: rgba(0, 0, 0, 0.10);
+    }
+}
+
+span.create-new-button {
+    color: $medium-gray;
+    font-size: 12px;
+    @extend .font-medium;
+    white-space: nowrap;
+}
+
+td ul.dropdown-menu {
+    left:32px;
+    top:12px;
+}
+
+
+@import "visualize/designs.scss";
+
+@import "visualize/bookmark-modal.scss";

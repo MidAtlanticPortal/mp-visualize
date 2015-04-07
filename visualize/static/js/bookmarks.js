@@ -78,36 +78,6 @@ function bookmarkModel(options) {
     self.getBookmarkHash = function() {
         return $.param(self.getBookmarkState());
     };
-
-    self.showBookmarkSettings = function(bookmark, event) {
-        var $button = $(event.target).closest('a'),
-            $popover = $('.bookmark-settings-popover');
-
-        app.viewModel.bookmarks.activeBookmark = bookmark;
-
-        if ($button.hasClass('active')) {
-            self.hideBookmarkSettings();
-        } else {
-            $popover.show().position({
-                "my": "center top",
-                "at": "center bottom",
-                "of": $button,
-                "offset": "0px 10px"
-            }).on("mouseleave", function () {
-                var _this = this;
-                $popover.hide();
-                setTimeout(function () {
-                    $(_this).popover('hide');
-                }, 200);
-            });
-            //$button.addClass('active');
-        }
-    };
-    self.hideBookmarkSettings = function(self, event) {
-        $('.bookmark-settings-popover').hide();
-        $('.bookmark-settings.active').removeClass('active');
-        app.updateUrl();
-    };
     
     return self;
 } // end of bookmarkModel
@@ -234,7 +204,22 @@ function bookmarksModel(options) {
     };
 
     self.openBookmarkIFrameExample = function() {
-        app.viewModel.mapLinks.openIFrameExample('bookmark');
+        var windowName = "newMapWindow";
+        var windowSize = "width=650, height=550";
+        var mapWindow = window.open('', windowName, windowSize);
+
+        var urlOrigin = window.location.origin;
+        if ( !urlOrigin ) {
+            urlOrigin = 'http://' + window.location.host;
+        }
+        var header = '<a href="/visualize"><img src="'+urlOrigin+'/media/marco/img/marco-logo_planner.jpg" style="border: 0px;"/></a>';
+        var iframeID = '#iframe-html';
+
+        mapWindow.document.write('<html><body><b>start</b><hr>');
+        mapWindow.document.write(app.viewModel.mapLinks.getIFrameHTML());
+        mapWindow.document.write('<hr><b>end</b></body></html>');
+        mapWindow.document.title = "Your MARCO Map!";
+        mapWindow.document.close();
 
         /*var windowName = "newMapWindow",
             windowSize = "width=650, height=550",
@@ -249,11 +234,8 @@ function bookmarksModel(options) {
         */
     };
 
-    self.removeBookmark = function() {
-        var bookmark = app.viewModel.bookmarks.activeBookmark;
-        // if the user is logged in, ajax call to add bookmark to server
-
-        $.jsonrpc('remove_bookmark', [bookmark.uid], 
+    self.removeBookmark = function(bookmark, event) {
+        $.jsonrpc('remove_bookmark', [bookmark.uid],
                   {complete: self.getBookmarks});
     };
 

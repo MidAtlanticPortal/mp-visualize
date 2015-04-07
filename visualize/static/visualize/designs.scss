@@ -1,0 +1,109 @@
+.designs-panel {}
+
+.designs-panel .design {
+    margin-left: 1em;
+    margin-right: 1em;
+}
+
+.design textarea,
+.design input[name="name"] {
+    width: 90%;
+}
+
+div .step {
+    border: 1px $light-gray solid;
+    padding: 6px;
+    margin-top: 4px;
+    margin-bottom: 8px;
+    min-height: 240px;
+}
+span.form-image { float: left; margin-left: -66px; }
+span.form-image > img { width:46px; height:46px; }
+
+.step input[type="checkbox"] {
+    margin-left: 0;
+    position: static;
+}
+
+label {
+    clear: both;
+    color: #344E63;
+    display: block;
+    margin: 0 0 5px;
+    padding: 0;
+}
+p.step-text {
+    margin: 0px;
+    text-align:left;
+}
+p.instructions {
+    margin: 0px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    text-align: left;
+}
+
+label.accordion-toggle.checkbox {
+    &:before { content: ""; }
+    &:after { content: ""; }
+    padding: 0;
+}
+
+/* Wind energy sitings */
+ul.parameters {
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+.parameter-label {
+    @extend .font-regular;
+    font-size: 14px;
+}
+
+input.parameters, input.filters {
+    display: none;
+}
+
+ul.parameters .accordion-inner {
+    margin-left: 25px;
+    margin-bottom: 1em;
+}
+
+ul.parameters .accordion-inner div {
+    margin-bottom: 1em;
+}
+
+.slidervalue {
+    @extend .font-medium;
+    width: 3em;
+}
+
+div.ui-slider {
+    margin-top: 1em;
+}
+
+.checkbox {
+    & > i.fa-square-o {
+        opacity: 0.4;
+    }
+
+    &:hover > i.fa-square-o {
+        opacity: 0.8;
+    }
+}
+
+/* Special case the "show lease blocks"
+   button on the Wind sitings panel */
+.show-blocks-btn .badge {
+    border-radius: 3px;
+    padding: 2px;
+}
+
+.wizard_nav {
+    margin-top: 1em;
+}
+
+#scenario-form .btn {
+    border-radius: 4px;
+}

@@ -25,7 +25,7 @@ def show_planner(request, template='visualize/planner.html'):
         context['session'] = request.session._session_key
     return render_to_response(template, RequestContext(request, context)) 
     
-def show_embedded_map(request, template='map.html'):
+def show_embedded_map(request, template='visualize/map.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
     return render_to_response(template, RequestContext(request, context)) 
     
