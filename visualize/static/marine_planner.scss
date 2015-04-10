@@ -216,8 +216,8 @@ body.template-visualize{
         background-image: url(/static/visualize/img/baselayer.png);
         display: table-cell;
         vertical-align: bottom;
-        border: 1px solid $gray-darker;
-        color: $gray-dark;
+        border: 1.5px solid $gray-darker;
+        box-shadow: 3px 3px 10px $gray-darker;
     }
 
     .olControlScaleBar {
