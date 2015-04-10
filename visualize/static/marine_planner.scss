@@ -919,6 +919,12 @@ td ul.dropdown-menu {
     top:12px;
 }
 
+.tooltip.fade.bottom.in {
+    .tooltip-inner {
+        max-width: 383px;
+    }
+}
+
 
 @import "visualize/designs.scss";
 
