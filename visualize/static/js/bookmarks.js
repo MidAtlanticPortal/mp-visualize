@@ -353,7 +353,11 @@ function bookmarksModel(options) {
     // load the bookmarks
     self.getBookmarks();
 
-    
+
     return self;
 } // end of bookmarksModel
 
+bookmarksModel.prototype.showSharingModal = function(bookmark) {
+    app.viewModel.bookmarks.activeBookmark(bookmark);
+    bookmark.showSharingModal();
+}

@@ -514,6 +514,21 @@ app.init = function () {
         } 
     }, 1000);
 
+
+    app.menus = {
+        bookmark: [
+            new ContextualMenu.Item("Share Bookmark", app.viewModel.bookmarks.showSharingModal, 'fa fa-link'),
+            new ContextualMenu.Item("-"),
+            new ContextualMenu.Item("Delete Bookmark", app.viewModel.bookmarks.removeBookmark, 'fa fa-times-circle red')
+        ]
+    };
+
+    $(function() {
+        //ContextualMenu.Init(app.menus, document.querySelector('#context-menu'))
+        app.menuModel = new ContextualMenu.Model(app.menus, document.querySelector('#context-menu'));
+        app.menuModel.setCorrectionOffset(0, -50);
+        ko.applyBindings(app.menuModel, document.querySelector('#context-menu'));
+    });
 };
 
 app.addLayerToMap = function(layer) {

@@ -146,19 +146,20 @@
                                                                 </span>
                                                             </td>
                                                             <td style="width: 35px">
-                                                                <div class="dropdown btn" style="position: absolute;margin-left: -10px;">
-                                                                    <a data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
-                                                                        <i class="fa fa-cog"></i>
-                                                                    </a>
+                                                                <div class="dropdown btn">
+                                                                    <a data-bind="click: app.menuModel.menu('bookmark')"><i class="fa fa-cog"></i></a>
+{#                                                                    <a data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">#}
+{#                                                                        <i class="fa fa-cog"></i>#}
+{#                                                                    </a>#}
 
-                                                                    <ul style="z-index: 1100" class="dropdown-menu" role="menu">
-                                                                        <li>
-                                                                            <a data-bind="click: showSharingModal"><i class="fa fa-link"></i> Share Bookmark</a>
-                                                                        </li>
-                                                                        <li>
-                                                                            <a data-bind="click: app.viewModel.bookmarks.removeBookmark"><i class="fa fa-times-circle"></i> Delete Bookmark</a>
-                                                                        </li>
-                                                                    </ul>
+{#                                                                    <ul style="z-index: 1100" class="dropdown-menu" role="menu">#}
+{#                                                                        <li>#}
+{#                                                                            <a data-bind="click: showSharingModal"><i class="fa fa-link"></i> Share Bookmark</a>#}
+{#                                                                        </li>#}
+{#                                                                        <li>#}
+{#                                                                            <a data-bind="click: app.viewModel.bookmarks.removeBookmark"><i class="fa fa-times-circle"></i> Delete Bookmark</a>#}
+{#                                                                        </li>#}
+{#                                                                    </ul>#}
                                                                 </div>
                                                             </td>
                                                         </tr>

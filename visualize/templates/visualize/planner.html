@@ -11,6 +11,19 @@
 {% endblock%}
 
 {% block body_class %}template-visualize{% endblock %}
+
+{% block top-level %}
+<div id="context-menu">
+    <ul data-bind="foreach: menuItems">
+        <li class="divider" data-bind="visible: name == '-' "></li>
+        <li data-bind="click: func, visible: name != '-' ">
+            <i data-bind="css: iconCls"></i> <span data-bind="text: name"></span>
+        </li>
+    </ul>
+</div>
+{% endblock %}
+
+
 {% block outer_content %}
 
         {% include "visualize/modals.html" %}
@@ -298,6 +311,7 @@
         <script src="{% static 'bower_components/bigscreen/bigscreen.js' %}"></script>
         <script src="{% static 'bower_components/jqueryui-touch-punch/jquery.ui.touch-punch.min.js' %}"></script>
 
+        <script src="{% static 'js/contextual_menu.js' %}"></script>
         <script src="{% static 'js/fixtures.js' %}"></script>
         <script src="{% static 'js/controls.js' %}"></script>
         <script src="{% static 'js/map.js' %}"></script>
@@ -310,4 +324,6 @@
         <script src="{% static 'js/server.js' %}"></script>
         <script src="{% static 'js/app.js' %}"></script>
 
+        <script src="{% static 'js/html2canvas.js' %}"></script>
+        <script src="{% static 'js/html2canvas.svg.js' %}"></script>
 {% endblock %}
