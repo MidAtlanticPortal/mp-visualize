@@ -2006,20 +2006,21 @@ function scenariosModel(options) {
         self.zoomToScenario(drawing);
     };
     self.deleteDrawing = function(drawing) {
-        self.deleteScenario(drawing);
+        drawing.deleteScenario();
     };
 
-    self.editDrawing = function(drawing) {
-        drawing.edit();
+
+    self.editLeaseBlockCollection = function(leaseBlockCollection) {
+        leaseBlockCollection.edit();
     };
-    self.shareDrawing = function(drawing) {
-        self.showSharingModal(drawing);
+    self.shareLeaseBlockCollection = function(leaseBlockCollection) {
+        self.showSharingModal(leaseBlockCollection);
     };
-    self.zoomToDrawing = function(drawing) {
-        self.zoomToScenario(drawing);
+    self.zoomToLeaseBlockCollection = function(leaseBlockCollection) {
+        self.zoomToScenario(leaseBlockCollection);
     };
-    self.deleteDrawing = function(drawing) {
-        self.deleteScenario(drawing);
+    self.deleteLeaseBlockCollection = function(leaseBlockCollection) {
+        leaseBlockCollection.deleteScenario();
     };
 
 

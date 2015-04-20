@@ -543,11 +543,11 @@ app.init = function () {
     ];
 
     app.menus.leaseBlockCollection = [
-        new ContextualMenu.Item("Edit", function(){console.info("leaseBlockCollection: Edit")}, 'fa fa-edit'),
-        new ContextualMenu.Item("Share", function(){console.info("leaseBlockCollection: Share")}, 'fa fa-share-alt'),
-        new ContextualMenu.Item("Zoom To", function(){console.info("leaseBlockCollection: Zoom To")}, 'fa fa-search-plus'),
+        new ContextualMenu.Item("Edit", app.viewModel.scenarios.editLeaseBlockCollection, 'fa fa-edit'),
+        new ContextualMenu.Item("Share", app.viewModel.scenarios.shareLeaseBlockCollection, 'fa fa-share-alt'),
+        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToLeaseBlockCollection, 'fa fa-search-plus'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Delete Lease Block Collection", function(){console.info("leaseBlockCollection: Delete")}, 'fa fa-times-circle red')
+        new ContextualMenu.Item("Delete Lease Block Collection", app.viewModel.scenarios.deleteLeaseBlockCollection, 'fa fa-times-circle red')
     ];
 
     app.menus.sharedWindEnergySiting = [
