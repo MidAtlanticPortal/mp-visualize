@@ -525,7 +525,7 @@ app.init = function () {
     app.menus.sharedDrawing = [
         new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToDrawing, 'fa fa-search-plus'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", function(){console.info("sharedDrawing: Create Copy")}, '')
+        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfDrawing, '')
     ];
 
     app.menus.drawing = [
@@ -537,9 +537,9 @@ app.init = function () {
     ];
 
     app.menus.sharedLeaseBlockCollection = [
-        new ContextualMenu.Item("Zoom To", function(){console.info("sharedLeaseBlockCollection: Zoom To")}, 'fa fa-search-plus'),
+        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToLeaseBlockCollection, 'fa fa-search-plus'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", function(){console.info("sharedLeaseBlockCollection: Create Copy")}, '')
+        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfLeaseBlockCollection, '')
     ];
 
     app.menus.leaseBlockCollection = [
@@ -553,15 +553,15 @@ app.init = function () {
     app.menus.sharedWindEnergySiting = [
         new ContextualMenu.Item("Zoom To", function(){console.info("sharedWindEnergySiting: Zoom To")}, 'fa fa-search-plus'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", function(){console.info("sharedWindEnergySiting: Create Copy")}, '')
+        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfWindEnergySiting, '')
     ];
 
     app.menus.windEnergySiting = [
-        new ContextualMenu.Item("Edit", function(){console.info("windEnergySiting: Edit")}, 'fa fa-edit'),
-        new ContextualMenu.Item("Share", function(){console.info("windEnergySiting: Share")}, 'fa fa-share-alt'),
-        new ContextualMenu.Item("Zoom To", function(){console.info("windEnergySiting: Zoom To")}, 'fa fa-search-plus'),
+        new ContextualMenu.Item("Edit", app.viewModel.scenarios.editWindEnergySiting, 'fa fa-edit'),
+        new ContextualMenu.Item("Share", app.viewModel.scenarios.shareWindEnergySiting, 'fa fa-share-alt'),
+        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToWindEnergySiting, 'fa fa-search-plus'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Delete Lease Block Collection", function(){console.info("windEnergySiting: Delete")}, 'fa fa-times-circle red')
+        new ContextualMenu.Item("Delete Wind Energy Siting", app.viewModel.scenarios.deleteWindEnergySiting, 'fa fa-times-circle red')
     ];
 
     $(function() {
