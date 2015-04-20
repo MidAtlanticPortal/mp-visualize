@@ -931,6 +931,8 @@ function selectionFormModel(options) {
     return self;
 }; // end selectionFormModel
 
+/* This is the "parent" class for the "Selection" model aka Lease block
+collections, and the "Drawing" model aka Drawings. */
 function scenarioModel(options) {
     var self = this;
 
@@ -1991,7 +1993,37 @@ function scenariosModel(options) {
             }
         });
     };
-    
+
+
+    // External interface to objects for menus
+    self.editDrawing = function(drawing) {
+        drawing.edit();
+    };
+    self.shareDrawing = function(drawing) {
+        self.showSharingModal(drawing);
+    };
+    self.zoomToDrawing = function(drawing) {
+        self.zoomToScenario(drawing);
+    };
+    self.deleteDrawing = function(drawing) {
+        self.deleteScenario(drawing);
+    };
+
+    self.editDrawing = function(drawing) {
+        drawing.edit();
+    };
+    self.shareDrawing = function(drawing) {
+        self.showSharingModal(drawing);
+    };
+    self.zoomToDrawing = function(drawing) {
+        self.zoomToScenario(drawing);
+    };
+    self.deleteDrawing = function(drawing) {
+        self.deleteScenario(drawing);
+    };
+
+
+
     return self;
 } // end scenariosModel
 

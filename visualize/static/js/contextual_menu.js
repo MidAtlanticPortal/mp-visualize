@@ -62,12 +62,17 @@ function doPasteThing(thing) {
         this.object = object;
     }
 
+    function MenuDivider() {
+        return new MenuItem('-');
+    }
+
     /** Return a function that calls the user's callback, and then runs our
      * internal finished() function to close the menu.
      */
     MenuItem.prototype._wrapped_callback = function(finished_fn) {
         return function(params, event) {
             try {
+                console.warn("Called callback", params);
                 return this.callback(params.object, event)
             }
             finally {
@@ -93,17 +98,21 @@ function doPasteThing(thing) {
         this.offy = 0;
 
         var closure = this;
-        this._closeMenu = function(e) {
+
+        // Event handler to handle a close menu click or escape press.
+        // defined in a funny closure like this otherwise removeEventListener
+        // won't work.
+        this._handleCloseMenuEvent = function(e) {
+            console.error('_handleCloseMenuEvent', count++);
+
             if (e.type == 'keyup' && e.keyCode != 27) {
                 return;
             }
             if (closure.menuElement.contains(e.target)) {
-                return;
+                return false;
             }
-            closure.menuElement.removeAttribute('style');
-            window.removeEventListener('mousedown', closure._closeMenu);
-            window.removeEventListener('keyup', closure._closeMenu);
-            console.error('fired', count++);
+
+            closure._closeMenu();
         };
     }
 
@@ -114,11 +123,15 @@ function doPasteThing(thing) {
 
             this.menuItems.removeAll();
             for (var i = 0; i < this.menuActions[kind].length; i++) {
-                var menuItem = this.menuActions[kind][i].get(params, this._closeMenu);
+                var menuItem = this.menuActions[kind][i].get(params, this._closeMenu.bind(this));
                 this.menuItems.push(menuItem);
             }
 
             this._positionMenu(event);
+
+            // Add a self-destructing event listener to close the menu on mouse down
+            window.addEventListener('mousedown', this._handleCloseMenuEvent);
+            window.addEventListener('keyup', this._handleCloseMenuEvent);
         }.bind(this);
     };
 
@@ -153,14 +166,20 @@ function doPasteThing(thing) {
             top -= height;
         }
 
-        // Add a self-destructing event listener to close the menu on mouse down
-        window.addEventListener('mousedown', this._closeMenu);
-        window.addEventListener('keyup', this._closeMenu);
-
         this.menuElement.style.left = left + 'px';
         this.menuElement.style.top = top + 'px';
         this.menuElement.style.zIndex = 111111;
     }
+
+    // Close the menu and remove any close event listeners
+    MenuModel.prototype._closeMenu = function() {
+        this.menuElement.removeAttribute('style');
+        window.removeEventListener('mousedown', this._handleCloseMenuEvent);
+        window.removeEventListener('keyup', this._handleCloseMenuEvent);
+
+        console.error('_closeMenu', count++);
+    }
+
 
     var count = 0;
 
@@ -175,6 +194,7 @@ function doPasteThing(thing) {
 
     window.ContextualMenu = {
         Item: MenuItem,
+        Divider: MenuDivider,
         Init: initDropdownMenus,
         Model: MenuModel
     }

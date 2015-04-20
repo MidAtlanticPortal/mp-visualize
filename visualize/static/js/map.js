@@ -515,17 +515,59 @@ app.init = function () {
     }, 1000);
 
 
-    app.menus = {
-        bookmark: [
-            new ContextualMenu.Item("Share Bookmark", app.viewModel.bookmarks.showSharingModal, 'fa fa-link'),
-            new ContextualMenu.Item("-"),
-            new ContextualMenu.Item("Delete Bookmark", app.viewModel.bookmarks.removeBookmark, 'fa fa-times-circle red')
-        ]
-    };
+    app.menus = {}
+    app.menus.bookmark = [
+        new ContextualMenu.Item("Share Bookmark", app.viewModel.bookmarks.showSharingModal, 'fa fa-link'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Delete Bookmark", app.viewModel.bookmarks.removeBookmark, 'fa fa-times-circle red')
+    ];
+
+    app.menus.sharedDrawing = [
+        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToDrawing, 'fa fa-search-plus'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Create Copy", function(){console.info("sharedDrawing: Create Copy")}, '')
+    ];
+
+    app.menus.drawing = [
+        new ContextualMenu.Item("Edit", app.viewModel.scenarios.editDrawing, 'fa fa-edit'),
+        new ContextualMenu.Item("Share", app.viewModel.scenarios.shareDrawing, 'fa fa-share-alt'),
+        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToDrawing, 'fa fa-search-plus'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Delete Drawing", app.viewModel.scenarios.deleteDrawing, 'fa fa-times-circle red')
+    ];
+
+    app.menus.sharedLeaseBlockCollection = [
+        new ContextualMenu.Item("Zoom To", function(){console.info("sharedLeaseBlockCollection: Zoom To")}, 'fa fa-search-plus'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Create Copy", function(){console.info("sharedLeaseBlockCollection: Create Copy")}, '')
+    ];
+
+    app.menus.leaseBlockCollection = [
+        new ContextualMenu.Item("Edit", function(){console.info("leaseBlockCollection: Edit")}, 'fa fa-edit'),
+        new ContextualMenu.Item("Share", function(){console.info("leaseBlockCollection: Share")}, 'fa fa-share-alt'),
+        new ContextualMenu.Item("Zoom To", function(){console.info("leaseBlockCollection: Zoom To")}, 'fa fa-search-plus'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Delete Lease Block Collection", function(){console.info("leaseBlockCollection: Delete")}, 'fa fa-times-circle red')
+    ];
+
+    app.menus.sharedWindEnergySiting = [
+        new ContextualMenu.Item("Zoom To", function(){console.info("sharedWindEnergySiting: Zoom To")}, 'fa fa-search-plus'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Create Copy", function(){console.info("sharedWindEnergySiting: Create Copy")}, '')
+    ];
+
+    app.menus.windEnergySiting = [
+        new ContextualMenu.Item("Edit", function(){console.info("windEnergySiting: Edit")}, 'fa fa-edit'),
+        new ContextualMenu.Item("Share", function(){console.info("windEnergySiting: Share")}, 'fa fa-share-alt'),
+        new ContextualMenu.Item("Zoom To", function(){console.info("windEnergySiting: Zoom To")}, 'fa fa-search-plus'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Delete Lease Block Collection", function(){console.info("windEnergySiting: Delete")}, 'fa fa-times-circle red')
+    ];
 
     $(function() {
         //ContextualMenu.Init(app.menus, document.querySelector('#context-menu'))
         app.menuModel = new ContextualMenu.Model(app.menus, document.querySelector('#context-menu'));
+        // fix for top nav's negative margin
         app.menuModel.setCorrectionOffset(0, -50);
         ko.applyBindings(app.menuModel, document.querySelector('#context-menu'));
     });
