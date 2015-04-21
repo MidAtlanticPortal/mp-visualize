@@ -20,22 +20,6 @@
     
     <div class="form-container" data-bind="visible: ! (app.viewModel.scenarios.loadingMessage() || app.viewModel.scenarios.errorMessage())">
         <div id="designs-data" data-bind="visible: !app.viewModel.scenarios.scenarioForm() && !app.viewModel.scenarios.selectionForm() && !app.viewModel.scenarios.reportsVisible() && !app.viewModel.scenarios.drawingForm()">
-        <!--
-            <div id="create-new-design" class="btn-group" style="padding-bottom: 10px;">
-                <a id="create-new-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                    Create New
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" style="min-width: 115px;">
-                    <li id="create-new-drawing"><a data-bind="click: app.viewModel.scenarios.createPolygonDesign" style="padding-left: 15px">Drawing</a></li>
-                    <li id="create-new-selection"><a data-bind="click: app.viewModel.scenarios.createSelectionDesign" style="padding-left: 15px">Lease Block Collection</a></li>
-
-                    {% if user|in_group:"Designers" %}
-                        <li><a data-bind="click: app.viewModel.scenarios.createWindScenario" style="padding-left: 15px">Wind Energy Siting</a></li>
-                    {% endif %}
-                </ul>
-            </div> -->
-                    
             <div id="design-list" class="row-fluid">
                 <div id="designs-accordion" class="designs">
                     <div class="accordion">                    
@@ -78,8 +62,98 @@
                                     
                                         <ul class="unstyled list" data-bind="foreach: drawingList ">
                                             <li class="layer">
-                                                {% include "visualize/includes/custom-layer-row.html" %}
-                                            </li>  
+<table class="layer-row">
+    <tr>
+        <td>
+            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
+                <i class="fa fa-info-circle"></i>
+            </a>
+        </td>
+        <td class="layer-name">
+            <a class="btn btn-layer" data-bind='click: toggleActive'>
+              <table>
+                <tr>
+                  <td class="text">
+                    <span rel="tooltip" data-bind="visible: shared, attr: {title: sharedBy}">
+                        <i class="fa fa-user"></i>
+                    </span>
+                    <span rel="tooltip" data-bind="visible: selectedGroups().length, attr: {title: sharedWith}">
+                        <i class="fa fa-group"></i>
+                    </span>
+                    <span data-bind='text: name'></span>
+                  </td>
+                  <td class="add-on">
+                    <i class="fa fa-check-circle"  data-bind="css: { 'fa-check-circle': active() && visible(), 'fa-circle-o': !(active() && visible()) }"></i>
+                  </td>
+                </tr>
+              </table>
+            </a>
+        </td>
+        <td>
+            <a class="btn" data-bind="visible: shared(), click: app.menuModel.menu('sharedDrawing')"><i class="fa fa-cog"></i></a>
+            <a class="btn" data-bind="visible: !shared(), click: app.menuModel.menu('drawing')"><i class="fa fa-cog"></i></a>
+        </td>
+    </tr>
+</table>
+<div class="layer-info" data-bind="visible: infoActive()">
+    <div class="link-bar" data-bind="if: $data.hasOwnProperty('kml') || $data.hasOwnProperty('data_download') || $data.hasOwnProperty('metadata') || $data.hasOwnProperty('source')">
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Download for Google Maps">
+            <!-- ko if: $data.hasOwnProperty("kml") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
+                kml <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("kml") -->
+            <a class="btn btn-mini disabled">
+                kml <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Download ESRI Formatted Dataset">
+            <!-- ko if: $data.hasOwnProperty("data_download") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
+                data <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("data_download") -->
+            <a class="btn btn-mini disabled">
+                data <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="View Metadata">
+            <!-- ko if: $data.hasOwnProperty("metadata") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
+                metadata <i class="fa fa-external-link-square" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("metadata") -->
+            <a class="btn btn-mini disabled">
+                metadata <i class="fa fa-external-link-square" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Link to Dataset Source Provider">
+            <!-- ko if: $data.hasOwnProperty("source") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
+                source <i class="fa fa-external-link-square"></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("source") -->
+            <a class="btn btn-mini disabled">
+                source <i class="fa fa-external-link-square"></i>
+            </a>
+            <!-- /ko -->
+        </span>
+    </div>
+    <div class="layer-text">
+        <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
+        <!-- ko if: $data.data_url -->
+        <a data-bind="attr: {href: $data.data_url}">read more</a>.
+        <!-- /ko -->
+    </div>
+</div>
+                                            </li>
                                         </ul>
                                     </div>
                                 </div>
@@ -128,45 +202,40 @@
 
                                             </div>
                                         </div>
-                                        <div data-bind="visible: bookmarksList().length > 0">
-                                            <div id="bookmarks-table">
-                                                <table class="table table-condensed" style="margin-bottom: 5px;">
-                                                    <tbody data-bind="foreach: bookmarksList">
+                                            <div data-bind="visible: bookmarksList().length > 0">
+                                                <ul class="unstyled list" data-bind="foreach: bookmarksList ">
+                                                    <li class="layer">
+                                                        <table class="layer-row">
+                                                            <tr>
+                                                                <td></td>
+                                                                <td class="layer-name">
+                                                                    <a class="btn btn-layer">
+                                                                        <table>
+                                                                            <tr>
+                                                                                <td class="text">
+                                                                                    <a data-bind="attr: {title: sharedBy}, visible: shared()"
+                                                                                       style="text-decoration: none; cursor: default;"
+                                                                                       data-toggle="tooltip" data-placement="right" >
+                                                                                        <i class="fa fa-group"></i>
+                                                                                    </a>
 
-                                                        <tr style="height: 33px">
-                                                            <td style="vertical-align: middle; padding-left: 52px">
-                                                                <a data-bind="attr: {title: sharedBy}, visible: shared()"
-                                                                   style="text-decoration: none; cursor: default;"
-                                                                   data-toggle="tooltip" data-placement="right" >
-                                                                    <i class="fa fa-group"></i>
-                                                                </a>
+                                                                                    <span data-bind="click: loadBookmark">
+                                                                                        <a data-bind="text: name, attr: {href: getBookmarkUrl}"></a>
+                                                                                    </span>
+                                                                                </td>
+                                                                                <td class="add-on"></td>
 
-                                                                <span data-bind="click: loadBookmark">
-                                                                    <a data-bind="text: name, attr: {href: getBookmarkUrl}">name</a>
-                                                                </span>
-                                                            </td>
-                                                            <td style="width: 35px">
-                                                                <div class="dropdown btn" style="position: absolute;margin-left: -10px;">
-                                                                    <a data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">
-                                                                        <i class="fa fa-cog"></i>
+                                                                            </tr>
+                                                                        </table>
                                                                     </a>
-
-                                                                    <ul style="z-index: 1100" class="dropdown-menu" role="menu">
-                                                                        <li>
-                                                                            <a data-bind="click: showSharingModal"><i class="fa fa-link"></i> Share Bookmark</a>
-                                                                        </li>
-                                                                        <li>
-                                                                            <a data-bind="click: app.viewModel.bookmarks.removeBookmark"><i class="fa fa-times-circle"></i> Delete Bookmark</a>
-                                                                        </li>
-                                                                    </ul>
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                                <p data-bind="visible: bookmarksList().length === 0">
-                                                    Bookmarks save the map and active layers. You currently have no bookmarks.
-                                                </p>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn" data-bind="visible: !shared(), click: app.menuModel.menu('bookmark')"><i class="fa fa-cog"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -211,8 +280,101 @@
                                     
                                         <ul class="unstyled list" data-bind="foreach: selectionList ">
                                             <li class="layer">
-                                                {% include "visualize/includes/custom-layer-row.html" %}
-                                            </li>  
+<table class="layer-row">
+    <tr>
+        <td>
+            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
+                <i class="fa fa-info-circle"></i>
+            </a>
+        </td>
+        <td class="layer-name">
+            <a class="btn btn-layer" data-bind='click: toggleActive'>
+                <table>
+                    <tr>
+                        <td class="text">
+                            <span rel="tooltip" data-bind="visible: shared, attr: {title: sharedBy}">
+                                <i class="fa fa-user"></i>
+                            </span>
+                            <span rel="tooltip" data-bind="visible: selectedGroups().length, attr: {title: sharedWith}">
+                                <i class="fa fa-group"></i>
+                            </span>
+                        <span data-bind='text: name'></span>
+                        </td>
+                        <td class="add-on">
+                            <i class="fa fa-check-circle"  data-bind="css: { 'fa-check-circle': active() && visible(), 'fa-circle-o': !(active() && visible()) }"></i>
+                        </td>
+                    </tr>
+                </table>
+            </a>
+        </td>
+        <td>
+            <a class="btn" data-bind="visible: shared(), click: app.menuModel.menu('sharedLeaseBlockCollection')"><i class="fa fa-cog"></i></a>
+            <a class="btn" data-bind="visible: !shared(), click: app.menuModel.menu('leaseBlockCollection')"><i class="fa fa-cog"></i></a>
+        </td>
+
+    </tr>
+</table>
+<div class="layer-info" data-bind="visible: infoActive()">
+    <div class="link-bar" data-bind="if: $data.hasOwnProperty('kml') || $data.hasOwnProperty('data_download') || $data.hasOwnProperty('metadata') || $data.hasOwnProperty('source')">
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Download for Google Maps">
+            <!-- ko if: $data.hasOwnProperty("kml") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
+                kml <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("kml") -->
+            <a class="btn btn-mini disabled">
+                kml <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Download ESRI Formatted Dataset">
+            <!-- ko if: $data.hasOwnProperty("data_download") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
+                data <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("data_download") -->
+            <a class="btn btn-mini disabled">
+                data <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="View Metadata">
+            <!-- ko if: $data.hasOwnProperty("metadata") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
+                metadata <i class="fa fa-external-link-square" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("metadata") -->
+            <a class="btn btn-mini disabled">
+                metadata <i class="fa fa-external-link-square" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Link to Dataset Source Provider">
+            <!-- ko if: $data.hasOwnProperty("source") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
+                source <i class="fa fa-external-link-square"></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("source") -->
+            <a class="btn btn-mini disabled">
+                source <i class="fa fa-external-link-square"></i>
+            </a>
+            <!-- /ko -->
+        </span>
+    </div>
+    <div class="layer-text">
+        <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
+        <!-- ko if: $data.data_url -->
+        <a data-bind="attr: {href: $data.data_url}">read more</a>.
+        <!-- /ko -->
+    </div>
+</div>
+
+
+                                            </li>
                                         </ul>
                                         <div id="view-reports-button" class="btn btn-primary btn-sm" data-bind="click: app.viewModel.scenarios.showComparisonReports"
                                                 style="margin: -8px auto 1em 50px">
@@ -260,7 +422,100 @@
                                         
                                         <ul class="unstyled list" data-bind="foreach: scenarioList ">
                                             <li class="layer">
-                                                {% include "visualize/includes/custom-layer-row.html" %}
+<table class="layer-row">
+    <tr>
+        <td>
+            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
+                <i class="fa fa-info-circle"></i>
+            </a>
+        </td>
+        <td class="layer-name">
+            <a class="btn btn-layer" data-bind='click: {% block "nameAction" %}toggleActive{% endblock %}'>
+              <table>
+                <tr>
+                  <td class="text">
+    <span rel="tooltip" data-bind="visible: shared, attr: {title: sharedBy}">
+        <i class="fa fa-user"></i>
+    </span>
+    <span rel="tooltip" data-bind="visible: selectedGroups().length, attr: {title: sharedWith}">
+        <i class="fa fa-group"></i>
+    </span>
+                    <span data-bind='text: name'></span>
+                  </td>
+                  <td class="add-on">
+                    <i class="fa fa-check-circle"  data-bind="css: { 'fa-check-circle': active() && visible(), 'fa-circle-o': !(active() && visible()) }"></i>
+                  </td>
+                </tr>
+              </table>
+            </a>
+        </td>
+        <td>
+            <a class="btn" data-bind="visible: shared(), click: app.menuModel.menu('sharedWindEnergySiting')"><i class="fa fa-cog"></i></a>
+            <a class="btn" data-bind="visible: !shared(), click: app.menuModel.menu('windEnergySiting')"><i class="fa fa-cog"></i></a>
+        </td>
+    </tr>
+</table>
+<div class="layer-info" data-bind="visible: infoActive()">
+    <div class="link-bar" data-bind="if: $data.hasOwnProperty('kml') || $data.hasOwnProperty('data_download') || $data.hasOwnProperty('metadata') || $data.hasOwnProperty('source')">
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Download for Google Maps">
+            <!-- ko if: $data.hasOwnProperty("kml") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! kml }, attr: { href: kml }" target="_blank">
+                kml <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("kml") -->
+            <a class="btn btn-mini disabled">
+                kml <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Download ESRI Formatted Dataset">
+            <!-- ko if: $data.hasOwnProperty("data_download") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! data_download }, attr: { href: data_download }" target="_blank">
+                data <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("data_download") -->
+            <a class="btn btn-mini disabled">
+                data <i class="fa fa-arrow-down" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="View Metadata">
+            <!-- ko if: $data.hasOwnProperty("metadata") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! metadata }, attr: { href: metadata }" target="_blank">
+                metadata <i class="fa fa-external-link-square" ></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("metadata") -->
+            <a class="btn btn-mini disabled">
+                metadata <i class="fa fa-external-link-square" ></i>
+            </a>
+            <!-- /ko -->
+        </span>
+        <span data-toggle="tooltip" data-placement="bottom" data-container="body" data-title="Link to Dataset Source Provider">
+            <!-- ko if: $data.hasOwnProperty("source") -->
+            <a class="btn btn-mini" data-bind="css: { disabled: ! source }, attr: { href: source }" target="_blank">
+                source <i class="fa fa-external-link-square"></i>
+            </a>
+            <!-- /ko -->
+            <!-- ko ifnot: $data.hasOwnProperty("source") -->
+            <a class="btn btn-mini disabled">
+                source <i class="fa fa-external-link-square"></i>
+            </a>
+            <!-- /ko -->
+        </span>
+    </div>
+    <div class="layer-text">
+        <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
+        <!-- ko if: $data.data_url -->
+        <a data-bind="attr: {href: $data.data_url}">read more</a>.
+        <!-- /ko -->
+    </div>
+</div>
+
+
+
                                             </li>  
                                         </ul>
                                     </div>

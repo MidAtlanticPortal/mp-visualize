@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+
+<link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css' %}" rel="stylesheet">
+
+    <style type="text/css">
+        #menu-container {
+            display: none;
+        }
+
+    #menu-container ul li:hover {
+        background-color: rgba(0,0, 0, 0.125);
+    }
+
+    </style>
+
+{% endblock %}
+
+{% block extra_js %}
+    <script src="{% static 'js/lib/knockout-3.3.0.js' %}"></script>
+    <script src="{% static 'js/contextual_menu.js' %}"></script>
+    <script type="text/javascript">
+
+    function bookmarkShare(bookmark_id) { console.info("Share", bookmark_id); }
+    function bookmarkDelete(bookmark_id) { console.info("Delete", bookmark_id); }
+    function featureDelete(feature_id) { console.info("Delete", feature_id); }
+    function featureEdit(feature_id) { console.info("Edit", feature_id); }
+    function featureZoom(feature_id) { console.info("Zoom", feature_id); }
+    function featureShare(feature_id) { console.info("Share", feature_id); }
+    function leaseblockZoom(feature_id) { console.info("ZoomLeaseBlock", feature_id); }
+    function leaseblockCopy(feature_id) { console.info("CopyLeaseBlock", feature_id); }
+
+    var actions = {
+{#        bookmark: [#}
+{#            {name: "Share", func: bookmarkShare, iconCls: "fa fa-share", object: null},#}
+{#            {name: "Delete", func: bookmarkDelete, iconCls: "fa fa-times-circle red", object: null}#}
+{#        ],#}
+        feature: [
+            new DropdownMenu.Item("Share", featureShare, "fa fa-share"),
+            new DropdownMenu.Item("Edit", featureEdit, "fa fa-edit"),
+            new DropdownMenu.Item("Zoom", featureZoom, "fa fa-search-plus"),
+            new DropdownMenu.Item("-", null, "fa"),
+            new DropdownMenu.Item("Delete", featureDelete, "fa fa-times-circle red", null)
+        ],
+        leaseBlockCollection: [
+            new DropdownMenu.Item("Zoom", leaseblockZoom, "fa fa-search-plus"),
+            new DropdownMenu.Item("Create Copy", leaseblockCopy, "fa fa-copy")
+        ]
+    };
+
+
+    $(function() {
+        var menu = document.querySelector('#menu-container');
+        if (menu == null) {
+            console.error("Can't find a menu")
+        }
+
+        DropdownMenu.Init(actions, menu);
+
+    });
+    </script>
+
+{% endblock %}
+
+{% block outer_content %}
+
+
+    <div style="padding: 3em;">
+        <p>Bootstrap Dropdown Menu</p>
+        <div class="btn-group">
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                I am a menu button. Click me.
+            </button>
+            <button class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                <span class="caret"></span>
+                <span class="sr-only">Togglie Bits</span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+                <li><a href="#">Action one</a></li>
+                <li><a href="#">Action two</a></li>
+                <li><a href="#">Action tre</a></li>
+                <li><a href="#">Action for</a></li>
+            </ul>
+        </div>
+
+        <p>Knockout Contextual Menuing</p>
+        <button data-bind="click: $root.menu('leaseBlockCollection', 1)">LBC</button>
+        <button data-bind="click: $root.menu('feature', 3)">Feature</button>
+{#        <div id="komenu-triggers" data-bind="foreach: [{a: 'bookmark', b:1}, {a:'feature', b:2}, {a:'bookmark', b:3}, {a:'leaseBlockCollection', b:4}]">#}
+{#            <button data-bind="click: $root.menu($data.a, $data.b), text: $data.a + ' Button'"></button>#}
+{#            <button data-bind="click: menu('bookmark', 1)">Bookmark Popup</button>#}
+{#            <button data-bind="click: menu('feature', 2)">Features Popup</button>#}
+{#            <button data-bind="click: menu('leaseBlockCollection', 3)">LeaseBlockCollection Popup</button>#}
+{#            <button data-bind="click: menu('bookmark', 5)">A different Bookmark Popup</button>#}
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block top-level %}
+<div style="border: 1px solid black" id="menu-container">
+    <ul style="border: 1px solid rgba(0, 0, 0, 0.5); border-radius: 4px; box-shadow: 3px 8px 12px rgba(0, 0, 0, 0.25); background-color: white"
+        data-bind="foreach: menuItems">
+        <li data-bind="visible: name == '-' "><hr></li>
+        <li data-bind="click: func, visible: name != '-' ">
+            <i data-bind="css: iconCls"></i> <span data-bind="text: name"></span>
+        </li>
+    </ul>
+</div>
+{% endblock %}

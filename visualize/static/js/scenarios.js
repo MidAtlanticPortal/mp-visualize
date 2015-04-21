@@ -931,6 +931,8 @@ function selectionFormModel(options) {
     return self;
 }; // end selectionFormModel
 
+/* This is the "parent" class for the "Selection" model aka Lease block
+collections, and the "Drawing" model aka Drawings. */
 function scenarioModel(options) {
     var self = this;
 
@@ -1991,7 +1993,60 @@ function scenariosModel(options) {
             }
         });
     };
-    
+
+
+    // External interface to objects for menus
+    self.editDrawing = function(drawing) {
+        drawing.edit();
+    };
+    self.createCopyOfDrawing = function(drawing) {
+        drawing.createCopy();
+    };
+    self.shareDrawing = function(drawing) {
+        self.showSharingModal(drawing);
+    };
+    self.zoomToDrawing = function(drawing) {
+        self.zoomToScenario(drawing);
+    };
+    self.deleteDrawing = function(drawing) {
+        drawing.deleteScenario();
+    };
+
+
+    self.editLeaseBlockCollection = function(leaseBlockCollection) {
+        leaseBlockCollection.edit();
+    };
+    self.createCopyOfLeaseBlockCollection = function(leaseBlockCollection) {
+        leaseBlockCollection.createCopy();
+    };
+    self.shareLeaseBlockCollection = function(leaseBlockCollection) {
+        self.showSharingModal(leaseBlockCollection);
+    };
+    self.zoomToLeaseBlockCollection = function(leaseBlockCollection) {
+        self.zoomToScenario(leaseBlockCollection);
+    };
+    self.deleteLeaseBlockCollection = function(leaseBlockCollection) {
+        leaseBlockCollection.deleteScenario();
+    };
+
+    self.editWindEnergySiting = function(windEnergySiting) {
+        windEnergySiting.edit();
+    };
+    self.createCopyOfWindEnergySiting = function(windEnergySiting) {
+        windEnergySiting.createCopy();
+    };
+    self.shareWindEnergySiting = function(windEnergySiting) {
+        self.showSharingModal(windEnergySiting);
+    };
+    self.zoomToWindEnergySiting = function(windEnergySiting) {
+        self.zoomToScenario(windEnergySiting);
+    };
+    self.deleteWindEnergySiting = function(windEnergySiting) {
+        windEnergySiting.deleteScenario();
+    };
+
+
+
     return self;
 } // end scenariosModel
 
