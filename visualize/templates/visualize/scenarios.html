@@ -20,22 +20,6 @@
     
     <div class="form-container" data-bind="visible: ! (app.viewModel.scenarios.loadingMessage() || app.viewModel.scenarios.errorMessage())">
         <div id="designs-data" data-bind="visible: !app.viewModel.scenarios.scenarioForm() && !app.viewModel.scenarios.selectionForm() && !app.viewModel.scenarios.reportsVisible() && !app.viewModel.scenarios.drawingForm()">
-        <!--
-            <div id="create-new-design" class="btn-group" style="padding-bottom: 10px;">
-                <a id="create-new-button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                    Create New
-                    <span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu" style="min-width: 115px;">
-                    <li id="create-new-drawing"><a data-bind="click: app.viewModel.scenarios.createPolygonDesign" style="padding-left: 15px">Drawing</a></li>
-                    <li id="create-new-selection"><a data-bind="click: app.viewModel.scenarios.createSelectionDesign" style="padding-left: 15px">Lease Block Collection</a></li>
-
-                    {% if user|in_group:"Designers" %}
-                        <li><a data-bind="click: app.viewModel.scenarios.createWindScenario" style="padding-left: 15px">Wind Energy Siting</a></li>
-                    {% endif %}
-                </ul>
-            </div> -->
-                    
             <div id="design-list" class="row-fluid">
                 <div id="designs-accordion" class="designs">
                     <div class="accordion">                    
@@ -218,46 +202,40 @@
 
                                             </div>
                                         </div>
-                                        <div data-bind="visible: bookmarksList().length > 0">
-                                            <div id="bookmarks-table">
-                                                <table class="table table-condensed" style="margin-bottom: 5px;">
-                                                    <tbody data-bind="foreach: bookmarksList">
+                                            <div data-bind="visible: bookmarksList().length > 0">
+                                                <ul class="unstyled list" data-bind="foreach: bookmarksList ">
+                                                    <li class="layer">
+                                                        <table class="layer-row">
+                                                            <tr>
+                                                                <td></td>
+                                                                <td class="layer-name">
+                                                                    <a class="btn btn-layer">
+                                                                        <table>
+                                                                            <tr>
+                                                                                <td class="text">
+                                                                                    <a data-bind="attr: {title: sharedBy}, visible: shared()"
+                                                                                       style="text-decoration: none; cursor: default;"
+                                                                                       data-toggle="tooltip" data-placement="right" >
+                                                                                        <i class="fa fa-group"></i>
+                                                                                    </a>
 
-                                                        <tr style="height: 33px">
-                                                            <td style="vertical-align: middle; padding-left: 52px">
-                                                                <a data-bind="attr: {title: sharedBy}, visible: shared()"
-                                                                   style="text-decoration: none; cursor: default;"
-                                                                   data-toggle="tooltip" data-placement="right" >
-                                                                    <i class="fa fa-group"></i>
-                                                                </a>
+                                                                                    <span data-bind="click: loadBookmark">
+                                                                                        <a data-bind="text: name, attr: {href: getBookmarkUrl}"></a>
+                                                                                    </span>
+                                                                                </td>
+                                                                                <td class="add-on"></td>
 
-                                                                <span data-bind="click: loadBookmark">
-                                                                    <a data-bind="text: name, attr: {href: getBookmarkUrl}">name</a>
-                                                                </span>
-                                                            </td>
-                                                            <td style="width: 35px">
-                                                                <div class="dropdown btn">
-                                                                    <a data-bind="click: app.menuModel.menu('bookmark')"><i class="fa fa-cog"></i></a>
-{#                                                                    <a data-toggle="dropdown" aria-expanded="false" aria-haspopup="true">#}
-{#                                                                        <i class="fa fa-cog"></i>#}
-{#                                                                    </a>#}
-
-{#                                                                    <ul style="z-index: 1100" class="dropdown-menu" role="menu">#}
-{#                                                                        <li>#}
-{#                                                                            <a data-bind="click: showSharingModal"><i class="fa fa-link"></i> Share Bookmark</a>#}
-{#                                                                        </li>#}
-{#                                                                        <li>#}
-{#                                                                            <a data-bind="click: app.viewModel.bookmarks.removeBookmark"><i class="fa fa-times-circle"></i> Delete Bookmark</a>#}
-{#                                                                        </li>#}
-{#                                                                    </ul>#}
-                                                                </div>
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                                <p data-bind="visible: bookmarksList().length === 0">
-                                                    Bookmarks save the map and active layers. You currently have no bookmarks.
-                                                </p>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </a>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn" data-bind="visible: !shared(), click: app.menuModel.menu('bookmark')"><i class="fa fa-cog"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                    </li>
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>

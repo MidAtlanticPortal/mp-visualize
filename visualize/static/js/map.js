@@ -571,7 +571,7 @@ app.init = function () {
         //ContextualMenu.Init(app.menus, document.querySelector('#context-menu'))
         app.menuModel = new ContextualMenu.Model(app.menus, document.querySelector('#context-menu'));
         // fix for top nav's negative margin
-        app.menuModel.setCorrectionOffset(0, -50);
+        app.menuModel.setCorrectionOffset(0, 0);
         ko.applyBindings(app.menuModel, document.querySelector('#context-menu'));
     });
 };
