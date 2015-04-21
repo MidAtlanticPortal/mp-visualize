@@ -1,6 +1,11 @@
 /**
 Created by seth on 4/16/15.
 
+Display a well positioned context menu containing user-defined items in
+response to a mouse click.
+
+Depends on: Knockout.js > 2.2.1
+
 Usage:
 
  // In your HTML, define the menu like so:
@@ -15,7 +20,7 @@ Usage:
 
 // Then define a trigger button
  <span data-bind="with: myAwesomeObject">
-     <button data-bind="click: $root.menu('thing', thing)">Show Thing Menu</button>
+     <button data-bind="click: $root.menu('thing')">Show Thing Menu</button>
  </span>
 
 
@@ -40,6 +45,14 @@ function doPasteThing(thing) {
 
   DropdownMenus.init(menus, document.querySelector("#menu");
 
+
+TODO: Refactor this so it doesn't depend on knockout. Just render the menus
+      and insert the menu div manually, and wrap the target object in a closure
+TODO: Add keyboard navigation and activation of menu (arrow keys, enter to activate)
+TODO: Add example styling for menus.
+TODO: Wrap this up into it's own package.
+TODO: Try adding hierarchical submenus. We don't need them for this project but
+      it would be a nice addition.
  */
 
 
@@ -72,7 +85,6 @@ function doPasteThing(thing) {
     MenuItem.prototype._wrapped_callback = function(finished_fn) {
         return function(params, event) {
             try {
-                console.warn("Called callback", params);
                 return this.callback(params.object, event)
             }
             finally {
@@ -100,11 +112,9 @@ function doPasteThing(thing) {
         var closure = this;
 
         // Event handler to handle a close menu click or escape press.
-        // defined in a funny closure like this otherwise removeEventListener
-        // won't work.
+        // defined in a funny closure like this because otherwise
+        // removeEventListener won't work.
         this._handleCloseMenuEvent = function(e) {
-            console.error('_handleCloseMenuEvent', count++);
-
             if (e.type == 'keyup' && e.keyCode != 27) {
                 return;
             }
@@ -119,8 +129,6 @@ function doPasteThing(thing) {
     /** Return a function that shows a menu at the current mouse position */
     MenuModel.prototype.menu = function(kind) {
         return function(params, event) {
-            console.info("OPEN MENU", arguments);
-
             this.menuItems.removeAll();
             for (var i = 0; i < this.menuActions[kind].length; i++) {
                 var menuItem = this.menuActions[kind][i].get(params, this._closeMenu.bind(this));
@@ -171,17 +179,12 @@ function doPasteThing(thing) {
         this.menuElement.style.zIndex = 111111;
     }
 
-    // Close the menu and remove any close event listeners
+    // Remove the menu and dispose of event listeners
     MenuModel.prototype._closeMenu = function() {
         this.menuElement.removeAttribute('style');
         window.removeEventListener('mousedown', this._handleCloseMenuEvent);
         window.removeEventListener('keyup', this._handleCloseMenuEvent);
-
-        console.error('_closeMenu', count++);
     }
-
-
-    var count = 0;
 
     function initDropdownMenus(menuActions, element) {
         if (!element) {

@@ -525,7 +525,7 @@ app.init = function () {
     app.menus.sharedDrawing = [
         new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToDrawing, 'fa fa-search-plus'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfDrawing, '')
+        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfDrawing, 'fa fa-copy')
     ];
 
     app.menus.drawing = [
@@ -539,7 +539,7 @@ app.init = function () {
     app.menus.sharedLeaseBlockCollection = [
         new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToLeaseBlockCollection, 'fa fa-search-plus'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfLeaseBlockCollection, '')
+        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfLeaseBlockCollection, 'fa fa-copy')
     ];
 
     app.menus.leaseBlockCollection = [
@@ -553,7 +553,7 @@ app.init = function () {
     app.menus.sharedWindEnergySiting = [
         new ContextualMenu.Item("Zoom To", function(){console.info("sharedWindEnergySiting: Zoom To")}, 'fa fa-search-plus'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfWindEnergySiting, '')
+        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfWindEnergySiting, 'fa fa-copy')
     ];
 
     app.menus.windEnergySiting = [
@@ -565,6 +565,9 @@ app.init = function () {
     ];
 
     $(function() {
+        // manually bind up the context menu here, otherwise ko will complain
+        // that we're binding the same element twice (MP's viewmodel applies
+        // to the entire page
         //ContextualMenu.Init(app.menus, document.querySelector('#context-menu'))
         app.menuModel = new ContextualMenu.Model(app.menus, document.querySelector('#context-menu'));
         // fix for top nav's negative margin
