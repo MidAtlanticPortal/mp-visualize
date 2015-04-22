@@ -351,7 +351,7 @@ function bookmarksModel(options) {
     };
 
     // load the bookmarks
-    self.getBookmarks();
+//    self.getBookmarks();
 
 
     return self;

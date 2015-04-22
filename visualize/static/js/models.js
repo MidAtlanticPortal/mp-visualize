@@ -931,6 +931,10 @@ function viewModel() {
         else {
             self.isBookmarksOpen(!self.isBookmarksOpen());
         }
+
+        if (self.isBookmarksOpen()) {
+            app.viewModel.bookmarks.getBookmarks();
+        }
     }
     
     self.scenarios = new scenariosModel();
