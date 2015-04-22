@@ -165,12 +165,12 @@
                             <div class="accordion-group">
                                 <div id="bookmarks-header"
                                      class="accordion-heading"
-                                     data-bind="click: app.viewModel.toggleBookmarksOpen, css: {'active': app.viewModel.isBookmarksOpen()}">
+                                     data-bind="css: {'active': app.viewModel.isBookmarksOpen()}">
                                     <div>
-                                        <a class="accordion-toggle">
+                                        <a class="accordion-toggle" data-bind="click: app.viewModel.toggleBookmarksOpen">
                                             <span>Map View Bookmarks</span>
                                         </a>
-                                        <a class="create-new-button" data-bind="click: app.viewModel.showBookmarks, clickBubble: false">
+                                        <a class="create-new-button" data-bind="click: app.viewModel.showBookmarks,clickBubble: false">
                                             <i class="fa fa-plus"></i>NEW
                                         </a>
                                     </div>
