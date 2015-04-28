@@ -607,7 +607,12 @@ body.template-visualize{
         border-radius: 0px;
         text-decoration: none;
         color: $gray-darker;
+
+        .count {
+            color: $green;
+        }
     }
+
     .sidebar-nav .nav-tabs li.active{
         background-color: $light-gray;
     }
@@ -927,15 +932,14 @@ body.template-visualize{
 
 a.create-new-button {
     cursor: pointer;
-    color: $medium-gray;
+    color: $green;
     font-size: 12px;
     @extend .font-medium;
     white-space: nowrap;
 
     &:hover {
-        color: $medium-gray;
+        color: $green;
         text-decoration: none;
-        background-color: rgba(0, 0, 0, 0.10);
     }
 }
 
