@@ -830,6 +830,9 @@ body.template-visualize{
     .popover-inner{
         background-color: $gray-lighter;
     }
+    #invalid-name-message.control-group {
+        color: $danger;
+    }
 
 
     @media print {
