@@ -156,6 +156,7 @@ body.template-visualize{
         #myTabContent {
             $tab-height: 47px;
             height: calc(100% - #{$tab-height});
+            padding: 10px;
         }
     }
 

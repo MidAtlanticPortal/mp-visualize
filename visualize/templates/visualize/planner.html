@@ -256,10 +256,12 @@
                                     {% else %}
                                     <div class="tab-pane " id="designs">
                                         <p>
-                                            <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in</a>
+                                            MyPlanner requires an Ocean Data Portal account or logging in. Please 
+                                            <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>register</a>
                                             or
-                                            <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>join</a>
+                                            <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>log in</a>.
                                         </p>
+                                        <p><a href="/join">Learn more about MyPlanner</a></p>
                                     </div>
                                     {% endif %}
                                     <!-- END DESIGNS TAB -->
