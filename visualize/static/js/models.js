@@ -1275,16 +1275,14 @@ function viewModel() {
     self.addBookmark = function(form) {
         var name = $(form).find('input').val();
         if (name.length == 0) {
-            window.alert("You forgot to name your bookmark. TODO: Turn this dialog into an error message");
-            return false; 
+            return false;
         }
         
         self.bookmarks.addBookmark(name);
         
         self.bookmarks.cancel();
     }
-    
-    
+
     self.showMapLinks = function() {
         self.mapLinks.shrinkURL(false);
         $('#short-url').text = self.mapLinks.getURL();

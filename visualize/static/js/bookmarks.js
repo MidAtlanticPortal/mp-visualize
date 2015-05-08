@@ -312,9 +312,19 @@ function bookmarksModel(options) {
                     });   
                     blist.push(bookmark);
                 }
+
                 if (blist.length > 0) {
-                    //self.bookmarksList(blist);
-                    self.bookmarksList(_.sortBy(blist, 'name'));
+                    blist.sort(function (a, b) {
+                      // for all false values null, false, '', 0
+                      if (!a.name) return 1;
+                      if (!b.name) return 0;
+
+                      a = (a.name || '').toLowerCase();
+                      b = (b.name || '').toLowerCase(); 
+
+                      return (a > b) ? 1 : ((a < b) ? -1 : 0);
+                    });
+                    self.bookmarksList(blist);
                     //self.storeBookmarks();
                 }
             },

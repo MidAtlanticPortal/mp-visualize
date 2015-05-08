@@ -729,7 +729,7 @@ body.template-visualize{
         left: inherit !important;
         width: 450px;
         max-width: 460px;
-        height: 320px;
+        height: 155px;
         background-color: $gray-lighter;
         border: none;
         border-radius:0px;
@@ -756,6 +756,9 @@ body.template-visualize{
         }
         input{
             width: 75%;
+        }
+        button {
+            margin-top: 8px;
         }
     }
     .bookmark-settings-popover {
