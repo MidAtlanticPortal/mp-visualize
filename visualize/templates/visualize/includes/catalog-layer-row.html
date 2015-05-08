@@ -6,8 +6,8 @@
       <ul class="dropdown-menu dropdown-menu-right layer-menu" data-bind="event: { mouseleave: closeMenu }">
           <li data-bind="foreach: subLayers">
               <a data-bind="click: toggleActive">
-                  <span><i class="fa" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
-                  <span data-bind="text: name"></span>
+                  <span><i class="fa green" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
+                  <span class="deep-blue" data-bind="text: nameUpperCase()"></span>
               </a>
           </li>
       </ul>
@@ -16,8 +16,8 @@
       <ul class="dropdown-menu dropdown-menu-right layer-menu" data-bind="event: { mouseleave: closeMenu }">
           <li data-bind="foreach: subLayers">
               <a data-bind="click: toggleActive" style="padding-left: 15px">
-                  <span><i class="fa" data-bind="css: { 'fa-check-square-o': visible(), 'fa-square-o': ! visible() }"></i></span>
-                  <span data-bind="text: name"></span>
+                  <span><i class="fa green" data-bind="css: { 'fa-check-square-o': visible(), 'fa-square-o': ! visible() }"></i></span>
+                  <span class="deep-blue" data-bind="text: nameUpperCase()"></span>
               </a>
           </li>
       </ul>

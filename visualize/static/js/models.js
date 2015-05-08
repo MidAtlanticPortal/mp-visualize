@@ -637,6 +637,10 @@ function layerModel(options, parent) {
         layer.showSublayers(false);
     };
 
+    self.nameUpperCase = function(layer) {
+        return self.name.toUpperCase();
+    };
+
     return self;
 } // end layerModel
 

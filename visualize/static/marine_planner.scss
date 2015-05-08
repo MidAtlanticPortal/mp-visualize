@@ -278,14 +278,14 @@ body.template-visualize{
         a, a:hover, a:active, a:visited{
             font-size: 12px;
             font-weight:bold;
-
+            color: $deep-blue; 
         }
         .layer-text{
             text-align: left;
             margin-left: auto;
             margin-right: auto;
             padding: 7px;
-            font-size: 12px;
+            font-size: 13px;
             width: 80%;
         }
     }
