@@ -183,12 +183,11 @@ body.template-visualize{
     }
     #aggregated-attribute-overlay{
         position:absolute;
-        right: 70px;
+        right: 33px;
         bottom: 120px;
         z-index: 1000;
         background-color: white;
         overflow: hidden;
-        max-height: 250px;
         opacity: 0.9;
         .accordion-heading{
             background-color: $light-gray;
@@ -199,8 +198,8 @@ body.template-visualize{
         margin-bottom: 0px;
     }
     #aggregated-attribute-heading{
-        height: 30px;
         padding: 0px 14px;
+        text-align: center;
         h4{
             color: #00a564;
             font-size: 16px;
@@ -212,34 +211,16 @@ body.template-visualize{
         max-height: 200px;
 
         .accordion-inner{
-            margin-left: 30px;
+            padding-top: 5px;
+            margin-left: 40px;
         }
-    }
-
-    #aggregated-attribute-overlay{
-        position:absolute;
-        right: 70px;
-        bottom: 120px;
-        z-index: 1000;
-        background-color: white;
-        overflow: none;
-        max-height: 250px;
+        .accordion-body{
+            height: 28px;
+        }
     }
 
     dl{
         margin-bottom: 0px;
-    }
-    #aggregated-attribute-heading{
-        height: 30px;
-    }
-
-    #aggregated-attribute-content{
-        overflow-y: auto;
-        max-height: 200px;
-
-        .accordion-inner{
-            margin-left: 30px;
-        }
     }
 
     #toggleBaselayer{
