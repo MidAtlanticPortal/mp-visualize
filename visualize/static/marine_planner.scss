@@ -610,6 +610,16 @@ body.template-visualize{
         height: 100%;
     }
 
+    #legend.tab-pane {
+        .legend-title {
+            font-size: 16px;
+        }
+        .legend-subtitle {
+            font-size: 14px;
+            margin: 2px 0 10px;
+        }
+    } 
+
     .sidebar-nav .tab-content, .sidebar-nav #data-accordion {
         background-color: $gray-lighter;
     }
