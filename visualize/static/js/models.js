@@ -982,10 +982,10 @@ function viewModel() {
     };
     self.updateAggregatedAttributesOverlayWidthAndScrollbar = function() {
         setTimeout( function() {
-            var overlayWidth = (document.getElementById('aggregated-attribute-overlay-test').clientWidth+50),
-                width = overlayWidth < 380 ? overlayWidth : 380;
+            // var overlayWidth = (document.getElementById('aggregated-attribute-overlay-test').clientWidth+50),
+            //     width = overlayWidth < 380 ? overlayWidth : 380;
             //console.log('setting overlay width to ' + width);
-            self.aggregatedAttributesWidth(width + 'px');
+            self.aggregatedAttributesWidth(240 + 'px');
         }, 500);
     };
 

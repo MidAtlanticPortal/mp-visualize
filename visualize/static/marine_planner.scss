@@ -199,7 +199,6 @@ body.template-visualize{
     }
     #aggregated-attribute-heading{
         padding: 0px 14px;
-        text-align: center;
         h4{
             color: #00a564;
             font-size: 16px;
@@ -214,8 +213,11 @@ body.template-visualize{
             padding-top: 5px;
             margin-left: 40px;
         }
+        dt {
+            padding-bottom: 5px;
+        }
         .accordion-body{
-            height: 28px;
+            max-height: 45px;
         }
     }
 
