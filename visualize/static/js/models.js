@@ -1062,12 +1062,6 @@ function viewModel() {
         }
     });
     
-    self.isFullScreen = ko.observable(false);
-    
-    self.fullScreenWithLayers = function() {
-        return self.isFullScreen() && self.showLayers();
-    };
-
     // show the map?
     self.showMapPanel = ko.observable(true);
 
