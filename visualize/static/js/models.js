@@ -1185,7 +1185,6 @@ function viewModel() {
     // close error-overlay
     self.closeAlert = function(self, event) {
         app.viewModel.error(null);
-        $('#fullscreen-error-overlay').hide();
     };
     
     self.activeKmlLink = function() {
