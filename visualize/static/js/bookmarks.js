@@ -43,7 +43,6 @@ function bookmarkModel(options) {
 
         // show the alert for resting state
         app.viewModel.error("restoreState");
-        $('#bookmark-popover').hide();
     };
     
     self.showSharingModal = function() {
@@ -54,7 +53,6 @@ function bookmarkModel(options) {
             self.temporarilySelectedGroups.push(self.selectedGroups()[i]);
         }
         $('#bookmark-share-modal').modal('show');
-        $('#bookmark-popover').hide();
     };
     
     /** Return true if this bookmark is shared with the specified groupName
@@ -348,10 +346,6 @@ function bookmarksModel(options) {
                   {complete: self.getBookmarks});
     };
 
-    self.cancel = function() {
-        $('#bookmark-popover').hide();
-    };
-
     self.restoreState = function() {
         // hide the error
         app.viewModel.error(null);
@@ -359,10 +353,6 @@ function bookmarksModel(options) {
         app.loadState(app.restoreState);
         app.saveStateMode = true;
     };
-
-    // load the bookmarks
-//    self.getBookmarks();
-
 
     return self;
 } // end of bookmarksModel

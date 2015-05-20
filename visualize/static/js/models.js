@@ -638,10 +638,6 @@ function layerModel(options, parent) {
         layer.showSublayers(false);
     };
 
-    self.nameUpperCase = function(layer) {
-        return self.name.toUpperCase();
-    };
-
     return self;
 } // end layerModel
 
@@ -1062,12 +1058,6 @@ function viewModel() {
         }
     });
     
-    self.isFullScreen = ko.observable(false);
-    
-    self.fullScreenWithLayers = function() {
-        return self.isFullScreen() && self.showLayers();
-    };
-
     // show the map?
     self.showMapPanel = ko.observable(true);
 
@@ -1191,7 +1181,6 @@ function viewModel() {
     // close error-overlay
     self.closeAlert = function(self, event) {
         app.viewModel.error(null);
-        $('#fullscreen-error-overlay').hide();
     };
     
     self.activeKmlLink = function() {
@@ -1253,25 +1242,18 @@ function viewModel() {
 
 
     // show bookmark stuff
+    self.addBookmarksDialogVisible = ko.observable(false);
     self.showBookmarks = function(self, event) {
-        var $button = $(event.target).closest('.btn'),
-            $popover = $('#bookmark-popover');
-
-        if ($popover.is(":visible")) {
-            $popover.hide();
-        } else {
-            self.bookmarks.newBookmarkName(null);
-            //TODO: move all this into bookmarks model
-            // hide the popover if already visible
-            $popover.show().position({
-                "my": "right middle",
-                "at": "left middle",
-                "of": $button,
-                offset: "-10px 0px"
-            });
-        }
+        self.bookmarks.newBookmarkName(null);
+        self.addBookmarksDialogVisible(true);
+        // scenario forms will hide anything with the "step" class, so show
+        // it explicitly here. 
+        $('#addBookmarkForm .step').show();
     };
-    
+    self.hideBookmarks = function() {
+        self.addBookmarksDialogVisible(false);
+    }
+
     /** Create a new bookmark from the bookmark form */
     self.addBookmark = function(form) {
         var name = $(form).find('input').val();
@@ -1280,8 +1262,8 @@ function viewModel() {
         }
         
         self.bookmarks.addBookmark(name);
-        
-        self.bookmarks.cancel();
+        self.hideBookmarks();
+        self.bookmarks.newBookmarkName(null);
     }
 
     self.showMapLinks = function() {

@@ -1,3 +1,6 @@
+.uppercase {
+    text-transform: uppercase;
+}
 #context-menu {
     position: absolute;
     display:none;
@@ -156,7 +159,7 @@ body.template-visualize{
         #myTabContent {
             $tab-height: 47px;
             height: calc(100% - #{$tab-height});
-            padding: 10px;
+
         }
     }
 
@@ -413,7 +416,7 @@ body.template-visualize{
         color: #777 !important;
     }
 
-    #printing-popover .arrow , #bookmark-popover .arrow{
+    #printing-popover .arrow, {
         display: none;
     }
 /*
