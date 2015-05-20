@@ -1230,7 +1230,24 @@ function scenariosModel(options) {
     
     self.drawingList = ko.observableArray();
     self.drawingForm = ko.observable(false);
-    
+
+    /** return true if normal MyPlanner content should be shown, false
+        otherwise (when a form is active and assuming control of MyPlanner's
+        space).
+     */
+    self.showMyPlanner = function() {
+        // How about: when a form becomes active, it sets a variable called
+        // anyFormActive(true)
+        return !(self.scenarioForm() ||
+                 self.reportsVisible() ||
+                 self.drawingForm() ||
+                 // This is awkward, but bookmarks aren't really scenarios,
+                 // and they live in their own place.
+                 app.viewModel.addBookmarksDialogVisible() ||
+                 self.selectionForm());
+    }
+
+
     self.getSelectionById = function(id) {
         var selections = self.selectionList();
         for (var i=0; i<selections.length; i++) {

@@ -257,10 +257,6 @@ $(document).mousedown(function(e) {
 
     return;
 
-  if (!$(e.target).closest("#bookmark-popover").length) {
-    $('#bookmark-popover').hide();
-  }
-  
   //ensure layer switcher is removed
   $('#SimpleLayerSwitcher_29').hide();
 

@@ -19,7 +19,7 @@
     </div>
     
     <div class="form-container" data-bind="visible: ! (app.viewModel.scenarios.loadingMessage() || app.viewModel.scenarios.errorMessage())">
-        <div id="designs-data" data-bind="visible: !app.viewModel.scenarios.scenarioForm() && !app.viewModel.scenarios.selectionForm() && !app.viewModel.scenarios.reportsVisible() && !app.viewModel.scenarios.drawingForm()">
+        <div id="designs-data" data-bind="visible: app.viewModel.scenarios.showMyPlanner()">
             <div id="design-list" class="row-fluid">
                 <div id="designs-accordion" class="designs">
                     <div class="accordion">                    
@@ -568,6 +568,39 @@
 
         <!-- designs dialogs -->
         <div class="designs-panel" data-bind="with: app.viewModel.scenarios">
+            <div style="height: 100%" data-bind="visible: app.viewModel.addBookmarksDialogVisible">
+                <div class="design">
+                    <div class="featurepanel">
+                        <h4>Create Bookmark</h4>
+                        <form id="addBookmarkForm" class="" data-bind="submit: app.viewModel.addBookmark">
+                            <div class="form-group">
+                                <div class="step">
+                                    <label>Bookmark Name:<br>
+                                        <input id="new_bookmark_name"
+                                               data-bind="value: app.viewModel.bookmarks.newBookmarkName"
+                                               type="text"
+                                               class="input form-control"
+                                               placeholder="Bookmark Name" required>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="wizard_nav" style="width:100%">
+                                <div class="btn-group pull-right">
+                                    <button type="submit" class="btn btn-primary">Add Bookmark</button>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="btn-group pull-left">
+                                    <a href="#" data-bind="click: app.viewModel.hideBookmarks" class="cancel_button btn btn-default"><span>Cancel</span></a>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             {% if user|in_group:"Designers" %}  
             <div style="height: 100%" data-bind="visible: scenarioForm">   
                 <div id="scenario-form" class="design"></div>
