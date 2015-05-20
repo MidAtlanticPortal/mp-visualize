@@ -234,7 +234,7 @@
 
                                     <!-- DESIGNS TAB -->
                                     {% if user.is_authenticated %}
-                                        {% include "visualize/scenarios.html" %}
+                                    {% include "visualize/scenarios.html" %}
                                     {% else %}
                                     <div class="tab-pane " id="designs">
                                         <div style="padding: 10px">
@@ -252,9 +252,9 @@
                                         <div id="embedded-legend-wrapper">
                                             <div id="embedded-legend-content">
                                                 <div style="padding: 10px">
-                                                     <div data-bind="visible: activeLegendLayers().length == 0">
-                                                         No data layers containing legends are activated.
-                                                     </div>
+                                                    <div data-bind="visible: activeLegendLayers().length == 0">
+                                                        No data layers containing legends are activated.
+                                                    </div>
 
                                                     <div data-bind="foreach: activeLegendLayers">
                                                     <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
@@ -304,7 +304,7 @@
         </div>
 
         {% include "visualize/bookmarks.html" %}
-
+    </div>
 {% endblock %}
 
 {% block extra_js %}
