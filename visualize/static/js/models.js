@@ -1246,6 +1246,9 @@ function viewModel() {
     self.showBookmarks = function(self, event) {
         self.bookmarks.newBookmarkName(null);
         self.addBookmarksDialogVisible(true);
+        // scenario forms will hide anything with the "step" class, so show
+        // it explicitly here. 
+        $('#addBookmarkForm .step').show();
     };
     self.hideBookmarks = function() {
         self.addBookmarksDialogVisible(false);
