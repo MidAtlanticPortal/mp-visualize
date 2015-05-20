@@ -236,12 +236,10 @@
                                     {% else %}
                                     <div class="tab-pane " id="designs">
                                         <div style="padding: 10px">
-                                            <p>
-                                                MyPlanner requires an Ocean Data Portal account or logging in. Please
-                                                <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>register</a>
-                                                or
-                                                <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>log in</a>.
-                                            </p>
+                                            <p>Please log in with your Ocean Data Portal account to access MyPlanner.
+                                                <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in here</a>.</p>
+                                            <p>If you do not have an account,
+                                                <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>register here</a>.</p>
                                             <p><a href="/join">Learn more about MyPlanner</a></p>
                                         </div>
                                     </div>
@@ -251,27 +249,33 @@
                                     <div class="tab-pane" id="legend">
                                         <div id="embedded-legend-wrapper">
                                             <div id="embedded-legend-content">
-                                                <div data-bind="foreach: activeLegendLayers">
-                                                <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
-                                                    <div style="padding-bottom: 18px;">
-                                                        <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
-                                                        <p class="legend-subtitle" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
-                                                        <span data-bind="if: legend">
-                                                            <div data-bind="if: legend['elements']">
-                                                                <div data-bind="foreach: legend['elements']">
-                                                                    <div>
-                                                                        <img data-bind="attr: {src: swatch}" />
-                                                                        <span data-bind="text: label" style="font-size: 11px; font-weight: bold;"></span>
+                                                <div style="padding: 10px">
+                                                     <div data-bind="visible: activeLegendLayers().length == 0">
+                                                         No data layers containing legends are activated.
+                                                     </div>
+
+                                                    <div data-bind="foreach: activeLegendLayers">
+                                                    <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
+                                                        <div style="padding-bottom: 18px;">
+                                                            <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
+                                                            <p class="legend-subtitle" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
+                                                            <span data-bind="if: legend">
+                                                                <div data-bind="if: legend['elements']">
+                                                                    <div data-bind="foreach: legend['elements']">
+                                                                        <div>
+                                                                            <img data-bind="attr: {src: swatch}" />
+                                                                            <span data-bind="text: label" style="font-size: 11px; font-weight: bold;"></span>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                            <div data-bind="if: !legend['elements']">
-                                                                <div data-bind="css: { 'in': legendVisibility }" style="padding: 5px 0 0 10px;">
-                                                                    <img data-bind="attr: { src: legend }" />
+                                                                <div data-bind="if: !legend['elements']">
+                                                                    <div data-bind="css: { 'in': legendVisibility }" style="padding: 5px 0 0 10px;">
+                                                                        <img data-bind="attr: { src: legend }" />
+                                                                    </div>
                                                                 </div>
-                                                            </div>
-                                                        </span>
+                                                            </span>
                                                     </div>
+                                                </div>
                                                 </div>
                                             </div>
                                         </div>
