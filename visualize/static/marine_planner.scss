@@ -560,15 +560,6 @@ body.template-visualize{
         padding-top: 2px;
         text-align: center;
     }
-    .search-icon {
-        color: $light-gray;
-    }
-    .search-instructions {
-        color: $light-gray;
-        text-transform: uppercase;
-        padding-top: 8px;
-        font-size: 90%;
-    }
     .sidebar-nav .nav-tabs{
         border-top: 1px solid #ddd;
         background-color: $gray-lighter;
@@ -805,14 +796,15 @@ body.template-visualize{
         margin-top: 8px;
         width: 250px;
     }
-    .search-icon {
-        color: $light-gray;
+    .form-search {
+        .right {
+            padding: 0;
+            top: 18px;
+            right: 2px;
+        }
     }
-    .search-instructions {
-        color: $light-gray;
-        text-transform: uppercase;
-        padding-top: 8px;
-        font-size: 90%;
+    .search-icon {
+        color: $gray;
     }
     #left-maximized{
         float: left;

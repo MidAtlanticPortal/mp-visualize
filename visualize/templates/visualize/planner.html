@@ -119,22 +119,16 @@
                     <div class="panel-heading">
                         <div class="panel-title">
                             <form class="form-search hide-collapsed" data-bind="submit: layerSearch">
-                                <div class="input-group">
+                                <div class="input-group inner-addon">
                                     <!-- data-provide="typeahead"  -->
                                     <input type="text" class="search-box form-control" 
                                            data-bind="value: searchTerm, event: { keyup: keySearch }"
                                            style="overflow: hidden; text-overflow: ellipsis;"
                                            placeholder="Search data" id="data-search-input">
-                                    <span>
-                                        <a class="btn" data-bind="visible: ! searchTermInput()">
-                                            <i class="fa fa-search search-icon"></i>
-                                        </a>
-                                        <a class="btn" style="display:none" data-bind="visible: searchTermInput(), click: clearSearch">
-                                            <i class="fa fa-close"></i>
-                                        </a>
-                                    </span>
+
+                                    <i class="fa fa-search right search-icon" data-bind="visible: !searchTermInput()"></i>
+                                    <i class="btn fa fa-close right"style="display:none" data-bind="visible: searchTermInput(), click: clearSearch"></i>
                                 </div>
-                                <p class="search-instructions">Start typing any phrase or keyword</p>
                             </form>
                             <div class="show-collapsed" style="display:none">
                                 <h4>Data Layers</h4>
