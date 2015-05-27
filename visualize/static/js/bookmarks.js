@@ -247,22 +247,16 @@ function bookmarksModel(options) {
     
     // get bookmark sharing groups for this user
     self.getSharingGroups = function() {
-        $.ajax({
-            url: '/groups/rpc/get_sharing_groups',
-            type: 'GET',
-            dataType: 'json',
-            success: function (groups) {
+        $.jsonrpc('get_sharing_groups', [], {
+            success: function(result) {
                 self.sharingGroups.removeAll();
-                for (var i = 0; i < groups.length; i++) {
-                    self.sharingGroups.push(groups[i]);
+                for (var i = 0; i < result.length; i++) {
+                    self.sharingGroups.push(result[i]);
                 }
-            },
-            error: function (result) {
-                //console.log('error in getSharingGroups');
             }
         });
-    };
-    
+    }
+
     // store the bookmarks to local storage
     self.storeBookmarks = function() {
         var ownedBookmarks = [];
