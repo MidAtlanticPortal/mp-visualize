@@ -2095,7 +2095,7 @@ $('#designsTab').on('show.bs.tab', function (e) {
         });
         
         $.ajax({
-            url: '/g/rpc/get_sharing_groups',
+            url: '/groups/rpc/get_sharing_groups',
             type: 'GET',
             dataType: 'json',
             success: function (groups) {
