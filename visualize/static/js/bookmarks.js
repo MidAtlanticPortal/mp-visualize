@@ -247,14 +247,8 @@ function bookmarksModel(options) {
     
     // get bookmark sharing groups for this user
     self.getSharingGroups = function() {
-        $.jsonrpc('get_sharing_groups', [], {
-            success: function(result) {
-                self.sharingGroups.removeAll();
-                for (var i = 0; i < result.length; i++) {
-                    self.sharingGroups.push(result[i]);
-                }
-            }
-        });
+        // borrow groups from the scenarios model instead of fetching them again
+        self.sharingGroups(app.viewModel.scenarios.sharingGroups());
     }
 
     // store the bookmarks to local storage
