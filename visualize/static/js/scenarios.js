@@ -2093,19 +2093,13 @@ $('#designsTab').on('show.bs.tab', function (e) {
                 //debugger;
             }
         });
-        
-        $.ajax({
-            url: '/g/rpc/get_sharing_groups',
-            type: 'GET',
-            dataType: 'json',
-            success: function (groups) {
-                app.viewModel.scenarios.sharingGroups(groups);
-                if (groups.length) {
+
+        $.jsonrpc('get_sharing_groups', [], {
+            success: function(result) {
+                app.viewModel.scenarios.sharingGroups(result);
+                if (result.length) {
                     app.viewModel.scenarios.hasSharingGroups(true);
                 }
-            },
-            error: function (result) {
-                //debugger;
             }
         });
     }

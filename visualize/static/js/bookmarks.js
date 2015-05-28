@@ -247,22 +247,10 @@ function bookmarksModel(options) {
     
     // get bookmark sharing groups for this user
     self.getSharingGroups = function() {
-        $.ajax({
-            url: '/g/rpc/get_sharing_groups',
-            type: 'GET',
-            dataType: 'json',
-            success: function (groups) {
-                self.sharingGroups.removeAll();
-                for (var i = 0; i < groups.length; i++) {
-                    self.sharingGroups.push(groups[i]);
-                }
-            },
-            error: function (result) {
-                //console.log('error in getSharingGroups');
-            }
-        });
-    };
-    
+        // borrow groups from the scenarios model instead of fetching them again
+        self.sharingGroups(app.viewModel.scenarios.sharingGroups());
+    }
+
     // store the bookmarks to local storage
     self.storeBookmarks = function() {
         var ownedBookmarks = [];
