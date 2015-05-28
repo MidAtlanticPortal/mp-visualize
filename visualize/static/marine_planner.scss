@@ -834,6 +834,13 @@ body.template-visualize{
         #left-panel{
             display:none;
         }
+        header {
+            display: none;
+        }
+        header + div {
+            height: 100%;
+        }
+
     }
     // @media (min-width: 992px){
     //     .col-md-4{
