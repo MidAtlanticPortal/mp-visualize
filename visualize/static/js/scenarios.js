@@ -25,6 +25,7 @@ var madrona = {
             } 
             //submitted = true;
             submitForm($form);
+            $form.closest('.panel').off('click', '.submit_button');
         }); 
         
         //no longer needed...? (if it was going here it meant there was a problem)
