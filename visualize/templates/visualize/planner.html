@@ -232,10 +232,17 @@
                                     {% else %}
                                     <div class="tab-pane " id="designs">
                                         <div style="padding: 10px">
-                                            <p>Please log in with your Ocean Data Portal account to access MyPlanner.
-                                                <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in here</a>.</p>
-                                            <p>If you do not have an account,
-                                                <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>register here</a>.</p>
+                                            <p>Please log in with your Ocean Data Portal account to access MyPlanner.</p>
+                                            <p>MyPlanner provides: </p>
+                                                <ul>
+                                                    <li>Creating and sharing of Map View Bookmarks</li>
+                                                    <li>Drawing and highlighting map areas</li>
+                                                    <li>Ocean area comparisions by lease blocks grids</li>
+                                                </ul> 
+                                            <p>
+                                                <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in here</a>.  If you do not have an account,
+                                                <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>register here</a>.
+                                            </p>
                                             <p><a href="/join">Learn more about MyPlanner</a></p>
                                         </div>
                                     </div>
