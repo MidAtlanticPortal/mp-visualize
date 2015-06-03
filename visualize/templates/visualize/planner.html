@@ -132,9 +132,9 @@
                             </form>
                             <div class="show-collapsed" style="display:none">
                                 <h4>Data Layers</h4>
-                                <span data-bind="visible: activeLayers().length > 0">
+                                <div data-bind="visible: activeLayers().length > 0">
                                     <span data-bind="text: activeLayers().length">0</span> Active
-                                </span>
+                                </div>
                             </div>
                             <a data-bind="click: toggleLayers" class="collapse-button">
                                 <i class="fa fa-angle-double-left"></i>
