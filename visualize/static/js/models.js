@@ -1267,7 +1267,7 @@ function viewModel() {
     }
 
     self.showMapLinks = function() {
-        self.mapLinks.shrinkURL(false);
+        self.mapLinks.shrinkURL(true);
         $('#short-url').text = self.mapLinks.getURL();
         self.mapLinks.setIFrameHTML();
         $('#map-links-modal').modal()
