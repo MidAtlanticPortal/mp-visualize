@@ -63,8 +63,7 @@ function bookmarkModel(options) {
     
     // get the url from a bookmark
     self.getBookmarkUrl = function() {
-        // var host = window.location.href.split('#')[0];
-        host = 'http://portal.midatlanticocean.org/visualize/';
+        var host = window.location.href.split('#')[0];
         return host + "#" + self.getBookmarkHash();
         //return host + "#" + self.state;
     };
@@ -168,8 +167,8 @@ function bookmarksModel(options) {
     };
 
     self.useShortBookmarkURL = function() {
-        var bitly_login = "ecofletch",
-            bitly_api_key = 'R_d02e03290041107b75e3720d7e3c4b95',
+        var bitly_login = "p97dev",
+            bitly_api_key = 'R_27f2b2cc886e49fb9f35c37b7b633749',
             long_url = self.sharingBookmark().getBookmarkUrl();
 
         $.getJSON(
