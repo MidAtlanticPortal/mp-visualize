@@ -63,7 +63,7 @@ function bookmarkModel(options) {
     
     // get the url from a bookmark
     self.getBookmarkUrl = function() {
-        var host = window.location.href.split('#')[0];
+        // var host = window.location.href.split('#')[0];
         host = 'http://portal.midatlanticocean.org/visualize/';
         return host + "#" + self.getBookmarkHash();
         //return host + "#" + self.state;
@@ -132,13 +132,15 @@ function bookmarksModel(options) {
           
     self.getCurrentBookmarkURL = function() {
         if ( self.sharingBookmark() ) {
-            return self.sharingBookmark().getBookmarkUrl();
+            self.shrinkBookmarkURL(true);
+            return self.useShortBookmarkURL();
+            // return self.sharingBookmark().getBookmarkUrl();
         } else {
             return '';
         }
     };
     
-    self.shrinkBookmarkURL = ko.observable();
+    self.shrinkBookmarkURL = ko.observable(true);
     self.shrinkBookmarkURL.subscribe( function() {
         if (self.shrinkBookmarkURL()) {
             self.useShortBookmarkURL();
@@ -149,7 +151,7 @@ function bookmarksModel(options) {
     
     self.resetBookmarkMapLinks = function(bookmark) {
         self.sharingBookmark(bookmark);
-        self.shrinkBookmarkURL(false);
+        self.shrinkBookmarkURL(true);
         $('.in #short-url').text = self.getCurrentBookmarkURL();
         self.setBookmarkIFrameHTML();
     };
