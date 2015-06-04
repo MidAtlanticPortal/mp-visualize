@@ -35,12 +35,14 @@ app.init = function () {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
+        visibility: false,
         textColor: "black"
     });
     googleStreet = new OpenLayers.Layer.Google("Streets", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
+        visibility: false,
         textColor: "black"
     });
     googleTerrain = new OpenLayers.Layer.Google("Physical", {
@@ -48,6 +50,7 @@ app.init = function () {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
+        visibility: false,
         textColor: "black"
     });
     googleSatellite = new OpenLayers.Layer.Google("Satellite", {
@@ -55,6 +58,7 @@ app.init = function () {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
+        visibility: false,
         textColor: "white"
     });
     
@@ -82,6 +86,7 @@ app.init = function () {
             isBaseLayer: true,
             numZoomLevels: 13,
             projection: "EPSG:3857",
+            visibility: false,
             textColor: "black"
         }
     );
@@ -108,9 +113,6 @@ app.init = function () {
     // );               
     
     map.addLayers([esriOcean, openStreetMap, googleStreet, googleTerrain, googleSatellite, nauticalCharts]);
-    
-    //map.addLayers([esriOcean]);
-    esriOcean.setZIndex(100);
 
     map.addControl(new SimpleLayerSwitcher());
     
