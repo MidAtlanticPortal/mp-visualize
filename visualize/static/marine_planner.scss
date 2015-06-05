@@ -671,6 +671,12 @@ body.template-visualize{
         color: $deep-blue;
         background-color: $light-gray;
     }
+
+    .dropdown-menu > li > a {
+        span {
+            white-space: normal;
+        }
+    }
     .btn{
         text-align: left;
     }
