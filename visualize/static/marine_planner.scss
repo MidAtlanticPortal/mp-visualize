@@ -677,6 +677,12 @@ body.template-visualize{
             white-space: normal;
         }
     }
+    ul.typeahead.dropdown-menu {
+        position: absolute;
+        max-height: calc(100vh - 175px);
+        min-height: 30px;
+        overflow-y: auto;
+    }
     .btn{
         text-align: left;
     }
