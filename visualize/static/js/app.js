@@ -61,8 +61,8 @@ app.viewModel.loadLayersFromServer().done(function() {
       $('#data-search-input').val(app.viewModel.searchTermInput());
     },
     autoSelect: true,
-    items: 15,
-    minLength: 1
+    items: 20,
+    minLength: 2
   });
 
   $('[data-toggle="tooltip"]').tooltip()
