@@ -54,7 +54,7 @@ app.viewModel.loadLayersFromServer().done(function() {
       // custom search matching
       // for now, we just do a full text search on the "searchText" property of each item
       // eventually we could do multiple, prioritized search fields
-      var it = item.searchText;
+      var it = item.name;
       return ~it.toLowerCase().indexOf(this.query.toLowerCase());
     },
     afterSelect: function() { 

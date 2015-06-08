@@ -94,10 +94,8 @@ app.viewModel.loadLayers = function(data) {
 	app.typeAheadSource = (function () {
             var items = [];
             for (var searchTerm in app.viewModel.layerSearchIndex) {
-                var text = app.viewModel.layerSearchIndex[searchTerm].searchText;
                 items.push({
-                    'searchText': text, // for full-text search
-                    'name': searchTerm  // for display
+                    'name': searchTerm
                 });
             }
             return items;
