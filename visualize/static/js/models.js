@@ -799,8 +799,22 @@ function mapLinksModel() {
 } // end of mapLinks Model
 
 
+function ExportGeometry() {
+    this.dialog = $('#export-geometry');
+}
+ExportGeometry.prototype.showDialog = function(object) {
+    console.log("Object =", object);
+    this.dialog.modal();
+}
+ExportGeometry.prototype.closeDialog = function() {
+    this.dialog.modal('hide');
+}
+
+
 function viewModel() {
     var self = this;
+
+    this.exportGeometry = new ExportGeometry();
 
     // list of (func, unlessTarget) for $(doc).mouseDown
     self._outsideClicks = [];
