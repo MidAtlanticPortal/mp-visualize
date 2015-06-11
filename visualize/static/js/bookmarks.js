@@ -311,9 +311,8 @@ function bookmarksModel(options) {
 
                       return (a > b) ? 1 : ((a < b) ? -1 : 0);
                     });
-                    self.bookmarksList(blist);
-                    //self.storeBookmarks();
                 }
+                self.bookmarksList(blist);
             },
             error: function(result) {
                 
