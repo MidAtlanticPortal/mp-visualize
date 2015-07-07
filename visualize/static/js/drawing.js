@@ -80,6 +80,23 @@ function drawingModel(options) {
             //complete: drawingModel.loadDrawingList
         });
     };
+
+    self.shapefileDownloadLink = function() {
+        var url = "/scenario/export/shp/" + self.id + ".zip";
+        return url;
+    }
+    self.geojsonDownloadLink = function() {
+        var url = "/scenario/export/geojson/" + self.id + ".geojson";
+        return url;
+    }
+    self.wktDownloadLink = function() {
+        var url = "/scenario/export/wkt/" + self.id + "-wkt.txt";
+        return url;
+    }
+    self.kmlDownloadLink = function() {
+        var url = "/scenario/export/kml/" + self.id + ".kml";
+        return url;
+    }
 }
 
 
