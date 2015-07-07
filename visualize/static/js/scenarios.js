@@ -728,7 +728,25 @@ function selectionModel(options) {
             }
         })
     };
-    
+
+    // identical to drawingModel functions
+    self.shapefileDownloadLink = function() {
+        var url = "/scenario/export/shp/" + self.id + ".zip";
+        return url;
+    }
+    self.geojsonDownloadLink = function() {
+        var url = "/scenario/export/geojson/" + self.id + ".geojson";
+        return url;
+    }
+    self.wktDownloadLink = function() {
+        var url = "/scenario/export/wkt/" + self.id + "-wkt.txt";
+        return url;
+    }
+    self.kmlDownloadLink = function() {
+        var url = "/scenario/export/kml/" + self.id + ".kml";
+        return url;
+    }
+
     return ret;
 } // end selectionModel
 
@@ -1214,7 +1232,24 @@ function scenarioModel(options) {
     self.hideDescription = function(scenario) {
         self.infoActive(false);
     };
-    
+
+    // identical to drawingModel functions
+    self.shapefileDownloadLink = function() {
+        var url = "/scenario/export/shp/" + self.id + ".zip";
+        return url;
+    }
+    self.geojsonDownloadLink = function() {
+        var url = "/scenario/export/geojson/" + self.id + ".geojson";
+        return url;
+    }
+    self.wktDownloadLink = function() {
+        var url = "/scenario/export/wkt/" + self.id + "-wkt.txt";
+        return url;
+    }
+    self.kmlDownloadLink = function() {
+        var url = "/scenario/export/kml/" + self.id + ".kml";
+        return url;
+    }
     return self;
 } // end scenarioModel
 
@@ -1310,6 +1345,11 @@ function scenariosModel(options) {
         self.sharingLayer().temporarilySelectedGroups(self.sharingLayer().selectedGroups().slice(0));
         $('#share-modal').modal('show');
     };
+
+    self.showExportModal = function(object) {
+        self.sharingLayer(object);
+        $('#export-geometry').modal('show');
+    }
     
     self.groupMembers = function(groupName) {
         var memberList = "";
@@ -2023,6 +2063,9 @@ function scenariosModel(options) {
     self.shareDrawing = function(drawing) {
         self.showSharingModal(drawing);
     };
+    self.exportDrawing = function(drawing) {
+        self.showExportModal(drawing);
+    }
     self.zoomToDrawing = function(drawing) {
         self.zoomToScenario(drawing);
     };

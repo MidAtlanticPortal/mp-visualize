@@ -804,7 +804,10 @@ function ExportGeometry() {
 }
 ExportGeometry.prototype.showDialog = function(object) {
     console.log("Object =", object);
-    this.dialog.modal();
+
+    // The dialog borrows "sharingLayer" to display the object
+    app.viewModel.scenarios.sharingLayer(object);
+    this.dialog.modal('show');
 }
 ExportGeometry.prototype.closeDialog = function() {
     this.dialog.modal('hide');
