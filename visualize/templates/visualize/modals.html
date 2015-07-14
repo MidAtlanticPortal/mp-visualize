@@ -7,10 +7,11 @@
                 <h3>Export <span data-bind="text: name"></span></h3>
             </div>
             <div class="modal-body">
-                <p><a data-bind="attr:{href: shapefileDownloadLink()}" class="btn btn-default">Download Shapefile</a><a href="https://en.wikipedia.org/wiki/Shapefile" target="_blank"><i class="fa fa-question-circle"></i></a></p>
-                <p><a data-bind="attr:{href: geojsonDownloadLink()}" class="btn btn-default">Download GeoJSON</a><a href="http://geojson.org/" target="_blank"><i class="fa fa-question-circle"></i></a></p>
-                <p><a data-bind="attr:{href: wktDownloadLink()}" class="btn btn-default">Download WKT (text file)</a><a href="https://en.wikipedia.org/wiki/Well-known_text" target="_blank"><i class="fa fa-question-circle"></i></a></p>
-                <p><a data-bind="attr:{href: kmlDownloadLink()}" class="btn btn-default">Download KML</a><a href="https://developers.google.com/kml/" target="_blank"><i class="fa fa-question-circle"></i></a></p>
+                <p>&ldquo;<span data-bind="text:name"></span>&rdquo; is available for export in the following formats:</p>
+                <p><a data-bind="attr:{href: shapefileDownloadLink()}" class="btn btn-default">Export as Shapefile</a> <sup><a title="What is a shapefile?" href="https://en.wikipedia.org/wiki/Shapefile" target="_blank"><i class="fa fa-question-circle"></i></a></sup></p>
+                <p><a data-bind="attr:{href: geojsonDownloadLink()}" class="btn btn-default">Export as GeoJSON</a> <sup><a  title="What is a GeoJSON?" href="http://geojson.org/" target="_blank"><i class="fa fa-question-circle"></i></a></sup></p>
+                <p><a data-bind="attr:{href: wktDownloadLink()}" class="btn btn-default">Export as WKT (text file)</a> <sup><a  title="What is a Well-known-text?" href="https://en.wikipedia.org/wiki/Well-known_text" target="_blank"><i class="fa fa-question-circle"></i></a></sup></p>
+                <p><a data-bind="attr:{href: kmlDownloadLink()}" class="btn btn-default">Export as KML</a> <sup><a  title="What is a KML?" href="https://developers.google.com/kml/" target="_blank"><i class="fa fa-question-circle"></i></a></sup></p>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-cancel" data-dismiss="modal">Close</button>
