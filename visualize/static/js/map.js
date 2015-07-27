@@ -624,7 +624,9 @@ app.addWmsLayerToMap = function(layer) {
         layer.name, 
         layer.url,
         {
-            layers: 'basic'
+            layers: layers.wms_slug,
+            transparent: "true",
+            format: "image/png"
         }
     );
 };
