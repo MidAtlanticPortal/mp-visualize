@@ -624,7 +624,7 @@ app.addWmsLayerToMap = function(layer) {
         layer.name, 
         layer.url,
         {
-            'layers': 'basic'
+            layers: 'basic'
         }
     );
 };
