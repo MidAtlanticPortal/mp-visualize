@@ -142,7 +142,7 @@ body.template-visualize{
         top: $map-padding-top;
         background-color: $light-gray;
         z-index:1000;
-        width: 400px;
+        width: 420px;
         padding: 0px;
         height: calc(100% - #{$map-padding-top} - #{$map-padding-bottom});
         .panel-heading {
@@ -574,10 +574,16 @@ body.template-visualize{
             }
         }
     }
+
+    .sidebar-nav .nav-tabs>li:first-child{
+        min-width: 115px;
+    }
+
     .sidebar-nav .nav-tabs>li{
         padding: 0px 15px 0px 15px;
         margin-bottom: 0px;
     }
+
     .sidebar-nav .nav-tabs>li a{
         margin-right:0px;
         border-top: 0px ;
