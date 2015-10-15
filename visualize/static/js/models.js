@@ -1008,7 +1008,7 @@ function viewModel() {
             // var overlayWidth = (document.getElementById('aggregated-attribute-overlay-test').clientWidth+50),
             //     width = overlayWidth < 380 ? overlayWidth : 380;
             //console.log('setting overlay width to ' + width);
-            self.aggregatedAttributesWidth(240 + 'px');
+            self.aggregatedAttributesWidth(280 + 'px');
         }, 500);
     };
 

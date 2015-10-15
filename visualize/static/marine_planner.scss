@@ -188,7 +188,7 @@ body.template-visualize{
     }
     #aggregated-attribute-overlay{
         position:absolute;
-        right: 33px;
+        right: 10px;
         bottom: 120px;
         z-index: 1000;
         background-color: white;
@@ -196,6 +196,9 @@ body.template-visualize{
         opacity: 0.9;
         .accordion-heading{
             background-color: $light-gray;
+        }
+        @media (max-height: 450px) {
+           display: none;
         }
     }
 
@@ -212,7 +215,7 @@ body.template-visualize{
 
     #aggregated-attribute-content{
         overflow-y: auto;
-        max-height: 200px;
+        max-height: 400px;
 
         .accordion-inner{
             padding-top: 5px;
@@ -222,7 +225,19 @@ body.template-visualize{
             padding-bottom: 5px;
         }
         .accordion-body{
-            max-height: 45px;
+            max-height: 1000000px;
+        }
+        @media (max-height: 715px) {
+            max-height: 325px;
+        }
+        @media (max-height: 635px) {
+            max-height: 250px;
+        }
+        @media (max-height: 560px) {
+            max-height: 200px;
+        }
+        @media (max-height: 505px) {
+            max-height: 125px;
         }
     }
 
