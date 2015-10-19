@@ -311,6 +311,8 @@ app.init = function () {
                             text = app.viewModel.getPortOwnershipAttributes(info.data);                             
                         } else if ( potential_layer.name === 'Maintained Channels') {
                             text = app.viewModel.getChannelAttributes(info.data);
+                        } else if ( potential_layer.name === 'Essential Fish Habitats') {
+                            text = app.viewModel.getEFHAttributes(info.data);
                         } else if ( title === 'Benthic Habitats (North)' || title === 'Benthic Habitats (South)' ) {
                             title = 'Benthic Habitats';
                         }

@@ -3,7 +3,7 @@
 {% block "after" %}
     <!-- ko if: subLayers.length > 0 -->
       <!-- ko if: !isCheckBoxLayer() -->
-      <ul class="dropdown-menu dropdown-menu-right layer-menu" data-bind="event: { mouseleave: closeMenu }">
+      <ul class="dropdown-menu dropdown-menu-right layer-menu">
           <li data-bind="foreach: subLayers">
               <a data-bind="click: toggleActive">
                   <span><i class="fa green" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
@@ -13,7 +13,7 @@
       </ul>
       <!-- /ko -->
       <!-- ko if: isCheckBoxLayer() -->
-      <ul class="dropdown-menu dropdown-menu-right layer-menu" data-bind="event: { mouseleave: closeMenu }">
+      <ul class="dropdown-menu dropdown-menu-right layer-menu">
           <li data-bind="foreach: subLayers">
               <a data-bind="click: toggleActive" style="padding-left: 15px">
                   <span><i class="fa green" data-bind="css: { 'fa-check-square-o': visible(), 'fa-square-o': ! visible() }"></i></span>
