@@ -78,7 +78,7 @@ app.init = function () {
         type: "AerialWithLabels"
     });*/
     
-    nauticalCharts = new OpenLayers.Layer.ArcGIS93Rest("Nautical Charts", "http://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/MapServer/export", 
+    nauticalCharts = new OpenLayers.Layer.ArcGIS93Rest("Nautical Charts", "http://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage", 
         {
             layers: 'null'
         },
@@ -393,6 +393,16 @@ app.init = function () {
         }
         
     });
+
+    app.map.addControl(
+        new OpenLayers.Control.MousePosition({
+            prefix: 'Coordinates: ',
+            separator: ', ',
+            numDigits: 3,
+            emptyString: ''
+        })
+    );
+
 
     //mouseout events
     app.map.events.register("featureout", null, function(e, test) {
