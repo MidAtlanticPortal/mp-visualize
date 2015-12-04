@@ -394,14 +394,14 @@ app.init = function () {
         
     });
 
-    app.map.addControl(
-        new OpenLayers.Control.MousePosition({
-            prefix: 'Coordinates: ',
-            separator: ', ',
-            numDigits: 3,
-            emptyString: ''
-        })
-    );
+    // app.map.addControl(
+    //     new OpenLayers.Control.MousePosition({
+    //         prefix: 'Coordinates: ',
+    //         separator: ', ',
+    //         numDigits: 3,
+    //         emptyString: ''
+    //     })
+    // );
 
 
     //mouseout events
