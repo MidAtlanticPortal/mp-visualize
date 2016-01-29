@@ -486,16 +486,22 @@ function layerModel(options, parent) {
 
     // bound to click handler for layer switching
     self.toggleActive = function(self, event) {
-        var activeLayer = app.viewModel.activeLayer()
+        var activeLayer = app.viewModel.activeLayer();
+        var activeParentLayer = app.viewModel.activeParentLayer();
         var layer = this;
 
-        if (layer !== activeLayer) {
-            if (typeof activeLayer !== 'undefined' && activeLayer.showSublayers()) {
+        //are the active and current layers the same
+        if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
+            //is sublayer already active
+            if (activeLayer.showSublayers()) {
+                //if radio sublayer
                 if (!activeLayer.isCheckBoxLayer()) {
                     activeLayer.showSublayers(false);
-                } else {
-                    console.log('dgdf')
-                }
+                } 
+            //check if a parent layer is active 
+            //checkbox sublayer has been clicked prior to opening another sublayer
+            } else if (activeParentLayer && layer.parent !== activeParentLayer) {
+                app.viewModel.activeParentLayer().showSublayers(false);
             }
         } 
 
@@ -1473,15 +1479,18 @@ function viewModel() {
     };
 
     self.outsideSubLayer = function(event, elm) {
-        if ($(elm).length === 1) {
+        var viewModel = app.viewModel;
+        if ($(elm).length) {
+            //check if mouse click is in the same element, don't close if it is
             if (!$(elm).is(event.target) && $(elm).has(event.target).length === 0) {
-                app.viewModel.activeLayer().showSublayers(false);
-            }
-        } else if ($(elm).length > 1) {
-            app.viewModel.activeLayer().toggleActive();
-        }
+                if (viewModel.activeParentLayer()) {
+                    viewModel.activeParentLayer().showSublayers(false);
+                } else {
+                    viewModel.activeLayer().showSublayers(false); 
+                }
 
-              
+            }
+        }              
     };
 
     /* DESIGNS */
