@@ -486,7 +486,18 @@ function layerModel(options, parent) {
 
     // bound to click handler for layer switching
     self.toggleActive = function(self, event) {
+        var activeLayer = app.viewModel.activeLayer()
         var layer = this;
+
+        if (layer !== activeLayer) {
+            if (typeof activeLayer !== 'undefined' && activeLayer.showSublayers()) {
+                if (!activeLayer.isCheckBoxLayer()) {
+                    activeLayer.showSublayers(false);
+                } else {
+                    console.log('dgdf')
+                }
+            }
+        } 
 
         // save a ref to the active layer for editing,etc
         app.viewModel.activeLayer(layer);
@@ -544,7 +555,6 @@ function layerModel(options, parent) {
             layer.activateLayer();
         }
     };
-    
 
     self.raiseLayer = function(layer, event) {
         var current = app.viewModel.activeLayers.indexOf(layer);
@@ -1460,6 +1470,18 @@ function viewModel() {
         for (var i=0; i< numOpenThemes; i++) {
             self.openThemes.remove(self.openThemes()[0]);
         }
+    };
+
+    self.outsideSubLayer = function(event, elm) {
+        if ($(elm).length === 1) {
+            if (!$(elm).is(event.target) && $(elm).has(event.target).length === 0) {
+                app.viewModel.activeLayer().showSublayers(false);
+            }
+        } else if ($(elm).length > 1) {
+            app.viewModel.activeLayer().toggleActive();
+        }
+
+              
     };
 
     /* DESIGNS */

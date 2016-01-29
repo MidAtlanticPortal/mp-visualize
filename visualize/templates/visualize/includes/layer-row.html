@@ -80,9 +80,9 @@
         </span>
     </div>
     <div class="layer-text">
-        <span data-bind="truncatedText: overview, maxTextLength: 100"></span>
+        <span data-bind="truncatedText: overview, maxTextLength: 150"></span>
         <!-- ko if: $data.data_url -->
-        <a data-bind="attr: {href: $data.data_url}">read more</a>.
+        <a data-bind="attr: {href: $data.data_url}" target="_blank">read more</a>.
         <!-- /ko -->
     </div>
 </div>

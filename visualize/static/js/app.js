@@ -182,6 +182,16 @@ $(document).ready(function() {
   $(document).on('click', '#share-option', function() {
     app.viewModel.scenarios.initSharingModal();
   });
+
+  $(document).on('click', 'body', function(event) {
+    var activeLayer = app.viewModel.activeLayer();
+    var elm = '.layer.open.dropdown';
+    if (activeLayer && (activeLayer.showSublayers() || $(elm).length)) {
+      app.viewModel.outsideSubLayer(event, elm);
+    }
+  });
+
+
   
   // hiding feature attributes on new click events (but ignoring map pan events)
   app.map.events.register('move', app.map, function() {
