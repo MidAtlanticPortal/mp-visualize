@@ -144,7 +144,13 @@ function layerModel(options, parent) {
     
     // set overview text for Learn More option
     if (options.overview) {
-        self.overview = options.overview;
+        $overviewTemp = $("<div/>", {
+            html: options.overview
+        });
+        $overviewTemp.find('a').each(function() {
+            $(this).attr('target', '_blank');
+        });
+        self.overview = $overviewTemp.html();
     } else if (parent && parent.overview) {
         self.overview = parent.overview;
     } else if (self.description) {

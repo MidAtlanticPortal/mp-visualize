@@ -84,7 +84,7 @@ ko.bindingHandlers.truncatedText = {
         }
 
         // updating text binding handler to show truncatedText
-        ko.bindingHandlers.text.update(element, function () {
+        ko.bindingHandlers.html.update(element, function () {
             return truncatedText;
         });
     }
