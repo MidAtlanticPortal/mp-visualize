@@ -6,6 +6,7 @@ function layerModel(options, parent) {
     self.id = options.id || null;
     self.name = options.name || null;
     self.featureAttributionName = self.name;
+    self.order = options.order;
     self.url = options.url || null;
     self.data_url = options.data_url || null;
     self.arcgislayers = options.arcgis_layers || 0;

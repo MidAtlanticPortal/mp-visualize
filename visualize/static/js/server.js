@@ -61,17 +61,14 @@ app.viewModel.loadLayers = function(data) {
                                 theme: theme
                             };
                         }
-                    });  
-                    layer.subLayers.sort( function(a,b) { 
-                        return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
                     });
+                    //sort by order id  
+                    layer.subLayers.sort( function(a,b) { return a.order - b.order });
                 } 
 
             });
-            //sort by name
-            theme.layers.sort( function(a,b) { 
-                return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
-            });
+            //sort by order id
+            theme.layers.sort( function(a,b) { return a.order - b.order });
             
             self.themes.push(theme);
         } else {
@@ -84,8 +81,8 @@ app.viewModel.loadLayers = function(data) {
                      theme.layers.push(layer);
                 // }
             });
-            //sort by name
-            theme.layers.sort( function(a,b) { return a.name.toUpperCase().localeCompare(b.name.toUpperCase()); } );
+            //sort by order id
+            theme.layers.sort( function(a,b) { return a.order - b.order });
             
             self.hiddenThemes.push(theme);
         }
