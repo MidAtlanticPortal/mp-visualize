@@ -63,12 +63,27 @@ app.viewModel.loadLayers = function(data) {
                         }
                     });
                     //sort by order id  
-                    layer.subLayers.sort( function(a,b) { return a.order - b.order });
+                    layer.subLayers.sort( function(a,b) {
+                        if (a.order === b.order) {
+                            //sort alphabetically if id order is the same
+                            return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
+                        } else {
+                            return a.order - b.order  
+                        } 
+                    });
                 } 
 
             });
             //sort by order id
-            theme.layers.sort( function(a,b) { return a.order - b.order });
+            theme.layers.sort( function(a,b) { 
+                if (a.order === b.order) {
+                    //sort alphabetically if id order is the same
+                    return a.name.toUpperCase().localeCompare(b.name.toUpperCase());
+                } else {
+                    return a.order - b.order
+                }
+            });  
+
             
             self.themes.push(theme);
         } else {
