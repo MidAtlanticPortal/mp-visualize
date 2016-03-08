@@ -1323,6 +1323,11 @@ function viewModel() {
         $('#map-links-modal').modal()
         
     };
+
+    self.showSessionWMS = function() {
+        $('#map-wms-modal').modal()
+        
+    };
     
     self.selectedLayer = ko.observable();
 

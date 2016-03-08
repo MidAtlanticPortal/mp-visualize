@@ -45,6 +45,12 @@
                           <a id="basemap-button" class="btn" data-toggle="tooltip" data-placement="left" title="Share this Map" data-bind="click: showMapLinks">
                               <i class="fa fa-link"></i>
                           </a>
+                          {% if user.is_authenticated %}
+                          <!--WMS Brower Layer Button-->
+                          <a id="wms-button" class="btn" data-toggle="tooltip" data-placement="left" title="Add a WMS Layer " data-bind="click: showSessionWMS">
+                              <i class="fa fa-location-arrow"></i>
+                          </a>
+                          {% endif %}
                         </div>
                 </div>
                 <div id="baselayers">
