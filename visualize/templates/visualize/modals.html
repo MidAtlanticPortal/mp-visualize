@@ -143,21 +143,21 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="map-links-modal-label">Session Based WMS Layer Input</h3>
             </div>
-            
+        <form id="wmsForm">
             <div class="modal-body"> 
-                <div>Layer Name
-                    <input type="text" style="width: 96%"> 
-                </div>
-                <div style="padding-top: 12px; padding-bottom: 5px"> 
-                    WMS Path
-                </div> 
-                <div> 
-                    <input type="text" style="width: 96%"> 
-                </div> 
+                 <div class="form-group">
+                   <label for="wmsName">Layer Name</label>
+                   <input type="text" class="form-control" id="wmsName" placeholder="Layer">
+                 </div>
+                 <div class="form-group">
+                   <label for="wmsUrl">URL Path</label>
+                   <input type="text" class="form-control" id="wmsUrl" placeholder="http://path.to.layer">
+                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button id="wmsFormSubmit" data-bind="click: submitWMSSession" class="btn btn-default">Submit</button>
             </div>
+        </form>
         </div>
     </div>
 </div>

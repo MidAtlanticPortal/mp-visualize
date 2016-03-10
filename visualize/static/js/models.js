@@ -1325,8 +1325,18 @@ function viewModel() {
     };
 
     self.showSessionWMS = function() {
-        $('#map-wms-modal').modal()
-        
+        var $mapModal = $('#map-wms-modal');
+        //clear modal content on open
+        $mapModal.on('hidden.bs.modal', function () {
+            $(this).find("input,textarea").val('').end();
+        });
+        $mapModal.modal();    
+    };
+
+    self.submitWMSSession = function() {
+        var sessionLayerName = $('#wmsName').val();
+        var sessionLayerUrl = $('#wmsUrl').val();
+        $('#map-wms-modal').modal('hide');
     };
     
     self.selectedLayer = ko.observable();
