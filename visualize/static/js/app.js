@@ -252,6 +252,57 @@ $('#left-panel .panel-heading h4 a.collapse-button').click(function(){
   }
 });
 
+//wms layer modal
+$('#map-wrapper').on('click', '#wms-button', function() {
+  var $mapModal = $('#map-wms-modal');
+
+  //show only one form on load
+  if ($('.wmsForm').length > 1) {
+    $('.wmsForm').not(':first').remove();
+  }
+  //clear modal content
+  $mapModal.on('hidden.bs.modal', function () {
+      $(this).find("input,textarea").val('').end();
+  });
+
+  $mapModal.modal();    
+});
+
+
+
+//clone wms form
+$('#map-wms-modal').on('click', '.clone-wms-form', function() {
+  var template = $('#wmsForms .wmsForm:first').clone();
+
+  if ($('.wmsForm').length === 1) {
+      var formCount = 1;
+  }
+
+  formCount++;
+  var form = template.clone().find(':input').each(function(){
+      //set id to store the updated form number
+      var newId = this.id + formCount;
+      //update for label
+      $(this).prev().attr('for', newId);
+      //update remove-wms class
+      this.id = newId;
+  }).end()
+
+  //inject new form
+  .appendTo('#wmsForms');
+
+  //only show removal options on new forms
+  form.children('.remove-wms').show();
+
+  return false;
+})
+
+//remove wms forms
+$('#map-wms-modal').on('click', '.remove-wms-form', function() {
+  $(this).parent().parent().empty();
+  return false;
+});
+
 $(document).mousedown(function(e) {
 
     // Process "outside" clicks

@@ -143,21 +143,31 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="map-links-modal-label">Session Based WMS Layer Input</h3>
             </div>
-        <form id="wmsForm">
             <div class="modal-body"> 
-                 <div class="form-group">
-                   <label for="wmsName">Layer Name</label>
-                   <input type="text" class="form-control" id="wmsName" placeholder="Layer">
-                 </div>
-                 <div class="form-group">
-                   <label for="wmsUrl">URL Path</label>
-                   <input type="text" class="form-control" id="wmsUrl" placeholder="http://path.to.layer">
-                 </div>
+                <form>
+                    <div id="wmsForms">
+                        <div class="wmsForm">
+                            <div class="form-group">
+                               <label for="wmsName">Layer Name</label>
+                               <input type="text" class="form-control" id="wmsName" placeholder="Layer">
+                            </div>
+                            <div class="form-group">
+                               <label for="wmsUrl">URL Path</label>
+                               <input type="text" class="form-control" id="wmsUrl" placeholder="http://path.to.layer">
+                            </div>
+                            <div class="text-right remove-wms">
+                                <i class="fa fa-minus deep-blue remove-wms-form"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <i class="fa fa-plus deep-blue clone-wms-form"></i>
+                    </div>
+                </form>
             </div>
             <div class="modal-footer">
                 <button id="wmsFormSubmit" data-bind="click: submitWMSSession" class="btn btn-default">Submit</button>
             </div>
-        </form>
         </div>
     </div>
 </div>

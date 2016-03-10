@@ -998,6 +998,14 @@ td ul.dropdown-menu {
     }
 }
 
+#map-wms-modal {
+    .remove-wms { display: none; }
+    .clone-wms-form,
+    .remove-wms-form {
+        cursor: pointer;
+    }
+}
+
 
 @import "visualize/designs.scss";
 
