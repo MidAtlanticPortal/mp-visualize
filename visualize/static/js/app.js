@@ -252,6 +252,8 @@ $('#left-panel .panel-heading h4 a.collapse-button').click(function(){
   }
 });
 
+app.wmsSession = [];
+
 //wms layer modal
 $('#map-wrapper').on('click', '#wms-button', function() {
   var $mapModal = $('#map-wms-modal');
@@ -268,8 +270,6 @@ $('#map-wrapper').on('click', '#wms-button', function() {
   $mapModal.modal();    
 });
 
-
-
 //clone wms form
 $('#map-wms-modal').on('click', '.clone-wms-form', function() {
   var template = $('#wmsForms .wmsForm:first').clone();
@@ -279,7 +279,7 @@ $('#map-wms-modal').on('click', '.clone-wms-form', function() {
   }
 
   formCount++;
-  var form = template.clone().find(':input').each(function(){
+  var form = template.clone().find(':input').val("").each(function(){
       //set id to store the updated form number
       var newId = this.id + formCount;
       //update for label

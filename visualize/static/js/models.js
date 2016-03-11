@@ -1325,8 +1325,25 @@ function viewModel() {
     };
 
     self.submitWMSSession = function() {
-        var sessionLayerName = $('#wmsName').val();
-        var sessionLayerUrl = $('#wmsUrl').val();
+        $('.wmsForm').each(function (index, value) {
+            //construct opacity method 
+            function lyr(){};
+            lyr.prototype.opacity = function(){ return 0.5 };
+
+            //create layer object
+            var lyrObj = new lyr();
+            lyrObj.type = 'ArcRest';
+
+            $(this).find(':input').each(function() {
+                if ($(this).attr("name") === 'name') {
+                    lyrObj.name = $(this).val();
+                } else if ($(this).attr("name") === 'url') {
+                    lyrObj.url = $(this).val();
+                }
+            })
+
+            app.addLayerToMap(lyrObj);
+        })
         $('#map-wms-modal').modal('hide');
     };
     
