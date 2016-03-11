@@ -252,12 +252,13 @@ $('#left-panel .panel-heading h4 a.collapse-button').click(function(){
   }
 });
 
-app.wmsSession = [];
 
+var cloneForm = '.clone-wms-form';
 //wms layer modal
 $('#map-wrapper').on('click', '#wms-button', function() {
   var $mapModal = $('#map-wms-modal');
 
+  $(cloneForm).show();
   //show only one form on load
   if ($('.wmsForm').length > 1) {
     $('.wmsForm').not(':first').remove();
@@ -271,12 +272,12 @@ $('#map-wrapper').on('click', '#wms-button', function() {
 });
 
 //clone wms form
-$('#map-wms-modal').on('click', '.clone-wms-form', function() {
+$('#map-wms-modal').on('click', cloneForm, function() {
+  var formCount = $('.wmsForm').length;
   var template = $('#wmsForms .wmsForm:first').clone();
+  var elm = 'add';
 
-  if ($('.wmsForm').length === 1) {
-      var formCount = 1;
-  }
+  toggleFormClone(cloneForm, elm);
 
   formCount++;
   var form = template.clone().find(':input').val("").each(function(){
@@ -295,13 +296,33 @@ $('#map-wms-modal').on('click', '.clone-wms-form', function() {
   form.children('.remove-wms').show();
 
   return false;
-})
+});
 
 //remove wms forms
 $('#map-wms-modal').on('click', '.remove-wms-form', function() {
-  $(this).parent().parent().empty();
+  var elm = 'remove';
+  $(this).parent().parent().remove();
+  toggleFormClone(cloneForm, elm)
   return false;
 });
+
+function toggleFormClone(cloneForm, elm) {
+  var formCount = $('.wmsForm').length;
+
+  if (elm === 'add') {
+    if (formCount >= 2) {
+      $(cloneForm).hide();
+    } else {
+      $(cloneForm).show()
+    }
+  } else {
+    if (formCount <= 3) {
+      $(cloneForm).show();
+    } else {
+      $(cloneForm).hide();
+    }
+  }
+}
 
 $(document).mousedown(function(e) {
 

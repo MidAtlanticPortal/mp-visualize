@@ -1327,7 +1327,7 @@ function viewModel() {
     /* session based WMS layers */
     self.submitWMSSession = function() {
         $('.wmsForm').each(function (index, value) {
-            //create layer object
+            //store object options
             var lyrObj = new Object();
             lyrObj.type = 'ArcRest';
 
@@ -1338,6 +1338,7 @@ function viewModel() {
                     lyrObj.url = $(this).val();
                 }
             })
+            //add options to layer 
             var wmsLayer = new layerModel(lyrObj);
             wmsLayer.activateLayer();
         });
