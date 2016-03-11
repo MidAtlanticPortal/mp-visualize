@@ -50,7 +50,14 @@ function layerModel(options, parent) {
     if (self.annotated && app.viewModel.zoomLevel() < 9) {
         self.isDisabled(true);
         self.disabledMessage(options.disabled_message);
-    } 
+    }
+
+    //on-the-fly session layers
+    self.wmsSession = ko.observable(false);
+    if (options.wmsSession) {
+        self.wmsSession(options.wmsSession)
+    }
+
     app.viewModel.zoomLevel.subscribe( function() {
         if (self.annotated && app.viewModel.zoomLevel() < 9) {
             self.isDisabled(true);
@@ -1330,6 +1337,7 @@ function viewModel() {
             //store object options
             var lyrObj = new Object();
             lyrObj.type = 'ArcRest';
+            lyrObj.wmsSession = true;
 
             $(this).find(':input').each(function() {
                 if ($(this).attr("name") === 'name') {
