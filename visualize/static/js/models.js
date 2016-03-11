@@ -12,7 +12,7 @@ function layerModel(options, parent) {
     self.arcgislayers = options.arcgis_layers || 0;
     self.wms_slug = options.wms_slug || null;
     self.wms_version = options.wms_version || false;
-    self.type = options.type || null;
+    self.type = options.type || null
     self.utfurl = options.utfurl || false;
     self.legend = options.legend || false;
     self.legendVisibility = ko.observable(false);
@@ -1324,14 +1324,11 @@ function viewModel() {
         
     };
 
+    /* session based WMS layers */
     self.submitWMSSession = function() {
         $('.wmsForm').each(function (index, value) {
-            //construct opacity method 
-            function lyr(){};
-            lyr.prototype.opacity = function(){ return 0.5 };
-
             //create layer object
-            var lyrObj = new lyr();
+            var lyrObj = new Object();
             lyrObj.type = 'ArcRest';
 
             $(this).find(':input').each(function() {
@@ -1341,9 +1338,9 @@ function viewModel() {
                     lyrObj.url = $(this).val();
                 }
             })
-
-            app.addLayerToMap(lyrObj);
-        })
+            var wmsLayer = new layerModel(lyrObj);
+            wmsLayer.activateLayer();
+        });
         $('#map-wms-modal').modal('hide');
     };
     
