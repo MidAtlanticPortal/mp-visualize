@@ -281,7 +281,7 @@ body.template-visualize{
         a, a:hover, a:active, a:visited{
             font-size: 12px;
             font-weight:bold;
-            color: $deep-blue; 
+            color: $deep-blue;
         }
         .layer-text{
             text-align: left;
@@ -637,7 +637,7 @@ body.template-visualize{
             font-size: 14px;
             margin: 2px 0 10px;
         }
-    } 
+    }
 
     .sidebar-nav .tab-content, .sidebar-nav #data-accordion {
         background-color: $gray-lighter;
@@ -999,6 +999,15 @@ td ul.dropdown-menu {
 }
 
 #map-wms-modal {
+    .modal-body {
+        max-height: 450px;
+        overflow: auto;
+
+        .wmsForm:not(:first-child) {
+            .form-group:first-child { padding-top: 20px; }
+        }
+    }
+
     .remove-wms { display: none; }
     .clone-wms-form,
     .remove-wms-form {

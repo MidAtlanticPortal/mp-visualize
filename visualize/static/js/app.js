@@ -34,10 +34,10 @@ app.restoreState = {};
 ko.applyBindings(app.viewModel);
 app.viewModel.loadLayersFromServer().done(function() {
   app.onResize();
-  
+
   // trigger events that depend on the map
   $(document).trigger('map-ready');
-  
+
   // if we have the hash state go ahead and load it now
   if (app.hash) {
     app.loadStateFromHash(app.hash);
@@ -55,7 +55,7 @@ app.viewModel.loadLayersFromServer().done(function() {
       var it = item.name;
       return ~it.toLowerCase().indexOf(this.query.toLowerCase());
     },
-    afterSelect: function() { 
+    afterSelect: function() {
       // replace the search box contents with the user's actual input
       // otherwise it will be replaced by the display text of the chosen item
       $('#data-search-input').val(app.viewModel.searchTermInput());
@@ -88,7 +88,7 @@ new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")
 $(document).ready(function() {
   app.onResize();
   $(window).resize(app.onResize);
-  
+
   //Do not display any warning for missing tiles
   OpenLayers.Util.onImageLoadError = function(){
     this.src = 'http://www.openlayers.org/api/img/blank.gif';
@@ -111,17 +111,17 @@ $(document).ready(function() {
     });
   });
 
-  
+
   $('.form-search').find('.btn').on('click', function(event) {
      $(event.target).closest('form').find('input').val(null).focus();
   });
-  
+
   $('#designsTab[data-toggle="tab"]').on('shown', function(e) {
-    setTimeout(function() {$('.group-members-popover').popover({html: true, trigger: 'hover'});}, 2000); 
+    setTimeout(function() {$('.group-members-popover').popover({html: true, trigger: 'hover'});}, 2000);
   });
-  
+
   //the following appears to handle the bookmark sharing, while the earlier popover activation handles the design sharing
-  setTimeout(function() {$('.group-members-popover').popover({html: true, trigger: 'hover'});}, 2000); 
+  setTimeout(function() {$('.group-members-popover').popover({html: true, trigger: 'hover'});}, 2000);
 
   setTimeout(function() {
     $('.disabled').popover({
@@ -142,7 +142,7 @@ $(document).ready(function() {
         $('#SimpleLayerSwitcher_29').hide();
     }
   });
-  
+
   //hide basemaps drop-down on mouseout
   $('#SimpleLayerSwitcher_29').mouseleave( function() {
     $('#SimpleLayerSwitcher_29').hide();
@@ -150,14 +150,14 @@ $(document).ready(function() {
     //     $('#basemaps').removeClass('open');
     // }
   });
-  
+
   //hide basemaps drop-down on mouseout
   $('#SimpleLayerSwitcher_29').mousedown( function() {
     // if (app.mafmc || !app.pageguide.preventBasemapsClose) {
     //     $('#basemaps').removeClass('open');
     // }
   });
-  
+
   //hide basemaps drop-down on mouseout
   $('#SimpleLayerSwitcher_29').mouseenter( function() {
     //$('#basemaps').addClass('open');
@@ -166,15 +166,15 @@ $(document).ready(function() {
   $(document).on('click', 'a[name="start-default-tour"]', function() {
     app.viewModel.startDefaultTour();
   });
-  
+
   $(document).on('click', '#continue-basic-tour', function() {
     app.viewModel.stepTwoOfBasicTour();
   });
-  
+
   $(document).on('click', '#start-data-tour', function() {
     app.viewModel.startDataTour();
   });
-  
+
   $(document).on('click', '#start-active-tour', function() {
     app.viewModel.startActiveTour();
   });
@@ -192,7 +192,7 @@ $(document).ready(function() {
   });
 
 
-  
+
   // hiding feature attributes on new click events (but ignoring map pan events)
   app.map.events.register('move', app.map, function() {
     app.map.mousedrag = true;
@@ -204,11 +204,11 @@ $(document).ready(function() {
     }
     app.map.mousedrag = false;
   });
-  
+
   $('a[data-toggle="tab"]').on('shown', function (e) {
     app.updateUrl();
   });
-  
+
   $('[data-toggle="tooltip"]').tooltip()
 
 });
@@ -268,7 +268,7 @@ $('#map-wrapper').on('click', '#wms-button', function() {
       $(this).find("input,textarea").val('').end();
   });
 
-  $mapModal.modal();    
+  $mapModal.modal();
 });
 
 //clone wms form
@@ -310,13 +310,13 @@ function toggleFormClone(cloneForm, elm) {
   var formCount = $('.wmsForm').length;
 
   if (elm === 'add') {
-    if (formCount >= 2) {
+    if (formCount >= 3) {
       $(cloneForm).hide();
     } else {
       $(cloneForm).show()
     }
   } else {
-    if (formCount <= 3) {
+    if (formCount <= 4) {
       $(cloneForm).show();
     } else {
       $(cloneForm).hide();
