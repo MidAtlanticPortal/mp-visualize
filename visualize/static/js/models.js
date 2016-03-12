@@ -1340,10 +1340,15 @@ function viewModel() {
             lyrObj.wmsSession = true;
 
             $(this).find(':input').each(function() {
-                if ($(this).attr("name") === 'name') {
-                    lyrObj.name = $(this).val();
-                } else if ($(this).attr("name") === 'url') {
-                    lyrObj.url = $(this).val();
+                var inputField = ($(this).attr("name"));
+                var value = $(this).val();
+                
+                if (inputField === 'name') {
+                    lyrObj.name = value;
+                } else if (inputField === 'url') {
+                    lyrObj.url = value;
+                } else if (inputField === 'layerId' && value.length > 0) {
+                    lyrObj.arcgis_layers = value;
                 }
             })
             //add options to layer 
