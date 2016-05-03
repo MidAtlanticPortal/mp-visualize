@@ -660,12 +660,10 @@ body.template-visualize{
     #data-panel{
         background-color: $gray-lighter;
         .layer-row {
-            table-layout: fixed;
             width: 100%;
             > tbody > tr > td {
-              width: 40px;
               &.layer-name {
-                width: initial;
+                width: 100%;
                 table {
                   width: 100%
                 }
@@ -674,6 +672,7 @@ body.template-visualize{
                 }
               }
             }
+            tbody > tr > td.layer-info-icon { width: 40px }
             .add-on {
               width: 1px;
             }

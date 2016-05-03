@@ -367,11 +367,16 @@ function layerModel(options, parent) {
         layer.visibleSublayer(false);
     };
     
+    // layer tracking Google Analytics
+    self.trackLayer = function(action) {
+        ga('send', 'event', 'Layers Activated', action);
+    };
+
     self.activateLayer = function() {
         var layer = this;
 
         if (!layer.active() && layer.type !== 'placeholder' && !layer.isDisabled()) {
-        
+
             self.activateBaseLayer();
 
             // save reference in parent layer
@@ -389,6 +394,7 @@ function layerModel(options, parent) {
                 layer.arcIdentifyControl.activate();
             }
 
+            self.trackLayer(layer.name);
         }
     };
     
@@ -692,6 +698,11 @@ function themeModel(options) {
     // array of layers
     self.layers = ko.observableArray();
 
+    //theme tracking Google Analytics
+    self.trackTheme = function(action) {
+        ga('send', 'event', 'Themes Activated', action);
+    };
+
     //add to open themes
     self.setOpenTheme = function() {
         var theme = this;
@@ -704,6 +715,7 @@ function themeModel(options) {
             app.viewModel.openThemes.remove(theme);
         } else {
             app.viewModel.openThemes.push(theme);
+            self.trackTheme(theme.name);
         }
     };
     
