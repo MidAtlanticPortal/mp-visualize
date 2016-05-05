@@ -26,7 +26,7 @@
     <div class="modal-header" style="min-height: 20px;">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
     </div>
-    <div class="modal-body" style="text-align: center">  
+    <div class="modal-body" style="text-align: center">
       <div class="row-fluid">
         <div class="span7" data-bind="style: {display: hideTours() ? 'none': 'block'}, css: {span7: !hideTours()}">
             <h4>Tour the MARCO Marine Planner</h4>
@@ -103,29 +103,29 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="map-links-modal-label">Map Links</h3>
             </div>
-            
-            <div class="modal-body"> 
-                <div>URL  
+
+            <div class="modal-body">
+                <div>URL
                     <span class="pull-right">
-                        <label> 
-                            <input class="short-url-checkbox" type="checkbox" data-bind="checked: shrinkURL" style="margin-top: 0px; margin-bottom: 3px"> 
-                            Short URL 
+                        <label>
+                            <input class="short-url-checkbox" type="checkbox" data-bind="checked: shrinkURL" style="margin-top: 0px; margin-bottom: 3px">
+                            Short URL
                         </label>
                     </span>
                 </div>
                 <div>
-                    <input id="short-url" type="text" style="width: 96%" data-bind="attr: {value: getURL()}, css: {'change-url': shrinkURL}"> 
+                    <input id="short-url" type="text" style="width: 96%" data-bind="attr: {value: getURL()}, css: {'change-url': shrinkURL}">
                 </div>
-                <div style="padding-top: 12px; padding-bottom: 5px"> 
+                <div style="padding-top: 12px; padding-bottom: 5px">
                     Embedded Map
-                </div> 
-                <div> 
-                    <input id="iframe-html" type="text" style="width: 96%" data-bind="attr: {value: getIFrameHTML}"> 
-                </div> 
-<!--                 <div> 
-                    <a href="#" data-bind="click: openIFrameExample"> 
-                        Preview embedded map 
-                    </a> 
+                </div>
+                <div>
+                    <input id="iframe-html" type="text" style="width: 96%" data-bind="attr: {value: getIFrameHTML}">
+                </div>
+<!--                 <div>
+                    <a href="#" data-bind="click: openIFrameExample">
+                        Preview embedded map
+                    </a>
                 </div> -->
             </div>
             <div class="modal-footer">
@@ -144,30 +144,28 @@
                 <h4 class="modal-title" id="map-links-modal-label">Session Based ArcRest Layer Input</h3>
             </div>
             <form id="sessionForm" data-bind="submit: submitWMSSession">
-                <div class="modal-body"> 
+                <div class="modal-body">
                     <div id="wmsForms">
                         <div class="wmsForm">
                             <div class="form-group">
                                <label for="wmsName">Layer Name</label>
-                               <input type="text" 
-                                      class="form-control" 
-                                      name="name" 
-                                      id="wmsName" 
-                                      placeholder="Layer" 
-                                      pattern=".{3,}" 
+                               <input type="text"
+                                      class="form-control"
+                                      name="name"
+                                      id="wmsName"
+                                      placeholder="Layer"
+                                      pattern=".{3,}"
                                       required title="Layer Name is Too Short"
                                       >
                             </div>
                             <div class="form-group">
                                <label for="wmsUrl">URL Path</label>
-                               <input type="url" 
-                                      class="form-control" 
-                                      name="url" 
-                                      id="wmsUrl" 
-                                      placeholder="http://path.to.layer/export" 
-                                      pattern="^http[s]?:\/\/[a-zA-Z0-9.-_]*\/export$" 
-                                      required title="Not a legitimate URL"
-                                      > 
+                               <input type="url"
+                                      class="form-control"
+                                      name="url"
+                                      id="wmsUrl"
+                                      placeholder="http://path.to.layer/export"
+                                      >
                             </div>
                             <div class="form-group" style="width: 15%">
                                 <label for="wmsLayerId">IDs</label>
