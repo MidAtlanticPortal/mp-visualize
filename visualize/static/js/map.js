@@ -394,14 +394,26 @@ app.init = function () {
         
     });
 
-    // app.map.addControl(
-    //     new OpenLayers.Control.MousePosition({
-    //         prefix: 'Coordinates: ',
-    //         separator: ', ',
-    //         numDigits: 3,
-    //         emptyString: ''
-    //     })
-    // );
+    app.map.addControl(
+        new OpenLayers.Control.MousePosition({
+            prefix: 'Lat: ',
+            separator: ', Lng: ',
+            numDigits: 3,
+            emptyString: '',
+            //OL-2 likes to spit out lng THEN lat
+            //lets reformat that
+            formatOutput: function(lonLat) { 
+                var digits = parseInt(this.numDigits); 
+                var newHtml = 
+                    this.prefix + 
+                    lonLat.lat.toFixed(digits) + 
+                    this.separator + 
+                    lonLat.lon.toFixed(digits) + 
+                    this.suffix; 
+                return newHtml; 
+            }, 
+        })
+    );
 
 
     //mouseout events

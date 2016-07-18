@@ -261,6 +261,18 @@ body.template-visualize{
         right: 13px;
     }
 
+    .olControlMousePosition {
+        bottom: 37px;
+        right: 165px;
+        font-size: 13px !important;
+        font-weight: bold;
+        background: $light-gray;
+        color: $dark-gray;
+        z-index: 1005 !important;
+        line-height: 32px;
+        padding: 0 4px 0 4px;
+    }
+
     #map.zoomBox {
         cursor: url(../ico/magnify.cur), pointer;
         cursor: -moz-zoom-in, pointer;
