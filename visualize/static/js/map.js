@@ -397,7 +397,7 @@ app.init = function () {
     app.map.addControl(
         new OpenLayers.Control.MousePosition({
             prefix: 'Lat: ',
-            separator: ', Lng: ',
+            separator: ', Long: ',
             numDigits: 3,
             emptyString: '',
             //OL-2 likes to spit out lng THEN lat
