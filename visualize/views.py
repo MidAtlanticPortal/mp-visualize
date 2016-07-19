@@ -1,7 +1,7 @@
 # Create your views here.
 from django.contrib.auth.models import Group
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, render_to_response
+from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 from querystring_parser import parser
 import json
@@ -23,19 +23,19 @@ def show_planner(request, template='visualize/planner.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL, 'SOCKET_URL': socket_url, 'login': 'true'}
     if request.user.is_authenticated:
         context['session'] = request.session._session_key
-    return render_to_response(template, RequestContext(request, context)) 
+    return render(request, template, context) 
     
 def show_embedded_map(request, template='visualize/map.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
-    return render_to_response(template, RequestContext(request, context)) 
+    return render(request, template, context) 
     
 def show_mafmc_map(request, template='mafmc.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
-    return render_to_response(template, RequestContext(request, context)) 
+    return render(request, template, context) 
     
 def show_mobile_map(request, template='mobile-map.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
-    return render_to_response(template, RequestContext(request, context)) 
+    return render(request, template, context) 
 
 
         

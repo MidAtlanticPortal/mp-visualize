@@ -694,6 +694,7 @@ function themeModel(options) {
     self.description = options.description;
     self.learn_link = options.learn_link;
     self.is_visible = options.is_visible;
+    self.slug_name = options.name;
 
     // array of layers
     self.layers = ko.observableArray();
@@ -747,6 +748,18 @@ function themeModel(options) {
 
     self.hideTooltip = function(theme, event) {
         $('.layer-popover').hide();
+    };
+
+    //mdat marine lifes theme
+    self.isMarineLife = function() {
+        var theme = this;
+        // we don't know what the display name for 
+        // marine life mdat layers are always going to be called
+        // so let's keep the slug name === 'marine-life'
+        if (theme.slug_name === 'marine-life') {
+            return true;
+        }
+        return false;
     };
 
     return self;

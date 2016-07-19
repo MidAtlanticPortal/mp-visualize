@@ -217,11 +217,20 @@
                                                         </div>
                                                         <div class="accordion-body collapse" data-bind="css: { 'in': isOpenTheme() }">
                                                             <div class="accordion-inner">
+                                                                <!-- ko if: isMarineLife() -->
+                                                                <ul  class="unstyled" data-bind="foreach: layers ">
+                                                                    <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
+                                                                        {% include "visualize/includes/mdat-marine-life.html" %}
+                                                                    </li>
+                                                                </ul>
+                                                                <!-- /ko -->
+                                                                <!-- ko ifnot: isMarineLife() -->
                                                                 <ul  class="unstyled" data-bind="foreach: layers ">
                                                                     <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
                                                                         {% include "visualize/includes/catalog-layer-row.html" %}
                                                                     </li>
                                                                 </ul>
+                                                                <!-- /ko -->
                                                             </div>
                                                         </div>
                                                     </div>
