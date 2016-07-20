@@ -497,8 +497,6 @@ function layerModel(options, parent) {
     self.showSublayers = ko.observable(false);
 
     self.ajaxMDAT = function(self, event) {
-        var activeLayer = app.viewModel.activeLayer();
-        var activeParentLayer = app.viewModel.activeParentLayer();
         var layer = this;
 
         //marine life theme?

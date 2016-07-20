@@ -827,6 +827,13 @@ body.template-visualize{
             cursor: pointer;
         }
     }
+    .layer.dropdown.open {
+        .mdat-search { display: block; }
+    }
+    .mdat-search {
+        padding-left: 25px;
+        display: none;
+    }
     .form-search {
         padding-left: 26px;
     }
@@ -841,7 +848,17 @@ body.template-visualize{
         padding: 4px;
         margin-top: 8px;
         width: 250px;
+
+        &.mdat-input {
+            height: 28px;
+            width: 85%;
+            font-size: 15px;
+            margin-top: 0;
+            padding-top: 0;
+        }
     }
+
+
     .form-search {
         .right {
             padding: 0;

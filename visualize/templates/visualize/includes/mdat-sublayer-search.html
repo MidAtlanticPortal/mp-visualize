@@ -1,7 +1,9 @@
 {% extends "visualize/includes/mdat-marine-life.html" %}
 
 {% block "after" %}
-<form action="#">
-  <input placeholder="Search…" type="search" name="q" data-bind="value: query, valueUpdate: 'keyup'" autocomplete="off">
-</form>
+  <div class="mdat-search">
+    <form class="form-search" action="#">
+      <input class="mdat-input search-box form-control" placeholder="Search…" type="text" name="q" autocomplete="off">
+    </form>
+  </div>
 {% endblock %}
