@@ -514,6 +514,7 @@ function layerModel(options, parent) {
 
             deferred.done(function(data) {
                 $.each(data.layers, function(i, val) {
+                    //we only want the actual layers
                     if (val.subLayerIds === null) {
                         layer.serviceLayers.push(val);
                     }

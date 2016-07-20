@@ -45,7 +45,7 @@ app.viewModel.loadLayersFromServer().done(function() {
 
   // autocomplete for filter
   // See bootstrap3-typeahead docs
-  $('.search-box').typeahead({
+  $('.main-search').typeahead({
     source: app.typeAheadSource,
     displayText: function(item) {
       return item.name;
@@ -191,7 +191,23 @@ $(document).ready(function() {
     }
   });
 
-
+  //typeahead autocomplete for mdat layers
+  $(document).on('focus click', '.mdat-input', function(){
+    $(this).typeahead({
+      source: app.viewModel.activeLayer().serviceLayers,
+      displayText: function(item) {
+        return item.name
+      },
+      matcher: function (item) {
+        // custom search matching on object titles
+        var it = item.name;
+        return ~it.toLowerCase().indexOf(this.query.toLowerCase());
+      },
+      minLength: 2,
+      items: 6,
+      
+    })
+  });
 
   // hiding feature attributes on new click events (but ignoring map pan events)
   app.map.events.register('move', app.map, function() {
