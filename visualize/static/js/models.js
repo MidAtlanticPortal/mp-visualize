@@ -496,13 +496,34 @@ function layerModel(options, parent) {
 
     self.showSublayers = ko.observable(false);
 
-    self.showSublayers.subscribe(function () {
-        setTimeout(function () {
-            if ( app.viewModel.activeLayer().subLayers.length > 1 ) {
-                //$('.layer').find('.open .layer-menu').jScrollPane();
-            }
-        });
-    });
+    self.ajaxMDAT = function(self, event) {
+        var activeLayer = app.viewModel.activeLayer();
+        var activeParentLayer = app.viewModel.activeParentLayer();
+        var layer = this;
+
+        //marine life theme?
+        if (layer.themes()[0].slug_name === 'marine-life') {
+            layer.serviceLayers = [];
+            layer.mdat_param = layer.url+'?f=pjson';
+            //give pseudo sublayer for toggling
+            layer.subLayers = [""]
+
+            var deferred = $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                url: layer.mdat_param
+            });
+
+            deferred.done(function(data) {
+                $.each(data.layers, function(i, val) {
+                    if (val.subLayerIds === null) {
+                        layer.serviceLayers.push(val);
+                    }
+                })
+                self.toggleActive();
+            })
+        }
+    }
 
     // bound to click handler for layer switching
     self.toggleActive = function(self, event) {
@@ -677,7 +698,7 @@ function layerModel(options, parent) {
             });
         }
     };
-
+    
     // remove the layer dropdrown menu
     self.closeMenu = function(layer, event) {
         $(event.target).closest('.btn-group').removeClass('open');
