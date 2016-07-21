@@ -192,20 +192,18 @@ $(document).ready(function() {
   });
 
   //typeahead autocomplete for mdat layers
-  $(document).on('focus click', '.mdat-input', function(){
+  $(document).on('focusin', '.mdat-input', function(){
     $(this).typeahead({
-      source: app.viewModel.activeLayer().serviceLayers,
-      displayText: function(item) {
-        return item.name
-      },
+      source:  app.viewModel.activeLayer().serviceLayers,
       matcher: function (item) {
         // custom search matching on object titles
         var it = item.name;
-        return ~it.toLowerCase().indexOf(this.query.toLowerCase());
+        if (it.toLowerCase().indexOf(this.query.trim().toLowerCase()) != -1) {
+            return true;
+        }
       },
       minLength: 2,
-      items: 6,
-      
+      items: 8, 
     })
   });
 

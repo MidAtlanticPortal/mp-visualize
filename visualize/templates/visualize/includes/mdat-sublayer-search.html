@@ -2,12 +2,13 @@
 
 {% block "after" %}
   <div class="mdat-search">
-    <form class="form-search" action="#">
-      <input class="mdat-input search-box form-control" 
-             placeholder="Search..." 
-             type="text"
-             data-provide="typeahead"
-             autocomplete="off">
+    <form class="form-search">
+    <input class="no-show" type="text" data-provide="typeahead">
+    <input class="mdat-input search-box form-control"
+            type="text"
+            placeholder="Search..." 
+            autocomplete="off"
+        >
     </form>
   </div>
 {% endblock %}

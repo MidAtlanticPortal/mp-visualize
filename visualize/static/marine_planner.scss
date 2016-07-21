@@ -830,6 +830,13 @@ body.template-visualize{
     .layer.dropdown.open {
         .mdat-search { display: block; }
     }
+
+    //hack for mdat typeahead
+    .no-show {
+        visibility: hidden;
+        height: 0;
+        padding: 0;
+    }
     .mdat-search {
         padding-left: 25px;
         display: none;
@@ -853,7 +860,7 @@ body.template-visualize{
             height: 28px;
             width: 85%;
             font-size: 15px;
-            margin-top: 0;
+            margin-top: -15px;
             padding-top: 0;
         }
     }

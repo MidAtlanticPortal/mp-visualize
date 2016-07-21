@@ -520,6 +520,10 @@ function layerModel(options, parent) {
                     }
                 })
                 self.toggleActive();
+                if (layer.showSublayers()) {
+                    //focus() fires typeahead search in models.js
+                    $('.mdat-input').focus();
+                }
             })
         }
     }
