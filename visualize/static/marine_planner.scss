@@ -836,6 +836,7 @@ body.template-visualize{
         visibility: hidden;
         height: 0;
         padding: 0;
+        border: none;
     }
     .mdat-search {
         padding-left: 25px;
@@ -859,7 +860,7 @@ body.template-visualize{
         &.mdat-input {
             height: 28px;
             width: 85%;
-            font-size: 15px;
+            font-size: 13px;
             margin-top: -15px;
             padding-top: 0;
         }

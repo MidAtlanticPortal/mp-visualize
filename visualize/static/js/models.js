@@ -521,11 +521,16 @@ function layerModel(options, parent) {
                 })
                 self.toggleActive();
                 if (layer.showSublayers()) {
-                    //focus() fires typeahead search in models.js
+                    //focus() instantiates typeahead search in models.js
                     $('.mdat-input').focus();
                 }
             })
         }
+    }
+
+    self.activateMDATLayer = function(layer, self, event) {
+        self;
+        layer;
     }
 
     // bound to click handler for layer switching
@@ -1379,6 +1384,18 @@ function viewModel() {
         $('#map-links-modal').modal()
         
     };
+
+    /* marine-life, not databased MDAT layers */
+    self.activateMDATLayer = function(layer) {
+        var mdatObj = {
+            type: 'ArcRest',
+            name: layer.name,
+            url: layer.url+'/export',
+            arcgis_layer: layer.id
+        };
+        var mdatLayer = new layerModel(mdatObj);
+        mdatLayer.activateLayer();
+    }
 
     /* session based WMS layers */
     self.submitWMSSession = function() {

@@ -193,14 +193,19 @@ $(document).ready(function() {
 
   //typeahead autocomplete for mdat layers
   $(document).on('focusin', '.mdat-input', function(){
+    var activeMDATParent = app.viewModel.activeLayer();
     $(this).typeahead({
-      source:  app.viewModel.activeLayer().serviceLayers,
+      source:  activeMDATParent.serviceLayers,
       matcher: function (item) {
         // custom search matching on object titles
         var it = item.name;
         if (it.toLowerCase().indexOf(this.query.trim().toLowerCase()) != -1) {
             return true;
         }
+      },
+      afterSelect: function(item) {
+        item.url = activeMDATParent.url;
+        app.viewModel.activateMDATLayer(item);
       },
       minLength: 2,
       items: 8, 
