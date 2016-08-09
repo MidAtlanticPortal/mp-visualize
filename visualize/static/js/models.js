@@ -28,6 +28,7 @@ function layerModel(options, parent) {
     self.color = options.color || "#ee9900";
     self.outline_color = options.outline_color || self.color;
     self.fillOpacity = options.fill_opacity || 0.0;
+
     if ( options.opacity === 0 ) {
         self.defaultOpacity = options.opacity;
     } else {
@@ -57,6 +58,10 @@ function layerModel(options, parent) {
     if (options.wmsSession) {
         self.wmsSession(options.wmsSession)
     }
+
+    // mdat/marine life layers
+    self.isMDAT = options.isMDAT || false;
+    self.parentMDATDirectory = options.parentDirectory || null;
 
     app.viewModel.zoomLevel.subscribe( function() {
         if (self.annotated && app.viewModel.zoomLevel() < 9) {
@@ -394,6 +399,11 @@ function layerModel(options, parent) {
                 layer.arcIdentifyControl.activate();
             }
 
+            //activate marine life layers
+            if (layer.isMDAT) {
+                self.parentMDATDirectory.visible(true);
+            }
+
             self.trackLayer(layer.name);
         }
     };
@@ -516,6 +526,7 @@ function layerModel(options, parent) {
                 $.each(data.layers, function(i, val) {
                     //we only want the actual layers
                     if (val.subLayerIds === null) {
+                        val.parentDirectory = layer;
                         layer.serviceLayers.push(val);
                     }
                 })
@@ -526,11 +537,6 @@ function layerModel(options, parent) {
                 }
             })
         }
-    }
-
-    self.activateMDATLayer = function(layer, self, event) {
-        self;
-        layer;
     }
 
     // bound to click handler for layer switching
@@ -562,33 +568,9 @@ function layerModel(options, parent) {
             app.viewModel.activeParentLayer(layer);
             if ( app.embeddedMap ) { // if data viewer is mobile app
                 $('.carousel').carousel('prev');
-                //var api = $("#sublayers-div").jScrollPane({}).data('jsp');
-                //if ( api ) {
-                //    api.destroy();
-                //}
                 $('#mobile-data-right-button').show();
                 $('#mobile-map-right-button').hide(); 
-            } /*else if (!layer.activeSublayer()) { //if layer does not have an active sublayer, then show/hide drop down menu
-                if (!layer.showSublayers()) {
-                    //show drop-down menu
-                    layer.showSublayers(true);
-                } else {
-                    //hide drop-down menu
-                    layer.showSublayers(false);
-                }
-            } else if ( layer.type === 'checkbox' ) { //else if layer does have an active sublayer and it's checkbox (not radio) 
-                if (!layer.showSublayers()) {
-                    //show drop-down menu
-                    layer.showSublayers(true);
-                } else {
-                    //hide drop-down menu
-                    layer.showSublayers(false);
-                }
-            } else {
-                //turn off layer
-                layer.deactivateLayer();
-                layer.showSublayers(false);
-            } */
+            } 
             if (!layer.showSublayers()) {
                 //show drop-down menu
                 layer.showSublayers(true);
@@ -608,6 +590,21 @@ function layerModel(options, parent) {
             layer.deactivateLayer();
         } else { // otherwise layer is not currently active
             layer.activateLayer();
+        }
+
+        //check if mdat/marine-life still has activeLayers
+        if (layer.isMDAT) {
+            var parentDirArray = [];
+
+            if (app.viewModel.activeLayers().length > 0) {
+               parentDirArray = $.grep(app.viewModel.activeLayers(), function(lyr) {
+                   return layer.parentMDATDirectory === lyr.parentMDATDirectory;
+               }); 
+            }
+
+            if (parentDirArray.length == 0) {
+                layer.parentMDATDirectory.visible(false);
+            }   
         }
     };
 
@@ -1390,6 +1387,8 @@ function viewModel() {
         var mdatObj = {
             type: 'ArcRest',
             name: layer.name,
+            isMDAT: true,
+            parentDirectory: layer.parentDirectory,
             url: layer.url+'/export',
             arcgis_layer: layer.id
         };
