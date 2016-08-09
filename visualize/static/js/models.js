@@ -507,10 +507,22 @@ function layerModel(options, parent) {
     self.showSublayers = ko.observable(false);
 
     self.ajaxMDAT = function(self, event) {
-        var layer = this;
+        if (self.showSublayers() === true) {
+            self.showSublayers(false);
+            return false; 
+        }
+
+        var layer = this,
+            $mdatSpinner = $('#mdat-load'),
+            $parentDirs = $(event.target).parents("ul.unstyled"),
+            $layerText = $('.mdat-input.search-box');
 
         //marine life theme?
         if (layer.themes()[0].slug_name === 'marine-life') {
+
+            $parentDirs.hide();
+            $mdatSpinner.css("display", "block");
+
             layer.serviceLayers = [];
             layer.mdat_param = layer.url+'?f=pjson';
             //give pseudo sublayer for toggling
@@ -530,8 +542,12 @@ function layerModel(options, parent) {
                         layer.serviceLayers.push(val);
                     }
                 })
+
+                $mdatSpinner.hide();
+                $parentDirs.show();
                 self.toggleActive();
                 if (layer.showSublayers()) {
+                    $layerText.val('');
                     //focus() instantiates typeahead search in models.js
                     $('.mdat-input').focus();
                 }

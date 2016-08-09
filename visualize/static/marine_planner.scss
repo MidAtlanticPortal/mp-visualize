@@ -830,7 +830,6 @@ body.template-visualize{
     .layer.dropdown.open {
         .mdat-search { display: block; }
     }
-
     //hack for mdat typeahead
     .no-show {
         visibility: hidden;
@@ -860,7 +859,7 @@ body.template-visualize{
         &.mdat-input {
             height: 28px;
             width: 85%;
-            font-size: 13px;
+            font-size: 15px;
             margin-top: -15px;
             padding-top: 0;
         }
@@ -896,8 +895,11 @@ body.template-visualize{
     #invalid-name-message.control-group {
         color: $danger;
     }
-
-
+    //gif ajax
+    #mdat-load{
+        display: none;
+        margin: 0 auto;
+    }
     @media print {
         #primary-content {
           height: 100%;
