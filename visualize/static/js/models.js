@@ -1406,7 +1406,7 @@ function viewModel() {
             isMDAT: true,
             parentDirectory: layer.parentDirectory,
             url: layer.url+'/export',
-            arcgis_layer: layer.id
+            arcgis_layers: layer.id
         };
         var mdatLayer = new layerModel(mdatObj);
         mdatLayer.activateLayer();
