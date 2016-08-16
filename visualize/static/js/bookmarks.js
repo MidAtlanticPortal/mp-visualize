@@ -95,6 +95,9 @@ function bookmarksModel(options) {
     
     // name of newly created bookmark
     self.newBookmarkName = ko.observable();
+
+    // check for duplicate naming
+    self.duplicateBookmark = ko.observable(false);
         
     self.toggleGroup = function(obj) {
         var groupName = obj.group_name,
@@ -240,6 +243,16 @@ function bookmarksModel(options) {
 
     // handle the bookmark submit
     self.addBookmark = function(name) {
+        //if a bookmark name exists, break out
+        var match = $.grep(app.viewModel.bookmarks.bookmarksList(), function(bkm) {
+            return bkm.name.indexOf(name) > -1
+        });
+        if (match.length > 0) {
+            //display duplication text
+            self.duplicateBookmark(true);
+            $('.dupe-bookmark').effect("highlight", {}, 1000);
+            return false;
+        }
         $.jsonrpc('add_bookmark', 
                   [name,
                    window.location.hash.slice(1)], // TODO: self.get_location()

@@ -1368,6 +1368,7 @@ function viewModel() {
     // show bookmark stuff
     self.addBookmarksDialogVisible = ko.observable(false);
     self.showBookmarks = function(self, event) {
+        self.bookmarks.duplicateBookmark(false);
         self.bookmarks.newBookmarkName(null);
         self.addBookmarksDialogVisible(true);
         // scenario forms will hide anything with the "step" class, so show
