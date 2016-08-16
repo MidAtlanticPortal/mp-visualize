@@ -1385,6 +1385,17 @@ function viewModel() {
         if (name.length == 0) {
             return false;
         }
+
+        //if a bookmark name exists, break out
+        var match = $.grep(self.bookmarks.bookmarksList(), function(bkm) {
+            return bkm.name.indexOf(name) > -1
+        });
+        if (match.length == 0) {
+            //display duplication text
+            self.bookmarks.duplicateBookmark(true);
+            $('.dupe-bookmark').effect("highlight", {}, 1000);
+            return false;
+        }
         
         self.bookmarks.addBookmark(name);
         self.hideBookmarks();
