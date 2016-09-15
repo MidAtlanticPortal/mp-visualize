@@ -1501,9 +1501,28 @@ function viewModel() {
     // get layer by id
     self.getLayerById = function(id) {
         for (var x=0; x<self.themes().length; x++) {
-            var layer_list = $.grep(self.themes()[x].layers(), function(layer) { return layer.id === id; });
+            var layer_list = $.grep(self.themes()[x].layers(), function(layer) { 
+                return layer.id === id; 
+            });
+            //find parent layers by ID
             if (layer_list.length > 0) {
                 return layer_list[0];
+            } else {
+                var subLayerArray = [];
+                $.each(self.themes()[x].layers(), function(i, l) {
+                    if (l.subLayers.length > 0) {
+                       subLayerArray.push.apply(subLayerArray, l.subLayers);
+                    }
+                })
+                //find sublayers by ID
+                if (subLayerArray.length > 0) {
+                    var sublayer_list = $.grep(subLayerArray, function(layer) { 
+                        return layer.id === id; 
+                    });
+                    if (sublayer_list.length > 0) {
+                        return sublayer_list[0];
+                    }
+                }
             }
         }
         return false;
