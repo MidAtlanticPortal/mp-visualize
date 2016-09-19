@@ -63,6 +63,11 @@ function layerModel(options, parent) {
     self.isMDAT = options.isMDAT || false;
     self.parentMDATDirectory = options.parentDirectory || null;
 
+    //tied to the layer that's a companion of another layer
+    self.companionLayers = options.companion_layers || false;
+    //has companion layer(s)
+    self.hasCompanion = options.has_companion || false;
+
     app.viewModel.zoomLevel.subscribe( function() {
         if (self.annotated && app.viewModel.zoomLevel() < 9) {
             self.isDisabled(true);
@@ -404,6 +409,10 @@ function layerModel(options, parent) {
                 self.parentMDATDirectory.visible(true);
             }
 
+            if (layer.hasCompanion) {
+                self.activateCompanionLayer();
+            }
+
             self.trackLayer(layer.name);
         }
     };
@@ -505,6 +514,27 @@ function layerModel(options, parent) {
     };
 
     self.showSublayers = ko.observable(false);
+
+    self.activateCompanionLayer = function() {
+        var layer = this;
+        //get 'hidden' companion theme
+        var companion = $.grep(app.viewModel.themes(), function(n, i){
+            return n.slug_name === 'companion';
+        });
+
+        if (companion.length > 0) {
+            $.each(companion[0].layers(), function(i, l) {
+                if (l.companionLayers.length > 0) {
+                    var companionLayer = $.grep(l.companionLayers, function(k) {
+                        return k.id == layer.id
+                    })
+                    if (companionLayer.length > 0) {
+                        l.activateLayer();
+                    }
+                }
+            })
+        }
+    }
 
     self.ajaxMDAT = function(self, event) {
         if (self.showSublayers() === true) {
