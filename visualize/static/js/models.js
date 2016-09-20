@@ -302,7 +302,7 @@ function layerModel(options, parent) {
             layer.arcIdentifyControl.deactivate();
         }
 
-        //de-activate companion layer - if only one remaining
+        //de-activate companion layer
         if (layer.hasCompanion) {
             self.deactivateCompanion();
         }
@@ -383,8 +383,26 @@ function layerModel(options, parent) {
     };
     
     self.deactivateCompanion = function() {
+        var layer = this;
+        //are there more than one layers active?
         if (app.viewModel.activeLayers().length > 1) {
+            var companionArray = [];
+            //find layers that have companions
+            $.each(app.viewModel.activeLayers(), function(i,lyr) {
+                if (lyr.hasCompanion) {
+                    companionArray.push(lyr)
+                }
+            });
+            var companionLayer = $.grep(companionArray, function(l) {
+                return l.companion.id == layer.companion.id
+            });
 
+            //if we can't find any more layers with the same companion layer
+            //let's remove it
+            if (companionLayer.length == 0) {
+                layer.companion.deactivateLayer();
+            }
+        // if no other layer is active - it's the companion layer, so let's remove it
         } else {
             app.viewModel.activeLayers()[0].deactivateLayer();
         }
