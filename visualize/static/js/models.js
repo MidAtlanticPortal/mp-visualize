@@ -565,7 +565,7 @@ function layerModel(options, parent) {
                         layer.companion = l;
                     }
                 }
-            })
+            });
         }
     }
 
@@ -580,7 +580,7 @@ function layerModel(options, parent) {
             $parentDirs = $(event.target).parents("ul.unstyled"),
             $layerText = $('.mdat-input.search-box');
 
-        //marine life theme?
+        //marine-life-library theme?
         if (layer.themes()[0].slug_name === 'marine-life-library') {
 
             $parentDirs.hide();
@@ -671,7 +671,7 @@ function layerModel(options, parent) {
             layer.activateLayer();
         }
 
-        //check if mdat/marine-life still has activeLayers
+        //check if mdat/marine-life-library still has activeLayers
         if (layer.isMDAT) {
             var parentDirArray = [];
 
@@ -1481,7 +1481,7 @@ function viewModel() {
         
     };
 
-    /* marine-life, not databased MDAT layers */
+    /* marine-life-library, not databased MDAT layers */
     self.activateMDATLayer = function(layer) {
         var mdatObj = {
             type: 'ArcRest',
@@ -1491,8 +1491,40 @@ function viewModel() {
             url: layer.url+'/export',
             arcgis_layers: layer.id
         };
-        var mdatLayer = new layerModel(mdatObj);
+
+        var mdatLayer = new layerModel(mdatObj),
+            avianAbundance = '/MDAT/Avian_Abundance',
+            avianOccurence = '/MDAT/Avian_Occurence';
+
+        //if the MDAT Query is an AvianOccurence or AvianAbundance service,
+        //activate its companion
+        if (layer.url.indexOf(avianAbundance) > -1 || layer.url.indexOf(avianOccurence) > -1) {
+            activateAvianQueryCompanion(mdatLayer);
+            mdatLayer['hasCompanion'] = true;
+        }
+
         mdatLayer.activateLayer();
+    }
+
+    function activateAvianQueryCompanion(lyr) {
+        /* 
+            NOTE: 
+            - this is a completely hardcoded hack to accomodate a late feature request
+            - functionality is dependent on both the name on MDAT's end and 
+            - the specific layer IDs tied to the database on the main Portal site
+        */
+        
+        if (lyr.name.slice(-6) === 'annual') {
+            self.getLayerById(219).activateLayer();
+        } else if (lyr.name.slice(-6) === 'spring') {
+            self.getLayerById(489).activateLayer();
+        } else if (lyr.name.slice(-6) === 'winter') {
+            self.getLayerById(492).activateLayer();
+        } else if (lyr.name.slice(-4) === 'fall') {
+            self.getLayerById(491).activateLayer();
+        } else {
+            self.getLayerById(490).activateLayer();
+        }
     }
 
     /* session based WMS layers */
