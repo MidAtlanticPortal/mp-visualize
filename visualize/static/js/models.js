@@ -581,7 +581,7 @@ function layerModel(options, parent) {
             $layerText = $('.mdat-input.search-box');
 
         //marine life theme?
-        if (layer.themes()[0].slug_name === 'marine-life') {
+        if (layer.themes()[0].slug_name === 'marine-life-library') {
 
             $parentDirs.hide();
             $mdatSpinner.css("display", "block");
@@ -860,8 +860,17 @@ function themeModel(options) {
         var theme = this;
         // we don't know what the display name for 
         // marine life mdat layers are always going to be called
-        // so let's keep the slug name === 'marine-life'
-        if (theme.slug_name === 'marine-life') {
+        // so let's keep the slug name === 'marine-life-library'
+        if (theme.slug_name === 'marine-life-library') {
+            return true;
+        }
+        return false;
+    };
+
+    //hidden 'companion' layer theme
+    self.isCompanionTheme = function() {
+        var theme = this;
+        if (theme.slug_name === 'companion') {
             return true;
         }
         return false;

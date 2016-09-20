@@ -208,6 +208,7 @@
                                             <!-- data accordion -->
                                             <div id="data-accordion">
                                                 <div class="accordion" data-bind="foreach: themes">
+                                                    <!-- ko ifnot: isCompanionTheme() -->
                                                     <div class="accordion-group">
                                                         <div class="accordion-heading" data-bind="click: setOpenTheme, css: { 'active': isOpenTheme() }">
                                                             <div>
@@ -236,6 +237,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <!-- /ko -->
                                                 </div>
                                             </div>
                                             <!-- /data-accordion -->
