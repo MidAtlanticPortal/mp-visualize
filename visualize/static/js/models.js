@@ -301,6 +301,11 @@ function layerModel(options, parent) {
         if (layer.arcIdentifyControl) {
             layer.arcIdentifyControl.deactivate();
         }
+
+        //de-activate companion layer - if only one remaining
+        if (layer.hasCompanion) {
+            self.deactivateCompanion();
+        }
         
         layer.layer = null;
 
@@ -377,6 +382,14 @@ function layerModel(options, parent) {
         layer.visibleSublayer(false);
     };
     
+    self.deactivateCompanion = function() {
+        if (app.viewModel.activeLayers().length > 1) {
+
+        } else {
+            app.viewModel.activeLayers()[0].deactivateLayer();
+        }
+    };
+
     // layer tracking Google Analytics
     self.trackLayer = function(action) {
         ga('send', 'event', 'Layers Activated', action);
@@ -409,6 +422,7 @@ function layerModel(options, parent) {
                 self.parentMDATDirectory.visible(true);
             }
 
+            //activate companion layers
             if (layer.hasCompanion) {
                 self.activateCompanionLayer();
             }
@@ -530,6 +544,7 @@ function layerModel(options, parent) {
                     })
                     if (companionLayer.length > 0) {
                         l.activateLayer();
+                        layer.companion = l;
                     }
                 }
             })
