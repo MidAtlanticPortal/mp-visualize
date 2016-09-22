@@ -204,6 +204,7 @@ function layerModel(options, parent) {
     // set download links 
     self.kml = options.kml || null;
     self.data_download = options.data_download || null;
+    self.learn_more = options.learn_more || null;
     self.metadata = options.metadata || null;
     self.source = options.source || null;
     self.tiles = options.tiles || null;
@@ -867,6 +868,18 @@ function themeModel(options) {
         return false;
     };
 
+    //C@S - VTR theme
+    self.isVTR = function() {
+        var theme = this;
+        // we don't know what the display name for 
+        // C@S layers are always going to be called
+        // so let's keep the slug name === 'vtr'
+        if (theme.slug_name === 'vtr') {
+            return true;
+        }
+        return false;
+    };
+
     //hidden 'companion' layer theme
     self.isCompanionTheme = function() {
         var theme = this;
@@ -1378,6 +1391,12 @@ function viewModel() {
     self.closeAlert = function(self, event) {
         app.viewModel.error(null);
     };
+
+    // self.learnMoreLink = function() {
+    //     if (self.learn_more) {
+    //         return 
+    //     }
+    // };
     
     self.activeKmlLink = function() {
         if ( self.activeInfoSublayer() ) {

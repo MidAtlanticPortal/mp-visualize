@@ -191,6 +191,10 @@ $(document).ready(function() {
     }
   });
 
+  $(document).on('click', '#activeTab', function() {
+    $('[data-toggle="tooltip"]').tooltip();
+  })
+
   //typeahead autocomplete for mdat layers
   $(document).on('focusin', '.mdat-input', function(){
     var activeMDATParent = app.viewModel.activeLayer();
