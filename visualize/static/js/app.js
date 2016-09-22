@@ -212,7 +212,7 @@ $(document).ready(function() {
         app.viewModel.activateMDATLayer(item);
       },
       minLength: 2,
-      items: 8, 
+      items: 12, 
     })
   });
 
