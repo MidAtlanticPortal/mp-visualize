@@ -382,6 +382,24 @@ function layerModel(options, parent) {
         layer.activeSublayer(false);
         layer.visibleSublayer(false);
     };
+
+    //deactivate all layers within a queryable mdat directory
+    self.deactivateMDATDirectory = function() {
+        var layerDir = this,
+            layersArray = app.viewModel.activeLayers().slice(); //deep copy
+
+        if (layerDir.visible()) {
+            $.each(layersArray, function(i, l) {
+                if (l.parentMDATDirectory) {
+                    l.parentMDATDirectory.id == layerDir.id;
+                    l.deactivateLayer();
+                }
+            });
+            layerDir.visible(false);
+            layerDir.showSublayers(false);
+        }
+
+    }
     
     self.deactivateCompanion = function() {
         var layer = this;
@@ -1502,6 +1520,16 @@ function viewModel() {
 
     /* marine-life-library, not databased MDAT layers */
     self.activateMDATLayer = function(layer) {
+        var activeMDATQueryLayers = $.grep(app.viewModel.activeLayers(), function(mdatLyr) { 
+            return mdatLyr.name === layer.name; 
+        });
+
+        //if this layer is already active (based purely on naming)
+        //don't create a duplicate layer object
+        if (activeMDATQueryLayers.length > 0) {
+            return false;
+        }
+
         var mdatObj = {
             type: 'ArcRest',
             name: layer.name,
@@ -1522,7 +1550,7 @@ function viewModel() {
             mdatLayer['hasCompanion'] = true;
         }
 
-        mdatLayer.activateLayer();
+        mdatLayer.activateLayer(); 
     }
 
     function activateAvianQueryCompanion(lyr) {
