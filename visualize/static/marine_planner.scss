@@ -841,6 +841,13 @@ body.template-visualize{
         padding-left: 25px;
         line-height: 0.5;
         display: none;
+
+        .typeahead.dropdown-menu {
+            max-width: 350px;
+            li > a {
+                white-space: initial;
+            }
+        }
     }
     .form-search {
         padding-left: 26px;
@@ -867,7 +874,7 @@ body.template-visualize{
         }
     }
     
-    //'x' delete button to clear auto completes
+    //'x' delete button to clear query search
     .delete-search {
         display: inline-block;
         margin-left: -30px;

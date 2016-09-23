@@ -198,14 +198,32 @@ $(document).ready(function() {
   //typeahead autocomplete for mdat layers
   $(document).on('focusin', '.mdat-input', function(){
     var activeMDATParent = app.viewModel.activeLayer();
+
+    function stringShortener(item) {
+      var nlb = 'natural log biomass',
+          intlb = 'interpolated natural log biomass';
+
+      if (item.name.indexOf(nlb) > -1) {
+        name = item.name.replace(nlb, 'log biomass');
+      } else if (it.indexOf(intlb) > -1) {
+        name = item.name.replace(intlb, 'iterpolated biomass');
+      } else {
+        name = item.name
+      }
+      return name
+    };
+
     $(this).typeahead({
       source:  activeMDATParent.serviceLayers,
       matcher: function (item) {
+        var it = stringShortener(item);
         // custom search matching on object titles
-        var it = item.name;
         if (it.toLowerCase().indexOf(this.query.trim().toLowerCase()) != -1) {
             return true;
         }
+      },
+      displayText: function(item) {
+        return stringShortener(item);
       },
       afterSelect: function(item) {
         item.url = activeMDATParent.url;
