@@ -839,6 +839,7 @@ body.template-visualize{
     }
     .mdat-search {
         padding-left: 25px;
+        line-height: 0.5;
         display: none;
     }
     .form-search {
@@ -857,6 +858,7 @@ body.template-visualize{
         width: 250px;
 
         &.mdat-input {
+            display: inline-block;
             height: 28px;
             width: 85%;
             font-size: 15px;
@@ -864,7 +866,16 @@ body.template-visualize{
             padding-top: 0;
         }
     }
-
+    
+    //'x' delete button to clear auto completes
+    .delete-search {
+        display: inline-block;
+        margin-left: -30px;
+        border: none;
+        background: $gray-lighter;
+        color: grey;
+        outline: none;
+    }
 
     .form-search {
         .right {
