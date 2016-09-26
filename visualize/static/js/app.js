@@ -201,14 +201,15 @@ $(document).ready(function() {
 
     function stringShortener(item) {
       var nlb = 'natural log biomass',
-          intlb = 'interpolated natural log biomass';
+          intlb = 'interpolated natural log biomass',
+          itName = item.name;
 
-      if (item.name.indexOf(nlb) > -1) {
-        name = item.name.replace(nlb, 'log biomass');
-      } else if (it.indexOf(intlb) > -1) {
-        name = item.name.replace(intlb, 'iterpolated biomass');
+      if (itName.indexOf(nlb) > -1) {
+        name = itName.replace(nlb, 'log biomass');
+      } else if (itName.indexOf(intlb) > -1) {
+        name = itName.replace(intlb, 'iterpolated biomass');
       } else {
-        name = item.name
+        name = itName
       }
       return name
     };

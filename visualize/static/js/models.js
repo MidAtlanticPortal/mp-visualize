@@ -1560,23 +1560,26 @@ function viewModel() {
             - functionality is dependent on both the name on MDAT's end and 
             - the specific layer IDs tied to the database on the main Portal site
         */
-        var companionLayer;
+        var companionLyr;
         
         if (lyr.name.slice(-6) === 'annual') {
-            companionLayer = self.getLayerById(488);
+            companionLyr = self.getLayerById(488);
         } else if (lyr.name.slice(-6) === 'spring') {
-            companionLayer = self.getLayerById(489);
+            companionLyr = self.getLayerById(489);
         } else if (lyr.name.slice(-6) === 'winter') {
-            companionLayer = self.getLayerById(492);
+            companionLyr = self.getLayerById(492);
         } else if (lyr.name.slice(-4) === 'fall') {
-            companionLayer = self.getLayerById(491);
-        } else {
-            companionLayer = self.getLayerById(490);
+            companionLyr = self.getLayerById(491);
+        } else if (lyr.name.slice(-6) === 'summer') {
+            companionLyr = self.getLayerById(490);
         }
-        //activate companion layer
-        companionLayer.activateLayer();
-        //create key-value for deactivation logic
-        lyr.companion = companionLayer;
+
+        if (companionLyr.hasOwnProperty('id')) {
+            //activate companion layer
+            companionLyr.activateLayer();
+            //create key-value for deactivation logic
+            lyr.companion = companionLyr;
+        }
     }
 
     /* session based WMS layers */
