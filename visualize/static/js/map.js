@@ -672,7 +672,12 @@ app.addArcRestLayerToMap = function(layer) {
                 var clickAttributes = {},
                     jsonFormat = new OpenLayers.Format.JSON(),
                     returnJSON = jsonFormat.read(responseText.text);
-                    
+                
+                //data manager opted to disable via DAI
+                if (layer.disable_click) {
+                    return false;
+                }
+
                 if(returnJSON['features'] && returnJSON['features'].length) { 
                     var attributeObjs = [];
                     
