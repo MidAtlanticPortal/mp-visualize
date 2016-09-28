@@ -1544,11 +1544,11 @@ function viewModel() {
 
         var mdatLayer = new layerModel(mdatObj),
             avianAbundance = '/MDAT/Avian_Abundance',
-            avianOccurence = '/MDAT/Avian_Occurence';
+            avianOccurrence = '/MDAT/Avian_Occurrence';
 
         //if the MDAT Query is an AvianOccurence or AvianAbundance service,
         //activate its companion
-        if (layer.url.indexOf(avianAbundance) > -1 || layer.url.indexOf(avianOccurence) > -1) {
+        if (layer.url.indexOf(avianAbundance) > -1 || layer.url.indexOf(avianOccurrence) > -1) {
             activateAvianQueryCompanion(mdatLayer);
             mdatLayer['hasCompanion'] = true;
         }
