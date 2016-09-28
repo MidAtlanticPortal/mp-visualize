@@ -403,6 +403,17 @@ function layerModel(options, parent) {
 
     self.deactivateCompanion = function() {
         var layer = this;
+        var activeCompanionLayer = $.grep(app.viewModel.activeLayers(), function(c) {
+            return (c.companionLayers && c.companionLayers.length > 0)
+        });
+
+        //is the companion layer still active?
+        if (activeCompanionLayer.length == 0) {
+            layer.hasCompanion = false;
+            layer.deactivateLayer();
+            return false;
+        }
+
         //are there more than one layers active?
         if (app.viewModel.activeLayers().length > 1) {
             var companionArray = [];
@@ -422,9 +433,9 @@ function layerModel(options, parent) {
                 $.each(layer.companion, function(i, ly) {
                     ly.deactivateLayer();
                 })
-            }
+            }  
         // if no other layer is active - it's the companion layer, so let's remove it
-        } else {
+        } else if (app.viewModel.activeLayers().length == 1) {
             app.viewModel.activeLayers()[0].deactivateLayer();
         }
     };
