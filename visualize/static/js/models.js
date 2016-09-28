@@ -391,16 +391,15 @@ function layerModel(options, parent) {
 
         if (layerDir.visible()) {
             $.each(layersArray, function(i, l) {
-                if (l.parentMDATDirectory) {
-                    l.parentMDATDirectory.id == layerDir.id;
+                if (l.parentMDATDirectory && l.parentMDATDirectory.id == layerDir.id) {
                     l.deactivateLayer();
                 }
             });
             layerDir.visible(false);
             layerDir.showSublayers(false);
+            return false;
         }
-
-    }
+    };
 
     self.deactivateCompanion = function() {
         var layer = this;
