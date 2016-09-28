@@ -1525,11 +1525,10 @@ function viewModel() {
     /* marine-life-library, not databased MDAT layers */
     self.activateMDATLayer = function(layer) {
         var activeMDATQueryLayers = $.grep(app.viewModel.activeLayers(), function(mdatLyr) {
-            return mdatLyr.name === layer.name;
+            return (mdatLyr.name === layer.name && mdatLyr.url === layer.url);
         });
 
-        //if this layer is already active (based purely on naming)
-        //don't create a duplicate layer object
+        //if this layer is already active, don't create a duplicate layer object
         if (activeMDATQueryLayers.length > 0) {
             return false;
         }
