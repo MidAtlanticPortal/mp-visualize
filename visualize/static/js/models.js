@@ -48,7 +48,7 @@ function layerModel(options, parent) {
     self.disabledMessage = ko.observable(false);
     if (options.disabled_message) {
         self.disabledMessage(options.disabled_message);
-    } 
+    }
     if (self.annotated && app.viewModel.zoomLevel() < 9) {
         self.isDisabled(true);
         self.disabledMessage(options.disabled_message);
@@ -72,7 +72,7 @@ function layerModel(options, parent) {
     app.viewModel.zoomLevel.subscribe( function() {
         if (self.annotated && app.viewModel.zoomLevel() < 9) {
             self.isDisabled(true);
-            self.disabledMessage(options.disabled_message); 
+            self.disabledMessage(options.disabled_message);
             $('.annotated.disabled').popover({
                 delay: {'show': 500},
                 trigger: 'hover'//,
@@ -84,13 +84,13 @@ function layerModel(options, parent) {
             $('.annotated').popover('destroy');
         }
     });
-    
+
     //these are necessary to prevent knockout errors when offering non-designs in Active panel
     self.sharedBy = ko.observable(false);
     self.sharedWith = ko.observable(false);
     self.selectedGroups = ko.observableArray();
     self.shared = ko.observable(false);
-    
+
     if (self.featureAttributionName === 'OCS Lease Blocks') {
         self.featureAttributionName = 'OCS Lease Blocks';
     } else if (self.featureAttributionName === 'Party & Charter Boat') {
@@ -100,9 +100,9 @@ function layerModel(options, parent) {
     } else if (self.featureAttributionName === 'Benthic Habitats (South)' ) {
         self.featureAttributionName = 'Benthic Habitats';
     }
-    
-    
-    // if legend is not provided, try using legend from web services 
+
+
+    // if legend is not provided, try using legend from web services
     if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
         $.ajax({
             dataType: "jsonp",
@@ -133,7 +133,7 @@ function layerModel(options, parent) {
                 } else {
                     //debugger;
                 }
-            }, 
+            },
             error: function(error) {
                 //debugger;
             }
@@ -142,12 +142,12 @@ function layerModel(options, parent) {
 
     //legends for actual WMS LAYERS
     if (!self.legend && self.url && self.type=='WMS' && self.wms_slug && self.wms_version) {
-        self.legend = self.url + 'SERVICE=WMS&VERSION=' + 
-                      self.wms_version + '&layer=' + 
-                      self.wms_slug + 
+        self.legend = self.url + 'SERVICE=WMS&VERSION=' +
+                      self.wms_version + '&layer=' +
+                      self.wms_slug +
                       "&REQUEST=getlegendgraphic&FORMAT=image/png"
     }
-    
+
     // set target blank for all links
     if (options.description) {
         $descriptionTemp = $("<div/>", {
@@ -160,7 +160,7 @@ function layerModel(options, parent) {
     } else {
         self.description = null;
     }
-    
+
     // set overview text for Learn More option
     if (options.overview) {
         $overviewTemp = $("<div/>", {
@@ -179,7 +179,7 @@ function layerModel(options, parent) {
     } else {
         self.overview = null;
     }
-    
+
     // if no description is provided, try using the web services description
     if ( !self.overview && self.url && (self.arcgislayers !== -1) ) {
         $.ajax({
@@ -191,18 +191,18 @@ function layerModel(options, parent) {
             }
         });
     }
-        
-    // set data source and data notes text 
+
+    // set data source and data notes text
     self.data_source = options.data_source || null;
     if (! self.data_source && parent && parent.data_source) {
         self.data_source = parent.data_source;
-    } 
+    }
     self.data_notes = options.data_notes || null;
     if (! self.data_notes && parent && parent.data_notes) {
         self.data_notes = parent.data_notes;
-    } 
-    
-    // set download links 
+    }
+
+    // set download links
     self.kml = options.kml || null;
     self.data_download = options.data_download || null;
     self.learn_more = options.learn_more || null;
@@ -216,7 +216,7 @@ function layerModel(options, parent) {
             self.layer.styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
             self.layer.styleMap.styles['default'].defaultStyle.graphicOpacity = newOpacity;
             //fill is currently turned off for many of the vector layers
-            //the following should not override the zeroed out fill opacity 
+            //the following should not override the zeroed out fill opacity
             //however we do still need to account for shipping lanes (in which styling is handled via lookup)
             if (self.fillOpacity > 0) {
                 var newFillOpacity = self.fillOpacity - (self.defaultOpacity - newOpacity);
@@ -230,17 +230,17 @@ function layerModel(options, parent) {
 
     // is description active
     self.infoActive = ko.observable(false);
-    
+
     // is the layer a checkbox layer
     self.isCheckBoxLayer = ko.observable(false);
     if (self.type === 'checkbox') {
         self.isCheckBoxLayer(true);
     }
-    
+
     // is the layer in the active panel?
     self.active = ko.observable(false);
     // is the layer visible?
-    self.visible = ko.observable(false);       
+    self.visible = ko.observable(false);
 
     self.activeSublayer = ko.observable(false);
     self.visibleSublayer = ko.observable(false);
@@ -266,7 +266,7 @@ function layerModel(options, parent) {
         var layer = this;
         layer.legendVisibility(!layer.legendVisibility());
     };
-    
+
     self.hasVisibleSublayers = function() {
         if ( !self.subLayers ) {
             return false;
@@ -282,12 +282,12 @@ function layerModel(options, parent) {
 
     self.deactivateLayer = function() {
         var layer = this;
-        
+
         //deactivate layer
         self.deactivateBaseLayer();
-        
+
         //remove related utfgrid layer
-        if (layer.utfgrid) { 
+        if (layer.utfgrid) {
             self.deactivateUtfGridLayer();
         }
         //remove parent layer
@@ -297,8 +297,8 @@ function layerModel(options, parent) {
         //remove sublayer
         if (layer.activeSublayer()) {
             self.deactivateSublayer();
-        } 
-        
+        }
+
         //de-activate arcIdentifyControl (if applicable)
         if (layer.arcIdentifyControl) {
             layer.arcIdentifyControl.deactivate();
@@ -308,11 +308,11 @@ function layerModel(options, parent) {
         if (layer.hasCompanion) {
             self.deactivateCompanion();
         }
-        
+
         layer.layer = null;
 
     };
-    
+
     // called from deactivateLayer
     self.deactivateBaseLayer = function() {
         var layer = this;
@@ -321,18 +321,18 @@ function layerModel(options, parent) {
 
         //remove the key/value pair from aggregatedAttributes
         app.viewModel.removeFromAggregatedAttributes(layer.name);
-        
+
         layer.active(false);
         layer.visible(false);
 
         app.setLayerVisibility(layer, false);
         layer.opacity(layer.defaultOpacity);
-        
+
         if ($.inArray(layer.layer, app.map.layers) !== -1) {
             app.map.removeLayer(layer.layer);
         }
     };
-    
+
     // called from deactivateLayer
     self.deactivateUtfGridLayer = function() {
         var layer = this;
@@ -360,7 +360,7 @@ function layerModel(options, parent) {
                 layer.parent.visible(false);
                 layer.parent.visibleSublayer(false);
             }
-            //check to see if any sublayers are still visible 
+            //check to see if any sublayers are still visible
             if (!layer.parent.hasVisibleSublayers()) {
                 layer.parent.visible(false);
             }
@@ -370,9 +370,9 @@ function layerModel(options, parent) {
             layer.parent.activeSublayer(false);
             layer.parent.visible(false);
             layer.parent.visibleSublayer(false);
-        } 
+        }
     };
-    
+
     // called from deactivateLayer
     self.deactivateSublayer = function() {
         var layer = this;
@@ -401,7 +401,7 @@ function layerModel(options, parent) {
         }
 
     }
-    
+
     self.deactivateCompanion = function() {
         var layer = this;
         //are there more than one layers active?
@@ -420,7 +420,9 @@ function layerModel(options, parent) {
             //if we can't find any more layers with the same companion layer
             //let's remove it
             if (companionLayer.length == 0) {
-                layer.companion.deactivateLayer();
+                $.each(layer.companion, function(i, ly) {
+                    ly.deactivateLayer();
+                })
             }
         // if no other layer is active - it's the companion layer, so let's remove it
         } else {
@@ -449,7 +451,7 @@ function layerModel(options, parent) {
             if (layer.utfgrid) {
                 self.activateUtfGridLayer();
             }
-            
+
             //activate arcIdentifyControl (if applicable)
             if (layer.arcIdentifyControl) {
                 layer.arcIdentifyControl.activate();
@@ -468,14 +470,14 @@ function layerModel(options, parent) {
             self.trackLayer(layer.name);
         }
     };
-    
+
     // called from activateLayer
     self.activateBaseLayer = function() {
         var layer = this;
-        
+
         app.addLayerToMap(layer);
 
-        //now that we now longer use the selectfeature control we can simply do the following 
+        //now that we now longer use the selectfeature control we can simply do the following
         //if (app.map.getLayersByName('Canyon Labels').length > 0) {
         if (app.viewModel.activeLayers().length > 0 && app.viewModel.activeLayers()[0].name === 'Canyon Labels') {
             app.viewModel.activeLayers.splice(1, 0, layer);
@@ -487,11 +489,11 @@ function layerModel(options, parent) {
         layer.active(true);
         layer.visible(true);
     };
-    
+
     // called from activateLayer
     self.activateParentLayer = function() {
         var layer = this;
-        
+
         if (layer.parent.type === 'radio' && layer.parent.activeSublayer()) {
             // only allow one sublayer on at a time
             layer.parent.activeSublayer().deactivateLayer();
@@ -501,59 +503,59 @@ function layerModel(options, parent) {
         layer.parent.visible(true);
         layer.parent.visibleSublayer(layer);
     };
-    
+
     // called from activateLayer
     self.activateUtfGridLayer = function() {
         var layer = this;
-        
+
         app.map.UTFControl.layers.unshift(layer.utfgrid);
     };
 
     // bound to click handler for layer visibility switching in Active panel
     self.toggleVisible = function() {
         var layer = this;
-        
+
         if (layer.visible()) { //make invisible
             self.setInvisible(layer);
         } else { //make visible
             self.setVisible(layer);
         }
     };
-    
+
     self.setVisible = function() {
         var layer = this;
-        
+
         layer.visible(true);
         if (layer.parent) {
             layer.parent.visible(true);
         }
         app.setLayerVisibility(layer, true);
-        
+
         //add utfgrid if applicable
         if (layer.utfgrid && app.map.UTFControl.layers.indexOf(layer.utfgrid) === -1) {
             app.map.UTFControl.layers.splice($.inArray(this, app.viewModel.activeLayers()), 0, layer.utfgrid);
         }
     };
-    
+
     self.setInvisible = function() {
         var layer = this;
-        
+
         layer.visible(false);
         if (layer.parent) {
             // if layer.parent is not a checkbox, set parent to invisible
             if (layer.parent.type !== 'checkbox') {
                 layer.parent.visible(false);
-            } else { //otherwise layer.parent is checkbox 
-                //check to see if any sublayers are still visible 
+            } else { //otherwise layer.parent is checkbox
+                //check to see if any sublayers are still visible
                 if (!layer.parent.hasVisibleSublayers()) {
                     layer.parent.visible(false);
                 }
             }
         }
         app.setLayerVisibility(layer, false);
-        
+
         app.viewModel.removeFromAggregatedAttributes(layer.name);
-        
+
         if ($.isEmptyObject(app.viewModel.visibleLayers())) {
             app.viewModel.closeAttribution();
         }
@@ -575,6 +577,7 @@ function layerModel(options, parent) {
         });
 
         if (companion.length > 0) {
+            layer.companion = [];
             $.each(companion[0].layers(), function(i, l) {
                 if (l.companionLayers.length > 0) {
                     var companionLayer = $.grep(l.companionLayers, function(k) {
@@ -582,7 +585,7 @@ function layerModel(options, parent) {
                     })
                     if (companionLayer.length > 0) {
                         l.activateLayer();
-                        layer.companion = l;
+                        layer.companion.push(l);
                     }
                 }
             });
@@ -592,7 +595,7 @@ function layerModel(options, parent) {
     self.ajaxMDAT = function(self, event) {
         if (self.showSublayers() === true) {
             self.showSublayers(false);
-            return false; 
+            return false;
         }
 
         var layer = this,
@@ -651,25 +654,25 @@ function layerModel(options, parent) {
                 //if radio sublayer
                 if (!activeLayer.isCheckBoxLayer()) {
                     activeLayer.showSublayers(false);
-                } 
-            //check if a parent layer is active 
+                }
+            //check if a parent layer is active
             //checkbox sublayer has been clicked prior to opening another sublayer
             } else if (activeParentLayer && layer.parent !== activeParentLayer) {
                 app.viewModel.activeParentLayer().showSublayers(false);
             }
-        } 
+        }
 
         // save a ref to the active layer for editing,etc
         app.viewModel.activeLayer(layer);
-        
+
         //handle possible dropdown/sublayer behavior
         if (layer.subLayers.length) {
             app.viewModel.activeParentLayer(layer);
             if ( app.embeddedMap ) { // if data viewer is mobile app
                 $('.carousel').carousel('prev');
                 $('#mobile-data-right-button').show();
-                $('#mobile-map-right-button').hide(); 
-            } 
+                $('#mobile-map-right-button').hide();
+            }
             if (!layer.showSublayers()) {
                 //show drop-down menu
                 layer.showSublayers(true);
@@ -698,12 +701,12 @@ function layerModel(options, parent) {
             if (app.viewModel.activeLayers().length > 0) {
                parentDirArray = $.grep(app.viewModel.activeLayers(), function(lyr) {
                    return layer.parentMDATDirectory === lyr.parentMDATDirectory;
-               }); 
+               });
             }
 
             if (parentDirArray.length == 0) {
                 layer.parentMDATDirectory.visible(false);
-            }   
+            }
         }
     };
 
@@ -738,7 +741,7 @@ function layerModel(options, parent) {
     self.isBottomLayer = function(layer) {
         return app.viewModel.activeLayers.indexOf(layer) === app.viewModel.activeLayers().length - 1;
     };
-      
+
     self.showingLegendDetails = ko.observable(true);
     self.toggleLegendDetails = function() {
         var legendID = '#' + app.viewModel.convertToSlug(self.name) + '-legend-content';
@@ -754,8 +757,8 @@ function layerModel(options, parent) {
             //$(legendID).collapse('show');
             //$(legendID).slideDown(200);
         }
-    };      
-    
+    };
+
     self.showingLayerAttribution = ko.observable(true);
     self.toggleLayerAttribution = function() {
         var layerID = '#' + app.viewModel.convertToSlug(self.featureAttributionName);
@@ -767,7 +770,7 @@ function layerModel(options, parent) {
             $(layerID).css('display', 'block');
         }
     };
-    
+
     // display descriptive text below the map
     self.toggleDescription = function(layer) {
         if ( ! layer.infoActive() ) {
@@ -776,15 +779,15 @@ function layerModel(options, parent) {
             self.hideDescription(layer);
         }
     };
-    
+
     self.showDescription = function(layer) {
         self.infoActive(true);
     };
-    
+
     self.hideDescription = function(layer) {
         self.infoActive(false);
     };
-    
+
     self.showTooltip = function(layer, event) {
         var layerActual;
         $('#layer-popover').hide();
@@ -802,7 +805,7 @@ function layerModel(options, parent) {
             });
         }
     };
-    
+
     // remove the layer dropdrown menu
     self.closeMenu = function(layer, event) {
         $(event.target).closest('.btn-group').removeClass('open');
@@ -832,7 +835,7 @@ function themeModel(options) {
     //add to open themes
     self.setOpenTheme = function() {
         var theme = this;
-        
+
         // ensure data tab is activated
         $('#dataTab').tab('show');
 
@@ -844,7 +847,7 @@ function themeModel(options) {
             self.trackTheme(theme.name);
         }
     };
-    
+
     //is in openThemes
     self.isOpenTheme = function() {
         var theme = this;
@@ -878,7 +881,7 @@ function themeModel(options) {
     //mdat marine lifes theme
     self.isMarineLife = function() {
         var theme = this;
-        // we don't know what the display name for 
+        // we don't know what the display name for
         // marine life mdat layers are always going to be called
         // so let's keep the slug name === 'marine-life-library'
         if (theme.slug_name === 'marine-life-library') {
@@ -890,7 +893,7 @@ function themeModel(options) {
     //C@S - VTR theme
     self.isVTR = function() {
         var theme = this;
-        // we don't know what the display name for 
+        // we don't know what the display name for
         // C@S layers are always going to be called
         // so let's keep the slug name === 'vtr'
         if (theme.slug_name === 'vtr') {
@@ -913,16 +916,16 @@ function themeModel(options) {
 
 function mapLinksModel() {
     var self = this;
-    
+
     self.cancel = function() {
         $('#map-links-popover').hide();
     };
-    
+
     self.getURL = function() {
         //return window.location.href;
         return 'http://portal.midatlanticocean.org' + app.viewModel.currentURL();
     };
-    
+
     self.shrinkURL = ko.observable();
     self.shrinkURL.subscribe( function() {
         if (self.shrinkURL()) {
@@ -931,19 +934,19 @@ function mapLinksModel() {
             self.useLongURL();
         }
     });
-    
+
     self.useLongURL = function() {
         $('#short-url')[0].value = self.getURL();
     };
-        
+
     self.useShortURL = function() {
         var bitly_login = "p97dev",
             bitly_api_key = 'R_27f2b2cc886e49fb9f35c37b7b633749',
             long_url = self.getURL();
-            
-        $.getJSON( 
-            "http://api.bitly.com/v3/shorten?callback=?", 
-            { 
+
+        $.getJSON(
+            "http://api.bitly.com/v3/shorten?callback=?",
+            {
                 "format": "json",
                 "apiKey": bitly_api_key,
                 "login": bitly_login,
@@ -955,21 +958,21 @@ function mapLinksModel() {
             }
         );
     };
-    
+
     self.getPortalURL = function() {
         var urlOrigin = window.location.origin,
             urlHash = window.location.hash;
         return urlOrigin + '/visualize/' + urlHash;
     };
-    
+
     self.setIFrameHTML = function() {
         $('#iframe-html')[0].value = self.getIFrameHTML();
     };
-    
+
     self.getIFrameHTML = function(bookmarkState) {
         var urlOrigin = window.location.origin,
             urlHash = window.location.hash;
-            
+
         if ( bookmarkState ) {
             //urlHash = '#'+$.param(bookmarkState);
             urlHash = '#' + bookmarkState;
@@ -984,7 +987,7 @@ function mapLinksModel() {
         //$('#iframe-html')[0].value = '<iframe width="600" height="450" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"' +
         //                             'src="' + embedURL + '">' + '</iframe>' + '<br />';
     };
-    
+
     self.openIFrameExample = function(info) {
         var windowName = "newMapWindow",
             windowSize = "width=650, height=550";
@@ -1003,7 +1006,7 @@ function mapLinksModel() {
         mapWindow.document.write('<html><body>' + $(iframeID)[0].value + '</body></html>');
         mapWindow.document.title = "Your MARCO Map!";
         mapWindow.document.close();
-        
+
     };
 
     return self;
@@ -1044,38 +1047,38 @@ function viewModel() {
             }
         });
     });
-    
+
     self.visibleLayers.subscribe( function() {
         self.updateAttributeLayers();
     });
-    
+
     self.attributeLayers = ko.observable();
-    
+
     self.featureAttribution = ko.observable(true);
     self.enableFeatureAttribution = function() {
         self.aggregatedAttributes(false);
         self.featureAttribution(true);
     };
     self.disableFeatureAttribution = function() {
-        self.featureAttribution(false); 
+        self.featureAttribution(false);
         app.markers.clearMarkers();
     };
-    
+
     self.showFeatureAttribution = ko.observable(false);
-    
+
     self.featureAttribution.subscribe( function() {
         self.showFeatureAttribution( self.featureAttribution() && !($.isEmptyObject(self.aggregatedAttributes())) );
     });
-    
+
     self.updateAttributeLayers = function() {
         var attributeLayersList = [];
         if (self.scenarios && self.scenarios.scenarioFormModel && self.scenarios.scenarioFormModel.isLeaseblockLayerVisible()) {
             attributeLayersList.push(self.scenarios.leaseblockLayer().layerModel);
         }
-        
+
         $.each(self.visibleLayers(), function(index, layer) {
             // special case for Benthic habitats
-            // make sure it doesn't exist already so it doesn't produce 
+            // make sure it doesn't exist already so it doesn't produce
             // two attribute outputs when both layers are active
             var ignoreDup = layer.featureAttributionName == 'Benthic Habitats' &&
                          app.utils.getObjectFromList(attributeLayersList, 'featureAttributionName', 'Benthic Habitats');
@@ -1086,15 +1089,15 @@ function viewModel() {
         });
         self.attributeLayers(attributeLayersList);
     };
-    
+
     // boolean flag determining whether or not to show layer panel
     self.showLayers = ko.observable(true);
-    
+
     self.showLayersText = ko.computed(function() {
         if (self.showLayers()) return "Hide Layers";
         else return "Show Layers";
     });
-    
+
     // toggle layer panel visibility
     self.toggleLayers = function() {
         self.showLayers(!self.showLayers());
@@ -1110,7 +1113,7 @@ function viewModel() {
 
     // reference to open themes in accordion
     self.openThemes = ko.observableArray();
-    
+
     self.openThemes.subscribe( function() {
         app.updateUrl();
     });
@@ -1120,7 +1123,7 @@ function viewModel() {
             return theme.id;
         });
     };
-    
+
     // reference to active theme model/name for display text
     self.activeTheme = ko.observable();
     self.activeThemeName = ko.observable();
@@ -1137,7 +1140,7 @@ function viewModel() {
     self.showDescription = ko.observable();
     // determines visibility of expanded description overlay
     self.showOverview = ko.observable();
-    
+
     // theme text currently on display
     self.themeText = ko.observable();
 
@@ -1165,16 +1168,16 @@ function viewModel() {
             app.viewModel.bookmarks.getBookmarks();
         }
     }
-    
+
     self.scenarios = new scenariosModel();
-    self.scenarios.reports = new reportsModel(); 
-    
+    self.scenarios.reports = new reportsModel();
+
     self.mapLinks = new mapLinksModel();
 
     // text for tooltip popup
     self.layerToolTipText = ko.observable();
 
-    // descriptive text below the map 
+    // descriptive text below the map
     self.activeInfoLayer = ko.observable(false);
     self.activeInfoSublayer = ko.observable(false);
     self.activeInfoSelector = ko.observable(false);
@@ -1220,7 +1223,7 @@ function viewModel() {
         self.aggregatedAttributes(false);
         app.markers.clearMarkers();
     };
-    
+
     self.updateMarker = function(lonlat) {
         //at some point this function is being called without an appropriate lonlat object...
         if (lonlat.lon && lonlat.lat) {
@@ -1234,10 +1237,10 @@ function viewModel() {
             }
         }
     };
-    
+
     self.zoomLevel = ko.observable(false);
-    
-    
+
+
     // minimize data panel
     self.minimized = false;
     self.minimizeLayerSwitcher = function() {
@@ -1258,7 +1261,7 @@ function viewModel() {
         }
         self.minimized = !self.minimized;
     };
-    
+
     // hide tours for smaller screens
     self.hideTours = ko.observable(false);
 
@@ -1269,7 +1272,7 @@ function viewModel() {
     self.clearError = function() {
         self.error(null);
     };
-    
+
     self.showLogo = ko.observable(true);
     self.hideLogo = function() {
         self.showLogo(false);
@@ -1285,7 +1288,7 @@ function viewModel() {
             $('.olControlZoom').css('display', '');
         }
     });
-    
+
     // show the map?
     self.showMapPanel = ko.observable(true);
 
@@ -1330,7 +1333,7 @@ function viewModel() {
             } else {
                 app.map.zoomBox.out = false;
             }
-            app.map.zoomBox.activate();            
+            app.map.zoomBox.activate();
             $('#map').addClass('zoomBox');
 
         }
@@ -1395,7 +1398,7 @@ function viewModel() {
         }
     };
 
-    // determine whether app is offering legends 
+    // determine whether app is offering legends
     self.hasActiveLegends = ko.computed(function() {
         var hasLegends = false;
         $.each(self.visibleLayers(), function(index, layer) {
@@ -1413,10 +1416,10 @@ function viewModel() {
 
     // self.learnMoreLink = function() {
     //     if (self.learn_more) {
-    //         return 
+    //         return
     //     }
     // };
-    
+
     self.activeKmlLink = function() {
         if ( self.activeInfoSublayer() ) {
             return self.activeInfoSublayer().kml;
@@ -1437,7 +1440,7 @@ function viewModel() {
             return false;
         }
     };
-    
+
     self.activeMetadataLink = function() {
         //activeInfoLayer().metadata
         if ( self.activeInfoSublayer() ) {
@@ -1448,7 +1451,7 @@ function viewModel() {
             return false;
         }
     };
-    
+
     self.activeSourceLink = function() {
         //activeInfoLayer().source
         if ( self.activeInfoSublayer() ) {
@@ -1459,7 +1462,7 @@ function viewModel() {
             return false;
         }
     };
-        
+
     self.activeTilesLink = function() {
         //activeInfoLayer().source
         if ( self.activeInfoSublayer() ) {
@@ -1470,7 +1473,7 @@ function viewModel() {
             return false;
         }
     };
-        
+
     //assigned in app.updateUrl (in state.js)
     self.currentURL = ko.observable();
 
@@ -1482,7 +1485,7 @@ function viewModel() {
         self.bookmarks.newBookmarkName(null);
         self.addBookmarksDialogVisible(true);
         // scenario forms will hide anything with the "step" class, so show
-        // it explicitly here. 
+        // it explicitly here.
         $('#addBookmarkForm .step').show();
     };
     self.hideBookmarks = function() {
@@ -1505,7 +1508,7 @@ function viewModel() {
             $('.dupe-bookmark').effect("highlight", {}, 1000);
             return false;
         }
-        
+
         self.bookmarks.addBookmark(name);
         self.hideBookmarks();
         self.bookmarks.newBookmarkName(null);
@@ -1516,13 +1519,13 @@ function viewModel() {
         $('#short-url').text = self.mapLinks.getURL();
         self.mapLinks.setIFrameHTML();
         $('#map-links-modal').modal()
-        
+
     };
 
     /* marine-life-library, not databased MDAT layers */
     self.activateMDATLayer = function(layer) {
-        var activeMDATQueryLayers = $.grep(app.viewModel.activeLayers(), function(mdatLyr) { 
-            return mdatLyr.name === layer.name; 
+        var activeMDATQueryLayers = $.grep(app.viewModel.activeLayers(), function(mdatLyr) {
+            return mdatLyr.name === layer.name;
         });
 
         //if this layer is already active (based purely on naming)
@@ -1551,18 +1554,18 @@ function viewModel() {
             mdatLayer['hasCompanion'] = true;
         }
 
-        mdatLayer.activateLayer(); 
+        mdatLayer.activateLayer();
     }
 
     function activateAvianQueryCompanion(lyr) {
-        /* 
-            NOTE: 
+        /*
+            NOTE:
             - this is a completely hardcoded hack to accomodate a late feature request
-            - functionality is dependent on both the name on MDAT's end and 
+            - functionality is dependent on both the name on MDAT's end and
             - the specific layer IDs tied to the database on the main Portal site
         */
         var companionLyr;
-        
+
         if (lyr.name.slice(-6) === 'annual') {
             companionLyr = self.getLayerById(488);
         } else if (lyr.name.slice(-6) === 'spring') {
@@ -1594,7 +1597,7 @@ function viewModel() {
             $(this).find(':input').each(function() {
                 var inputField = ($(this).attr("name"));
                 var value = $(this).val();
-                
+
                 if (inputField === 'name') {
                     lyrObj.name = value;
                 } else if (inputField === 'url') {
@@ -1603,13 +1606,13 @@ function viewModel() {
                     lyrObj.arcgis_layers = value;
                 }
             })
-            //add options to layer 
+            //add options to layer
             var wmsLayer = new layerModel(lyrObj);
             wmsLayer.activateLayer();
         });
         $('#map-wms-modal').modal('hide');
     };
-    
+
     self.selectedLayer = ko.observable();
 
     self.showOpacity = function(layer, event) {
@@ -1661,8 +1664,8 @@ function viewModel() {
     // get layer by id
     self.getLayerById = function(id) {
         for (var x=0; x<self.themes().length; x++) {
-            var layer_list = $.grep(self.themes()[x].layers(), function(layer) { 
-                return layer.id === id; 
+            var layer_list = $.grep(self.themes()[x].layers(), function(layer) {
+                return layer.id === id;
             });
             //find parent layers by ID
             if (layer_list.length > 0) {
@@ -1676,8 +1679,8 @@ function viewModel() {
                 })
                 //find sublayers by ID
                 if (subLayerArray.length > 0) {
-                    var sublayer_list = $.grep(subLayerArray, function(layer) { 
-                        return layer.id === id; 
+                    var sublayer_list = $.grep(subLayerArray, function(layer) {
+                        return layer.id === id;
                     });
                     if (sublayer_list.length > 0) {
                         return sublayer_list[0];
@@ -1690,8 +1693,8 @@ function viewModel() {
 
     self.getLayerBySlug = function(slug) {
         for (var x=0; x<self.themes().length; x++) {
-            var layer_list = $.grep(self.themes()[x].layers(), function(layer) { 
-                return self.convertToSlug(layer.name) === slug; 
+            var layer_list = $.grep(self.themes()[x].layers(), function(layer) {
+                return self.convertToSlug(layer.name) === slug;
             });
             if (layer_list.length > 0) {
                 return layer_list[0];
@@ -1772,9 +1775,9 @@ function viewModel() {
 
         // update the url hash
         app.updateUrl();
-        
+
     });
-    
+
     self.deactivateAllLayers = function() {
         //$.each(self.activeLayers(), function (index, layer) {
         var numActiveLayers = self.activeLayers().length;
@@ -1782,7 +1785,7 @@ function viewModel() {
             self.activeLayers()[0].deactivateLayer();
         }
     };
-    
+
     self.closeAllThemes = function() {
         var numOpenThemes = self.openThemes().length;
         for (var i=0; i< numOpenThemes; i++) {
@@ -1798,29 +1801,29 @@ function viewModel() {
                 if (viewModel.activeParentLayer()) {
                     viewModel.activeParentLayer().showSublayers(false);
                 } else {
-                    viewModel.activeLayer().showSublayers(false); 
+                    viewModel.activeLayer().showSublayers(false);
                 }
 
             }
-        }              
+        }
     };
 
     /* DESIGNS */
-    
+
     self.showCreateButton = ko.observable(true);
-    
+
     /* Wind Design */
     self.showWindDesignWizard = ko.observable(false);
     self.windDesignStep1 = ko.observable(false);
     self.windDesignStep2 = ko.observable(false);
     self.windDesignStep3 = ko.observable(false);
-    
+
     self.startWindDesignWizard = function() {
         self.showCreateButton(false);
         self.showWindDesignWizard(true);
         self.showWindDesignStep1();
     };
-    
+
     self.showWindDesignStep1 = function() {
         self.windDesignStep1(true);
         $('#wind-design-breadcrumb-step-1').addClass('active');
@@ -1829,7 +1832,7 @@ function viewModel() {
         self.windDesignStep3(false);
         $('#wind-design-breadcrumb-step-3').removeClass('active');
     };
-    
+
     self.showWindDesignStep2 = function() {
         self.windDesignStep1(false);
         $('#wind-design-breadcrumb-step-1').removeClass('active');
@@ -1838,7 +1841,7 @@ function viewModel() {
         self.windDesignStep3(false);
         $('#wind-design-breadcrumb-step-3').removeClass('active');
     };
-    
+
     self.showWindDesignStep3 = function() {
         self.windDesignStep1(false);
         $('#wind-design-breadcrumb-step-1').removeClass('active');
@@ -1848,7 +1851,7 @@ function viewModel() {
         $('#wind-design-breadcrumb-step-3').addClass('active');
     };
     /* END Wind Design */
-    
+
     self.startDefaultTour = function() {
         if ( $.pageguide('isOpen') ) { // activated when 'tour' is clicked
             // close the pageguide
@@ -1857,28 +1860,28 @@ function viewModel() {
         } else {
             //save state
             app.pageguide.state = app.getState();
-            app.saveStateMode = false;   
+            app.saveStateMode = false;
         }
-        
+
         //show the data layers panel
         app.viewModel.showLayers(true);
-        
+
         //ensure pageguide is managing the default guide
         $.pageguide(defaultGuide, defaultGuideOverrides);
-        
-        //adding delay to ensure the message will load 
+
+        //adding delay to ensure the message will load
         setTimeout( function() { $.pageguide('open'); }, 700 );
         //$('#help-tab').click();
-        
+
         app.pageguide.togglingTours = false;
     };
-    
+
     self.stepTwoOfBasicTour = function() {
         $('.pageguide-fwd')[0].click();
     };
-    
+
     self.startDataTour = function() {
-        //ensure the pageguide is closed 
+        //ensure the pageguide is closed
         if ( $.pageguide('isOpen') ) { // activated when 'tour' is clicked
             // close the pageguide
             app.pageguide.togglingTours = true;
@@ -1886,30 +1889,30 @@ function viewModel() {
         } else {
             //save state
             app.pageguide.state = app.getState();
-            app.saveStateMode = false;   
+            app.saveStateMode = false;
         }
-        
+
         //show the data layers panel
         app.viewModel.showLayers(true);
-        
+
         //switch pageguide from default guide to data guide
         $.pageguide(dataGuide, dataGuideOverrides);
-        
+
         //show the data tab, close all themes and deactivate all layers, and open the Admin theme
         app.viewModel.closeAllThemes();
         app.viewModel.deactivateAllLayers();
         app.viewModel.themes()[0].setOpenTheme();
         app.setMapPosition(-73, 38.5, 7);
         $('#dataTab').tab('show');
-         
+
         //start the tour
         setTimeout( function() { $.pageguide('open'); }, 700 );
-        
+
         app.pageguide.togglingTours = false;
     };
-    
+
     self.startActiveTour = function() {
-        //ensure the pageguide is closed 
+        //ensure the pageguide is closed
         if ( $.pageguide('isOpen') ) { // activated when 'tour' is clicked
             // close the pageguide
             app.pageguide.togglingTours = true;
@@ -1917,15 +1920,15 @@ function viewModel() {
         } else {
             //save state
             app.pageguide.state = app.getState();
-            app.saveStateMode = false;   
+            app.saveStateMode = false;
         }
-        
+
         //show the data layers panel
         app.viewModel.showLayers(true);
-        
+
         //switch pageguide from default guide to active guide
         $.pageguide(activeGuide, activeGuideOverrides);
-        
+
         //show the active tab, close all themes and deactivate all layers, activate a couple layers
         //app.viewModel.closeAllThemes();
         app.viewModel.deactivateAllLayers();
@@ -1942,13 +1945,13 @@ function viewModel() {
         }
         app.setMapPosition(-75, 37.6, 8);
         $('#activeTab').tab('show');
-        
+
         //start the tour
         setTimeout( function() { $.pageguide('open'); }, 700 );
-        
+
         app.pageguide.togglingTours = false;
     };
-    
+
     self.startDesignsTour = function() {
         if ( $.pageguide('isOpen') ) { // activated when 'tour' is clicked
             // close the pageguide
@@ -1957,22 +1960,22 @@ function viewModel() {
         } else {
             //save state
             app.pageguide.state = app.getState();
-            app.saveStateMode = false;   
+            app.saveStateMode = false;
         }
-        
+
         //show the designs panel
         $('#designsTab').tab('show');
-        
+
         //ensure pageguide is managing the default guide
         $.pageguide(designsGuide, designsGuideOverrides);
-        
-        //adding delay to ensure the message will load 
+
+        //adding delay to ensure the message will load
         setTimeout( function() { $.pageguide('open'); }, 700 );
-        
+
         app.pageguide.togglingTours = false;
     };
-    
-    
+
+
     //if toggling legend or layers panel during default pageguide, then correct step 4 position
     self.correctTourPosition = function() {
         // if ( $.pageguide('isOpen') ) {
@@ -1981,7 +1984,7 @@ function viewModel() {
         //     }
         // }
     };
-    
+
     self.showMapAttribution = function() {
         $('.olControlScaleBar').show();
         $('.olControlAttribution').show();
@@ -1990,14 +1993,14 @@ function viewModel() {
         $('.olControlScaleBar').hide();
         $('.olControlAttribution').hide();
     };
-    
+
     self.convertToSlug = function(orig) {
         return orig
             .toLowerCase()
             .replace(/[^\w ]+/g,'')
             .replace(/ +/g,'-');
     };
-    
+
     self.getWindPlanningAreaAttributes = function (data) {
         attrs = [];
         if ('INFO' in data) {
@@ -2013,10 +2016,10 @@ function viewModel() {
                 state = state.slice(0, third);
             }*/
             attrs.push({'display': '', 'data': state});
-        } 
+        }
         return attrs;
     };
-    
+
     self.getSeaTurtleAttributes = function (data) {
         attrs = [];
         if ('ST_LK_NUM' in data && data['ST_LK_NUM']) {
@@ -2029,21 +2032,21 @@ function viewModel() {
         } else {
             attrs.push({'display': 'Sightings were in the normal range for all species', 'data': ''});
         }
-        
+
         if ('ST_LK_NUM' in data && data['ST_LK_NUM'] ) {
-            var season, species, sighting; 
+            var season, species, sighting;
             if ('GREEN_LK' in data && data['GREEN_LK']) {
                 season = data['GREEN_LK'];
                 species = 'Green Sea Turtle';
                 sighting = species + ' (' + season + ') ';
                 attrs.push({'display': '', 'data': sighting});
-            }  
+            }
             if ('LEATH_LK' in data && data['LEATH_LK']) {
                 season = data['LEATH_LK'];
                 species = 'Leatherback Sea Turtle';
                 sighting = species + ' (' + season + ') ';
                 attrs.push({'display': '', 'data': sighting});
-            }  
+            }
             if ('LOGG_LK' in data && data['LOGG_LK']) {
                 season = data['LOGG_LK'];
                 species = 'Loggerhead Sea Turtle';
@@ -2239,7 +2242,7 @@ function viewModel() {
         }
         return attrs;
     };
-    
+
     self.getToothedMammalAttributes = function (data) {
         attrs = [];
         if ('TOO_LK_NUM' in data && data['TOO_LK_NUM']) {
@@ -2252,19 +2255,19 @@ function viewModel() {
             attrs.push({'display': 'Sightings were in the normal range for all species', 'data': ''});
         }
         if ('TOO_LK_NUM' in data && data['TOO_LK_NUM'] ) {
-            var season, species, sighting; 
+            var season, species, sighting;
             if ('SPERM_LK' in data && data['SPERM_LK']) {
                 season = data['SPERM_LK'];
                 species = 'Sperm Whale';
                 sighting = species + ' (' + season + ') ';
                 attrs.push({'display': '', 'data': sighting});
-            }  
+            }
             if ('BND_LK' in data && data['BND_LK']) {
                 season = data['BND_LK'];
                 species = 'Bottlenose Dolphin';
                 sighting = species + ' (' + season + ') ';
                 attrs.push({'display': '', 'data': sighting});
-            }  
+            }
             if ('STRIP_LK' in data && data['STRIP_LK']) {
                 season = data['STRIP_LK'];
                 species = 'Striped Dolphin';
@@ -2274,36 +2277,36 @@ function viewModel() {
         }
         return attrs;
     };
-    
+
     self.getWindSpeedAttributes = function (data) {
         attrs = [];
         if ('SPEED_90' in data) {
             var min_speed = (parseFloat(data['SPEED_90'])-0.125).toPrecision(3),
                 max_speed = (parseFloat(data['SPEED_90'])+0.125).toPrecision(3);
             attrs.push({'display': 'Estimated Avg Wind Speed', 'data': min_speed + ' to ' + max_speed + ' m/s'});
-        } 
+        }
         return attrs;
     };
-    
+
     self.adjustPartyCharterAttributes = function (attrs) {
         for (var x=0; x<attrs.length; x=x+1) {
             attrs[x].display = 'Total Trips (2000-2009)';
         }
         return attrs;
     };
-    
+
     self.isSelectedLeaseBlock = function(name) {
         if (name === "OCS Lease Blocks") {
             return true;
         }
-        if (self.scenarios && 
-            self.scenarios.selectionFormModel && 
-            self.scenarios.selectionFormModel.selectedLeaseBlockLayer && 
+        if (self.scenarios &&
+            self.scenarios.selectionFormModel &&
+            self.scenarios.selectionFormModel.selectedLeaseBlockLayer &&
             self.scenarios.selectionFormModel.selectedLeaseBlocksLayerName === name) {
             return true;
-        } 
-        if (self.scenarios && 
-            self.scenarios.scenarioFormModel && 
+        }
+        if (self.scenarios &&
+            self.scenarios.scenarioFormModel &&
             self.scenarios.scenarioLeaseBlocksLayerName === name) {
             return true;
         }
@@ -2315,7 +2318,7 @@ function viewModel() {
         attrs = [];
         if ('location' in data) {
             attrs.push({'display': '', 'data': data['location']});
-        } 
+        }
         if ('minimumDep' in data) {
             var meters = data['minimumDep'],
                 feet =  new Number(meters * 3.28084).toPrecision(2);
@@ -2337,7 +2340,7 @@ function viewModel() {
         if ('Commodity_' in data) {
             var commodity = 'Unknown';
             switch (data['Commodity_']) {
-                case 0: 
+                case 0:
                     commodity = 'Not applicable';
                     break;
                 case 10:
@@ -2375,7 +2378,7 @@ function viewModel() {
         }
         return attrs;
     };
-    
+
     self.getOCSAttributes = function (data) {
         attrs = [];
         if ('BLOCK_LAB' in data) {
@@ -2391,9 +2394,9 @@ function viewModel() {
             attrs.push({'display': 'Protraction Number', 'data': protNumbe});
         }
         if ('PROT_NUMB' in data) {
-            if (self.scenarios && 
-                self.scenarios.selectionFormModel && 
-                self.scenarios.selectionFormModel.IE && 
+            if (self.scenarios &&
+                self.scenarios.selectionFormModel &&
+                self.scenarios.selectionFormModel.IE &&
                 self.scenarios.selectionFormModel.selectingLeaseBlocks()) {
                 var blockID = data['PROT_NUMB'],
                     index = self.scenarios.selectionFormModel.selectedLeaseBlocks.indexOf(blockID);
@@ -2406,10 +2409,10 @@ function viewModel() {
                 }
             }
         }
-        
+
         //Wind Speed
         if ('WINDREV_MI' in data && 'WINDREV_MA' in data) {
-            if ( data['WINDREV_MI'] ) {                
+            if ( data['WINDREV_MI'] ) {
                 var min_speed = data['WINDREV_MI'].toFixed(3),
                     max_speed = data['WINDREV_MA'].toFixed(3),
                     min_range = (parseFloat(min_speed)-.125).toPrecision(3),
@@ -2425,7 +2428,7 @@ function viewModel() {
                 attrs.push({'display': 'Estimated Avg Wind Speed', 'data': 'Unknown'});
             }
         }
-        
+
         //Distance to Coastal Substation
         if ('SUBSTAMIN' in data && 'SUBSTMAX' in data) {
             if (data['SUBSTAMIN'] !== 0 && data['SUBSTMAX'] !== 0) {
@@ -2434,18 +2437,18 @@ function viewModel() {
                 attrs.push({'display': 'Distance to Coastal Substation Unknown', 'data': null});
             }
         }
-        
+
         //Distance to AWC Hubs
         if ('AWCMI_MIN' in data && 'AWCMI_MAX' in data) {
             attrs.push({'display': 'Distance to Proposed AWC Hub', 'data': data['AWCMI_MIN'].toFixed(0) + ' to ' + data['AWCMI_MAX'].toFixed(0) + ' miles'});
         }
-        
+
         //Wind Planning Areas
         if ('WEA2' in data && data['WEA2'] !== 0) {
             var weaName = data['WEA2_NAME'],
                 stateName = weaName.substring(0, weaName.indexOf(' '));
-            if (stateName === 'New') { 
-                stateName = 'New Jersey'; 
+            if (stateName === 'New') {
+                stateName = 'New Jersey';
             } else if (stateName === 'Rhode') {
                 stateName = 'Rhode Island / Massachusetts';
             }
@@ -2454,17 +2457,17 @@ function viewModel() {
             //attrs.push({'display': 'Within the ' + stateName + ' WPA', 'data': null});
             //}
         }
-        
+
         //Distance to Shipping Lanes
         if ('TRAFFCMIN' in data && 'TRAFFCMAX' in data) {
             attrs.push({'display': 'Distance to Ship Routing Measures', 'data': data['TRAFFCMIN'].toFixed(0) + ' to ' + data['TRAFFCMAX'].toFixed(0) + ' miles'});
         }
-        
+
         //Distance to Shore
         if ('MI_MIN' in data && 'MI_MAX' in data) {
             attrs.push({'display': 'Distance to Shore', 'data': data['MI_MIN'].toFixed(0) + ' to ' + data['MI_MAX'].toFixed(0) + ' miles'});
         }
-        
+
         //Depth Range
         if ('DEPTHM_MIN' in data && 'DEPTHM_MAX' in data) {
             if ( data['DEPTHM_MIN'] ) {
@@ -2476,7 +2479,7 @@ function viewModel() {
                 attrs.push({'display': 'Depth Range', 'data': 'Unknown'});
             }
         }
-        
+
         //Seabed Form
         if ('PCT_TOTAL' in data) {
             if (data['PCT_TOTAL'] < 99.9) {
@@ -2487,10 +2490,10 @@ function viewModel() {
                     attrs.push({'tab': true, 'display': 'Depression (' + Math.round(data['PCTDEPRESS']) + '%)', 'data': ''});
                 }
                 if ('PCTHIGHFLA' in data && Math.round(data['PCTHIGHFLA']) > 0) {
-                    attrs.push({'tab': true, 'display': 'High Flat (' + Math.round(data['PCTHIGHFLA']) + '%)', 'data': ''}); 
+                    attrs.push({'tab': true, 'display': 'High Flat (' + Math.round(data['PCTHIGHFLA']) + '%)', 'data': ''});
                 }
                 if ('PCTHIGHSLO' in data && Math.round(data['PCTHIGHSLO']) > 0) {
-                    attrs.push({'tab': true, 'display': 'High Slope (' + Math.round(data['PCTHIGHSLO']) + '%)', 'data': ''}); 
+                    attrs.push({'tab': true, 'display': 'High Slope (' + Math.round(data['PCTHIGHSLO']) + '%)', 'data': ''});
                 }
                 if ('PCTLOWSLOP' in data && Math.round(data['PCTLOWSLOP']) > 0) {
                     attrs.push({'tab': true, 'display': 'Low Slope (' + Math.round(data['PCTLOWSLOP']) + '%)', 'data': ''});
@@ -2499,14 +2502,14 @@ function viewModel() {
                     attrs.push({'tab': true, 'display': 'Mid Flat (' + Math.round(data['PCTMIDFLAT']) + '%)', 'data': ''});
                 }
                 if ('PCTSIDESLO' in data && Math.round(data['PCTSIDESLO']) > 0) {
-                    attrs.push({'tab': true, 'display': 'Side Slope (' + Math.round(data['PCTSIDESLO']) + '%)', 'data': ''}); 
+                    attrs.push({'tab': true, 'display': 'Side Slope (' + Math.round(data['PCTSIDESLO']) + '%)', 'data': ''});
                 }
                 if ('PCTSTEEP' in data && Math.round(data['PCTSTEEP']) > 0) {
                     attrs.push({'tab': true, 'display': 'Steep (' + Math.round(data['PCTSTEEP']) + '%)', 'data': ''});
                 }
             }
         }
-        
+
         //Coral Count
         var coralCount = 0,
             laceCount = 0,
@@ -2531,8 +2534,8 @@ function viewModel() {
             coralCount += gorgoCount;
         }
         if ('FREQ_HARD' in data) {
-            hardCount = data['FREQ_HARD'];  
-            coralCount += hardCount;  
+            hardCount = data['FREQ_HARD'];
+            coralCount += hardCount;
         }
         if (coralCount > 0) {
             attrs.push({'display': 'Identified Corals', 'data': coralCount});
@@ -2556,12 +2559,12 @@ function viewModel() {
             var seaPenCount = data['FREQ_PENS'];
             attrs.push({'display': 'Sea Pens Identified', 'data': seaPenCount});
         }
-        
+
         //Shipwrecks
         if ('BOEMSHPDEN' in data) {
             attrs.push({'display': 'Number of Shipwrecks', 'data': data['BOEMSHPDEN']});
         }
-                
+
         //Distance to Discharge Point Locations
         if ('DISCHMEAN' in data) {
             attrs.push({'display': 'Avg Distance to Offshore Discharge', 'data': data['DISCHMEAN'].toFixed(1) + ' miles'});
@@ -2569,7 +2572,7 @@ function viewModel() {
         if ('DFLOWMEAN' in data) {
             attrs.push({'display': 'Avg Distance to Flow-Only Offshore Discharge', 'data': data['DFLOWMEAN'].toFixed(1) + ' miles'});
         }
-        
+
         //Dredge Disposal Locations
         if ('DREDGE_LOC' in data) {
             if (data['DREDGE_LOC'] > 0) {
@@ -2578,8 +2581,8 @@ function viewModel() {
                 attrs.push({'display': 'Does not contain a Dredge Disposal Location', 'data': ''});
             }
         }
-        
-        //Unexploded Ordinances 
+
+        //Unexploded Ordinances
         if ('UXO' in data) {
             if (data['UXO'] === 0) {
                 attrs.push({'display': 'No known Unexploded Ordnances', 'data': ''});
@@ -2657,10 +2660,10 @@ function viewModel() {
         //     }
         //     attrs.push({'display': 'Commercial Ship Traffic Density', 'data': rank });
         // }
-        
+
         return attrs;
     };
-    
+
     self.adjustAidsToNavigationAttributes = function (attrObj) {
         aidType = _.find(attrObj, function(obj) { return obj["display"] === 'Aid Type'; });
         if ( aidType["data"] === "PA" ) {
@@ -2671,7 +2674,7 @@ function viewModel() {
             aidType["data"] = "FD (Undocumented)";
         }
     }
-            
+
     return self;
 } //end viewModel
 
