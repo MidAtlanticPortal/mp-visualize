@@ -69,6 +69,8 @@ function layerModel(options, parent) {
     //has companion layer(s)
     self.hasCompanion = options.has_companion || false;
 
+    self.searchQueryable = options.search_query || false;
+
     app.viewModel.zoomLevel.subscribe( function() {
         if (self.annotated && app.viewModel.zoomLevel() < 9) {
             self.isDisabled(true);
@@ -283,6 +285,10 @@ function layerModel(options, parent) {
     self.deactivateLayer = function() {
         var layer = this;
 
+        //de-activate companion layer should happen prior to base
+        if (layer.hasCompanion) {
+            self.deactivateCompanion();
+        }
         //deactivate layer
         self.deactivateBaseLayer();
 
@@ -302,11 +308,6 @@ function layerModel(options, parent) {
         //de-activate arcIdentifyControl (if applicable)
         if (layer.arcIdentifyControl) {
             layer.arcIdentifyControl.deactivate();
-        }
-
-        //de-activate companion layer
-        if (layer.hasCompanion) {
-            self.deactivateCompanion();
         }
 
         layer.layer = null;
@@ -392,7 +393,10 @@ function layerModel(options, parent) {
         if (layerDir.visible()) {
             $.each(layersArray, function(i, l) {
                 if (l.parentMDATDirectory && l.parentMDATDirectory.id == layerDir.id) {
-                    l.deactivateLayer();
+                    l.deactivateBaseLayer();
+                    if (l.companion.length > 0) {
+                        l.deactivateCompanion();
+                    }
                 }
             });
             layerDir.visible(false);
@@ -402,42 +406,52 @@ function layerModel(options, parent) {
     };
 
     self.deactivateCompanion = function() {
-        var layer = this;
-        var activeCompanionLayer = $.grep(app.viewModel.activeLayers(), function(c) {
-            return (c.companionLayers && c.companionLayers.length > 0)
-        });
-
-        //is the companion layer still active?
-        if (activeCompanionLayer.length == 0) {
-            layer.hasCompanion = false;
-            layer.deactivateLayer();
-            return false;
-        }
-
-        //are there more than one layers active?
-        if (app.viewModel.activeLayers().length > 1) {
-            var companionArray = [];
-            //find layers that have companions
-            $.each(app.viewModel.activeLayers(), function(i,lyr) {
-                if (lyr.hasCompanion) {
-                    companionArray.push(lyr)
-                }
-            });
-            var companionLayer = $.grep(companionArray, function(l) {
-                return l.companion.id == layer.companion.id
+        var layer = this,
+            mdatDir = layer.parentMDATDirectory;
+        //if queryable layers - deactivate companions
+        if (mdatDir && mdatDir.searchQueryable) {
+            $.each(layer.companion, function(i, ly) {
+                ly.deactivateBaseLayer();
+            })
+        } else {
+            var activeCompanionLayer = $.grep(app.viewModel.activeLayers(), function(c) {
+                return (c.companionLayers && c.companionLayers.length > 0)
             });
 
-            //if we can't find any more layers with the same companion layer
-            //let's remove it
-            if (companionLayer.length == 0) {
-                $.each(layer.companion, function(i, ly) {
-                    ly.deactivateLayer();
-                })
-            }  
-        // if no other layer is active - it's the companion layer, so let's remove it
-        } else if (app.viewModel.activeLayers().length == 1) {
-            app.viewModel.activeLayers()[0].deactivateLayer();
+            //is the companion layer still active?
+            if (activeCompanionLayer.length == 0) {
+                layer.deactivateBaseLayer();
+                return false;
+
+            //are there more than one layers active?
+            } else if (app.viewModel.activeLayers().length > 1) {
+                var companionArray = [];
+                //find layers that have companions
+                $.each(app.viewModel.activeLayers(), function(i,lyr) {
+                    if (lyr.hasCompanion) {
+                        //ignore queryable MDATs
+                        if (mdatDir && mdatDir.searchQueryable) {
+                            companionArray;
+                        } else {
+                            companionArray.push(lyr)
+                        }
+                    }
+                });
+                var companionLayer = $.grep(companionArray, function(l) {
+                    return l.companion.id == layer.companion.id
+                });
+
+                if (companionLayer.length > 0) {
+                    $.each(layer.companion, function(i, ly) {
+                        ly.deactivateBaseLayer();
+                    })
+                }  
+            // if no other layer is active - it's the companion layer, so let's remove it
+            } else if (app.viewModel.activeLayers().length == 1) {
+                app.viewModel.activeLayers()[0].deactivateBaseLayer();
+            }
         }
+        
     };
 
     // layer tracking Google Analytics
@@ -474,7 +488,13 @@ function layerModel(options, parent) {
 
             //activate companion layers
             if (layer.hasCompanion) {
-                self.activateCompanionLayer();
+                if (layer.parentMDATDirectory) {
+                    if (!layer.parentMDATDirectory.searchQueryable) {
+                        self.activateCompanionLayer()
+                    } 
+                } else {
+                    self.activateCompanionLayer();
+                }
             }
 
             self.trackLayer(layer.name);
@@ -1591,7 +1611,7 @@ function viewModel() {
             //activate companion layer
             companionLyr.activateLayer();
             //create key-value for deactivation logic
-            lyr.companion = companionLyr;
+            lyr.companion =[companionLyr];
         }
     }
 
