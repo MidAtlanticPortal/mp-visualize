@@ -1,12 +1,12 @@
 <table class="layer-row">
     <tr>
         <td class="layer-info-icon">
-        <!-- ko ifnot: isMDAT && parentMDATDirectory -->
-            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive(), disabled: wmsSession()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
+        <!-- ko ifnot: hasOwnProperty('isMDAT') && isMDAT -->
+            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
                 <i class="fa fa-info-circle"></i>
             </a>
         <!-- /ko -->
-        <!-- ko if: isMDAT && parentMDATDirectory -->
+        <!-- ko if: hasOwnProperty('isMDAT') && isMDAT && parentMDATDirectory -->
             <a class="btn btn-info-sign" data-bind="attr: {'data-title': parentMDATDirectory.name }" data-toggle="tooltip" data-placement="right">
                 <i class="fa fa-info-circle"></i>
             </a>
@@ -35,7 +35,7 @@
         {% endblock %}
     </tr>
 </table>
-<!-- ko ifnot: isMDAT && parentMDATDirectory -->
+<!-- ko ifnot: hasOwnProperty('isMDAT') && isMDAT -->
 <div class="layer-info" data-bind="visible: infoActive()">
     <div class="link-bar" data-bind="if: $data.hasOwnProperty('kml') || $data.hasOwnProperty('data_download') || $data.hasOwnProperty('metadata') || $data.hasOwnProperty('source')">
         <span data-toggle="tooltip" data-placement="bottom" data-container="body" title="Download for Google Maps">
