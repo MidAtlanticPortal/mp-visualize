@@ -914,7 +914,8 @@ body.template-visualize{
         color: $danger;
     }
     //gif ajax
-    #mdat-load{
+    #mdat-load,
+    #date-load{
         display: none;
         margin: 0 auto;
     }

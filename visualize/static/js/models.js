@@ -671,6 +671,54 @@ function layerModel(options, parent) {
         }
     }
 
+    // array of VTR/CAS date ranges
+    self.dateRanges = ko.observableArray();
+
+    self.ajaxVTR = function(self, event) {
+        if (self.showSublayers() === true) {
+            self.showSublayers(false);
+            return false;
+        }
+
+        var layer = this,
+            $dateSpinner = $('#date-load'),
+            $parentDirs = $(event.target).parents("ul.unstyled");
+            // $layerText = $('.mdat-input.search-box');
+
+        //marine-life-library theme?
+        if (layer.themes()[0].slug_name === 'vtr') {
+
+            $parentDirs.hide();
+            $dateSpinner.css("display", "block");
+            layer.gear = layer.url+'?f=pjson';
+            //give pseudo sublayer for toggling
+            layer.subLayers = [""]
+
+            var deferred = $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                url: layer.gear
+            });
+
+            deferred.done(function(data) {
+                $.each(data.services, function(i, val) {
+                    val.parentDirectory = layer;
+                    layer.dateRanges.push(val);
+
+                })
+
+                $dateSpinner.hide();
+                $parentDirs.show();
+                self.toggleActive();
+                if (layer.showSublayers()) {
+                //     $layerText.val('');
+                //     //focus() instantiates typeahead search in models.js
+                //     $('.mdat-input').focus();
+                }
+            })
+        }
+    }
+
     // bound to click handler for layer switching
     self.toggleActive = function(self, event) {
         var activeLayer = app.viewModel.activeLayer();
