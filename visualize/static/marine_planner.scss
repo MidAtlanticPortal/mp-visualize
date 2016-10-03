@@ -830,14 +830,18 @@ body.template-visualize{
     .layer.dropdown.open {
         .mdat-search { display: block; }
     }
-    //hack for mdat typeahead
+    .vtr-date-range.open {
+        .port-search { display: block; }
+    }
+    //hack for mdat/vtr typeahead
     .no-show {
         visibility: hidden;
         height: 0;
         padding: 0;
         border: none;
     }
-    .mdat-search {
+    .mdat-search,
+    .port-search {
         padding-left: 25px;
         line-height: 0.5;
         display: none;
@@ -849,8 +853,11 @@ body.template-visualize{
             }
         }
     }
-    .form-search {
+    .mdat-search > .form-search {
         padding-left: 26px;
+    }
+    .port-search > .form-search {
+        padding-left: 40px;
     }
     .search-box{
         border: none;
@@ -864,7 +871,8 @@ body.template-visualize{
         margin-top: 8px;
         width: 250px;
 
-        &.mdat-input {
+        &.mdat-input,
+        &.port-input {
             display: inline-block;
             height: 28px;
             width: 85%;

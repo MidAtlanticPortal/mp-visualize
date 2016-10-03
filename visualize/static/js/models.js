@@ -718,7 +718,7 @@ function layerModel(options, parent) {
         }
     }
 
-    // array of VTR/CAS date ranges
+    // array of VTR/CAS ports
     self.ports = ko.observableArray();
 
     self.searchVTRPort = function(self, event) {
@@ -731,15 +731,33 @@ function layerModel(options, parent) {
             $vtrSpinner.css("display", "block");
 
             layer.url = replaceVTRPath(layer);
-            layer.ports = layer.url+'?f=pjson';
+            layer.portsPath = layer.url+'/MapServer?f=pjson';
+            layer.serviceLayers = [];
             //give pseudo sublayer for toggling
             layer.subLayers = [""]
 
             var deferred = $.ajax({
                 type: 'GET',
                 dataType: 'jsonp',
-                url: layer.ports
+                url: layer.portsPath
             });
+
+            //get date-range directories
+            deferred.done(function(data) {
+                $.each(data.layers, function(i, port) {
+                    port.dateRangeDirectory = layer;
+                    layer.serviceLayers.push(port);
+                })
+
+                $vtrSpinner.hide();
+                $parentDirs.show();
+                self.showVTRSearch(true);
+                // if (layer.showSublayers()) {
+                //     $layerText.val('');
+                //     //focus() instantiates typeahead search in models.js
+                //     $('.port-input').focus();
+                // }
+            })
 
     }
 
@@ -1696,6 +1714,10 @@ function viewModel() {
             lyr.companion =[companionLyr];
         }
     }
+
+    self.activateVTRLayer = function() {
+        console.log('dgfdf')
+    };
 
     /* session based WMS layers */
     self.submitWMSSession = function() {
