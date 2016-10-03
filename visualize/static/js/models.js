@@ -681,18 +681,17 @@ function layerModel(options, parent) {
         }
 
         var layer = this,
-            $dateSpinner = $('#date-load'),
+            $vtrSpinner = $('#vtr-load'),
             $parentDirs = $(event.target).parents("ul.unstyled");
-            // $layerText = $('.mdat-input.search-box');
 
         //marine-life-library theme?
         if (layer.themes()[0].slug_name === 'vtr') {
-
+            layer.dateRanges([]);
             $parentDirs.hide();
-            $dateSpinner.css("display", "block");
+            $vtrSpinner.css("display", "block");
             layer.gear = layer.url+'?f=pjson';
             //give pseudo sublayer for toggling
-            layer.subLayers = [""]
+            layer.subLayers = [""];
 
             var deferred = $.ajax({
                 type: 'GET',
@@ -700,23 +699,58 @@ function layerModel(options, parent) {
                 url: layer.gear
             });
 
+            //get date-range directories
             deferred.done(function(data) {
                 $.each(data.services, function(i, val) {
                     val.parentDirectory = layer;
+                    val.showVTRSearch = ko.observable(false);
+                    val.searchVTRPort = ko.observable();
+                    val.path = val.name;
+                    //we only want the second part of the path as the name
+                    val.name = val.name.split('/')[1].replace('_', '-');
                     layer.dateRanges.push(val);
-
                 })
 
-                $dateSpinner.hide();
+                $vtrSpinner.hide();
                 $parentDirs.show();
                 self.toggleActive();
-                if (layer.showSublayers()) {
-                //     $layerText.val('');
-                //     //focus() instantiates typeahead search in models.js
-                //     $('.mdat-input').focus();
-                }
             })
         }
+    }
+
+    // array of VTR/CAS date ranges
+    self.ports = ko.observableArray();
+
+    self.searchVTRPort = function(self, event) {
+        var layer = this,
+            $vtrSpinner = $('#vtr-load'),
+            $parentDirs = $(event.target).parents("ul.unstyled"),
+            $layerText = $('.vtr-port-input.search-box'); 
+
+            $parentDirs.hide();
+            $vtrSpinner.css("display", "block");
+
+            layer.url = replaceVTRPath(layer);
+            layer.ports = layer.url+'?f=pjson';
+            //give pseudo sublayer for toggling
+            layer.subLayers = [""]
+
+            var deferred = $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                url: layer.ports
+            });
+
+    }
+
+    function replaceVTRPath(lyr) {
+        var path = lyr.parentDirectory.url;
+        //find the last '/' in the url path
+        var urlLocale = path.lastIndexOf('/');
+        var sub = path.substring(urlLocale + 1);
+        //replace the substring with the actual path
+        var newPath = path.replace(sub, lyr.path);
+        return newPath
     }
 
     // bound to click handler for layer switching
