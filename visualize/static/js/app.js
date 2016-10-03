@@ -242,7 +242,7 @@ $(document).on('focusin', '.port-input', function(){
   $(this).typeahead({
     source:  activateVTRParent.serviceLayers,
     matcher: function (item) {
-      var it = stringShortener(item);
+      var it = item.name;
       // custom search matching on object titles
       if (it.toLowerCase().indexOf(this.query.trim().toLowerCase()) != -1) {
           return true;

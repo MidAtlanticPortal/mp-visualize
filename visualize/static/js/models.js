@@ -64,6 +64,10 @@ function layerModel(options, parent) {
     self.isMDAT = options.isMDAT || false;
     self.parentMDATDirectory = options.parentDirectory || null;
 
+    // mdat/marine life layers
+    self.isVTR = options.isVTR || false;
+    self.parentMDATDirectory = options.parentDirectory || null;
+
     //tied to the layer that's a companion of another layer
     self.companionLayers = options.companion_layers || false;
     //has companion layer(s)
@@ -713,7 +717,6 @@ function layerModel(options, parent) {
 
                 $vtrSpinner.hide();
                 $parentDirs.show();
-                self.toggleActive();
             })
         }
     }
@@ -751,12 +754,11 @@ function layerModel(options, parent) {
 
                 $vtrSpinner.hide();
                 $parentDirs.show();
+                //set layer to be queryable
+                app.viewModel.activeLayer(layer);
                 self.showVTRSearch(true);
-                // if (layer.showSublayers()) {
-                //     $layerText.val('');
-                //     //focus() instantiates typeahead search in models.js
-                //     $('.port-input').focus();
-                // }
+                $layerText.val('');
+                $('.port-input').focus();
             })
 
     }
@@ -1715,8 +1717,27 @@ function viewModel() {
         }
     }
 
-    self.activateVTRLayer = function() {
-        console.log('dgfdf')
+    self.activateVTRLayer = function(layer) {
+        var activeVTRQueryLayers = $.grep(app.viewModel.activeLayers(), function(vtrLyr) {
+            return (vtrLyr.name === layer.name && vtrLyr.url === layer.url);
+        });
+
+        //if this layer is already active, don't create a duplicate layer object
+        if (activeVTRQueryLayers.length > 0) {
+            return false;
+        }
+
+        var vtrObj = {
+            type: 'ArcRest',
+            name: layer.name,
+            isVTR: true,
+            url: layer.url+'/MapServer/export',
+            arcgis_layers: layer.id
+        };
+
+        var vtrLayer = new layerModel(vtrObj);
+        vtrLayer.activateLayer();
+
     };
 
     /* session based WMS layers */
