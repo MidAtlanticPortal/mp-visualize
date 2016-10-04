@@ -64,9 +64,9 @@ function layerModel(options, parent) {
     self.isMDAT = options.isMDAT || false;
     self.parentMDATDirectory = options.parentDirectory || null;
 
-    // mdat/marine life layers
+    // VTR/CAS life layers
     self.isVTR = options.isVTR || false;
-    self.parentMDATDirectory = options.parentDirectory || null;
+    self.dateRangeDirectory = options.dateRangeDirectory || null;
 
     //tied to the layer that's a companion of another layer
     self.companionLayers = options.companion_layers || false;
@@ -490,6 +490,10 @@ function layerModel(options, parent) {
                 self.parentMDATDirectory.visible(true);
             }
 
+            if (layer.isVTR) {
+                self.visible(true);
+            }
+
             //activate companion layers
             if (layer.hasCompanion) {
                 if (layer.parentMDATDirectory) {
@@ -695,14 +699,15 @@ function layerModel(options, parent) {
             layer.dateRanges([]);
             $parentDirs.hide();
             $vtrSpinner.css("display", "block");
-            layer.gear = layer.url+'?f=pjson';
+            layer.gearURL = layer.url+'?f=pjson';
             //give pseudo sublayer for toggling
             layer.subLayers = [""];
+            layer.isVTR = true;
 
             var deferred = $.ajax({
                 type: 'GET',
                 dataType: 'jsonp',
-                url: layer.gear
+                url: layer.gearURL
             });
 
             //get date-range directories
@@ -713,7 +718,7 @@ function layerModel(options, parent) {
                     val.searchVTRPort = ko.observable();
                     val.path = val.name;
                     //we only want the second part of the path as the name
-                    val.name = val.name.split('/')[1].replace('_', '-');
+                    val.name = val.name.split('/')[1].replace('_', ' - ');
                     layer.dateRanges.push(val);
                 })
 
@@ -734,7 +739,7 @@ function layerModel(options, parent) {
         var layer = this,
             $vtrSpinner = $('#vtr-load'),
             $parentDirs = $(event.target).parents("ul.unstyled"),
-            $layerText = $('.vtr-port-input.search-box');
+            $layerText = $('.port-input.search-box');
 
             $parentDirs.hide();
             $vtrSpinner.css("display", "block");
@@ -787,8 +792,12 @@ function layerModel(options, parent) {
 
         //are the active and current layers the same
         if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
+            // are these CAS/VTR layers?
+            if (activeLayer.dateRangeDirectory) {
+                activeLayer.parentDirectory.showSublayers(false);
+            }
             //is sublayer already active
-            if (activeLayer.showSublayers()) {
+            else if (activeLayer && activeLayer.showSublayers()) {
                 //if radio sublayer
                 if (!activeLayer.isCheckBoxLayer()) {
                     activeLayer.showSublayers(false);
@@ -1737,6 +1746,7 @@ function viewModel() {
             type: 'ArcRest',
             name: layer.name,
             isVTR: true,
+            dateRangeDirectory: layer.dateRangeDirectory,
             url: layer.url+'/MapServer/export',
             arcgis_layers: layer.id
         };
