@@ -1053,6 +1053,11 @@ td ul.dropdown-menu {
         max-width: 1000px;
     }
 }
+.tooltip.fade.right.in {
+    .tooltip-inner {
+        max-width: 100%;
+    }
+}
 
 #map-wms-modal {
     .modal-body {
