@@ -827,8 +827,16 @@ body.template-visualize{
             cursor: pointer;
         }
     }
+    .layer.dropdown {
+        .date-ranges { display: none; }
+    }
     .layer.dropdown.open {
         .mdat-search { display: block; }
+        //show gear date ranges
+        .date-ranges { display: block; }
+    }
+    .vtr-date-range {
+        .port-search { display: none; }
     }
     .vtr-date-range.open {
         .port-search { display: block; }
@@ -881,7 +889,7 @@ body.template-visualize{
             padding-top: 0;
         }
     }
-    
+
     //'x' delete button to clear query search
     .delete-search {
         display: inline-block;

@@ -449,13 +449,13 @@ function layerModel(options, parent) {
                     $.each(layer.companion, function(i, ly) {
                         ly.deactivateBaseLayer();
                     })
-                }  
+                }
             // if no other layer is active - it's the companion layer, so let's remove it
             } else if (app.viewModel.activeLayers().length == 1) {
                 app.viewModel.activeLayers()[0].deactivateBaseLayer();
             }
         }
-        
+
     };
 
     // layer tracking Google Analytics
@@ -495,7 +495,7 @@ function layerModel(options, parent) {
                 if (layer.parentMDATDirectory) {
                     if (!layer.parentMDATDirectory.searchQueryable) {
                         self.activateCompanionLayer()
-                    } 
+                    }
                 } else {
                     self.activateCompanionLayer();
                 }
@@ -684,11 +684,13 @@ function layerModel(options, parent) {
             return false;
         }
 
+        self.showSublayers(true);
+
         var layer = this,
             $vtrSpinner = $('#vtr-load'),
             $parentDirs = $(event.target).parents("ul.unstyled");
 
-        //marine-life-library theme?
+        //communities at sea theme?
         if (layer.themes()[0].slug_name === 'vtr') {
             layer.dateRanges([]);
             $parentDirs.hide();
@@ -725,10 +727,14 @@ function layerModel(options, parent) {
     self.ports = ko.observableArray();
 
     self.searchVTRPort = function(self, event) {
+        if (self.showVTRSearch()) {
+            self.showVTRSearch(false);
+            return false;
+        }
         var layer = this,
             $vtrSpinner = $('#vtr-load'),
             $parentDirs = $(event.target).parents("ul.unstyled"),
-            $layerText = $('.vtr-port-input.search-box'); 
+            $layerText = $('.vtr-port-input.search-box');
 
             $parentDirs.hide();
             $vtrSpinner.css("display", "block");

@@ -30,7 +30,7 @@
 <!-- END GEARS -->
 
 <!-- DATE RANGES -->
-<div data-bind="foreach: dateRanges(); visible: showSublayers()">
+<div class="date-ranges" data-bind="foreach: dateRanges()">
   <div class="vtr-date-range" data-bind="attr: { 'layer-name': name }, css: { open: showVTRSearch() }">
     <table class="vtr-gear-layer layer-row">
         <tr>
@@ -58,7 +58,7 @@
       <input class="no-show" type="text" data-provide="typeahead">
       <input class="port-input search-box form-control"
               type="text"
-              placeholder="Search..." 
+              placeholder="Search..."
               autocomplete="off">
       <button class="fa fa-times delete-search" aria-hidden="true" type="reset"></button>
       </form>
