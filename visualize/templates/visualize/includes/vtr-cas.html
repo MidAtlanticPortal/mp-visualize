@@ -52,8 +52,17 @@
           </td>
         </tr>
     </table>
+
     <!-- PORT SEARCH -->
     <div class="port-search">
+      <ul class="dropdown-menu dropdown-menu-right layer-menu">
+          <li data-bind="foreach: subLayers">
+              <a data-bind="click: toggleActive">
+                  <span><i class="fa green" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
+                  <span class="deep-blue uppercase" data-bind="text: name"></span>
+              </a>
+          </li>
+      </ul>
       <form class="form-search">
       <input class="no-show" type="text" data-provide="typeahead">
       <input class="port-input search-box form-control"
