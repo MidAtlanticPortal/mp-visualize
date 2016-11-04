@@ -1750,6 +1750,7 @@ function viewModel() {
             name: layer.name,
             isVTR: true,
             dateRangeDirectory: layer.dateRangeDirectory,
+            parentDirectory: layer.parentDirectory,
             url: layer.url+'/MapServer/export',
             arcgis_layers: layer.id
         };
