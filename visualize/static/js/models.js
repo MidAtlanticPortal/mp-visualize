@@ -742,7 +742,7 @@ function layerModel(options, parent) {
         var layer = this,
             $vtrSpinner = $('#vtr-load'),
             $parentDirs = $(event.target).parents("ul.unstyled"),
-            // $layerText = $('.port-input.search-box');
+            $layerText = $('.port-input.search-box');
 
             $parentDirs.hide();
             $vtrSpinner.css("display", "block");
