@@ -688,10 +688,13 @@ function layerModel(options, parent) {
             $.each(layersArray, function(i, l) {
                 if (l.parentMDATDirectory && l.parentMDATDirectory.id == layerDir.id) {
                     l.deactivateBaseLayer();
+                    if (l.companion.length > 0) {
+                        l.deactivateCompanion();
+                    }
                 }
             });
             layerDir.visible(false);
-            layerDir.showSublayers(false);
+            // layerDir.showSublayers(false);
             return false;
         }
     };
