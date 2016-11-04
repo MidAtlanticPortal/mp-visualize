@@ -241,7 +241,7 @@ $(document).ready(function() {
 $(document).on('focusin', '.port-input', function(){
   var activateVTRParent = app.viewModel.activeLayer();
 
-  /* $(this).typeahead({
+  $(this).typeahead({
     source:  activateVTRParent.serviceLayers,
     matcher: function (item) {
       var it = item.name;
@@ -256,7 +256,7 @@ $(document).on('focusin', '.port-input', function(){
     },
     minLength: 2,
     items: 12, 
-  }) */
+  })
 });
 
   // hiding feature attributes on new click events (but ignoring map pan events)

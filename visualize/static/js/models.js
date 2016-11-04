@@ -731,6 +731,8 @@ function layerModel(options, parent) {
     // array of VTR/CAS ports
     self.ports = ko.observableArray();
 
+    self.serviceLayers = ko.observableArray();
+
     self.searchVTRPort = function(self, event) {
         if (self.showVTRSearch()) {
             self.showVTRSearch(false);
@@ -740,14 +742,14 @@ function layerModel(options, parent) {
         var layer = this,
             $vtrSpinner = $('#vtr-load'),
             $parentDirs = $(event.target).parents("ul.unstyled"),
-            $layerText = $('.port-input.search-box');
+            // $layerText = $('.port-input.search-box');
 
             $parentDirs.hide();
             $vtrSpinner.css("display", "block");
 
             layer.url = replaceVTRPath(layer);
             layer.portsPath = layer.url+'/MapServer?f=pjson';
-            layer.serviceLayers = [];
+            layer.serviceLayers([]);
             //give pseudo sublayer for toggling
             layer.subLayers = [""]
 
@@ -761,6 +763,7 @@ function layerModel(options, parent) {
             deferred.done(function(data) {
                 $.each(data.layers, function(i, port) {
                     port.dateRangeDirectory = layer;
+                    val.name = val.name.split('/')[1].replace('_', ' - ');
                     layer.serviceLayers.push(port);
                 })
 
@@ -769,8 +772,8 @@ function layerModel(options, parent) {
                 //set layer to be queryable
                 app.viewModel.activeLayer(layer);
                 self.showVTRSearch(true);
-                $layerText.val('');
-                $('.port-input').focus();
+                // $layerText.val('');
+                // $('.port-input').focus();
             })
 
     }
