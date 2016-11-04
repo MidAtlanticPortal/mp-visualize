@@ -64,6 +64,10 @@ function layerModel(options, parent) {
     self.isMDAT = options.isMDAT || false;
     self.parentMDATDirectory = options.parentDirectory || null;
 
+    // VTR/CAS life layers
+    self.isVTR = options.isVTR || false;
+    self.dateRangeDirectory = options.dateRangeDirectory || null;
+
     //tied to the layer that's a companion of another layer
     self.companionLayers = options.companion_layers || false;
     //has companion layer(s)
@@ -445,13 +449,13 @@ function layerModel(options, parent) {
                     $.each(layer.companion, function(i, ly) {
                         ly.deactivateBaseLayer();
                     })
-                }  
+                }
             // if no other layer is active - it's the companion layer, so let's remove it
             } else if (app.viewModel.activeLayers().length == 1) {
                 app.viewModel.activeLayers()[0].deactivateBaseLayer();
             }
         }
-        
+
     };
 
     // layer tracking Google Analytics
@@ -486,12 +490,16 @@ function layerModel(options, parent) {
                 self.parentMDATDirectory.visible(true);
             }
 
+            if (layer.isVTR) {
+                self.visible(true);
+            }
+
             //activate companion layers
             if (layer.hasCompanion) {
                 if (layer.parentMDATDirectory) {
                     if (!layer.parentMDATDirectory.searchQueryable) {
                         self.activateCompanionLayer()
-                    } 
+                    }
                 } else {
                     self.activateCompanionLayer();
                 }
@@ -671,6 +679,112 @@ function layerModel(options, parent) {
         }
     }
 
+    // array of VTR/CAS date ranges
+    self.dateRanges = ko.observableArray();
+
+    self.ajaxVTR = function(self, event) {
+        if (self.showSublayers() === true) {
+            self.showSublayers(false);
+            return false;
+        }
+        
+        self.showSublayers(true);
+
+        var layer = this,
+            $vtrSpinner = $('#vtr-load'),
+            $parentDirs = $(event.target).parents("ul.unstyled");
+
+        //communities at sea theme?
+        if (layer.themes()[0].slug_name === 'vtr') {
+            layer.dateRanges([]);
+            $parentDirs.hide();
+            $vtrSpinner.css("display", "block");
+            layer.gearURL = layer.url+'?f=pjson';
+            //give pseudo sublayer for toggling
+            layer.subLayers = [""];
+            layer.isVTR = true;
+
+            var deferred = $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                url: layer.gearURL
+            });
+
+            //get date-range directories
+            deferred.done(function(data) {
+                $.each(data.services, function(i, val) {
+                    val.parentDirectory = layer;
+                    val.showVTRSearch = ko.observable(false);
+                    val.searchVTRPort = ko.observable();
+                    val.path = val.name;
+                    //we only want the second part of the path as the name
+                    val.name = val.name.split('/')[1].replace('_', ' - ');
+                    layer.dateRanges.push(val);
+                })
+
+                $vtrSpinner.hide();
+                $parentDirs.show();
+            })
+        }
+    }
+
+    // array of VTR/CAS ports
+    self.ports = ko.observableArray();
+
+    self.searchVTRPort = function(self, event) {
+        if (self.showVTRSearch()) {
+            self.showVTRSearch(false);
+            return false;
+        }
+
+        var layer = this,
+            $vtrSpinner = $('#vtr-load'),
+            $parentDirs = $(event.target).parents("ul.unstyled"),
+            $layerText = $('.port-input.search-box');
+
+            $parentDirs.hide();
+            $vtrSpinner.css("display", "block");
+
+            layer.url = replaceVTRPath(layer);
+            layer.portsPath = layer.url+'/MapServer?f=pjson';
+            layer.serviceLayers = [];
+            //give pseudo sublayer for toggling
+            layer.subLayers = [""]
+
+            var deferred = $.ajax({
+                type: 'GET',
+                dataType: 'jsonp',
+                url: layer.portsPath
+            });
+
+            //get date-range directories
+            deferred.done(function(data) {
+                $.each(data.layers, function(i, port) {
+                    port.dateRangeDirectory = layer;
+                    layer.serviceLayers.push(port);
+                })
+
+                $vtrSpinner.hide();
+                $parentDirs.show();
+                //set layer to be queryable
+                app.viewModel.activeLayer(layer);
+                self.showVTRSearch(true);
+                $layerText.val('');
+                $('.port-input').focus();
+            })
+
+    }
+
+    function replaceVTRPath(lyr) {
+        var path = lyr.parentDirectory.url;
+        //find the last '/' in the url path
+        var urlLocale = path.lastIndexOf('/');
+        var sub = path.substring(urlLocale + 1);
+        //replace the substring with the actual path
+        var newPath = path.replace(sub, lyr.path);
+        return newPath
+    }
+
     // bound to click handler for layer switching
     self.toggleActive = function(self, event) {
         var activeLayer = app.viewModel.activeLayer();
@@ -679,11 +793,17 @@ function layerModel(options, parent) {
 
         //are the active and current layers the same
         if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
+            // are these CAS/VTR layers?
+            if (activeLayer.dateRangeDirectory && typeof activeLayer.parentDirectory == 'Function') {
+                activeLayer.parentDirectory.showSublayers(false);
+            }
             //is sublayer already active
-            if (activeLayer.showSublayers()) {
-                //if radio sublayer
-                if (!activeLayer.isCheckBoxLayer()) {
-                    activeLayer.showSublayers(false);
+            else if (activeLayer && typeof activeLayer.showSublayers == 'Function' ) {
+                if (activeLayer && activeLayer.showSublayers()) {
+                    //if radio sublayer
+                    if (!activeLayer.isCheckBoxLayer()) {
+                        activeLayer.showSublayers(false);
+                    }
                 }
             //check if a parent layer is active
             //checkbox sublayer has been clicked prior to opening another sublayer
@@ -1614,6 +1734,30 @@ function viewModel() {
             lyr.companion =[companionLyr];
         }
     }
+
+    self.activateVTRLayer = function(layer) {
+        var activeVTRQueryLayers = $.grep(app.viewModel.activeLayers(), function(vtrLyr) {
+            return (vtrLyr.name === layer.name && vtrLyr.url === layer.url);
+        });
+
+        //if this layer is already active, don't create a duplicate layer object
+        if (activeVTRQueryLayers.length > 0) {
+            return false;
+        }
+
+        var vtrObj = {
+            type: 'ArcRest',
+            name: layer.name,
+            isVTR: true,
+            dateRangeDirectory: layer.dateRangeDirectory,
+            url: layer.url+'/MapServer/export',
+            arcgis_layers: layer.id
+        };
+
+        var vtrLayer = new layerModel(vtrObj);
+        vtrLayer.activateLayer();
+
+    };
 
     /* session based WMS layers */
     self.submitWMSSession = function() {

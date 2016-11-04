@@ -186,8 +186,10 @@ $(document).ready(function() {
   $(document).on('click', 'body', function(event) {
     var activeLayer = app.viewModel.activeLayer();
     var elm = '.layer.open.dropdown';
-    if (activeLayer && (activeLayer.showSublayers() || $(elm).length)) {
-      app.viewModel.outsideSubLayer(event, elm);
+    if (activeLayer && typeof activeLayer.showSublayers == 'function') {
+      if (activeLayer && (activeLayer.showSublayers() || $(elm).length)) {
+        app.viewModel.outsideSubLayer(event, elm);
+      }
     }
   });
 
@@ -234,6 +236,28 @@ $(document).ready(function() {
       items: 12, 
     })
   });
+
+//typeahead autocomplete for VTR port layers
+$(document).on('focusin', '.port-input', function(){
+  var activateVTRParent = app.viewModel.activeLayer();
+
+  $(this).typeahead({
+    source:  activateVTRParent.serviceLayers,
+    matcher: function (item) {
+      var it = item.name;
+      // custom search matching on object titles
+      if (it.toLowerCase().indexOf(this.query.trim().toLowerCase()) != -1) {
+          return true;
+      }
+    },
+    afterSelect: function(item) {
+      item.url = activateVTRParent.url;
+      app.viewModel.activateVTRLayer(item);
+    },
+    minLength: 2,
+    items: 12, 
+  })
+});
 
   // hiding feature attributes on new click events (but ignoring map pan events)
   app.map.events.register('move', app.map, function() {

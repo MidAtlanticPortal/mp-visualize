@@ -1,0 +1,75 @@
+<!-- GEARS -->
+<table class="layer-row">
+    <tr>
+        <td class="layer-info-icon">
+            <a class="btn btn-info-sign" data-bind="attr: { href: learn_more }" data-toggle="tooltip" data-placement="right" data-title="More Info" target="_blank">
+                <i class="fa fa-info-circle"></i>
+            </a>
+        </td>
+        <td class="layer-name">
+            <a class="btn btn-layer vtr-gear-layer">
+              <table>
+                <tr>
+                  <td class="text" data-bind='click: {% block "nameAction" %}ajaxVTR{% endblock %}'>
+                    {% block "text-pre" %}
+                    {% endblock %}
+                    <i class="fa deep-blue" data-bind="css: { 'fa-caret-down': showSublayers() , 'fa-caret-right': !showSublayers()  }"></i>
+                  <span class="deep-blue uppercase" data-bind="text: name"></span>
+                  </td>
+                  <td class="add-on">
+                    <i class="fa fa-check-circle"  data-bind="css: { 'fa-check-circle': visible(), 'fa-circle-o': !(visible()) }, click: deactivateMDATDirectory"></i>
+                  </td>
+                </tr>
+              </table>
+            </a>
+        </td>
+        {% block "controls" %}
+        {% endblock %}
+    </tr>
+</table>
+<!-- END GEARS -->
+
+<!-- DATE RANGES -->
+<div class="date-ranges" data-bind="foreach: dateRanges()">
+  <div class="vtr-date-range" data-bind="attr: { 'layer-name': name }, css: { open: showVTRSearch() }">
+    <table class="vtr-gear-layer layer-row">
+        <tr>
+          <td class="layer-name">
+              <a class="btn btn-layer">
+                <table>
+                  <tr>
+                    <td width='50px'></td>
+                    <td class="text" data-bind='click: $parent.searchVTRPort'>
+                      <i class="fa deep-blue" data-bind="css: { 'fa-caret-down': showVTRSearch() , 'fa-caret-right': !showVTRSearch()  }"></i>
+                    <span class="deep-blue uppercase" data-bind="text: name"></span>
+                    </td>
+                    <td class="add-on">
+                      <i class="fa fa-check-circle"  data-bind="css: { 'fa-check-circle': $parent.visible(), 'fa-circle-o': !($parent.visible()) }"></i>
+                    </td>
+                  </tr>
+                </table>
+              </a>
+          </td>
+        </tr>
+    </table>
+
+    <!-- PORT SEARCH -->
+    <div class="port-search">
+      <form class="form-search">
+      <input class="no-show" type="text" data-provide="typeahead">
+      <input class="port-input search-box form-control"
+              type="text"
+              placeholder="Search for a Port..."
+              autocomplete="off">
+      <button class="fa fa-times delete-search" aria-hidden="true" type="reset"></button>
+      </form>
+    </div>
+    <!-- END PORT SEARCH -->
+  </div>
+</div>
+<!-- END DATE RANGES -->
+
+
+
+{% block "after" %}
+{% endblock %}
