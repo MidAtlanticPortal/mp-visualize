@@ -186,7 +186,7 @@ $(document).ready(function() {
   $(document).on('click', 'body', function(event) {
     var activeLayer = app.viewModel.activeLayer();
     var elm = '.layer.open.dropdown';
-    if ( typeof activeLayer.showSublayers == 'function' ) {
+    if (activeLayer && typeof activeLayer.showSublayers == 'function') {
       if (activeLayer && (activeLayer.showSublayers() || $(elm).length)) {
         app.viewModel.outsideSubLayer(event, elm);
       }

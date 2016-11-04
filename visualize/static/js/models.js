@@ -798,10 +798,12 @@ function layerModel(options, parent) {
                 activeLayer.parentDirectory.showSublayers(false);
             }
             //is sublayer already active
-            else if (activeLayer && activeLayer.showSublayers()) {
-                //if radio sublayer
-                if (!activeLayer.isCheckBoxLayer()) {
-                    activeLayer.showSublayers(false);
+            else if (activeLayer && typeof activeLayer.showSublayers == 'Function' ) {
+                if (activeLayer && activeLayer.showSublayers()) {
+                    //if radio sublayer
+                    if (!activeLayer.isCheckBoxLayer()) {
+                        activeLayer.showSublayers(false);
+                    }
                 }
             //check if a parent layer is active
             //checkbox sublayer has been clicked prior to opening another sublayer
