@@ -731,8 +731,6 @@ function layerModel(options, parent) {
     // array of VTR/CAS ports
     self.ports = ko.observableArray();
 
-    self.vtrServiceLayers = ko.observableArray();
-
     self.searchVTRPort = function(self, event) {
         if (self.showVTRSearch()) {
             self.showVTRSearch(false);
@@ -749,7 +747,7 @@ function layerModel(options, parent) {
 
             layer.url = replaceVTRPath(layer);
             layer.portsPath = layer.url+'/MapServer?f=pjson';
-            layer.vtrServiceLayers([]);
+            layer.serviceLayers = [];
             //give pseudo sublayer for toggling
             layer.subLayers = [""]
 
@@ -763,18 +761,16 @@ function layerModel(options, parent) {
             deferred.done(function(data) {
                 $.each(data.layers, function(i, port) {
                     port.dateRangeDirectory = layer;
-                    port.name = port.name.split('/')[1].replace('_', ' - ');
-                    layer.vtrServiceLayers.push(port);
-                    app.viewModel.activeLayer(layer);
+                    layer.serviceLayers.push(port);
                 })
 
                 $vtrSpinner.hide();
                 $parentDirs.show();
                 //set layer to be queryable
-                //app.viewModel.activeLayer(layer);
-                // self.showVTRSearch(true);
-                // $layerText.val('');
-                // $('.port-input').focus();
+                app.viewModel.activeLayer(layer);
+                self.showVTRSearch(true);
+                $layerText.val('');
+                $('.port-input').focus();
             })
 
     }
