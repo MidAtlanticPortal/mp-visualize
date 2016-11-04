@@ -794,7 +794,7 @@ function layerModel(options, parent) {
         //are the active and current layers the same
         if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
             // are these CAS/VTR layers?
-            if (activeLayer.dateRangeDirectory) {
+            if (activeLayer.dateRangeDirectory && typeof activeLayer.parentDirectory == 'Function') {
                 activeLayer.parentDirectory.showSublayers(false);
             }
             //is sublayer already active
@@ -1750,7 +1750,6 @@ function viewModel() {
             name: layer.name,
             isVTR: true,
             dateRangeDirectory: layer.dateRangeDirectory,
-            parentDirectory: layer.parentDirectory,
             url: layer.url+'/MapServer/export',
             arcgis_layers: layer.id
         };
