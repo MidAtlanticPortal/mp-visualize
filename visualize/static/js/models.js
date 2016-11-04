@@ -679,6 +679,23 @@ function layerModel(options, parent) {
         }
     }
 
+    //deactivate all layers within a queryable gear or port
+    self.deactivateVTR = function() {
+        var layerDir = this,
+            layersArray = app.viewModel.activeLayers().slice(); //deep copy
+
+        if (layerDir.visible()) {
+            $.each(layersArray, function(i, l) {
+                if (l.parentMDATDirectory && l.parentMDATDirectory.id == layerDir.id) {
+                    l.deactivateBaseLayer();
+                }
+            });
+            layerDir.visible(false);
+            layerDir.showSublayers(false);
+            return false;
+        }
+    };
+
     // array of VTR/CAS date ranges
     self.dateRanges = ko.observableArray();
 
@@ -736,6 +753,9 @@ function layerModel(options, parent) {
             self.showVTRSearch(false);
             return false;
         }
+
+        self.showSublayers(true);
+
         var layer = this,
             $vtrSpinner = $('#vtr-load'),
             $parentDirs = $(event.target).parents("ul.unstyled"),
