@@ -705,8 +705,6 @@ function layerModel(options, parent) {
             return false;
         }
 
-        self.showSublayers(true);
-
         var layer = this,
             $vtrSpinner = $('#vtr-load'),
             $parentDirs = $(event.target).parents("ul.unstyled");
