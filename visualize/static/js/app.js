@@ -233,7 +233,7 @@ $(document).ready(function() {
         app.viewModel.activateMDATLayer(item);
       },
       minLength: 2,
-      items: 12, 
+      items: 14, 
     })
   });
 
