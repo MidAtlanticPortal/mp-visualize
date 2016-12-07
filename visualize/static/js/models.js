@@ -1715,15 +1715,15 @@ function viewModel() {
         */
         var companionLyr;
 
-        if (lyr.name.slice(-6) === 'annual') {
+        if (lyr.name.split(' ').includes('annual') ) {
             companionLyr = self.getLayerById(488);
-        } else if (lyr.name.slice(-6) === 'spring') {
+        } else if (lyr.name.split(' ').includes('spring')) {
             companionLyr = self.getLayerById(489);
-        } else if (lyr.name.slice(-6) === 'winter') {
+        } else if (lyr.name.split(' ').includes('winter')) {
             companionLyr = self.getLayerById(492);
-        } else if (lyr.name.slice(-4) === 'fall') {
+        } else if (lyr.name.split(' ').includes('fall')) {
             companionLyr = self.getLayerById(491);
-        } else if (lyr.name.slice(-6) === 'summer') {
+        } else if (lyr.name.split(' ').includes('summer')) {
             companionLyr = self.getLayerById(490);
         }
 
