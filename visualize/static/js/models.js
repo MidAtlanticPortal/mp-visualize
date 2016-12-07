@@ -1713,7 +1713,7 @@ function viewModel() {
             - functionality is dependent on both the name on MDAT's end and
             - the specific layer IDs tied to the database on the main Portal site
         */
-        var companionLyr;
+        var companionLyr = {};
 
         if (lyr.name.split(' ').includes('annual') ) {
             companionLyr = self.getLayerById(488);
