@@ -114,7 +114,7 @@ function polygonFormModel(options) {
     self.polygonLayer = new OpenLayers.Layer.Vector(self.newPolygonLayerName);
     app.map.addLayer(self.polygonLayer);
 
-    self.polygonControl = new OpenLayers.Control.DrawFeature(self.polygonLayer, OpenLayers.Handler.Polygon);
+    self.polygonControl = new OpenLayers.Control.DrawFeature(self.polygonLayer, OpenLayers.Handler.Polygon, {multi:false});
     app.map.addControl(self.polygonControl);
 
     self.editControl = new OpenLayers.Control.ModifyFeature(self.polygonLayer);
@@ -127,10 +127,35 @@ function polygonFormModel(options) {
         'featureadded',
         self.polygonLayer,
         function(e) {
+            new_feature = e.feature;
+            self.assign_correct_layer(new_feature);
             self.completeSketch();
             self.showEdit(true);
         }
     );
+
+    self.assign_correct_layer = function(new_feature) {
+      if (new_feature.layer != self.polygonLayer) {
+        feat = new_feature.geometry;
+        var poly_found = false;
+        while (!poly_found || !feat.hasOwnProperty('components')) {
+          if (feat instanceof OpenLayers.Geometry.Polygon) {
+            if (self.polygonLayer.features[0].geometry instanceof OpenLayers.Feature.Vector) {
+              self.polygonLayer.features[0].geometry.components.push(feat);
+            } else {
+              self.polygonLayer.features[0].geometry.addComponent(feat);
+            }
+            poly_found = true;
+          } else {
+            feat = feat.components[0].geometry;
+          }
+        }
+        if (poly_found) {
+          new_feature.layer.destroy();
+          self.polygonLayer.redraw();
+        }
+      }
+    };
 
     self.startEdit = function() {
         self.isEditing(true);
@@ -166,7 +191,7 @@ function polygonFormModel(options) {
           for (var i=0; i < feature_list.length; i++) {
             if (feature_list[i].geometry instanceof OpenLayers.Geometry.Polygon) {
               polygon_list.push(feature_list[i].geometry)
-            } else if (feature_list[i].geometry instanceof OpenLayers.Geometry.Multipolygon) {
+            } else if (feature_list[i].geometry instanceof OpenLayers.Geometry.MultiPolygon) {
               for (var j=0; j < feature_list[i].geometry.components.length; j++) {
                 if (feature_list[i].geometry.components[j] instanceof OpenLayers.Geometry.Polygon) {
                   polygon_list.push(feature_list[i].geometry.components[j])
