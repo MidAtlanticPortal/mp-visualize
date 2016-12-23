@@ -164,7 +164,17 @@ function polygonFormModel(options) {
           }
         }
         if (poly_found) {
+          app.map.removeLayer(new_feature.layer);
           new_feature.layer.destroy();
+          app.map.removeControl(self.polygonControl);
+          self.polygonControl.destroy();
+          self.polygonControl = new OpenLayers.Control.DrawFeature(self.polygonLayer, OpenLayers.Handler.Polygon, {multi:false});
+          app.map.addControl(self.polygonControl);
+
+          app.map.removeControl(self.editControl);
+          self.editControl.destroy();
+          self.editControl = new OpenLayers.Control.ModifyFeature(self.polygonLayer);
+          app.map.addControl(self.editControl);
           self.polygonLayer.redraw();
         }
       }
