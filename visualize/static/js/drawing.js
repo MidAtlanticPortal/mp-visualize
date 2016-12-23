@@ -38,7 +38,6 @@ function drawingModel(options) {
 
                 app.viewModel.scenarios.drawingFormModel.showEdit(true);
                 app.viewModel.scenarios.drawingFormModel.hasShape(true);
-                app.viewModel.scenarios.drawingFormModel.startEdit();
             },
             error: function (result) {
                 //debugger;
@@ -187,8 +186,6 @@ function polygonFormModel(options) {
         self.editControl.deactivate();
         //re-enable feature attribution
         app.viewModel.enableFeatureAttribution();
-        //advance form (in case this was called clicking Done Editing button
-        $('#button_next').click();
     };
 
     self.completeSketch = function() {
