@@ -128,11 +128,25 @@ function polygonFormModel(options) {
         self.polygonLayer,
         function(e) {
             new_feature = e.feature;
-            self.assign_correct_layer(new_feature);
-            self.completeSketch();
-            self.showEdit(true);
+            is_polygon = self.validate_polygon(new_feature);
+            if (is_polygon) {
+                self.assign_correct_layer(new_feature);
+                self.completeSketch();
+                self.showEdit(true);
+            } else {
+              window.alert('Shapes must have at least 3 corners.');
+              e.feature.layer.removeFeatures(e.feature);
+            }
         }
     );
+
+    self.validate_polygon = function(feature) {
+      if (feature.geometry.getArea() > 0 && feature.geometry.getVertices().length > 2){
+        return true;
+      } else {
+        return false;
+      }
+    };
 
     self.assign_correct_layer = function(new_feature) {
       if (new_feature.layer != self.polygonLayer) {
