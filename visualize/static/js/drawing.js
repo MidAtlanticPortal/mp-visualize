@@ -127,7 +127,7 @@ function polygonFormModel(options) {
         self.polygonLayer,
         function(e) {
             new_feature = e.feature;
-            is_polygon = self.validate_polygon(new_feature);
+            is_polygon = self.validate_polygon(new_feature.geometry);
             if (is_polygon) {
                 self.assign_correct_layer(new_feature);
                 self.completeSketch();
@@ -140,7 +140,7 @@ function polygonFormModel(options) {
     );
 
     self.validate_polygon = function(feature) {
-      if (feature.geometry.getArea() > 0 && feature.geometry.getVertices().length > 2){
+      if (feature.getArea() > 0 && feature.getVertices().length > 2){
         return true;
       } else {
         return false;
@@ -151,6 +151,7 @@ function polygonFormModel(options) {
       if (new_feature.layer != self.polygonLayer) {
         feat = new_feature.geometry;
         var poly_found = false;
+        // Dig down through nested geometry types to find the polygon if present
         while (!poly_found || !feat.hasOwnProperty('components')) {
           if (feat instanceof OpenLayers.Geometry.Polygon) {
             if (self.polygonLayer.features[0].geometry instanceof OpenLayers.Feature.Vector) {
@@ -164,18 +165,9 @@ function polygonFormModel(options) {
           }
         }
         if (poly_found) {
-          app.map.removeLayer(new_feature.layer);
-          new_feature.layer.destroy();
-          app.map.removeControl(self.polygonControl);
-          self.polygonControl.destroy();
-          self.polygonControl = new OpenLayers.Control.DrawFeature(self.polygonLayer, OpenLayers.Handler.Polygon, {multi:false});
-          app.map.addControl(self.polygonControl);
-
-          app.map.removeControl(self.editControl);
-          self.editControl.destroy();
-          self.editControl = new OpenLayers.Control.ModifyFeature(self.polygonLayer);
-          app.map.addControl(self.editControl);
           self.polygonLayer.redraw();
+          // Assuming users can only draw 1 polygon at a time...
+          new_feature.layer.removeAllFeatures();
         }
       }
     };
@@ -194,8 +186,29 @@ function polygonFormModel(options) {
         self.isEditing(false);
         //deactivate the modify feature control
         self.editControl.deactivate();
+        geom = self.polygonLayer.features[0].geometry;
+        if (geom instanceof OpenLayers.Geometry.Polygon) {
+          // small edit for backward compatibility with polygon-only drawings
+          polys = [geom]
+        } else {
+          polys = geom.components;
+        }
+        //check that all shapes are polygons
+        for (var i = polys.length-1; i >= 0; i--) {
+          poly = polys[i];
+          if (!self.validate_polygon(poly)){
+            geom.removeComponent(polys[i]);
+          }
+        }
+        self.polygonLayer.redraw();
         //re-enable feature attribution
         app.viewModel.enableFeatureAttribution();
+        // Check that at least 1 shape remains after validation
+        if (self.polygonLayer.features.length == 0 || self.polygonLayer.features[0].geometry.components.length == 0) {
+          self.hasShape(false);
+          self.startSketch();
+          window.alert('You have no shapes drawn. Please draw a shape before saving.');
+        }
     };
 
     self.completeSketch = function() {
@@ -203,57 +216,54 @@ function polygonFormModel(options) {
         self.isDrawing(false);
         //deactivate the draw feature control
         self.polygonControl.deactivate();
-
-
         //Handle multipolygons
-        if (self.polygonLayer.features.length > 1) {
-          feature_list = self.polygonLayer.features;
-          polygon_list = [];
-          for (var i=0; i < feature_list.length; i++) {
-            if (feature_list[i].geometry instanceof OpenLayers.Geometry.Polygon) {
-              polygon_list.push(feature_list[i].geometry)
-            } else if (feature_list[i].geometry instanceof OpenLayers.Geometry.MultiPolygon) {
-              for (var j=0; j < feature_list[i].geometry.components.length; j++) {
-                if (feature_list[i].geometry.components[j] instanceof OpenLayers.Geometry.Polygon) {
-                  polygon_list.push(feature_list[i].geometry.components[j])
-                }
-              }
-            } else {
-              window.alert('New geometry is not a polygon and will not be added to the drawing.');
-            }
-          }
-          multipolygon = new OpenLayers.Geometry.MultiPolygon;
-          for (var poly_idx = 0; poly_idx < polygon_list.length; poly_idx++) {
-            multipolygon.addComponent(polygon_list[poly_idx]);
-          }
-          self.polygonLayer.features[0].geometry = multipolygon;
-          while (self.polygonLayer.features.length > 1) {
-            self.polygonLayer.features.pop(1);
-          }
-        }
-
-
-
+        self.consolidatePolygonLayerFeatures()
         //re-enable feature attribution
         app.viewModel.enableFeatureAttribution();
     };
 
+    self.consolidatePolygonLayerFeatures = function() {
+      // Despite the name, this mostly functions to convert old Polygon drawings
+      //    into single-part multipolygons, but it also helps with isertion of
+      //    new polygons into multipolygons.
+      feature_list = self.polygonLayer.features;
+      polygon_list = [];
+      for (var i=0; i < feature_list.length; i++) {
+        if (feature_list[i].geometry instanceof OpenLayers.Geometry.Polygon) {
+          polygon_list.push(feature_list[i].geometry)
+        } else if (feature_list[i].geometry instanceof OpenLayers.Geometry.MultiPolygon) {
+          for (var j=0; j < feature_list[i].geometry.components.length; j++) {
+            if (feature_list[i].geometry.components[j] instanceof OpenLayers.Geometry.Polygon) {
+              polygon_list.push(feature_list[i].geometry.components[j])
+            }
+          }
+        } else {
+          window.alert('New geometry is not a polygon and will not be added to the drawing.');
+        }
+      }
+      multipolygon = new OpenLayers.Geometry.MultiPolygon;
+      for (var poly_idx = 0; poly_idx < polygon_list.length; poly_idx++) {
+        multipolygon.addComponent(polygon_list[poly_idx]);
+      }
+      if (self.polygonLayer.features.length > 0) {
+        self.polygonLayer.features[0].geometry = multipolygon;
+        while (self.polygonLayer.features.length > 1) {
+          self.polygonLayer.features.pop(1);
+        }
+      }
+    }
+
     self.startSketch = function() {
+        if (self.polygonLayer.features[0].geometry instanceof OpenLayers.Geometry.Polygon) {
+          self.consolidatePolygonLayerFeatures();
+        }
         self.isDrawing(true);
         //activate the draw feature control
         self.polygonControl.activate();
         //disable feature attribution
         app.viewModel.disableFeatureAttribution();
     };
-    /*
-    self.replacePolygonLayer = function(newLayer) {
-        app.map.removeLayer(self.polygonLayer);
-        self.polygonLayer = newLayer;
-        //maybe remove layer from app.map and then re-add layer?
-        app.map.removeLayer(newLayer);
-        app.map.addLayer(newLayer);
-    };
-    */
+
     self.cleanUp = function() {
         //app.map.removeLayer(self.polygonLayer);
         self.polygonControl.deactivate();
