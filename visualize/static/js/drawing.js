@@ -254,7 +254,7 @@ function polygonFormModel(options) {
     }
 
     self.startSketch = function() {
-        if (self.polygonLayer.features[0].geometry instanceof OpenLayers.Geometry.Polygon) {
+        if (self.polygonLayer.features.length > 0 && self.polygonLayer.features[0].geometry instanceof OpenLayers.Geometry.Polygon) {
           self.consolidatePolygonLayerFeatures();
         }
         self.isDrawing(true);
