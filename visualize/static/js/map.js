@@ -278,7 +278,8 @@ app.init = function () {
                                 } else {
                                     try {
                                         //set the precision and add any necessary commas
-                                        value = value.toFixed(obj.precision).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                                        value = value.toFixed(obj.precision);
+                                        value = app.utils.numberWithCommas(value);
                                     }
                                     catch (e) {
                                         //keep on keeping on
