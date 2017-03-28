@@ -717,6 +717,12 @@ app.addArcRestLayerToMap = function(layer) {
                                                 data = new Date(data).toDateString();
                                             } else if (app.utils.isNumber(data)) {
                                                 data = app.utils.formatNumber(data);
+                                            } else if (typeof(data) == 'string' && data.indexOf('http') == 0){
+                                                // Make link attributes live!
+                                                str_list = data.split(' ');
+                                                link_string = '<a href="' + str_list[0] + '" target="_blank">' + str_list[0] + '</a>';
+                                                str_list[0] = link_string;
+                                                data = str_list.join(' ');
                                             }
                                             if (data && app.utils.trim(data) !== "") {
                                                 attributeObjs.push({

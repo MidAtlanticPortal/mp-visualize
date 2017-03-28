@@ -67,7 +67,7 @@
                             <dl data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
                                 <dt>
                                     <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
-                                    <span style="font-weight: normal" data-bind="text: data"></span>
+                                    <span style="font-weight: normal" data-bind="html: data"></span>
                                 </dt>
                             </dl>
                         </div>
@@ -95,7 +95,7 @@
                                                     <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                                     <!-- /ko -->
                                                     <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
-                                                    <span style="font-weight: normal" data-bind="text: data"></span>
+                                                    <span style="font-weight: normal" data-bind="html: data"></span>
                                                 </dt>
                                             </dl>
                                         </div>
@@ -127,7 +127,7 @@
                             <form class="form-search hide-collapsed" data-bind="submit: layerSearch">
                                 <div class="input-group inner-addon">
                                     <!-- data-provide="typeahead"  -->
-                                    <input type="text" class="search-box main-search form-control" 
+                                    <input type="text" class="search-box main-search form-control"
                                            data-bind="value: searchTerm, event: { keyup: keySearch }"
                                            style="text-overflow: ellipsis;"
                                            placeholder="Search data" id="data-search-input">
@@ -149,7 +149,7 @@
                     </div>
                     <div class="panel-body">
                         <div class="frame tabs" id="data-panel" data-bind="visible: showLayers()">
-                        
+
                             <div class="sidebar-nav">
                                 <ul id="myTab" class="nav nav-tabs">
                                     <li data-tab="active">
@@ -164,7 +164,7 @@
                                     <li data-tab="designs">
                                         <h4>
                                             <a href="#designs" data-toggle="tab" id="designsTab">MyPlanner</a>
-                                        </h4> 
+                                        </h4>
                                     </li>
                                     <li class="active" data-tab="data" >
                                         <h4>
@@ -268,7 +268,7 @@
                                                     <li>Creating and sharing of Map View Bookmarks</li>
                                                     <li>Drawing and highlighting map areas</li>
                                                     <li>Ocean area comparisions by lease blocks grids</li>
-                                                </ul> 
+                                                </ul>
                                             <p>
                                                 <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in here</a>.  If you do not have an account,
                                                 <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>register here</a>.
