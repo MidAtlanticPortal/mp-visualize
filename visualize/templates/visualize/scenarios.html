@@ -358,7 +358,8 @@
                         </div>
                         <!-- end drawings -->
 
-                        <!-- LEASE BLOCK COLLECTIONS -->
+                        <!-- LEASE BLOCK COLLECTIONS - removed 5/17 by RDH under KV's request -->
+                        {% if False %}
                         <div data-bind="with: app.viewModel.scenarios">
                             <div class="accordion-group">
                                 <div class="collections-header">
@@ -561,10 +562,12 @@
                                 </div>
                             </div>
                         </div>
+                        {% endif %}
                         <!-- end collections -->
 
-                        <!-- WIND ENERGY SITINGS -->
-                        {% if user|in_group:"Designers" %}
+                        <!-- WIND ENERGY SITINGS - removed 5/17 by RDH under KV's request -->
+                        {% if False %}
+                        <!-- {\% if user|in_group:"Designers" %} -->
                         <div data-bind="with: app.viewModel.scenarios">
                             <div class="accordion-group">
                                 <div class="accordion-heading"
@@ -906,4 +909,3 @@
         </div>
     </div>
 </div>
-
