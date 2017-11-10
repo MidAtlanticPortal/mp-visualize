@@ -1,14 +1,16 @@
-
-@media print {
+@media print and (orientation: landscape) {
 	html {
-		height: 100%;
+		/*min-height: 100%;*/
+		/*min-width: 100%;*/
 	}
 
 	body.template-visualize #map-wrapper {
-    height: 100%;
+    height: 8.5in !important;
     position: relative;
-    width: 100%;
+    width: 11in !important;
   }
+
+	/*
 
 	body.template-visualize #map {
     bottom: 0;
@@ -19,9 +21,9 @@
     right: 0;
     width: 100%;
     z-index: 9999;
-  }
+  } */
 
-	body.template-visualize #left-panel:not(.collapsed) {
+	/* body.template-visualize #left-panel:not(.collapsed) {
     display: block;
     height: auto;
     left: 0;
@@ -30,41 +32,14 @@
     top: 100%;
     width: 100%;
   }
-
-	body.template-visualize #left-panel #left-panel-body {
-    height: 100%;
-  }
-
-  body.template-visualize .tab-content .tab-pane {
-    display: none;
-    height: auto;
-    position: relative;
-    visibility: visible;
-    width: 100%;
-  }
-
-	body.template-visualize #left-panel .tab-pane#legend,
-  body.template-visualize #left-panel .tab-pane#active {
-    display: block;
-
-  }
-
-  body.template-visualize .nav-tabs {
-    display: none;
-  }
-
-  path {
-    fill-opacity: 0 !important;
-    stroke: yellow;
-    stroke-opacity: .95;
-    stroke-width: 5;
+*/
+	body.template-visualize #left-panel {
+    background: #f3f3f3 !important;
   }
 
   .gmnoscreen,
   .navicon,
   #OpenLayers.Control.MousePosition_43,
-  #map .olControlScaleBar,
-	.olControlScaleBar,
 	.olControlZoom,
 	#baselayers,
 	#map-controls,
@@ -74,23 +49,18 @@
 	#bookmark-popover,
 	#pageGuideMessage,
 	.form-search {
-		display: none;
+		/*display: none;*/
 	}
 
-	#OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div:nth-child(1) > div:nth-child(1) > img,
+/*	#OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div:nth-child(1) > div:nth-child(1) > img,
   #OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div:nth-child(1) > div:nth-child(1),
   #OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div > div {
     height: 256px;
     width: 256px;
   }
+*/
 
-  #OpenLayers\2e Map_2_OpenLayers_Container {
-    margin-left: -80px !important;
-  }
-
-  .panel-open #OpenLayers\2e Map_2_OpenLayers_Container {
-    margin-left: -360px !important;
-  }
+  .panel-open #OpenLayers\2e Map_2_OpenLayers_Container {}
 
 	.modal {
 		display: none !important;
@@ -98,7 +68,7 @@
 
   /* overwrite bootstrap print */
   .olTileImage {
-    max-width: none !important;
+    /*max-width: none !important;*/
   }
 
 }
