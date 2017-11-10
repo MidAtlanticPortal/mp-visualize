@@ -399,6 +399,62 @@ function toggleFormClone(cloneForm, elm) {
   }
 }
 
+function returnPxOver(pxOver) {
+  var printWidthRatio = pxOver / 16;
+  if (pxOver < 300) {
+    printWidthRatio = pxOver / 13;
+  } else if (pxOver < 400) {
+    printWidthRatio = pxOver / 14;
+  } else if (pxOver < 500) {
+    printWidthRatio = pxOver / 15;
+  }
+  return printWidthRatio;
+};
+
+$('#btn-print').click(function() {
+  var olimgs = document.getElementById('OpenLayers.Map_2_OpenLayers_Container'),
+      $olsvgs = $('#map svg'),
+      leftPanel = document.getElementById('left-panel'),
+      $lpWidth = $('#left-panel').width(),
+      $mapWidth = $('#map-wrapper').width();
+
+  var pxOver = $mapWidth - 1056,
+      printWidthRatio = returnPxOver(pxOver),
+      olTilePrintWidth = 100 - printWidthRatio,
+      printTileWidth = olTilePrintWidth + 'px';
+      console.log(pxOver);
+      console.log(printWidthRatio);
+      console.log(olTilePrintWidth);
+  olimgs.style.width = printTileWidth;
+  olimgs.style.height = printTileWidth;
+
+  var lpPrintWidth = $lpWidth - ($lpWidth * printWidthRatio / 100);
+  leftPanel.style.width = lpPrintWidth + 'px';
+
+  $olsvgs.each(function(i,e) {
+    var $svgWidth = $(this).width(),
+      $svgHeight = $(this).height(),
+      svgRatio = $svgHeight / $svgWidth;
+    $(this).width($mapWidth - pxOver);
+    $(this).height(($mapWidth - pxOver) * svgRatio);
+  });
+
+  window.setTimeout(function() {
+    window.print();
+    window.setTimeout(function() {
+      olimgs.style.width = '100px';
+      olimgs.style.height = '100px';
+      leftPanel.style.width = $lpWidth + 'px';
+      $olsvgs.each(function(i,e) {
+        $(this).width($('#map').width());
+        $(this).height($('#map').height());
+      });
+      app.map.updateSize();
+    }, 1500);
+  }, 1000);
+
+});
+
 $(document).mousedown(function(e) {
 
     // Process "outside" clicks

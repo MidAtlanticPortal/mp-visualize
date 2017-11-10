@@ -687,7 +687,7 @@ function layerModel(options, parent) {
             self.showSublayers(false);
             return false;
         }
-        
+
         self.showSublayers(true);
 
         var layer = this,

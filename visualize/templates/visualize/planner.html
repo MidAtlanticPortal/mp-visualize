@@ -41,62 +41,6 @@
                           <a class="btn" id="btn-print" data-toggle="tooltip" data-placement="left" title="Print/Export">
                             <i class="fa fa-print" id="print-icon"> </i>
                           </a>
-                          <script>
-                          let pbtn = document.getElementById('btn-print');
-                          pbtn.addEventListener('click', function() {
-                            var olimgs = document.getElementById('OpenLayers.Map_2_OpenLayers_Container'),
-                                $olsvgs = $('#map svg'),
-                                leftPanel = document.getElementById('left-panel'),
-                                lpWidth = $('#left-panel').width(),
-                                mapWrap = document.getElementById('map-wrapper'),
-                                mapWidth = mapWrap.clientWidth;
-
-                            var pxOver = mapWidth - 1056;
-                            var printWidthRatio = returnPxOver(pxOver);
-                            var olTilePrintWidth = 100 - printWidthRatio;
-                            var lpPrintWidth = lpWidth - (lpWidth * printWidthRatio / 100);
-                            var printTileWidth = olTilePrintWidth + 'px';
-
-                            olimgs.style.width = printTileWidth;
-                            olimgs.style.height = printTileWidth;
-                            leftPanel.style.width = lpPrintWidth + 'px';
-
-                            $olsvgs.each(function(i,e) {
-                              var $svgWidth = $(this).width(),
-                                  $svgHeight = $(this).height(),
-                                  svgRatio = $svgHeight / $svgWidth;
-                                $(this).width(mapWidth - pxOver);
-                                $(this).height((mapWidth - pxOver) * svgRatio);
-                            });
-
-                            window.setTimeout(function() {
-                              window.print();
-                              window.setTimeout(function() {
-                                olimgs.style.width = '100px';
-                                olimgs.style.height = '100px';
-                                leftPanel.style.width = lpWidth + 'px';
-                                $olsvgs.each(function(i,e) {
-                                  $(this).width($('#map').width());
-                                  $(this).height($('#map').height());
-                                });
-                                app.map.updateSize();
-                              }, 1000);
-                            }, 1000);
-                          });
-
-                          function returnPxOver(pxOver) {
-                            var printWidthRatio = pxOver / 16;
-                            if (pxOver < 300) {
-                              printWidthRatio = pxOver / 13;
-                            } else if (pxOver < 400) {
-                              printWidthRatio = pxOver / 14;
-                            } else if (pxOver < 500) {
-                              printWidthRatio = pxOver / 15;
-                            }
-                            return printWidthRatio;
-                          }
-
-                          </script>
                           <!--Map Links Button-->
                           <a id="basemap-button" class="btn" data-toggle="tooltip" data-placement="left" title="Share this Map" data-bind="click: showMapLinks">
                               <i class="fa fa-link"></i>

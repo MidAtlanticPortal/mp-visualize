@@ -1,41 +1,23 @@
 @media print and (orientation: landscape) {
-	html {
-		/*min-height: 100%;*/
-		/*min-width: 100%;*/
-	}
 
 	body.template-visualize #map-wrapper {
-    height: 8.5in !important;
-    position: relative;
+    height: 8.25in !important;
     width: 11in !important;
   }
 
-	/*
-
-	body.template-visualize #map {
-    bottom: 0;
-    height: 100%;
-    position: absolute;
-    overflow: visible;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 9999;
-  } */
-
-	/* body.template-visualize #left-panel:not(.collapsed) {
-    display: block;
-    height: auto;
-    left: 0;
-    padding: 0 5%;
-    position: absolute;
-    top: 100%;
-    width: 100%;
-  }
-*/
 	body.template-visualize #left-panel {
     background: #f3f3f3 !important;
+		top: 5px !important;
+		max-height: 8in !important;
   }
+
+	#myTab h4 {
+		font-size: 14px;
+	}
+
+	.olControlScaleBarGraphics > div {
+		background: #333 !important;
+	}
 
   .gmnoscreen,
   .navicon,
@@ -48,23 +30,16 @@
   #close-attribute-overlay,
 	#bookmark-popover,
 	#pageGuideMessage,
-	.form-search {
-		/*display: none;*/
-	}
-
-/*	#OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div:nth-child(1) > div:nth-child(1) > img,
-  #OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div:nth-child(1) > div:nth-child(1),
-  #OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div > div {
-    height: 256px;
-    width: 256px;
-  }
-*/
-
-  .panel-open #OpenLayers\2e Map_2_OpenLayers_Container {}
-
+	.form-search,
 	.modal {
-		display: none !important;
+		display: none;
 	}
+
+	.olControlAttribution {
+		left: 0;
+	}
+
+  /*.panel-open #OpenLayers\2e Map_2_OpenLayers_Container {}*/
 
   /* overwrite bootstrap print */
   .olTileImage {
