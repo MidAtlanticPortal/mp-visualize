@@ -19,6 +19,11 @@
 		background: #333 !important;
 	}
 
+	/* overwrite bootstrap print */
+  .olTileImage {
+    max-width: none !important;
+  }
+
   .gmnoscreen,
   .navicon,
   #OpenLayers.Control.MousePosition_43,
@@ -40,10 +45,4 @@
 	}
 
   /*.panel-open #OpenLayers\2e Map_2_OpenLayers_Container {}*/
-
-  /* overwrite bootstrap print */
-  .olTileImage {
-    /*max-width: none !important;*/
-  }
-
 }
