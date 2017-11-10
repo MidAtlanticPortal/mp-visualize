@@ -65,9 +65,8 @@
                               var $svgWidth = $(this).width(),
                                   $svgHeight = $(this).height(),
                                   svgRatio = $svgHeight / $svgWidth;
-
-                                  $(this).width(mapWidth - pxOver);
-                                  $(this).height((mapWidth - pxOver) * svgRatio);
+                                $(this).width(mapWidth - pxOver);
+                                $(this).height((mapWidth - pxOver) * svgRatio);
                             });
 
                             window.setTimeout(function() {
@@ -76,9 +75,11 @@
                                 olimgs.style.width = '100px';
                                 olimgs.style.height = '100px';
                                 leftPanel.style.width = lpWidth + 'px';
-                                for (let i = 0; i < olsvgs.length; i++) {
-                                  olsvgs[i].style.width = mapWidth;
-                                }
+                                $olsvgs.each(function(i,e) {
+                                  $(this).width($('#map').width());
+                                  $(this).height($('#map').height());
+                                });
+                                app.map.updateSize();
                               }, 1000);
                             }, 1000);
                           });
