@@ -11,7 +11,12 @@ function layerModel(options, parent) {
     self.data_url = options.data_url || null;
     self.arcgislayers = options.arcgis_layers || 0;
     self.wms_slug = options.wms_slug || null;
-    self.wms_version = options.wms_version || false;
+    self.wms_version = options.wms_version || null;
+    self.wms_format = options.wms_format || null;
+    self.wms_srs = options.wms_srs || null;
+    self.wms_styles = options.wms_styles || null;
+    self.wms_timing = options.wms_timing || null;
+    self.wms_additional = options.wms_additional || null;
     self.type = options.type || null
     self.utfurl = options.utfurl || false;
     self.legend = options.legend || false;
@@ -687,7 +692,7 @@ function layerModel(options, parent) {
             self.showSublayers(false);
             return false;
         }
-        
+
         self.showSublayers(true);
 
         var layer = this,

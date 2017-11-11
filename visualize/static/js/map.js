@@ -649,14 +649,82 @@ app.addXyzLayerToMap = function(layer) {
 };
 
 app.addWmsLayerToMap = function(layer) {
+    wms_url = layer.url;
+    wms_proxy = false;
+    layer_params = {
+      layers: layer.wms_slug,
+      transparent: "true"
+    }
+    if (layer.wms_format){
+      layer_params.format = layer.format;
+    } else {
+      layer_params.format = "image/png";
+    }
+    if (layer.wms_srs){
+      // OL2 - We need to proxy to another WMS that DOES support the current projection
+      if (layer.srs != 'EPSG:3857') {
+        wms_proxy = true;
+        // TODO: set param keys from settings.py -> views -> this
+        var wms_proxy_url = 'http://tiles.ecotrust.org/mapserver/'; // WMS_PROXY
+        var wms_proxy_mapfile_field = 'map'; // WMS_PROXY_MAPFILE_FIELD
+        var wms_proxy_mapfile = '/mapfiles/generic.map'; // WMS_PROXY_MAPFILE
+        var source_srs_param_key = 'sourcesrs'; // WMS_PROXY_SOURCE_SRS
+        var conn_param_key = 'conn'; //WMS_PROXY_CONNECTION
+        var layer_name_param_key = 'layername'; // WMS_PROXY_LAYERNAME
+        var format_param_key = 'format'; // WMS_PROXY_FORMAT
+        var version_param_key = 'version'; // WMS_PROXY_VERSION
+        var style_param_key = 'srcstyle'; // WMS_PROXY_SOURCE_STYLE
+        var time_param_key = 'timeext'; // WMS_PROXY_TIME_EXTENT
+        var time_def_param_key = 'timedef'; // WMS_PROXY_TIME_DEFAULT
+        var proxy_generic_layer = 'generic'; // WMS_PROXY_GENERIC_LAYER
+        var proxy_time_layer = 'time'; // WMS_PROXY_TIME_LAYER
+
+        wms_url = wms_proxy_url;
+        layer_params[wms_proxy_mapfile_field] = wms_proxy_mapfile
+        layer_params[source_srs_param_key] = layer.srs;
+        layer_params[conn_param_key] =  layer.url; // TODO: URL encode?
+        layer_params[layer_name_param_key] = layer.wms_slug;
+        if (layer.wms_timing) {
+          layer_params.layers = proxy_time_layer;
+          layer_params[time_param_key] = layer.timing;
+          // TODO: Do we need Time Default? It looks like we also need Time Item.
+        } else {
+          layer_params.layers = proxy_generic_layer;
+        }
+        layer_params[format_param_key] = layer.wms_format;
+        layer_params[version_param_key] = layer.wms_version;
+        layer_params[style_param_key] = layer.wms_styles;
+      }
+    }
+    if (!wms_proxy) {
+      if (layer.wms_styles){
+        layer_params.styles = layer.wms_styles;
+      }
+      if (layer.wms_timing){
+        layer_params.timing;
+        // TODO: Looks like we need Time item and maybe Time default
+      }
+      if (layer.wms_additional){
+        if (layer.wms_additional[0] == '?') {
+          layer.wms_additional = layer.wms_additional.slice(1);
+        }
+        var additional_list = layer.wms_additional.split("&");
+        for (var i = 0; i < additional_list.length; i++) {
+          key_val = additional_list[i].split('=');
+          if (key_val.length == 2) {
+            key = key_val[0];
+            value = key_val[1];
+            layer_params[key] = value;
+          }
+        }
+      }
+
+    }
+
     layer.layer = new OpenLayers.Layer.WMS(
         layer.name,
-        layer.url,
-        {
-            layers: layer.wms_slug,
-            transparent: "true",
-            format: "image/png"
-        }
+        wms_url,
+        layer_params
     );
 };
 
