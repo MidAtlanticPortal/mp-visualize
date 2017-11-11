@@ -233,7 +233,7 @@ $(document).ready(function() {
         app.viewModel.activateMDATLayer(item);
       },
       minLength: 2,
-      items: 14, 
+      items: 14,
     })
   });
 
@@ -255,7 +255,7 @@ $(document).on('focusin', '.port-input', function(){
       app.viewModel.activateVTRLayer(item);
     },
     minLength: 2,
-    items: 12, 
+    items: 12,
   })
 });
 
@@ -305,6 +305,15 @@ $('#feedback-form').on('submit', function (event) {
       //$('#thankyou-modal').modal('show');
    });
    $form.closest('.modal').modal('hide');
+});
+
+// add panel class for printing
+$('#map-wrapper').toggleClass('panel-open');
+// toggle panel class for printing
+// when map-wrapper has class panel-open the map is translated left by the width of left panel
+// this allows the print area to match what the user sees in window
+$('.collapse-button').click( function() {
+  $('#map-wrapper').toggleClass('panel-open');
 });
 
 $('#left-panel .panel-heading h4 a.collapse-button').click(function(){
