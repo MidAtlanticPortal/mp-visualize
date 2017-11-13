@@ -20,6 +20,10 @@
 	}
 
 	/* overwrite bootstrap print */
+	img {
+		max-width: none !important;
+	}
+
   .olTileImage {
     max-width: none !important;
   }
