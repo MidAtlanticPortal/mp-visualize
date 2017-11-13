@@ -662,7 +662,7 @@ app.addWmsLayerToMap = function(layer) {
     }
     if (layer.wms_srs){
       // OL2 - We need to proxy to another WMS that DOES support the current projection
-      if (layer.srs != 'EPSG:3857') {
+      if (layer.wms_srs != 'EPSG:3857') {
         wms_proxy = true;
         // TODO: set param keys from settings.py -> views -> this
         var wms_proxy_url = 'http://tiles.ecotrust.org/mapserver/'; // WMS_PROXY
@@ -675,6 +675,7 @@ app.addWmsLayerToMap = function(layer) {
         var version_param_key = 'version'; // WMS_PROXY_VERSION
         var style_param_key = 'srcstyle'; // WMS_PROXY_SOURCE_STYLE
         var time_param_key = 'timeext'; // WMS_PROXY_TIME_EXTENT
+        var time_item_param_key = 'timeitem'; // WMS_PROXY_TIME_ITEM
         var time_def_param_key = 'timedef'; // WMS_PROXY_TIME_DEFAULT
         var proxy_generic_layer = 'generic'; // WMS_PROXY_GENERIC_LAYER
         var proxy_time_layer = 'time'; // WMS_PROXY_TIME_LAYER
@@ -686,8 +687,10 @@ app.addWmsLayerToMap = function(layer) {
         layer_params[layer_name_param_key] = layer.wms_slug;
         if (layer.wms_timing) {
           layer_params.layers = proxy_time_layer;
-          layer_params[time_param_key] = layer.timing;
-          // TODO: Do we need Time Default? It looks like we also need Time Item.
+          layer_params[time_param_key] = layer.wms_timing;
+          if (layer.wms_time_item) {
+            layer_params[time_item_param_key] = layer.wms_time_item;
+          }
         } else {
           layer_params.layers = proxy_generic_layer;
         }
@@ -701,8 +704,7 @@ app.addWmsLayerToMap = function(layer) {
         layer_params.styles = layer.wms_styles;
       }
       if (layer.wms_timing){
-        layer_params.timing;
-        // TODO: Looks like we need Time item and maybe Time default
+        layer_params.time = layer.wms_timing;
       }
       if (layer.wms_additional){
         if (layer.wms_additional[0] == '?') {

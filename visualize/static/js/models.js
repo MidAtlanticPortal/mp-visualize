@@ -16,6 +16,7 @@ function layerModel(options, parent) {
     self.wms_srs = options.wms_srs || null;
     self.wms_styles = options.wms_styles || null;
     self.wms_timing = options.wms_timing || null;
+    self.wms_time_item = options.wms_time_item || null;
     self.wms_additional = options.wms_additional || null;
     self.type = options.type || null
     self.utfurl = options.utfurl || false;
