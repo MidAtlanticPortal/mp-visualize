@@ -664,39 +664,24 @@ app.addWmsLayerToMap = function(layer) {
       // OL2 - We need to proxy to another WMS that DOES support the current projection
       if (layer.wms_srs != 'EPSG:3857') {
         wms_proxy = true;
-        // TODO: set param keys from settings.py -> views -> this
-        var wms_proxy_url = 'http://tiles.ecotrust.org/mapserver/'; // WMS_PROXY
-        var wms_proxy_mapfile_field = 'map'; // WMS_PROXY_MAPFILE_FIELD
-        var wms_proxy_mapfile = '/mapfiles/generic.map'; // WMS_PROXY_MAPFILE
-        var source_srs_param_key = 'sourcesrs'; // WMS_PROXY_SOURCE_SRS
-        var conn_param_key = 'conn'; //WMS_PROXY_CONNECTION
-        var layer_name_param_key = 'layername'; // WMS_PROXY_LAYERNAME
-        var format_param_key = 'format'; // WMS_PROXY_FORMAT
-        var version_param_key = 'version'; // WMS_PROXY_VERSION
-        var style_param_key = 'srcstyle'; // WMS_PROXY_SOURCE_STYLE
-        var time_param_key = 'timeext'; // WMS_PROXY_TIME_EXTENT
-        var time_item_param_key = 'timeitem'; // WMS_PROXY_TIME_ITEM
-        var time_def_param_key = 'timedef'; // WMS_PROXY_TIME_DEFAULT
-        var proxy_generic_layer = 'generic'; // WMS_PROXY_GENERIC_LAYER
-        var proxy_time_layer = 'time'; // WMS_PROXY_TIME_LAYER
-
-        wms_url = wms_proxy_url;
-        layer_params[wms_proxy_mapfile_field] = wms_proxy_mapfile
-        layer_params[source_srs_param_key] = layer.srs;
-        layer_params[conn_param_key] =  layer.url; // TODO: URL encode?
-        layer_params[layer_name_param_key] = layer.wms_slug;
+        // var time_def_param_key = app.server_constants.time_def_param_key;
+        wms_url = app.server_constants.wms_proxy_url;
+        layer_params[app.server_constants.wms_proxy_mapfile_field] = app.server_constants.wms_proxy_mapfile
+        layer_params[app.server_constants.source_srs_param_key] = layer.srs;
+        layer_params[app.server_constants.conn_param_key] =  layer.url;
+        layer_params[app.server_constants.layer_name_param_key] = layer.wms_slug;
         if (layer.wms_timing) {
-          layer_params.layers = proxy_time_layer;
-          layer_params[time_param_key] = layer.wms_timing;
+          layer_params.layers = app.server_constants.proxy_time_layer;
+          layer_params[app.server_constants.time_param_key] = layer.wms_timing;
           if (layer.wms_time_item) {
-            layer_params[time_item_param_key] = layer.wms_time_item;
+            layer_params[app.server_constants.time_item_param_key] = layer.wms_time_item;
           }
         } else {
-          layer_params.layers = proxy_generic_layer;
+          layer_params.layers = app.server_constants.proxy_generic_layer;
         }
-        layer_params[format_param_key] = layer.wms_format;
-        layer_params[version_param_key] = layer.wms_version;
-        layer_params[style_param_key] = layer.wms_styles;
+        layer_params[app.server_constants.format_param_key] = layer.wms_format;
+        layer_params[app.server_constants.version_param_key] = layer.wms_version;
+        layer_params[app.server_constants.style_param_key] = layer.wms_styles;
       }
     }
     if (!wms_proxy) {
