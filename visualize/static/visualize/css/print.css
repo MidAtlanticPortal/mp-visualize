@@ -1,9 +1,25 @@
-@media print and (orientation: landscape) {
+@media print {
+	body.template-visualize #map-wrapper {
+    height: 100%;
+    width: 100%;
+  }
+}
 
+@media print and (orientation: landscape) {
 	body.template-visualize #map-wrapper {
     height: 8.25in !important;
     width: 11in !important;
   }
+}
+
+@media print and (orientation: portrait) {
+	body.template-visualize #map-wrapper {
+    height: 10.75in !important;
+    width: 8.5in !important;
+  }
+}
+
+@media print {
 
 	body.template-visualize #left-panel {
     background: #f3f3f3 !important;

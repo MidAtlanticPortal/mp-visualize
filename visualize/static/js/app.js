@@ -400,15 +400,23 @@ function toggleFormClone(cloneForm, elm) {
 }
 
 function returnPxOver(pxOver) {
-  var printWidthRatio = pxOver / 16;
+  var printWidthRatio = pxOver / 18;
   if (pxOver < 300) {
     printWidthRatio = pxOver / 13;
   } else if (pxOver < 400) {
     printWidthRatio = pxOver / 14;
   } else if (pxOver < 500) {
     printWidthRatio = pxOver / 15;
+  } else if (pxOver < 625) {
+    printWidthRatio = pxOver / 16;
+  } else if (pxOver < 750) {
+    printWidthRatio = pxOver / 17;
   }
-  return printWidthRatio;
+  if (printWidthRatio > 0) {
+    return printWidthRatio;
+  } else {
+    return 0;
+  }
 };
 
 $('#btn-print').click(function() {
@@ -418,13 +426,17 @@ $('#btn-print').click(function() {
       $lpWidth = $('#left-panel').width(),
       $mapWidth = $('#map-wrapper').width();
 
-  var pxOver = $mapWidth - 1056,
-      printWidthRatio = returnPxOver(pxOver),
+  /**
+   * check to see if portrait then overwrite landscape px over
+   */
+  var pxOver = $mapWidth - 1056;
+  if (window.innerHeight > window.innerWidth) {
+    pxOver = $('#map-wrapper').height() - 812;
+  }
+  var printWidthRatio = returnPxOver(pxOver),
       olTilePrintWidth = 100 - printWidthRatio,
       printTileWidth = olTilePrintWidth + 'px';
-      console.log(pxOver);
-      console.log(printWidthRatio);
-      console.log(olTilePrintWidth);
+
   olimgs.style.width = printTileWidth;
   olimgs.style.height = printTileWidth;
 
