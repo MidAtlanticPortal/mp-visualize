@@ -45,10 +45,8 @@
 		display: none;
 	}
 
-	body.template-visualize #left-panel,
-	body.template-visualize #left-panel:before,
-	body.template-visualize #left-panel:after {
-		background: #f3f3f3 !important;
+	body.template-visualize #left-panel {
+		background: none !important;
 		border: none;
 		content: '';
 		overflow: hidden;
