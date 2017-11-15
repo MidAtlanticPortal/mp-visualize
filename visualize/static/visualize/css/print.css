@@ -1,3 +1,8 @@
+@page {
+	margin: 0.25in;
+	orientation: landscape;
+}
+
 @media print {
 	body.template-visualize #map-wrapper {
     height: 100%;
@@ -7,14 +12,14 @@
 
 @media print and (orientation: landscape) {
 	body.template-visualize #map-wrapper {
-    height: 8.25in !important;
+    height: 8.5in !important;
     width: 11in !important;
   }
 }
 
 @media print and (orientation: portrait) {
 	body.template-visualize #map-wrapper {
-    height: 10.75in !important;
+    height: 11in !important;
     width: 8.5in !important;
   }
 }
@@ -22,17 +27,34 @@
 @media print {
 
 	body.template-visualize #left-panel {
-    background: #f3f3f3 !important;
-		top: 5px !important;
+		background: #f3f3f3 !important;
+    background-color: #f3f3f3 !important;
+		border: none;
+		top: .25in !important;
 		max-height: 8in !important;
+		z-index: 9999999;
   }
+
+	body.template-visualize .sidebar-nav .nav-tabs > li.active a {
+		border-bottom: none !important;
+	}
+
+	body.template-visualize .tab-content .tab-pane {
+		overflow-y: hidden;
+		overflow-x: hidden;
+	}
+
+	body.template-visualize .tab-pane {
+		display: none;
+	}
+
+	body.template-visualize #legend {
+		display: block;
+		visibility: visible;
+	}
 
 	#myTab h4 {
 		font-size: 14px;
-	}
-
-	.olControlScaleBarGraphics > div {
-		background: #333 !important;
 	}
 
 	/* overwrite bootstrap print */
@@ -43,6 +65,13 @@
   .olTileImage {
     max-width: none !important;
   }
+
+	.olControlScaleBarGraphics div {
+		background: #f3f3f3 !important;
+		background-color: #333 !important;
+		border: 1px solid #000;
+		color: #333 !important;
+	}
 
   .gmnoscreen,
   .navicon,
