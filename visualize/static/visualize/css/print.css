@@ -54,7 +54,7 @@
 		overflow: hidden;
 		top: 24px !important;
 		height: auto !important;
-		max-height: 768px !important;
+		max-height: none !important;
 		z-index: 9999;
   }
 
