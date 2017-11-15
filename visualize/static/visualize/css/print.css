@@ -96,8 +96,12 @@
     max-width: none !important;
   }
 
-	.olControlAttribution {
-		left: 0;
+	#map .olControlAttribution {
+		font-size: 8px;
+		left: 50%;
+		text-align: center;
+		transform: translate(-120px,0);
+		width: 240px;
 	}
 
 	body.template-visualize .olControlScaleBar,
