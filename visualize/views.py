@@ -53,7 +53,27 @@ def show_planner(request, template='visualize/planner.html'):
         if len(Content.objects.filter(name='disclaimer_decline_url',live=True)) > 0:
             disclaimer_content['decline_url'] = strip_tags(Content.objects.filter(name='disclaimer_decline_url',live=True)[0].content)
 
-    context = {'MEDIA_URL': settings.MEDIA_URL, 'SOCKET_URL': socket_url, 'login': 'true', 'disclaimer': disclaimer_content}
+    context = {
+        'MEDIA_URL': settings.MEDIA_URL,
+        'SOCKET_URL': socket_url,
+        'login': 'true',
+        'disclaimer': disclaimer_content,
+        # WMS Proxy support:
+        'wms_proxy_url': settings.WMS_PROXY,
+        'wms_proxy_mapfile_field': settings.WMS_PROXY_MAPFILE_FIELD,
+        'wms_proxy_mapfile': settings.WMS_PROXY_MAPFILE,
+        'layer_name_param_key': settings.WMS_PROXY_LAYERNAME,
+        'conn_param_key': settings.WMS_PROXY_CONNECTION,
+        'format_param_key': settings.WMS_PROXY_FORMAT,
+        'version_param_key': settings.WMS_PROXY_VERSION,
+        'source_srs_param_key': settings.WMS_PROXY_SOURCE_SRS,
+        'style_param_key': settings.WMS_PROXY_SOURCE_STYLE,
+        'time_param_key': settings.WMS_PROXY_TIME_EXTENT,
+        'time_item_param_key': settings.WMS_PROXY_TIME_ITEM,
+        'time_def_param_key': settings.WMS_PROXY_TIME_DEFAULT,
+        'proxy_generic_layer': settings.WMS_PROXY_GENERIC_LAYER,
+        'proxy_time_layer': settings.WMS_PROXY_TIME_LAYER,
+    }
 
     if request.user.is_authenticated:
         context['session'] = request.session._session_key

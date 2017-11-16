@@ -365,6 +365,24 @@
     <script src="{% static 'js/contextual_menu.js' %}"></script>
     <script src="{% static 'js/fixtures.js' %}"></script>
     <script src="{% static 'js/map.js' %}"></script>
+    <script>
+      app.server_constants = {
+        'wms_proxy_url': '{{ wms_proxy_url }}',
+        'wms_proxy_mapfile_field': '{{ wms_proxy_mapfile_field }}',
+        'wms_proxy_mapfile': '{{ wms_proxy_mapfile }}',
+        'source_srs_param_key': '{{ source_srs_param_key }}',
+        'conn_param_key': '{{ conn_param_key }}',
+        'layer_name_param_key': '{{ layer_name_param_key }}',
+        'format_param_key': '{{ format_param_key }}',
+        'version_param_key': '{{ version_param_key }}',
+        'style_param_key': '{{ style_param_key }}',
+        'time_param_key': '{{ time_param_key }}',
+        'time_item_param_key': '{{ time_item_param_key }}',
+        'time_def_param_key': '{{ time_def_param_key }}',
+        'proxy_generic_layer': '{{ proxy_generic_layer }}',
+        'proxy_time_layer': '{{ proxy_time_layer }}'
+      }
+    </script>
     <script src="{% static 'js/state.js' %}"></script>
     <script src="{% static 'js/bookmarks.js' %}"></script>
     <script src="{% static 'js/scenarios.js' %}"></script>
