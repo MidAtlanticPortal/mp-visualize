@@ -1,70 +1,121 @@
+@page {
+	margin: 0.25in;
+	orientation: landscape;
+}
 
 @media print {
-	html {
-		height: 100%;
-	}
-
 	body.template-visualize #map-wrapper {
     height: 100%;
-    position: relative;
     width: 100%;
   }
+}
 
-	body.template-visualize #map {
-    bottom: 0;
-    height: 100%;
-    position: absolute;
-    overflow: visible;
-    left: 0;
-    right: 0;
-    width: 100%;
-    z-index: 9999;
+@media print and (orientation: landscape) {
+	body.template-visualize #map-wrapper {
+    height: 8.25in !important;
+    width: 11in !important;
+  }
+}
+
+@media print and (orientation: portrait) {
+	body.template-visualize #map-wrapper {
+    height: 11in !important;
+    width: 8.5in !important;
+  }
+}
+
+@media print {
+
+	/**
+	 * css border hack for printing background color on IE and Edge
+	 */
+	body.template-visualize #left-panel div.panel-heading {
+		border: 210px solid #fff;
+		box-sizing: border-box;
+		height: 100%;
+		left: 0;
+		padding: 0;
+		position: absolute;
+		top: 0;
+		width: 0;
+		z-index: -2;
+	}
+
+	body.template-visualize #left-panel .panel-heading .panel-title {
+		display: none;
+	}
+
+	body.template-visualize #left-panel {
+		background: none !important;
+		border: none;
+		content: '';
+		overflow: hidden;
+		top: 24px !important;
+		height: auto !important;
+		max-height: none !important;
+		z-index: 9999;
   }
 
-	body.template-visualize #left-panel:not(.collapsed) {
-    display: block;
-    height: auto;
-    left: 0;
-    padding: 0 5%;
-    position: absolute;
-    top: 100%;
-    width: 100%;
+	body.template-visualize .sidebar-nav .nav-tabs > li.active a {
+		border-bottom: none !important;
+	}
+
+	body.template-visualize .sidebar-nav .nav-tabs li {
+		display: none;
+	}
+	body.template-visualize .sidebar-nav .nav-tabs li[data-tab=legend],
+	body.template-visualize .sidebar-nav .nav-tabs li:last-of-type {
+		display: block;
+	}
+
+	body.template-visualize .tab-content .tab-pane {
+		overflow-y: hidden;
+		overflow-x: hidden;
+	}
+
+	body.template-visualize .tab-pane {
+		display: none;
+	}
+	body.template-visualize #legend {
+		display: block;
+		visibility: visible;
+	}
+
+	#myTab h4 {
+		font-size: 14px;
+	}
+
+	/* overwrite bootstrap print */
+	img {
+		max-width: none !important;
+	}
+
+  .olTileImage {
+    max-width: none !important;
   }
 
-	body.template-visualize #left-panel #left-panel-body {
-    height: 100%;
-  }
+	#map .olControlAttribution {
+		font-size: 8px;
+		left: 50%;
+		text-align: center;
+		transform: translate(-120px,0);
+		width: 240px;
+	}
 
-  body.template-visualize .tab-content .tab-pane {
-    display: none;
-    height: auto;
-    position: relative;
-    visibility: visible;
-    width: 100%;
-  }
+	body.template-visualize .olControlScaleBar,
+	.olControlAttribution {
+		bottom: .5in;
+	}
 
-	body.template-visualize #left-panel .tab-pane#legend,
-  body.template-visualize #left-panel .tab-pane#active {
-    display: block;
-
-  }
-
-  body.template-visualize .nav-tabs {
-    display: none;
-  }
-
-  path {
-    fill-opacity: 0 !important;
-    stroke: yellow;
-    stroke-opacity: .95;
-    stroke-width: 5;
-  }
+	.olControlScaleBarGraphics div {
+		background: #f3f3f3 !important;
+		border: 1px solid #000;
+		color: #333 !important;
+	}
 
   .gmnoscreen,
   .navicon,
   #OpenLayers.Control.MousePosition_43,
-  #map .olControlScaleBar,
-	.olControlScaleBar,
 	.olControlZoom,
 	#baselayers,
 	#map-controls,
@@ -73,32 +124,10 @@
   #close-attribute-overlay,
 	#bookmark-popover,
 	#pageGuideMessage,
-	.form-search {
+	.form-search,
+	.modal {
 		display: none;
 	}
 
-	#OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div:nth-child(1) > div:nth-child(1) > img,
-  #OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div:nth-child(1) > div:nth-child(1),
-  #OpenLayers\2e Map_2_GMapContainer > div > div > div > div > div > div > div > div {
-    height: 256px;
-    width: 256px;
-  }
-
-  #OpenLayers\2e Map_2_OpenLayers_Container {
-    margin-left: -80px !important;
-  }
-
-  .panel-open #OpenLayers\2e Map_2_OpenLayers_Container {
-    margin-left: -360px !important;
-  }
-
-	.modal {
-		display: none !important;
-	}
-
-  /* overwrite bootstrap print */
-  .olTileImage {
-    max-width: none !important;
-  }
-
+  /*.panel-open #OpenLayers\2e Map_2_OpenLayers_Container {}*/
 }

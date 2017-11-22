@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Marine Planner{% endblock %}
+{% block title %}Mid-Atlantic Ocean Data Portal - Marine Planner{% endblock %}
 
 {% block extra_css %}
         <link href="{% static 'visualize/css/print.css' %}" rel="stylesheet" media="print">
@@ -38,7 +38,7 @@
                 <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
                     <div class="btn-group btn-group-vertical">
                           <!-- Print Button -->
-                          <a class="btn" id="btn-print" onclick="window.print();" data-toggle="tooltip" data-placement="left" title="Print/Export">
+                          <a class="btn" id="btn-print" data-toggle="tooltip" data-placement="left" title="Print/Export">
                             <i class="fa fa-print" id="print-icon"> </i>
                           </a>
                           <!--Map Links Button-->
