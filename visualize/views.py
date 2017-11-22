@@ -68,7 +68,7 @@ def show_planner(request, template='visualize/planner.html'):
         'version_param_key': settings.WMS_PROXY_VERSION,
         'source_srs_param_key': settings.WMS_PROXY_SOURCE_SRS,
         'style_param_key': settings.WMS_PROXY_SOURCE_STYLE,
-        'time_param_key': settings.WMS_PROXY_TIME_EXTENT,
+        'time_param_key': settings.WMS_PROXY_TIME,
         'time_item_param_key': settings.WMS_PROXY_TIME_ITEM,
         'time_def_param_key': settings.WMS_PROXY_TIME_DEFAULT,
         'proxy_generic_layer': settings.WMS_PROXY_GENERIC_LAYER,
