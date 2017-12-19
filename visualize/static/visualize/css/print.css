@@ -53,6 +53,9 @@
 		top: 24px !important;
 		height: auto !important;
 		max-height: none !important;
+		position: relative !important;
+		width: 100% !important;
+		page-break-before: always;
 		z-index: 9999;
   }
 
