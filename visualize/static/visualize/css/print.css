@@ -53,10 +53,20 @@
 		top: 24px !important;
 		height: auto !important;
 		max-height: none !important;
-		position: relative !important;
-		width: 100% !important;
-		page-break-before: always;
 		z-index: 9999;
+  }
+
+  body.template-visualize #left-panel.collapsed {
+	  page-break-before: always;
+	  position: relative !important;
+  }
+
+	body.template-visualize #left-panel.collapsed .panel-body {
+		height: 100% !important;
+	}
+
+  body.template-visualize #left-panel.collapsed #data-panel {
+	  display: block !important;
   }
 
 	body.template-visualize .sidebar-nav .nav-tabs > li.active a {
@@ -79,8 +89,10 @@
 	body.template-visualize .tab-pane {
 		display: none;
 	}
-	body.template-visualize #legend {
+
+	body.template-visualize .tab-content #legend {
 		display: block;
+		overflow: visible;
 		visibility: visible;
 	}
 
