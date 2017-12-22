@@ -82,7 +82,7 @@ def show_planner(request, template='visualize/planner.html'):
     return render(request, template, context)
 
 @xframe_options_exempt
-def show_embedded_map(request, template='visualize/map.html'):
+def show_embedded_map(request, template='visualize/embedded.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
     return render(request, template, context)
 
