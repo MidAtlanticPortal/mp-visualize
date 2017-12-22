@@ -113,7 +113,7 @@ function layerModel(options, parent) {
         self.featureAttributionName = 'Benthic Habitats';
     }
 
-    getArcGISJSON = function(self, protocol) {
+    getArcGISJSONLegend = function(self, protocol) {
       var url = self.url.replace('/export', '/legend/?f=pjson');
       if (protocol == "https:") {
         url = url.replace('http:', 'https:');
@@ -157,12 +157,12 @@ function layerModel(options, parent) {
     // if legend is not provided, try using legend from web services
     if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
       try {
-        getArcGISJSON(self, window.location.protocol);
+        getArcGISJSONLegend(self, window.location.protocol);
       } catch (err) {
         if (window.location.protocol == "http:") {
           console.log(err);
         } else {
-          getArcGISJSON(self, "http:");
+          getArcGISJSONLegend(self, "http:");
         }
       }
 
@@ -208,16 +208,32 @@ function layerModel(options, parent) {
         self.overview = null;
     }
 
+    getArcGISJSONDescription = function(self, protocol) {
+      var url = self.url.replace('/export', '/'+self.arcgislayers) + '?f=pjson';
+      if (protocol == "https:") {
+        url = url.replace('http:', 'https:');
+      }
+      $.ajax({
+          dataType: "jsonp",
+          url: url,
+          type: 'GET',
+          success: function(data) {
+              self.overview = data['description'];
+          }
+      });
+    }
+
     // if no description is provided, try using the web services description
     if ( !self.overview && self.url && (self.arcgislayers !== -1) ) {
-        $.ajax({
-            dataType: "jsonp",
-            url: self.url.replace('/export', '/'+self.arcgislayers) + '?f=pjson',
-            type: 'GET',
-            success: function(data) {
-                self.overview = data['description'];
-            }
-        });
+        try {
+          getArcGISJSONDescription(self, window.location.protocol);
+        } catch (err) {
+          if (window.location.protocol == "http:") {
+            console.log(err);
+          } else {
+            getArcGISJSONDescription(self, "http:");
+          }
+        }
     }
 
     // set data source and data notes text
