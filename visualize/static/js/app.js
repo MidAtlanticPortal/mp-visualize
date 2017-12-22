@@ -423,7 +423,7 @@ $('#btn-print').click(function() {
   var olimgs = document.getElementById('OpenLayers.Map_2_OpenLayers_Container'),
       $olsvgs = $('#map svg'),
       leftPanel = document.getElementById('left-panel'),
-      $lpWidth = $('#left-panel').width(),
+      $lpWidth = $('#left-panel:not(.collapsed)').width(),
       $mapWidth = $('#map-wrapper').width();
 
   /**
@@ -440,8 +440,10 @@ $('#btn-print').click(function() {
   olimgs.style.width = printTileWidth;
   olimgs.style.height = printTileWidth;
 
-  var lpPrintWidth = $lpWidth - ($lpWidth * printWidthRatio / 100);
-  leftPanel.style.width = lpPrintWidth + 'px';
+  if ($lpWidth !== null) {
+    var lpPrintWidth = $lpWidth - ($lpWidth * printWidthRatio / 100);
+    leftPanel.style.width = lpPrintWidth + 'px';
+  }
 
   $olsvgs.each(function(i,e) {
     var $svgWidth = $(this).width(),
@@ -456,7 +458,9 @@ $('#btn-print').click(function() {
     window.setTimeout(function() {
       olimgs.style.width = '100px';
       olimgs.style.height = '100px';
-      // leftPanel.style.width = $lpWidth + 'px';
+      if ($lpWidth !== null) {
+        leftPanel.style.width = $lpWidth + 'px';
+      }
       $olsvgs.each(function(i,e) {
         $(this).width($('#map').width());
         $(this).height($('#map').height());
