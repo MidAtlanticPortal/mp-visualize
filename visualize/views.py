@@ -8,6 +8,7 @@ import json
 from features.registry import user_sharing_groups
 from functools import cmp_to_key
 import locale
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 from django.conf import settings
 from models import *
@@ -80,6 +81,7 @@ def show_planner(request, template='visualize/planner.html'):
 
     return render(request, template, context)
 
+@xframe_options_exempt
 def show_embedded_map(request, template='visualize/map.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
     return render(request, template, context)
