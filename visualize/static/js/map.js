@@ -779,7 +779,12 @@ app.addArcRestLayerToMap = function(layer) {
                                                   str_list = data.split(' ');
                                                 }
                                                 for (var i=0; i < str_list.length; i++) {
-                                                  link_string = '<a href="' + str_list[i] + '" target="_blank">' + str_list[i] + '</a>';
+                                                  if (str_list[i].indexOf('http') < 0) {
+                                                    var list_addr = 'http://' + str_list[i];
+                                                  } else {
+                                                    var list_addr = str_list[i];
+                                                  }
+                                                  link_string = '<a href="' + list_addr + '" target="_blank">' + str_list[i] + '</a>';
                                                   str_list[i] = link_string;
                                                 }
                                                 data = str_list.join(' ');
