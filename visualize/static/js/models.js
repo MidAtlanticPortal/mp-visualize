@@ -456,12 +456,18 @@ function layerModel(options, parent) {
                 ly.deactivateBaseLayer();
             })
         } else {
-            var activeCompanionLayer = $.grep(app.viewModel.activeLayers(), function(c) {
-                return (c.companionLayers && c.companionLayers.length > 0)
+            var activeCompanionLayers = $.grep(app.viewModel.activeLayers(), function(c) {
+                if (c.companionLayers) {
+                  relatedCompanionLayers = $.grep(c.companionLayers, function(parentLayer) {
+                    return parentLayer.id == layer.id;
+                  })
+                  return (relatedCompanionLayers.length) > 0;
+                }
+                return false
             });
 
             //is the companion layer still active?
-            if (activeCompanionLayer.length == 0) {
+            if (activeCompanionLayers.length == 0) {
                 layer.deactivateBaseLayer();
                 return false;
 
@@ -470,23 +476,42 @@ function layerModel(options, parent) {
                 var companionArray = [];
                 //find layers that have companions
                 $.each(app.viewModel.activeLayers(), function(i,lyr) {
-                    if (lyr.hasCompanion) {
+                    // do not include current layer
+                    if (lyr.hasCompanion && lyr != layer) {
                         //ignore queryable MDATs
                         if (mdatDir && mdatDir.searchQueryable) {
                             companionArray;
                         } else {
-                            companionArray.push(lyr)
+                            companionArray.push(lyr.id)
                         }
                     }
                 });
-                var companionLayer = $.grep(companionArray, function(l) {
-                    return l.companion.id == layer.companion.id
-                });
 
-                if (companionLayer.length > 0) {
-                    $.each(layer.companion, function(i, ly) {
-                        ly.deactivateBaseLayer();
-                    })
+                //Get IDs of all active layers that aren't the current layer
+                var activeLayers = app.viewModel.activeLayers();
+                var activeLayerIds = [];
+                for (var i = 0; i < activeLayers.length; i++) {
+                  if (activeLayers[i] != layer) {
+                    activeLayerIds.push(activeLayers[i]);
+                  }
+                }
+                // for each companion layer to this current layer
+                for (var i = 0; i < activeCompanionLayers.length; i++){
+                  var companionLayer = activeCompanionLayers[i];
+                  // if only 1 parent layer, then it's this layer
+                  if (companionLayer.companionLayers.length == 1) {
+                    companionLayer.deactivateLayer();
+                  } else {
+                    var companionLayerActivelyShared = false;
+                    for (var j = 0; j < companionLayer.companionLayers.length; j++) {
+                      if (activeLayerIds.indexOf(companionLayer.companionLayers[j].id) >= 0){
+                        companionLayerActivelyShared = true;
+                      }
+                    }
+                    if (!companionLayerActivelyShared) {
+                      companionLayer.deactivateLayer();
+                    }
+                  }
                 }
             // if no other layer is active - it's the companion layer, so let's remove it
             } else if (app.viewModel.activeLayers().length == 1) {
@@ -1671,6 +1696,7 @@ function viewModel() {
     self.showBookmarks = function(self, event) {
         self.bookmarks.duplicateBookmark(false);
         self.bookmarks.newBookmarkName(null);
+        // self.bookmarks.newBookmarkDescription(null);
         self.addBookmarksDialogVisible(true);
         // scenario forms will hide anything with the "step" class, so show
         // it explicitly here.
@@ -1683,6 +1709,8 @@ function viewModel() {
     /** Create a new bookmark from the bookmark form */
     self.addBookmark = function(form) {
         var name = $(form).find('input').val();
+        // var name = $(form).find('#new_bookmark_name').val();
+        // var description = $(form).find('#new_bookmark_description').val();
         if (name.length == 0) {
             return false;
         }
@@ -1698,8 +1726,10 @@ function viewModel() {
         }
 
         self.bookmarks.addBookmark(name);
+        // self.bookmarks.addBookmark(name, description);
         self.hideBookmarks();
         self.bookmarks.newBookmarkName(null);
+        // self.bookmarks.newBookmarkDescription(null);
     }
 
     self.showMapLinks = function() {
