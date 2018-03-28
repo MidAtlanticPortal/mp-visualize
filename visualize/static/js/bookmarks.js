@@ -2,6 +2,8 @@
 function bookmarkModel(options) {
     var self = this;
 
+    scenarioModel.apply(this, arguments);
+
     self.uid = options.uid;
     self.name = options.name;
     self.description = options.description;
