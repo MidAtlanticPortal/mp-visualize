@@ -117,8 +117,11 @@
                                                                                     </a>
 
                                                                                 <span data-bind="click: loadBookmark">
-                                                                                    <a data-bind="text: name, attr: {href: getBookmarkUrl}"></a>
+                                                                                    <a data-bind="attr: {href: getBookmarkUrl}">
+                                                                                      <span data-bind="text: name"></span> - <span data-bind="text: description"></span>
+                                                                                    </a>
                                                                                 </span>
+
                                                                                 </td>
                                                                                 <td class="add-on"></td>
 
@@ -788,6 +791,14 @@
                                                required>
                                     </label>
                                     <div class="dupe-bookmark" data-bind="visible: app.viewModel.bookmarks.duplicateBookmark">That bookmark name already exists, please enter another name</div>
+                                    <label>Description:<br>
+                                      <input id="new_bookmark_description"
+                                            data-bind="value: app.viewModel.bookmarks.newBookmarkDescription"
+                                            type="text"
+                                            class="input form-control"
+                                            placeholder="Description"
+                                      >
+                                    </label>
                                 </div>
                             </div>
 

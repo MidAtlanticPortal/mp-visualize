@@ -6,6 +6,7 @@ from tinymce.models import HTMLField
 @register
 class Bookmark(Feature):
     url_hash = models.CharField(max_length=2050)
+    description = models.TextField(null=True, blank=True, default=None)
 
     class Options:
         verbose_name = 'MARCO Bookmark'

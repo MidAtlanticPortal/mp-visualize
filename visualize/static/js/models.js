@@ -1696,7 +1696,7 @@ function viewModel() {
     self.showBookmarks = function(self, event) {
         self.bookmarks.duplicateBookmark(false);
         self.bookmarks.newBookmarkName(null);
-        // self.bookmarks.newBookmarkDescription(null);
+        self.bookmarks.newBookmarkDescription(null);
         self.addBookmarksDialogVisible(true);
         // scenario forms will hide anything with the "step" class, so show
         // it explicitly here.
@@ -1708,9 +1708,8 @@ function viewModel() {
 
     /** Create a new bookmark from the bookmark form */
     self.addBookmark = function(form) {
-        var name = $(form).find('input').val();
-        // var name = $(form).find('#new_bookmark_name').val();
-        // var description = $(form).find('#new_bookmark_description').val();
+        var name = $(form).find('#new_bookmark_name').val();
+        var description = $(form).find('#new_bookmark_description').val();
         if (name.length == 0) {
             return false;
         }
@@ -1725,11 +1724,10 @@ function viewModel() {
             return false;
         }
 
-        self.bookmarks.addBookmark(name);
-        // self.bookmarks.addBookmark(name, description);
+        self.bookmarks.addBookmark(name, description);
         self.hideBookmarks();
         self.bookmarks.newBookmarkName(null);
-        // self.bookmarks.newBookmarkDescription(null);
+        self.bookmarks.newBookmarkDescription(null);
     }
 
     self.showMapLinks = function() {

@@ -8,16 +8,17 @@ from mapgroups.models import MapGroup, MapGroupMember
 from visualize.models import Bookmark
 
 @rpcmethod(login_required=True)
-def add_bookmark(name, url_hash, **kwargs):
+def add_bookmark(name, description, url_hash, **kwargs):
     request = kwargs['request']
 
-    bookmark = Bookmark(user=request.user, name=name, url_hash=url_hash)
+    bookmark = Bookmark(user=request.user, name=name, description=description, url_hash=url_hash)
     bookmark.save()
     sharing_groups = [group.name for group in bookmark.sharing_groups.all()]
     content = [{
         'uid': bookmark.uid,
-        'name': bookmark.name, 
-        'hash': bookmark.url_hash, 
+        'name': bookmark.name,
+        'description': bookmark.description,
+        'hash': bookmark.url_hash,
         'sharing_groups': sharing_groups,
     }]
     return content
@@ -39,6 +40,7 @@ def get_bookmarks(**kwargs):
         content.append({
             'uid': bookmark.uid,
             'name': bookmark.name,
+            'description': bookmark.description,
             'hash': bookmark.url_hash,
             'sharing_groups': sharing_groups
         })
@@ -66,6 +68,7 @@ def get_bookmarks(**kwargs):
             content.append({
                 'uid': bookmark.uid,
                 'name': bookmark.name,
+                'description': bookmark.description,
                 'hash': bookmark.url_hash,
                 'shared': True,
                 'shared_by_user': bookmark.user.id,
@@ -102,5 +105,3 @@ def share_bookmark(bookmark_uid, group_names, **kwargs):
         groups.append(g)
 
     bookmark.share_with(groups, append=False)
-
-
