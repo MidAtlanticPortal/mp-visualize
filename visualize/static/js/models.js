@@ -173,7 +173,7 @@ function layerModel(options, parent) {
         self.legend = self.url + 'SERVICE=WMS&VERSION=' +
                       self.wms_version + '&layer=' +
                       self.wms_slug +
-                      "&REQUEST=getlegendgraphic&FORMAT=image/png"
+                      "&REQUEST=GetLegendGraphic&FORMAT=image/png"
     }
 
     // set target blank for all links
