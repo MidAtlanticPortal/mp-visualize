@@ -716,7 +716,11 @@ app.addWmsLayerToMap = function(layer) {
 };
 
 app.addArcRestLayerToMap = function(layer) {
-    var identifyUrl = layer.url.replace('export', layer.arcgislayers + '/query');
+    if (layer.url){
+      var identifyUrl = layer.url.replace('export', layer.arcgislayers + '/query');
+    } else {
+      var identifyUrl = '';
+    }
 
     layer.arcIdentifyControl = new OpenLayers.Control.ArcGisRestIdentify(
     {

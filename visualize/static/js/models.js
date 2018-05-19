@@ -79,6 +79,11 @@ function layerModel(options, parent) {
     //has companion layer(s)
     self.hasCompanion = options.has_companion || false;
 
+    self.is_multilayer = options.is_multilayer || false;
+    self.associated_multilayers = options.associated_multilayers || [];
+    self.dimensions = options.dimensions || [];
+    self.activeMultilayer = false;
+
     self.searchQueryable = options.search_query || false;
 
     app.viewModel.zoomLevel.subscribe( function() {
@@ -269,6 +274,9 @@ function layerModel(options, parent) {
             self.layer.redraw();
         } else {
             self.layer.setOpacity(newOpacity);
+        }
+        if (self.activeMultilayer) {
+          self.activeMultilayer.opacity(newOpacity);
         }
     });
 
@@ -568,6 +576,11 @@ function layerModel(options, parent) {
                 }
             }
 
+            //activate multilayer groups
+            if (layer.is_multilayer && layer.dimensions.length > 0){
+              self.activateMultiLayers();
+            }
+
             self.trackLayer(layer.name);
         }
     };
@@ -692,6 +705,47 @@ function layerModel(options, parent) {
             });
         }
     }
+
+    self.getMultilayerIds = function(object, id_list) {
+      var keys = Object.keys(object);
+      for (var i = 0; i < keys.length; i++){
+        key = keys[i];
+        value = object[key];
+        if (typeof(value) == "number") {
+          id_list.push(value);
+        } else if (typeof(value) == "object") {
+          id_list.concat(self.getMultilayerIds(value, id_list));
+        }
+      }
+      return id_list;
+    };
+
+    self.activateMultiLayers = function() {
+        var layer = this;
+        multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
+        for (var i = 0; i < multilayers.length; i++) {
+          mlayer = app.viewModel.getLayerById(multilayers[i]);
+          if (mlayer) {
+            mlayer.activateLayer();
+            mlayer.opacity(0);
+          }
+        }
+    };
+
+    self.toggleMultilayer = function(values) {
+      multilayerObject = Object.assign({},self.associated_multilayers);
+      for (var i = 0; i < values.length; i++) {
+        multilayerObject = multilayerObject[values[i]];
+      }
+      newMultiLayer = app.viewModel.getLayerById(multilayerObject);
+      if (newMultiLayer) {
+        if (self.activeMultilayer) {
+          self.activeMultilayer.opacity(0);
+        }
+        self.activeMultilayer = newMultiLayer;
+        self.activeMultilayer.opacity(self.opacity());
+      }
+    };
 
     self.ajaxMDAT = function(self, event) {
         if (self.showSublayers() === true) {
