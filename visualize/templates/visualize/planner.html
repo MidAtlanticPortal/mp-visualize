@@ -8,7 +8,7 @@
         <link href="{% static 'visualize/css/scalebar-thin.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/multilayer.css' %}" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="{% static 'js/lib/openlayers/theme/default/style.css' %}">
-        <link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css' %}" rel="stylesheet">
+        <link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css' %}" type="text/css" rel="stylesheet">
 {% endblock%}
 
 {% block body_class %}template-visualize{% endblock %}
@@ -199,9 +199,6 @@
                                                 <div class="active-wrapper">
                                                     {% include "visualize/includes/active-layer-row.html" %}
                                                 </div>
-                                                <!-- ko if: $data.is_multilayer -->
-                                                <div data-bind="attr: {id: id + '_multilayerslider'}" class="multilayerslider"></div>
-                                                <!-- /ko -->
                                             </li>
                                         </ul>
                                     </div>
