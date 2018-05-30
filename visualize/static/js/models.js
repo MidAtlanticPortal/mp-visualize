@@ -79,7 +79,8 @@ function layerModel(options, parent) {
     //has companion layer(s)
     self.hasCompanion = options.has_companion || false;
 
-    self.is_multilayer = options.is_multilayer || false;
+    self.is_multilayer_parent = options.is_multilayer_parent || false;
+    self.is_multilayer = ko.observable((options.is_multilayer && !options.is_multilayer_parent) || false);
     self.associated_multilayers = options.associated_multilayers || [];
     self.dimensions = options.dimensions || [];
     self.multilayerValueLookup = {};
@@ -361,6 +362,10 @@ function layerModel(options, parent) {
             layer.arcIdentifyControl.deactivate();
         }
 
+        if (layer.is_multilayer_parent && layer.dimensions.length > 0){
+          self.deactivateMultiLayers();
+        }
+
         layer.layer = null;
 
     };
@@ -435,6 +440,17 @@ function layerModel(options, parent) {
         layer.activeSublayer(false);
         layer.visibleSublayer(false);
     };
+
+    self.deactivateMultiLayers = function() {
+      var layer = this;
+      multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
+      for (var i = 0; i < multilayers.length; i++) {
+        mlayer = app.viewModel.getLayerById(multilayers[i]);
+        if (mlayer) {
+          mlayer.deactivateLayer();
+        }
+      }
+    }
 
     //deactivate all layers within a queryable mdat directory
     self.deactivateMDATDirectory = function() {
@@ -578,7 +594,7 @@ function layerModel(options, parent) {
             }
 
             //activate multilayer groups
-            if (layer.is_multilayer && layer.dimensions.length > 0){
+            if (layer.is_multilayer_parent && layer.dimensions.length > 0){
               self.activateMultiLayers();
               self.buildMultilayerValueLookup();
             }
@@ -593,12 +609,14 @@ function layerModel(options, parent) {
 
         app.addLayerToMap(layer);
 
-        //now that we now longer use the selectfeature control we can simply do the following
+        //now that we no longer use the selectfeature control we can simply do the following
         //if (app.map.getLayersByName('Canyon Labels').length > 0) {
         if (app.viewModel.activeLayers().length > 0 && app.viewModel.activeLayers()[0].name === 'Canyon Labels') {
             app.viewModel.activeLayers.splice(1, 0, layer);
         } else {
-            app.viewModel.activeLayers.unshift(layer);
+            if (!layer.is_multilayer()) {
+              app.viewModel.activeLayers.unshift(layer);
+            }
         }
 
         // set the active flag
@@ -635,6 +653,20 @@ function layerModel(options, parent) {
             self.setInvisible(layer);
         } else { //make visible
             self.setVisible(layer);
+        }
+
+        if (layer.is_multilayer_parent && layer.dimensions.length > 0){
+          var multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
+          for (var i = 0; i < multilayers.length; i++) {
+            var mlayer = app.viewModel.getLayerById(multilayers[i]);
+            if (mlayer) {
+              if (layer.visible()) {
+                mlayer.setVisible(mlayer);
+              } else {
+                mlayer.setInvisible(mlayer);
+              }
+            }
+          }
         }
     };
 

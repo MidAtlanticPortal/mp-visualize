@@ -100,7 +100,7 @@
 <!-- /ko -->
 
 {% block "after" %}
-<!-- ko if: $data.is_multilayer -->
+<!-- ko if: $data.is_multilayer_parent -->
 <div data-bind="foreach: dimensions">
   <div class="slider multilayerslider" data-bind="attr: {id: $parent.id + '_' + label + '_multilayerslider'}"></div>
 </div>
