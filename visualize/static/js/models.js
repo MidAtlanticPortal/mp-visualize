@@ -787,6 +787,24 @@ function layerModel(options, parent) {
       self.toggleMultilayer(sliderValues);
     };
 
+    self.multilayerAnimateToggle = function(checkbox, slider) {
+      var intr = setInterval(function() {
+        if (!checkbox.checked) {
+          clearInterval(intr);
+        } else {
+          var max = slider.slider('option', 'max');
+          var value = slider.slider('value');
+          var step = slider.slider('option', 'step');
+          var min = slider.slider('option', 'min');
+          if (value < max && (value + step) <= max ) {
+            slider.slider('value', value + step);
+          } else {
+            slider.slider('value', min);
+          }
+        }
+      }, 1000);
+    };
+
     self.buildMultilayerValueLookup = function() {
       for (var i = 0; i < self.dimensions.length; i++) {
         dimension = self.dimensions[i];
@@ -797,17 +815,17 @@ function layerModel(options, parent) {
           step: 1,
           range: 'min'
         }
-        self.addSlider(dimension.label);
+        self.addSlider(dimension);
       }
     };
 
     self.addSlider = function(dimension) {
-      $( "#" + self.id + "_" + dimension + "_multilayerslider" ).slider({
+      $( "#" + self.id + "_" + dimension.label + "_multilayerslider" ).slider({
         create: self.multilayerSliderCreate,
         change: self.multilayerSliderChange,
         value: 0,
         min: 0,
-        max: self.multilayerValueLookup[dimension].length-1,
+        max: self.multilayerValueLookup[dimension.label].length-1,
         step: 1
       })
       .each(function() {
@@ -821,7 +839,7 @@ function layerModel(options, parent) {
         // Get the options for this slider
         var opt = {
           min: 0,
-          max: self.multilayerValueLookup[dimension].length-1,
+          max: self.multilayerValueLookup[dimension.label].length-1,
           step: 1,
           range: 'min'
         }
@@ -832,13 +850,20 @@ function layerModel(options, parent) {
         // Space out values
         for (var i = 0; i <= vals; i++) {
 
-          var el = $('<label>'+self.multilayerValueLookup[dimension][i].label+'</label>').css('left',(i/vals*100)+'%');
+          var el = $('<label>'+self.multilayerValueLookup[dimension.label][i].label+'</label>').css('left',(i/vals*100)+'%');
 
-          $( "#" + self.id + "_" + dimension + "_multilayerslider" ).append(el);
+          $( "#" + self.id + "_" + dimension.label + "_multilayerslider" ).append(el);
 
         }
 
       });
+
+      if (dimension.animated) {
+        $( "#" + self.id + "_animate_multilayerslider" ).change(function() {
+          var slider = $( "#" + self.id + "_" + dimension.label + "_multilayerslider" );
+          self.multilayerAnimateToggle(this, slider);
+        });
+      }
     };
 
     self.toggleMultilayer = function(values) {

@@ -102,7 +102,24 @@
 {% block "after" %}
 <!-- ko if: $data.is_multilayer_parent -->
 <div data-bind="foreach: dimensions">
-  <div class="slider multilayerslider" data-bind="attr: {id: $parent.id + '_' + label + '_multilayerslider'}"></div>
+  <table class="slider-table">
+    <tr class="slider-row">
+      <!-- ko if: $data.animated -->
+        <td class="animated-slider-cell">
+          <div class="slider multilayerslider" data-bind="attr: {id: $parent.id + '_' + label + '_multilayerslider'}"></div>
+        </td>
+        <td>
+          <input type="checkbox" data-bind="attr: {id: $parent.id + '_animate_multilayerslider'}" name="animate" value="animate">
+          <label data-bind="attr: {for: $parent.id + '_animate_multilayerslider'}">animate</label>
+        </td>
+      <!-- /ko -->
+      <!-- ko ifnot: $data.animated -->
+        <td class="slider-cell">
+          <div class="slider multilayerslider" data-bind="attr: {id: $parent.id + '_' + label + '_multilayerslider'}"></div>
+        </td>
+      <!-- /ko -->
+    </tr>
+  </table>
 </div>
 <!-- /ko -->
 {% endblock %}
