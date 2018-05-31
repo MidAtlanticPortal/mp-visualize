@@ -760,6 +760,7 @@ function layerModel(options, parent) {
         for (var i = 0; i < multilayers.length; i++) {
           mlayer = app.viewModel.getLayerById(multilayers[i]);
           if (mlayer) {
+            mlayer.is_multilayer(true);
             mlayer.activateLayer();
             mlayer.opacity(0);
           }
@@ -1041,6 +1042,8 @@ function layerModel(options, parent) {
         var activeLayer = app.viewModel.activeLayer();
         var activeParentLayer = app.viewModel.activeParentLayer();
         var layer = this;
+
+        layer.is_multilayer(false);
 
         //are the active and current layers the same
         if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
