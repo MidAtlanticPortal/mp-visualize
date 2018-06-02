@@ -108,9 +108,11 @@
         <td class="animated-slider-cell">
           <div class="slider multilayerslider" data-bind="attr: {id: $parent.id + '_' + label + '_multilayerslider'}"></div>
         </td>
-        <td>
-          <input type="checkbox" data-bind="attr: {id: $parent.id + '_animate_multilayerslider'}" name="animate" value="animate">
-          <label data-bind="attr: {for: $parent.id + '_animate_multilayerslider'}">animate</label>
+        <td class='animation-check-container'>
+          <input type="checkbox" data-bind="attr: {id: $parent.id + '_animate_multilayerslider'}" class="animate-checkmark" name="animate" value="animate">
+          <label data-bind="attr: {for: $parent.id + '_animate_multilayerslider'}">
+            <i class="fa fa-play" aria-hidden="true"></i>
+          </label>
         </td>
       <!-- /ko -->
       <!-- ko ifnot: $data.animated -->

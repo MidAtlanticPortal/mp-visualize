@@ -22,5 +22,53 @@
 }
 
 .animated-slider-cell {
-  width: 85%;
+  width: 100%;
+}
+
+.animation-check-container {
+  display: block;
+  position: relative;
+  margin-bottom: 12px;
+  margin-top: 9px;
+  left: -20px;
+  cursor: pointer;
+  font-size: 14px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.animation-check-container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.animate-checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 25px;
+  width: 25px;
+}
+
+
+.animate-checkmark ~ label i{
+  color: #00a564;
+  border: 2px solid;
+  padding: 3px;
+  border-radius: 4px;
+  width: 22px;
+  height: 24px;
+
+}
+
+.animate-checkmark:checked ~ label i{
+  background-color: #d7d7d8;
+}
+
+.animate-checkmark:checked ~ label i:before{
+  /* pause */
+  content: "\f04c";
 }
