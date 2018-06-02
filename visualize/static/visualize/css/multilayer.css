@@ -72,3 +72,7 @@
   /* pause */
   content: "\f04c";
 }
+
+#active.tab-pane.active {
+  overflow-x: hidden;
+}
