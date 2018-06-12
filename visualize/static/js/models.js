@@ -85,6 +85,7 @@ function layerModel(options, parent) {
     self.dimensions = options.dimensions || [];
     self.multilayerValueLookup = {};
     self.activeMultilayer = false;
+    self.multilayerSliderState = [];
 
     self.searchQueryable = options.search_query || false;
 
@@ -767,40 +768,46 @@ function layerModel(options, parent) {
         }
     };
 
-    self.multilayerSliderCreate = function(event, ui) {
+    self.multilayerSliderChange = function(event, ui) {
+      // If this isn't the first creation
       if (Object.keys(self.multilayerValueLookup).length == self.dimensions.length) {
         var sliderValues = [];
         for (var i = 0; i < self.dimensions.length; i++) {
           var dimension = self.dimensions[i].label;
-          sliderValues.push(self.multilayerValueLookup[dimension][0].value.toString());
+          try {
+            var sliderIndex = $('#' + self.id + '_' + dimension + '_multilayerslider').slider('value');
+            self.multilayerSliderState[i] = sliderIndex;
+            sliderValues.push(self.multilayerValueLookup[dimension][sliderIndex].value.toString());
+          } catch(err) {
+            if (self.multilayerSliderState.length > i) {
+              sliderValues.push(self.multilayerValueLookup[dimension][self.multilayerSliderState[i]].value.toString());
+            } else {
+              sliderValues.push(self.multilayerValueLookup[dimension][0].value.toString());
+            }
+          }
         }
         self.toggleMultilayer(sliderValues);
       }
-    };
-
-    self.multilayerSliderChange = function(event, ui) {
-      var sliderValues = [];
-      for (var i = 0; i < self.dimensions.length; i++) {
-        var dimension = self.dimensions[i].label;
-        var sliderIndex = $('#' + self.id + '_' + dimension + '_multilayerslider').slider('value');
-        sliderValues.push(self.multilayerValueLookup[dimension][sliderIndex].value.toString());
-      }
-      self.toggleMultilayer(sliderValues);
     };
 
     self.multilayerAnimateToggle = function(checkbox, slider) {
       var intr = setInterval(function() {
         if (!checkbox.checked) {
           clearInterval(intr);
+          return;
         } else {
-          var max = slider.slider('option', 'max');
-          var value = slider.slider('value');
-          var step = slider.slider('option', 'step');
-          var min = slider.slider('option', 'min');
-          if (value < max && (value + step) <= max ) {
-            slider.slider('value', value + step);
-          } else {
-            slider.slider('value', min);
+          try {
+            var max = slider.slider('option', 'max');
+            var value = slider.slider('value');
+            var step = slider.slider('option', 'step');
+            var min = slider.slider('option', 'min');
+            if (value < max && (value + step) <= max ) {
+              slider.slider('value', value + step);
+            } else {
+              slider.slider('value', min);
+            }
+          } catch(err) {
+            return;
           }
         }
       }, 1000);
@@ -810,60 +817,64 @@ function layerModel(options, parent) {
       for (var i = 0; i < self.dimensions.length; i++) {
         dimension = self.dimensions[i];
         self.multilayerValueLookup[dimension.label] = dimension.nodes;
-        var sliderOptions = {
-          min: 0,
-          max: dimension.nodes.length,
-          step: 1,
-          range: 'min'
+        if (self.multilayerSliderState.length > 0) {
+          self.addSlider(dimension, self.multilayerSliderState[i]);
+        } else {
+          self.addSlider(dimension, 0);
         }
-        self.addSlider(dimension);
       }
     };
 
-    self.addSlider = function(dimension) {
+    self.drawSlider = function() {
+      //
+      // Add labels to slider whose values
+      // are specified by min, max and whose
+      // step is set to 1
+      //
+
+      // Get the options for this slider
+      var opt = {
+        min: 0,
+        max: self.multilayerValueLookup[dimension.label].length-1,
+        step: 1,
+        range: 'min'
+      }
+
+      // Get the number of possible values
+      var vals = opt.max - opt.min;
+
+      // Space out values
+      for (var i = 0; i <= vals; i++) {
+
+        var el = $('<label>'+self.multilayerValueLookup[dimension.label][i].label+'</label>').css('left',(i/vals*100)+'%');
+
+        $( "#" + self.id + "_" + dimension.label + "_multilayerslider" ).append(el);
+
+      }
+    };
+
+    self.addSlider = function(dimension, value) {
       $( "#" + self.id + "_" + dimension.label + "_multilayerslider" ).slider({
-        create: self.multilayerSliderCreate,
+        create: self.multilayerSliderChange,
         change: self.multilayerSliderChange,
-        value: 0,
+        value: value,
         min: 0,
         max: self.multilayerValueLookup[dimension.label].length-1,
         step: 1
       })
-      .each(function() {
-
-        //
-        // Add labels to slider whose values
-        // are specified by min, max and whose
-        // step is set to 1
-        //
-
-        // Get the options for this slider
-        var opt = {
-          min: 0,
-          max: self.multilayerValueLookup[dimension.label].length-1,
-          step: 1,
-          range: 'min'
+      .each(
+        function() {
+          self.drawSlider();
         }
-
-        // Get the number of possible values
-        var vals = opt.max - opt.min;
-
-        // Space out values
-        for (var i = 0; i <= vals; i++) {
-
-          var el = $('<label>'+self.multilayerValueLookup[dimension.label][i].label+'</label>').css('left',(i/vals*100)+'%');
-
-          $( "#" + self.id + "_" + dimension.label + "_multilayerslider" ).append(el);
-
-        }
-
-      });
+      );
 
       if (dimension.animated) {
-        $( "#" + self.id + "_animate_multilayerslider" ).change(function() {
-          var slider = $( "#" + self.id + "_" + dimension.label + "_multilayerslider" );
-          self.multilayerAnimateToggle(this, slider);
-        });
+        if (!$._data( $( "#" + self.id + "_animate_multilayerslider" ).get(0), 'events')) {
+          $( "#" + self.id + "_animate_multilayerslider" ).change(function(evt) {
+            var slider = $( "#" + self.id + "_" + dimension.label + "_multilayerslider" );
+            self.multilayerAnimateToggle(this, slider);
+          });
+        }
       }
     };
 
@@ -2195,6 +2206,13 @@ function viewModel() {
             // are above those that are at the end
             // also save the layer state
             app.setLayerZIndex(layer, index);
+
+            // multilayer sliders need to be redrawn after dragging to reorder
+            if (layer.is_multilayer_parent) {
+              setTimeout(function() {
+                layer.buildMultilayerValueLookup();
+              }, 50);
+            }
             index--;
         });
 
