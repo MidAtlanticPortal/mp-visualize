@@ -156,8 +156,8 @@
                                     <li data-tab="active">
                                         <h4>
                                             <a href="#active" data-toggle="tab" id="activeTab">Active
-                                                <span data-bind="visible: activeLayers().length > 0">
-                                                    &#8226;&nbsp;<span class="count" data-bind="text: activeLayers().length">0</span>
+                                                <span data-bind="visible: visibleLayers().length > 0">
+                                                    &#8226;&nbsp;<span class="count" data-bind="text: visibleLayers().length">0</span>
                                                 </span>
                                             </a>
                                         </h4>
@@ -195,7 +195,7 @@
                                             </div>
                                         </div>
                                         <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
-                                            <li>
+                                            <li data-bind="visible: !$data.is_multilayer()">
                                                 <div class="active-wrapper">
                                                     {% include "visualize/includes/active-layer-row.html" %}
                                                 </div>

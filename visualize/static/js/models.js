@@ -444,12 +444,41 @@ function layerModel(options, parent) {
 
     self.deactivateMultiLayers = function() {
       var layer = this;
-      multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
+      var multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
       for (var i = 0; i < multilayers.length; i++) {
         mlayer = app.viewModel.getLayerById(multilayers[i]);
         if (mlayer) {
           mlayer.deactivateLayer();
         }
+      }
+    }
+
+    self.reorderMultilayers = function() {
+
+      // thanks JSPerf via digiguru @ https://stackoverflow.com/a/7180095/706797
+      Array.prototype.move = function(from, to) {
+          this.splice(to, 0, this.splice(from, 1)[0]);
+      };
+
+      // Get list of active layers minus 'multilayers'
+      var visibleLayers = [];
+      for (var i=0; i < app.viewModel.activeLayers().length; i++) {
+        layer = app.viewModel.activeLayers()[i];
+        if (!layer.is_multilayer()) {
+          visibleLayers.push(layer);
+        }
+      }
+      // Get index of self in this list
+      var toIndex = visibleLayers.indexOf(self);
+      var fromIndex = app.viewModel.activeLayers().indexOf(self);
+      // For self and then each multilayer, move to that index.
+      app.viewModel.activeLayers().move(fromIndex, toIndex);
+
+      var multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
+      for (var i=0; i<multilayers.length; i++) {
+        var multilayer = multilayers[i];
+        fromIndex = app.viewModel.activeLayers().indexOf(multilayer);
+        app.viewModel.activeLayers().move(fromIndex, toIndex);
       }
     }
 
@@ -615,9 +644,7 @@ function layerModel(options, parent) {
         if (app.viewModel.activeLayers().length > 0 && app.viewModel.activeLayers()[0].name === 'Canyon Labels') {
             app.viewModel.activeLayers.splice(1, 0, layer);
         } else {
-            if (!layer.is_multilayer()) {
-              app.viewModel.activeLayers.unshift(layer);
-            }
+            app.viewModel.activeLayers.unshift(layer);
         }
 
         // set the active flag
@@ -1457,7 +1484,7 @@ function viewModel() {
     // list of visible layermodels in same order as activeLayers
     self.visibleLayers = ko.computed(function() {
         return $.map(self.activeLayers(), function(layer) {
-            if (layer.visible()) {
+            if (layer.visible() && !layer.is_multilayer()) {
                 return layer;
             }
         });
@@ -2211,6 +2238,7 @@ function viewModel() {
             if (layer.is_multilayer_parent) {
               setTimeout(function() {
                 layer.buildMultilayerValueLookup();
+                // layer.reorderMultilayers();
               }, 50);
             }
             index--;
