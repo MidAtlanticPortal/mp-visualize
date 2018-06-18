@@ -102,7 +102,7 @@
 {% block "after" %}
 <!-- ko if: $data.is_multilayer_parent -->
 <div data-bind="foreach: dimensions">
-  <table class="slider-table">
+  <table class="slider-table" data-bind="visible: nodes.length>1">
     <tr class="slider-row">
       <!-- ko if: $data.animated -->
         <td class="animated-slider-cell">
