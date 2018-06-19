@@ -870,10 +870,18 @@ function layerModel(options, parent) {
       // Get the number of possible values
       var vals = opt.max - opt.min;
 
+      // clean out old labels before adding new
+      $( "#" + self.id + "_" + dimension.label + "_multilayerslider" ).children('label').remove()
       // Space out values
       for (var i = 0; i <= vals; i++) {
 
-        var el = $('<label>'+self.multilayerValueLookup[dimension.label][i].label+'</label>').css('left',(i/vals*100)+'%');
+        var el = $('<label>'+self.multilayerValueLookup[dimension.label][i].label+'</label>');
+        if (i == 0) {
+            var el_offset_width = 10;
+        } else {
+          var el_offset_width = (self.multilayerValueLookup[dimension.label][i].label.length-1) * 4 + 10;
+        }
+        el.css('left','calc(' + (i/vals*100)+'% - ' + el_offset_width + 'px)');
 
         $( "#" + self.id + "_" + dimension.label + "_multilayerslider" ).append(el);
 
