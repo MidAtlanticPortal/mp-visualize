@@ -3,21 +3,24 @@ app.viewModel.loadLayers = function(data) {
 	var self = app.viewModel;
 	// load layers
 	$.each(data.layers, function(i, layer) {
-		var layerViewModel = new layerModel(layer);
+    if (layer) {
+      var layerViewModel = new layerModel(layer);
 
-		self.layerIndex[layer.id] = layerViewModel;
-		// add sublayers if they exist
-		if (layer.subLayers) {
-			$.each(layer.subLayers, function(i, layer_options) {
-				var subLayer = new layerModel(layer_options, layerViewModel);
-				app.viewModel.layerIndex[subLayer.id] = subLayer;
-				layerViewModel.subLayers.push(subLayer);
-			});
-		}
+      self.layerIndex[layer.id] = layerViewModel;
+      // add sublayers if they exist
+      if (layer.subLayers) {
+        $.each(layer.subLayers, function(i, layer_options) {
+          var subLayer = new layerModel(layer_options, layerViewModel);
+          app.viewModel.layerIndex[subLayer.id] = subLayer;
+          layerViewModel.subLayers.push(subLayer);
+        });
+      }
+    }
 	});
 
 	// load themes
     $.each(data.themes, function(i, themeFixture) {
+      if (themeFixture) {
         var layers = [],
             theme = new themeModel(themeFixture);
         if (theme.is_visible) {
@@ -107,6 +110,7 @@ app.viewModel.loadLayers = function(data) {
 
             self.hiddenThemes.push(theme);
         }
+      }
     });
 
 	app.typeAheadSource = (function () {
