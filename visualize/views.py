@@ -15,6 +15,7 @@ from models import *
 from data_manager.models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
+from visualize import settings as viz_settings
 
 def show_planner(request, template='visualize/planner.html'):
     try:
@@ -74,6 +75,7 @@ def show_planner(request, template='visualize/planner.html'):
         'time_def_param_key': settings.WMS_PROXY_TIME_DEFAULT,
         'proxy_generic_layer': settings.WMS_PROXY_GENERIC_LAYER,
         'proxy_time_layer': settings.WMS_PROXY_TIME_LAYER,
+        'show_watermark': viz_settings.SHOW_WATERMARK,
     }
 
     if request.user.is_authenticated:
