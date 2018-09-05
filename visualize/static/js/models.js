@@ -2234,6 +2234,25 @@ function viewModel() {
         var index = 300;
         app.state.activeLayers = [];
 
+        // Pull multilayer children ids out of parent.associated_multilayers
+        var getMultilayerChildren = function(object, child_ids) {
+          var keys = Object.keys(object);
+          for (var x=0; x < keys.length; x++) {
+            var key = keys[x];
+            if (typeof object[key] == "object") {
+              var new_ids = getMultilayerChildren(object[key],[]);
+              child_ids = child_ids.concat(new_ids);
+            } else {
+              //assuming typeof is number
+              child_ids.push(object[key]);
+            }
+          }
+          return child_ids;
+        }
+
+        var multilayer_children = {};
+        var multilayer_parents = {};
+
         //self.showLegend(false);
         $.each(self.activeLayers(), function(i, layer) {
             // set the zindex on the openlayers layer
@@ -2242,8 +2261,13 @@ function viewModel() {
             // also save the layer state
             app.setLayerZIndex(layer, index);
 
+            if (layer.is_multilayer) {
+              multilayer_children[layer.id.toString()] = layer;
+            }
+
             // multilayer sliders need to be redrawn after dragging to reorder
             if (layer.is_multilayer_parent) {
+              multilayer_parents[index.toString()] = layer;
               setTimeout(function() {
                 layer.buildMultilayerValueLookup();
                 // layer.reorderMultilayers();
@@ -2251,6 +2275,19 @@ function viewModel() {
             }
             index--;
         });
+        for (var i = 0; i < Object.keys(multilayer_parents).length; i++) {
+          var index_str = Object.keys(multilayer_parents)[i];
+          var parent = multilayer_parents[index_str];
+          var index = parseInt(index_str);
+          var children_ids = getMultilayerChildren(parent.associated_multilayers, []);
+          for (var j = 0; j < children_ids.length; j++) {
+            var child_id = children_ids[j].toString();
+            if (multilayer_children.hasOwnProperty(child_id)) {
+              var child = multilayer_children[child_id];
+              app.setLayerZIndex(child, index);
+            }
+          }
+        }
 
         // re-ordering map layers by z value
         app.map.layers.sort(function(a, b) {
