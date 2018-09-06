@@ -35,6 +35,7 @@ function layerModel(options, parent) {
     self.outline_color = options.outline_color || self.color;
     self.fillOpacity = options.fill_opacity || 0.0;
     self.disable_click = options.disable_arcgis_attributes || false;
+    self.description = ko.observable();
 
     if ( options.opacity === 0 ) {
         self.defaultOpacity = options.opacity;
@@ -128,7 +129,6 @@ function layerModel(options, parent) {
       }
       $.ajax({
           dataType: "jsonp",
-          //http://ocean.floridamarine.org/arcgis/rest/services/SAFMC/SAFMC_Regulations/MapServer/legend/?f=pjson
           url: url,
           type: 'GET',
           success: function(data) {
@@ -137,7 +137,6 @@ function layerModel(options, parent) {
                       if (parseInt(layerobj['layerId'], 10) === parseInt(self.arcgislayers, 10)) {
                           self.legend = {'elements': []};
                           $.each(layerobj['legend'], function(j, legendobj) {
-                              //http://ocean.floridamarine.org/arcgis/rest/services/SAFMC/SAFMC_Regulations/MapServer/13/images/94ed037ab533027972ba3fc4a7c9d05c
                               var swatchURL = self.url.replace('/export', '/'+self.arcgislayers+'/images/'+legendobj['url']),
                                   label = legendobj['label'];
                               if (label === "") {
@@ -158,22 +157,9 @@ function layerModel(options, parent) {
           },
           error: function(error) {
               //debugger;
+              console.log(error);
           }
       });
-    }
-
-    // if legend is not provided, try using legend from web services
-    if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
-      try {
-        getArcGISJSONLegend(self, window.location.protocol);
-      } catch (err) {
-        if (window.location.protocol == "http:") {
-          console.log(err);
-        } else {
-          getArcGISJSONLegend(self, "http:");
-        }
-      }
-
     }
 
     //legends for actual WMS LAYERS
@@ -192,9 +178,9 @@ function layerModel(options, parent) {
         $descriptionTemp.find('a').each(function() {
             $(this).attr('target', '_blank');
         });
-        self.description = $descriptionTemp.html();
+        self.description($descriptionTemp.html());
     } else {
-        self.description = null;
+        self.description(null);
     }
 
     // set overview text for Learn More option
@@ -208,10 +194,10 @@ function layerModel(options, parent) {
         self.overview = $overviewTemp.html();
     } else if (parent && parent.overview) {
         self.overview = parent.overview;
-    } else if (self.description) {
-        self.overview = self.description;
-    } else if (parent && parent.description) {
-        self.overview = parent.description;
+    } else if (self.description()) {
+        self.overview = self.description();
+    } else if (parent && parent.description()) {
+        self.overview = parent.description();
     } else {
         self.overview = null;
     }
@@ -226,22 +212,20 @@ function layerModel(options, parent) {
           url: url,
           type: 'GET',
           success: function(data) {
-              self.overview = data['description'];
+            if (data['description']) {
+              if (!self.overview) {
+                self.overview = data['description'];
+              }
+              // RDH 09-06-2018
+              // I added the below code, but cannot find any proof that the Mid-A team
+              // WANTS auto-pulling of description if not provided explicitly.
+              // This logic would also have to be applied to the data-catalog as well.
+              // if (!self.description()) {
+              //   self.description(data['description']);
+              // }
+            }
           }
       });
-    }
-
-    // if no description is provided, try using the web services description
-    if ( !self.overview && self.url && (self.arcgislayers !== -1) ) {
-        try {
-          getArcGISJSONDescription(self, window.location.protocol);
-        } catch (err) {
-          if (window.location.protocol == "http:") {
-            console.log(err);
-          } else {
-            getArcGISJSONDescription(self, "http:");
-          }
-        }
     }
 
     // set data source and data notes text
@@ -1091,6 +1075,20 @@ function layerModel(options, parent) {
 
         layer.is_multilayer(false);
 
+        // if legend is not provided, try using legend from web services
+        if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
+          try {
+            getArcGISJSONLegend(self, window.location.protocol);
+          } catch (err) {
+            if (window.location.protocol == "http:") {
+              console.log(err);
+            } else {
+              getArcGISJSONLegend(self, "http:");
+            }
+          }
+
+        }
+
         //are the active and current layers the same
         if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
             // are these CAS/VTR layers?
@@ -1223,6 +1221,18 @@ function layerModel(options, parent) {
 
     // display descriptive text below the map
     self.toggleDescription = function(layer) {
+        // if no description is provided, try using the web services description
+        if ( (!self.overview || !self.description()) && self.url && (self.arcgislayers !== -1) ) {
+          try {
+            getArcGISJSONDescription(self, window.location.protocol);
+          } catch (err) {
+            if (window.location.protocol == "http:") {
+              console.log(err);
+            } else {
+              getArcGISJSONDescription(self, "http:");
+            }
+          }
+        }
         if ( ! layer.infoActive() ) {
             self.showDescription(layer);
         } else {
@@ -1241,13 +1251,13 @@ function layerModel(options, parent) {
     self.showTooltip = function(layer, event) {
         var layerActual;
         $('#layer-popover').hide();
-        if (layer.activeSublayer() && layer.activeSublayer().description) {
+        if (layer.activeSublayer() && layer.activeSublayer().description()) {
             layerActual = layer.activeSublayer();
         } else {
             layerActual = layer;
         }
-        if (layerActual.description) {
-            app.viewModel.layerToolTipText(layerActual.description);
+        if (layerActual.description()) {
+            app.viewModel.layerToolTipText(layerActual.description());
             $('#layer-popover').show().position({
                 "my": "right middle",
                 "at": "left middle",
@@ -1269,7 +1279,7 @@ function themeModel(options) {
     var self = this;
     self.name = options.display_name;
     self.id = options.id;
-    self.description = options.description;
+    self.description = ko.observable(options.description);
     self.learn_link = options.learn_link;
     self.is_visible = options.is_visible;
     self.slug_name = options.name;
@@ -1312,7 +1322,7 @@ function themeModel(options) {
         var theme = this;
         app.viewModel.activeTheme(theme);
         app.viewModel.activeThemeName(self.name);
-        app.viewModel.themeText(theme.description);
+        app.viewModel.themeText(theme.description());
     };
 
     // is active theme
