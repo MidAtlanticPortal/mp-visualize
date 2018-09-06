@@ -82,6 +82,8 @@ function layerModel(options, parent) {
 
     self.is_multilayer_parent = options.is_multilayer_parent || false;
     self.is_multilayer = ko.observable((options.is_multilayer && !options.is_multilayer_parent) || false);
+    self.is_visible_multilayer = ko.observable(false);
+
     self.associated_multilayers = options.associated_multilayers || [];
     self.dimensions = options.dimensions || [];
     self.multilayerValueLookup = {};
@@ -128,7 +130,7 @@ function layerModel(options, parent) {
         url = url.replace('http:', 'https:');
       }
       $.ajax({
-          dataType: "jsonp",
+          dataType: "json",
           url: url,
           type: 'GET',
           success: function(data) {
@@ -568,6 +570,20 @@ function layerModel(options, parent) {
     self.activateLayer = function() {
         var layer = this;
 
+        // if legend is not provided, try using legend from web services
+        if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
+          try {
+            getArcGISJSONLegend(self, window.location.protocol);
+          } catch (err) {
+            if (window.location.protocol == "http:") {
+              console.log(err);
+            } else {
+              getArcGISJSONLegend(self, "http:");
+            }
+          }
+
+        }
+
         if (!layer.active() && layer.type !== 'placeholder' && !layer.isDisabled()) {
 
             self.activateBaseLayer();
@@ -905,10 +921,12 @@ function layerModel(options, parent) {
       newMultiLayer = app.viewModel.getLayerById(multilayerObject);
       if (newMultiLayer) {
         if (self.activeMultilayer) {
+          self.activeMultilayer.is_visible_multilayer(false);
           self.activeMultilayer.opacity(0);
         }
         self.activeMultilayer = newMultiLayer;
         self.activeMultilayer.opacity(self.opacity());
+        self.activeMultilayer.is_visible_multilayer(true);
       }
     };
 
@@ -1074,20 +1092,6 @@ function layerModel(options, parent) {
         var layer = this;
 
         layer.is_multilayer(false);
-
-        // if legend is not provided, try using legend from web services
-        if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
-          try {
-            getArcGISJSONLegend(self, window.location.protocol);
-          } catch (err) {
-            if (window.location.protocol == "http:") {
-              console.log(err);
-            } else {
-              getArcGISJSONLegend(self, "http:");
-            }
-          }
-
-        }
 
         //are the active and current layers the same
         if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
@@ -1499,6 +1503,14 @@ function viewModel() {
     // list of active layermodels
     self.activeLayers = ko.observableArray();
 
+    self.visibleLegendLayers = ko.computed(function() {
+      return $.map(self.activeLayers(), function(layer) {
+          if (layer.visible()) {
+              return layer;
+          }
+      });
+    });
+
     // list of visible layermodels in same order as activeLayers
     self.visibleLayers = ko.computed(function() {
         return $.map(self.activeLayers(), function(layer) {
@@ -1510,6 +1522,17 @@ function viewModel() {
 
     self.visibleLayers.subscribe( function() {
         self.updateAttributeLayers();
+    });
+
+    // Legends relied on 'visibleLayers' to determine what to show.
+    // Multilayers are left out of 'visibleLayers' so that they don't appear
+    // in the Active tab, but we DO want them in the Legend tab (if showing).
+    self.visibleLegendLayers = ko.computed(function() {
+      return $.map(self.activeLayers(), function(layer) {
+          if (layer.visible()) {
+              return layer;
+          }
+      });
     });
 
     self.attributeLayers = ko.observable();
@@ -1809,8 +1832,8 @@ function viewModel() {
     self.showLegend = ko.observable(false);
 
     self.activeLegendLayers = ko.computed(function() {
-        var layers = $.map(self.visibleLayers(), function(layer) {
-            if (layer.legend || layer.legendTitle) {
+        var layers = $.map(self.visibleLegendLayers(), function(layer) {
+            if ((layer.legend || layer.legendTitle) && (!layer.is_multilayer() || layer.is_visible_multilayer())) {
                 return layer;
             }
         });
@@ -1861,7 +1884,7 @@ function viewModel() {
     // determine whether app is offering legends
     self.hasActiveLegends = ko.computed(function() {
         var hasLegends = false;
-        $.each(self.visibleLayers(), function(index, layer) {
+        $.each(self.visibleLegendLayers(), function(index, layer) {
             if (layer.legend || layer.legendTitle) {
                 hasLegends = true;
             }
