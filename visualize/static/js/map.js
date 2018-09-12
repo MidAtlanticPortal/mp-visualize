@@ -30,7 +30,6 @@ app.init = function () {
         attribution: "Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others",
         textColor: "black"
     });
-
     openStreetMap = new OpenLayers.Layer.OSM("Open Street Map", "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png", {
         sphericalMercator: true,
         isBaseLayer: true,
@@ -38,46 +37,30 @@ app.init = function () {
         visibility: false,
         textColor: "black"
     });
-    googleStreet = new OpenLayers.Layer.Google("Streets", {
+    esriStreets = new OpenLayers.Layer.XYZ("ESRI Streets", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
-        visibility: false,
+        attribution: "Sources: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, METI, TomTom, and others",
+        buffer: 3,
         textColor: "black"
     });
-    googleTerrain = new OpenLayers.Layer.Google("Physical", {
-        type: google.maps.MapTypeId.TERRAIN,
+    esriTopo = new OpenLayers.Layer.XYZ("ESRI Physical", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
-        visibility: false,
+        attribution: "Sources: Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, and others",
+        buffer: 3,
         textColor: "black"
     });
-    googleSatellite = new OpenLayers.Layer.Google("Satellite", {
-        type: google.maps.MapTypeId.SATELLITE,
+    esriImagery = new OpenLayers.Layer.XYZ("ESRI Satellite", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
-        numZoomLevels: 13,
-        visibility: false,
+        // numZoomLevels: max_zoom,
+        attribution: "Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and others",
+        buffer: 3,
         textColor: "white"
     });
-
-    /*var bingHybrid = new OpenLayers.Layer.Bing( {
-        name: "Bing Hybrid",
-        key: "AvD-cuulbvBqwFDQGNB1gCXDEH4S6sEkS7Yw9r79gOyCvd2hBvQYPaRBem8cpkjv",
-        type: "AerialWithLabels",
-        sphericalMercator: true,
-        isBaseLayer: true,
-        numZoomLevels: 13
-    });*/
-
-    // need api key from http://bingmapsportal.com/
-    /*var bingHybrid = new OpenLayers.Layer.Bing({
-        name: "Bing Hybrid",
-        key: "AvD-cuulbvBqwFDQGNB1gCXDEH4S6sEkS7Yw9r79gOyCvd2hBvQYPaRBem8cpkjv",
-        type: "AerialWithLabels"
-    });*/
-
     nauticalCharts = new OpenLayers.Layer.ArcGIS93Rest("Nautical Charts", "http://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage",
         {
             layers: 'null'
@@ -112,7 +95,7 @@ app.init = function () {
     //     }
     // );
 
-    map.addLayers([esriOcean, openStreetMap, googleStreet, googleTerrain, googleSatellite, nauticalCharts]);
+    map.addLayers([esriOcean, openStreetMap, esriStreets, esriTopo, esriImagery, nauticalCharts]);
 
     map.addControl(new SimpleLayerSwitcher());
 
