@@ -2294,7 +2294,7 @@ function viewModel() {
             // also save the layer state
             app.setLayerZIndex(layer, index);
 
-            if (layer.is_multilayer) {
+            if (layer.is_multilayer()) {
               multilayer_children[layer.id.toString()] = layer;
             }
 
