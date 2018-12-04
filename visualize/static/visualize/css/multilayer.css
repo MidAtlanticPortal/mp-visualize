@@ -1,4 +1,6 @@
 .multilayerslider label {
+    font-size: 12px;
+    font-family: arial;
     position: absolute;
     width: 20px;
     /* margin-left: -10px; */
