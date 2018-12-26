@@ -341,6 +341,14 @@ app.updateUrl = function () {
     if (app.saveStateMode) {
         app.restoreState = state;
     }
+    var ua = window.navigator.userAgent;
+    if (ua.indexOf("MSIE ") > -1 || ua.indexOf("Edge") > -1) {
+      while ($.param(state).length > 2047) {
+        state.dls.pop();
+        state.dls.pop();
+        state.dls.pop();
+      }
+    }
     window.location.hash = $.param(state);
     app.viewModel.currentURL(window.location.pathname + window.location.hash);
 };
