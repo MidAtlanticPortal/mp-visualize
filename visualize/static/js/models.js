@@ -156,10 +156,6 @@ function layerModel(options, parent) {
               } else {
                   //debugger;
               }
-          },
-          error: function(error) {
-              //debugger;
-              console.log(error);
           }
       });
     }
@@ -937,6 +933,7 @@ function layerModel(options, parent) {
         };
       }
       multilayerObject = Object.assign({},self.associated_multilayers);
+      //One value for each dimension: use this to ID the layer ID for the given dimensions
       for (var i = 0; i < values.length; i++) {
         multilayerObject = multilayerObject[values[i]];
       }
@@ -2323,10 +2320,6 @@ function viewModel() {
             // multilayer sliders need to be redrawn after dragging to reorder
             if (layer.is_multilayer_parent) {
               multilayer_parents[index.toString()] = layer;
-              setTimeout(function() {
-                layer.buildMultilayerValueLookup();
-                // layer.reorderMultilayers();
-              }, 50);
             }
             index--;
         });
