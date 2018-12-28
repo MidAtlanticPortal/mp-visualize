@@ -342,7 +342,7 @@ app.updateUrl = function () {
         app.restoreState = state;
     }
     var ua = window.navigator.userAgent;
-    if (ua.indexOf("MSIE ") > -1 || ua.indexOf("Edge") > -1) {
+    if (ua.indexOf("MSIE ") > -1 || ua.indexOf("Edge") > -1 || ua.indexOf("Trident") > -1) {
       while ($.param(state).length > 2047) {
         state.dls.pop();
         state.dls.pop();
