@@ -125,7 +125,11 @@ function layerModel(options, parent) {
     }
 
     getArcGISJSONLegend = function(self, protocol) {
-      var url = self.url.replace('/export', '/legend/?f=pjson');
+      if (self.url.indexOf('?') < 0) {
+        var url = self.url.replace('/export', '/legend/?f=pjson');
+      } else {
+        var url = self.url.split('?').join('&').replace('/export', '/legend/?f=pjson');
+      }
       if (protocol == "https:") {
         url = url.replace('http:', 'https:');
       }
