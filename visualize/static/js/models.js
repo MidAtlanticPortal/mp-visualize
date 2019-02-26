@@ -124,6 +124,107 @@ function layerModel(options, parent) {
         self.featureAttributionName = 'Benthic Habitats';
     }
 
+    parseArgGISJSONLegendResponse = function(self, data, layerId) {
+      console.log('LAYER ID: ' + layerId);
+      if (layerId == 42 || layerId == "42") {
+        debugger;
+      }
+      $.each(data['layers'], function(i, layerobj) {
+          // console.log('RETRIEVED ID: ' + parseInt(layerobj['layerId'], 10));
+          if (parseInt(layerobj['layerId'], 10) === layerId) {
+              self.legend = {'elements': []};
+              $.each(layerobj['legend'], function(j, legendobj) {
+                  var swatchURL = self.url.replace('/export', '/'+layerId+'/images/'+legendobj['url']),
+                      label = legendobj['label'];
+                  if (label === "") {
+                      label = layerobj['layerName'];
+                  }
+                  self.legend['elements'].push({'swatch': swatchURL, 'label': label});
+                  //console.log(self.legend);
+              });
+          }
+      });
+      return(self);
+    };
+
+    manageArcGISJSONLegendResults = function(self, url, data, layerId, protocol) {
+      if (data['layers']) {
+        self = parseArgGISJSONLegendResponse(self, data, layerId);
+        if (!self.hasOwnProperty('legend') || !self.legend.hasOwnProperty('elements') || self.legend.elements.length < 1) {
+          // For AIS Sliders, sublayers do not have legends, but their parents do. We need to trace ancestry to find these.
+          getAncestorArcGISJSONLEGEND(self, url, layerId, protocol);
+        }
+        //reset visibility (to reset activeLegendLayers)
+        var visible = self.visible();
+        self.visible(false);
+        self.visible(visible);
+      } else {
+          console.log('no "Layers" in returned data: ' + data);
+      }
+    };
+
+    getAncestorArcGISJSONLEGEND = function(self, url, layerId, protocol) {
+      console.log("Layer " + layerId + " not found. Looking for ancestor legend...");
+      parentId = false;
+      ajaxStarted = false;
+      ajaxReturned = false;
+      parentId = null;
+      time = 0;
+      var getParentIdURL = self.url.slice(0, self.url.indexOf('/export')) + "/" + layerId + "?f=pjson";
+      if (protocol == "https:") {
+        getParentIdURL = getParentIdURL.replace('http:', 'https:');
+      }
+      while (time < 10 && ajaxReturned == false) {
+        setTimeout(function() {
+          if (!ajaxStarted) {
+            $.ajax({
+              dataType: "json",
+              url: getParentIdURL,
+              type: 'GET',
+              success: function(data) {
+                // console.log(data);
+                // new AJAX call get get and parse Legend JSON
+                try {
+                  parentId = data.parentLayer.id;
+                  console.log("Parent ID found: " + parentId);
+                } catch (err){
+                  console.log(err);
+                  console.log("Data has no parentLayer.id field: " + data);
+                  ajaxReturned = true;
+                }
+                if (parentId) {
+                  $.ajax({
+                    dataType: "json",
+                    url: url,
+                    type: 'GET',
+                    success: function(jsonLegendData) {
+                      // WHEN DONE, SET ajaxReturned to True (both success and fail)
+                      ajaxReturned = true;
+                      manageArcGISJSONLegendResults(self, url, jsonLegendData, parentId, protocol);
+
+                    },
+                    error: function(err) {
+                      // WHEN DONE, SET ajaxReturned to True (both success and fail)
+                      ajaxReturned = true;
+                      console.log(err);
+                    }
+                  });
+                }
+
+              // },
+              // error: fucntion(err) {
+              //   ajaxReturned = true;
+              //   console.log(err);
+              }
+            });  // end parent ID AJAX
+            ajaxStarted=true;
+          } // end if(ajaxStarted)
+        }, 1000);  // end timeout
+        time++;
+      }  // end while
+
+    };
+
     getArcGISJSONLegend = function(self, protocol) {
       if (self.url.indexOf('?') < 0) {
         var url = self.url.replace('/export', '/legend/?f=pjson');
@@ -138,28 +239,36 @@ function layerModel(options, parent) {
           url: url,
           type: 'GET',
           success: function(data) {
-              if (data['layers']) {
-                  $.each(data['layers'], function(i, layerobj) {
-                      if (parseInt(layerobj['layerId'], 10) === parseInt(self.arcgislayers, 10)) {
-                          self.legend = {'elements': []};
-                          $.each(layerobj['legend'], function(j, legendobj) {
-                              var swatchURL = self.url.replace('/export', '/'+self.arcgislayers+'/images/'+legendobj['url']),
-                                  label = legendobj['label'];
-                              if (label === "") {
-                                  label = layerobj['layerName'];
-                              }
-                              self.legend['elements'].push({'swatch': swatchURL, 'label': label});
-                              //console.log(self.legend);
-                          });
-                      }
-                  });
-                  //reset visibility (to reset activeLegendLayers)
-                  var visible = self.visible();
-                  self.visible(false);
-                  self.visible(visible);
-              } else {
-                  //debugger;
-              }
+              manageArcGISJSONLegendResults(self, url, data, parseInt(self.arcgislayers, 10), protocol);
+              // if (data['layers']) {
+              //   parseArgGISJSONLegendResponse(self, data, parseInt(self.arcgislayers, 10));
+              //   // console.log('LAYER ID: ' + parseInt(self.arcgislayers, 10));
+              //   // $.each(data['layers'], function(i, layerobj) {
+              //   //     console.log('RETRIEVED ID: ' + parseInt(layerobj['layerId'], 10));
+              //   //     if (parseInt(layerobj['layerId'], 10) === parseInt(self.arcgislayers, 10)) {
+              //   //         self.legend = {'elements': []};
+              //   //         $.each(layerobj['legend'], function(j, legendobj) {
+              //   //             var swatchURL = self.url.replace('/export', '/'+self.arcgislayers+'/images/'+legendobj['url']),
+              //   //                 label = legendobj['label'];
+              //   //             if (label === "") {
+              //   //                 label = layerobj['layerName'];
+              //   //             }
+              //   //             self.legend['elements'].push({'swatch': swatchURL, 'label': label});
+              //   //             //console.log(self.legend);
+              //   //         });
+              //   //     }
+              //   // });
+              //   if (!self.hasOwnProperty('legend') || !self.lagend.hasOwnProperty('elements') || self.legend.elements.length < 1) {
+              //     // For AIS Sliders, sublayers do not have legends, but their parents do. We need to trace ancestry to find these.
+              //     getAncestorArcGISJSONLEGEND(self, url, parseInt(self.arcgislayers, 10), protocol);
+              //   }
+              //   //reset visibility (to reset activeLegendLayers)
+              //   var visible = self.visible();
+              //   self.visible(false);
+              //   self.visible(visible);
+              // } else {
+              //     console.log('no "Layers" in returned data: ' + data);
+              // }
           }
       });
     }
