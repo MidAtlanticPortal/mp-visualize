@@ -876,12 +876,12 @@ function layerModel(options, parent) {
       for (var i = 0; i <= vals; i++) {
 
         var el = $('<label>'+self.multilayerValueLookup[dimension.label][i].label+'</label>');
-        if (i == 0) {
-            var el_offset_width = 10;
-        } else {
-          var el_offset_width = (self.multilayerValueLookup[dimension.label][i].label.length-1) * 4 + 10;
+        if (vals != 0) {
+          var label_width = 100/vals;
+          var label_left = label_width*i-(label_width/2);
+          el.css('width', label_width + '%');
+          el.css('left', label_left + '%');
         }
-        el.css('left','calc(' + (i/vals*100)+'% - ' + el_offset_width + 'px)');
 
         $( "#" + self.id + "_" + dimension.label + "_multilayerslider" ).append(el);
 
