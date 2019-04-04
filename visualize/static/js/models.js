@@ -2349,6 +2349,21 @@ function viewModel() {
         // update the url hash
         app.updateUrl();
 
+        $.each(self.activeLayers(), function(i, layer) {
+          if (layer.is_multilayer_parent) {
+            if ($('#'+ layer.id + '_' + layer.dimensions[0].label + '_multilayerslider').length == 0 || $('#'+ layer.id + '_' + layer.dimensions[0].label + '_multilayerslider').html() == "") {
+              try {
+                setTimeout(function() {
+                  layer.buildMultilayerValueLookup();
+                }, 30)
+              }
+              catch (err) {
+                console.log('pass: ' + layer );
+              }
+            }
+          }
+        });
+
     });
 
     self.deactivateAllLayers = function() {
