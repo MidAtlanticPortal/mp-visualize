@@ -22,6 +22,11 @@ html, body {
 #linear-measurement-box-header i {
   float: right;
   margin-top: 1.5rem;
+  cursor: pointer;
+}
+
+#linear-measurement-box-header i:hover {
+  color: #00a564;
 }
 
 .olControlScaleLine {
