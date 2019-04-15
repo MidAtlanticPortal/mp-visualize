@@ -2028,8 +2028,101 @@ function viewModel() {
         $('#short-url').text = self.mapLinks.getURL();
         self.mapLinks.setIFrameHTML();
         $('#map-links-modal').modal()
-
     };
+
+    self.toggleLinearMeasurement = function() {
+      if ($('#linear-measurement i').hasClass('fa-arrows-h')) {
+        self.startLinearMeasurement();
+      } else {
+        self.clearLinearMeasurement();
+      }
+    }
+
+    self.handleLinearMeasurements = function(event) {
+        var geometry = event.geometry;
+        var units = event.units;
+        var order = event.order;
+        var measure = event.measure;
+        var element = document.getElementById('measurement-output');
+        var out = "";
+        if (measure < 19) {
+          var to_fixed_digits = 2;
+        } else if (measure > 187 ) {
+          var to_fixed_digits = 0;
+        } else {
+          var to_fixed_digits = 1;
+        }
+        if(order == 1) {
+            out += "measure: " + measure.toFixed(to_fixed_digits) + " " + units;
+            if (units == "km") {
+              out += "; " + (measure/1.609344).toFixed(to_fixed_digits) + " mi" + "; " + (measure/1.852).toFixed(to_fixed_digits) + " N mi";
+            } else if (units == "m") {
+              out += "; " + (measure/1609.344).toFixed(3) + " mi" + "; " + (measure/1852).toFixed(3) + " N mi";
+            }
+        } else {
+            out += "measure: " + measure.toFixed(to_fixed_digits) + " " + units + "<sup>2</" + "sup>";
+        }
+        element.innerHTML = out;
+    }
+
+    self.createLinearControl = function() {
+      // yanked from http://dev.openlayers.org/examples/measure.html
+      var sketchSymbolizers = {
+          "Line": {
+              strokeWidth: 3,
+              strokeOpacity: 1,
+              strokeDashstyle: "dash"
+          }
+      };
+      var style = new OpenLayers.Style();
+      style.addRules([
+          new OpenLayers.Rule({symbolizer: sketchSymbolizers})
+      ]);
+      var styleMap = new OpenLayers.StyleMap({"default": style});
+
+      var renderer = OpenLayers.Util.getParameters(window.location.href).renderer;
+      renderer = (renderer) ? [renderer] : OpenLayers.Layer.Vector.prototype.renderers;
+
+      app.map.linearMeasurementControl = new OpenLayers.Control.Measure(
+          OpenLayers.Handler.Path, {
+              persist: true,
+              handlerOptions: {
+                  layerOptions: {
+                      renderers: renderer,
+                      styleMap: styleMap
+                  }
+              }
+          }
+      );
+
+      app.map.linearMeasurementControl.events.on({
+        'measure': self.handleLinearMeasurements,
+        'measurepartial': self.handleLinearMeasurements
+      });
+      app.map.linearMeasurementControl.geodesic = true;
+      app.map.linearMeasurementControl.setImmediate(true);
+      app.map.addControl(app.map.linearMeasurementControl);
+
+    }
+
+    self.startLinearMeasurement = function() {
+      if (!app.map.linearMeasurementControl) {
+        self.createLinearControl();
+      }
+      // Activate drawing (linestring)
+      app.map.linearMeasurementControl.activate();
+      $('#measurement-display').show();
+      // change $('#linear-measurement-button') to work as cancel/clear
+      $('#linear-measurement i').removeClass('fa-arrows-h');
+      $('#linear-measurement i').addClass('fa-times');
+    }
+
+    self.clearLinearMeasurement = function() {
+      $('#measurement-display').hide();
+      app.map.linearMeasurementControl.deactivate();
+      $('#linear-measurement i').removeClass('fa-times');
+      $('#linear-measurement i').addClass('fa-arrows-h');
+    }
 
     /* marine-life-library, not databased MDAT layers */
     self.activateMDATLayer = function(layer) {

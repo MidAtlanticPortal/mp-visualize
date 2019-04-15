@@ -1,0 +1,31 @@
+html, body {
+  overflow: hidden;
+}
+
+#measurement-display {
+  left: 40vw;
+  bottom: -2rem;
+  position: absolute;
+  background-color: #e7e7e8;
+  border: 1px solid #ddd;
+  border-radius: 2rem;
+  z-index: 1000;
+  padding: 0 2rem 3rem 3rem;
+  min-width: 360px;
+}
+
+#measurement-output {
+  min-height: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+#linear-measurement-box-header i {
+  float: right;
+  margin-top: 1.5rem;
+}
+
+.olControlScaleLine {
+  bottom: 5px;
+  right: 35px;
+  left: auto;
+}

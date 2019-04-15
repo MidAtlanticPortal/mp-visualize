@@ -100,15 +100,15 @@ app.init = function () {
     map.addControl(new SimpleLayerSwitcher());
 
     //Scale Bar
-    var scalebar = new OpenLayers.Control.ScaleBar( {
-        displaySystem: "english",
-        minWidth: 100, //default
-        maxWidth: 150, //default
-        divisions: 2, //default
-        subdivisions: 2, //default
-        showMinorMeasures: false //default
+    var scaleline = new OpenLayers.Control.ScaleLine({
+      maxWidth: 130,
+      topOutUnits: "mi",
+      topInUnits: "mi",
+      bottomOutUnits: "km",
+      bottomInUnits: "m",
+      geodesic: true
     });
-    map.addControl(scalebar);
+    map.addControl(scaleline);
 
     map.zoomBox = new OpenLayers.Control.ZoomBox( {
         //enables zooming to a given extent on the map by holding down shift key while dragging the mouse
