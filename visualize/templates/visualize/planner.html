@@ -214,7 +214,7 @@
                                             </div>
                                         </div>
                                         <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
-                                            <li data-bind="visible: !$data.is_multilayer()">
+                                            <li data-bind="visible: (!$data.hasOwnProperty('is_multilayer') || !$data.is_multilayer())">
                                                 <div class="active-wrapper">
                                                     {% include "visualize/includes/active-layer-row.html" %}
                                                 </div>

@@ -1537,7 +1537,7 @@ function viewModel() {
     // list of visible layermodels in same order as activeLayers
     self.visibleLayers = ko.computed(function() {
         return $.map(self.activeLayers(), function(layer) {
-            if (layer.visible() && !layer.is_multilayer()) {
+            if (layer.visible() && (!layer.hasOwnProperty('is_multilayer') || !layer.is_multilayer())) {
                 return layer;
             }
         });
@@ -2410,7 +2410,7 @@ function viewModel() {
             // also save the layer state
             app.setLayerZIndex(layer, index);
 
-            if (layer.is_multilayer()) {
+            if (layer.hasOwnProperty('is_multilayer') && layer.is_multilayer()) {
               multilayer_children[layer.id.toString()] = layer;
             }
 
