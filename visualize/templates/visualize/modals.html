@@ -73,8 +73,8 @@
                                 <div style="text-align: left; margin-left: 50px; cursor: pointer;">
                                     <div>
                                         <!--<input type="checkbox" style="margin-top: 0px; margin-bottom: 2px; margin-right: 3px;">-->
-                                        <i class="fa fa-large fa-check-square-o" data-bind="visible: $parent.groupIsSelected(group_name)"></i>
-                                        <i class="fa fa-large fa-square-o" data-bind="visible: !$parent.groupIsSelected(group_name)"></i>
+                                        <i class="far fa-large fa-check-square" data-bind="visible: $parent.groupIsSelected(group_name)"></i>
+                                        <i class="far fa-large fa-square" data-bind="visible: !$parent.groupIsSelected(group_name)"></i>
                                         <span data-bind="text: group_name"></span>
                                         <a class="group-members-popover" rel="popover" data-bind="attr: {'data-content': $parent.groupMembers(group_name), 'data-original-title': group_name}">
                                             <i class="icon-group"> </i>
