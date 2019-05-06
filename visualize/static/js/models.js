@@ -2078,7 +2078,7 @@ function viewModel() {
           "Line": {
               strokeWidth: 3,
               strokeOpacity: 1,
-              strokeDashstyle: "dash"
+              strokeDashstyle: "solid"
           }
       };
       var style = new OpenLayers.Style();
