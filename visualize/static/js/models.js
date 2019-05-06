@@ -696,6 +696,9 @@ function layerModel(options, parent) {
             }
           }
         }
+
+        app.updateUrl();
+
     };
 
     self.setVisible = function() {
@@ -1409,8 +1412,11 @@ function mapLinksModel() {
     };
 
     self.getURL = function() {
-        //return window.location.href;
-        return 'http://portal.midatlanticocean.org' + app.viewModel.currentURL();
+        if (window.location.hostname == "localhost") {
+          return window.location.protocol + '//portal.midatlanticocean.org' + app.viewModel.currentURL();
+        } else {
+          return window.location.origin + app.viewModel.currentURL();
+        }
     };
 
     self.shrinkURL = ko.observable();
@@ -1432,7 +1438,7 @@ function mapLinksModel() {
             long_url = self.getURL();
 
         $.getJSON(
-            "http://api.bitly.com/v3/shorten?callback=?",
+            "https://api-ssl.bitly.com/v3/shorten?callback=?",
             {
                 "format": "json",
                 "apiKey": bitly_api_key,
@@ -2024,6 +2030,7 @@ function viewModel() {
     }
 
     self.showMapLinks = function() {
+        app.updateUrl();
         self.mapLinks.shrinkURL(true);
         $('#short-url').text = self.mapLinks.getURL();
         self.mapLinks.setIFrameHTML();
