@@ -2038,7 +2038,7 @@ function viewModel() {
     };
 
     self.toggleLinearMeasurement = function() {
-      if ($('#linear-measurement i').hasClass('fa-ruler')) {
+      if ($('#linear-measurement i').hasClass('fa-ruler-vertical')) {
         self.startLinearMeasurement();
       } else {
         self.clearLinearMeasurement();
@@ -2120,7 +2120,7 @@ function viewModel() {
       app.map.linearMeasurementControl.activate();
       $('#measurement-display').show();
       // change $('#linear-measurement-button') to work as cancel/clear
-      $('#linear-measurement i').removeClass('fa-ruler');
+      $('#linear-measurement i').removeClass('fa-ruler-vertical');
       $('#linear-measurement i').addClass('fa-times');
     }
 
@@ -2128,7 +2128,7 @@ function viewModel() {
       $('#measurement-display').hide();
       app.map.linearMeasurementControl.deactivate();
       $('#linear-measurement i').removeClass('fa-times');
-      $('#linear-measurement i').addClass('fa-ruler');
+      $('#linear-measurement i').addClass('fa-ruler-vertical');
     }
 
     /* marine-life-library, not databased MDAT layers */

@@ -34,3 +34,11 @@ html, body {
   right: 35px;
   left: auto;
 }
+
+.fas.fa-ruler-vertical.outline {
+  padding: 2px 1px 2px 2px;
+  color: rgb(231, 231, 232);
+  background-color: #58585b;
+  transform: rotate(-125deg);
+  border-radius: 3px;
+}
