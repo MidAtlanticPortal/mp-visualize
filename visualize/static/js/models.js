@@ -1252,6 +1252,14 @@ function layerModel(options, parent) {
             $(layerID).css('display', 'block');
         }
     };
+    self.toggleFeatureAttribution = function(target_id) {
+        var layerID = '#' + app.viewModel.convertToSlug(target_id.id);
+        if ( $(layerID).is(':visible') ) {
+            $(layerID).css('display', 'none');
+        } else {
+            $(layerID).css('display', 'block');
+        }
+    };
 
     // display descriptive text below the map
     self.toggleDescription = function(layer) {

@@ -1,0 +1,16 @@
+#aggregated-attribute-overlay {
+  z-index: 1020 !important;
+}
+
+.feature-attributes {
+  margin: 10px;
+  margin-left: 10px !important;
+  border: 1px solid #e7e7e8;
+  border-radius: 5px;
+  padding-top: 0 !important;
+  margin-top: 5px;
+}
+
+.accordion-toggle {
+  width: 100%;
+}
