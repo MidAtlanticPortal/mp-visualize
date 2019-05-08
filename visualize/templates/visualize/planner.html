@@ -69,7 +69,7 @@
                               Basemaps
                         </div>
                 </div>
-                
+
                 <!-- Aggregated Attribution Overlay -->
                 <div id="aggregated-attribute-overlay" data-bind="visible: aggregatedAttributes && showFeatureAttribution, style: {width: aggregatedAttributesWidth}" style="display: none">
                     <div id="aggregated-attribute-heading">
@@ -88,7 +88,7 @@
                                         <div class="accordion-inner feature-attributes">
                                           <div data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
                                             <div class="accordion-heading" data-bind="visible: $root.aggregatedAttributes()[$parent.featureAttributionName].length > 1">
-                                                <a class="accordion-toggle" data-bind="click: $parent.toggleFeatureAttribution">
+                                                <a class="accordion-toggle feature-attributes-title" data-bind="click: $parent.toggleFeatureAttribution">
                                                     <span data-bind="text: $data.name"></span>
                                                 </a>
                                             </div>
@@ -101,7 +101,7 @@
                                                           <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                                           <!-- /ko -->
                                                           <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
-                                                          <span style="font-weight: normal" data-bind="html: data"></span>
+                                                          <span class="attribute-text" data-bind="html: data"></span>
                                                       </dt>
                                                   </dl>
                                                 </div>

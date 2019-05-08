@@ -11,6 +11,11 @@
   margin-top: 5px;
 }
 
-.accordion-toggle {
+.feature-attributes-title {
   width: 100%;
+}
+
+.attribute-text {
+  font-weight: normal;
+  overflow-wrap: break-word;
 }
