@@ -6,7 +6,7 @@
       <ul class="dropdown-menu dropdown-menu-right layer-menu">
           <li data-bind="foreach: subLayers">
               <a data-bind="click: toggleActive">
-                  <span><i class="fa green" data-bind="css: { 'fa-check-circle-o': visible(), 'fa-circle-o': ! visible() }"></i></span>
+                  <span><i class="far green" data-bind="css: { 'fa-check-circle': visible(), 'fa-circle': ! visible() }"></i></span>
                   <span class="deep-blue uppercase" data-bind="text: name"></span>
               </a>
           </li>
@@ -16,7 +16,7 @@
       <ul class="dropdown-menu dropdown-menu-right layer-menu">
           <li data-bind="foreach: subLayers">
               <a data-bind="click: toggleActive" style="padding-left: 15px">
-                  <span><i class="fa green" data-bind="css: { 'fa-check-square-o': visible(), 'fa-square-o': ! visible() }"></i></span>
+                  <span><i class="far green" data-bind="css: { 'fa-check-square': visible(), 'fa-square': ! visible() }"></i></span>
                   <span class="deep-blue uppercase" data-bind="text: name"></span>
               </a>
           </li>
@@ -24,4 +24,3 @@
       <!-- /ko -->
     <!-- /ko -->
 {% endblock %}
-    
