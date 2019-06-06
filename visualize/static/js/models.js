@@ -145,7 +145,7 @@ function layerModel(options, parent) {
                           $.each(layerobj['legend'], function(j, legendobj) {
                               var swatchURL = self.url.replace('/export', '/'+self.arcgislayers+'/images/'+legendobj['url']),
                                   label = legendobj['label'];
-                              if (label === "") {
+                              if (j < 1 && label === "") {
                                   label = layerobj['layerName'];
                               }
                               self.legend['elements'].push({'swatch': swatchURL, 'label': label});
