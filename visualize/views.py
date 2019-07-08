@@ -11,7 +11,7 @@ import locale
 from django.views.decorators.clickjacking import xframe_options_exempt
 
 from django.conf import settings
-from models import *
+from .models import *
 from data_manager.models import *
 from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
