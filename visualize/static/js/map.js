@@ -824,6 +824,11 @@ app.addArcRestLayerToMap = function(layer) {
             isBaseLayer: false
         }
     );
+    tile_size = new OpenLayers.Size(
+        w = app.map.size.w,
+        h = app.map.size.h
+    );
+    layer.layer.setTileSize(tile_size);
 };
 
 app.addVectorLayerToMap = function(layer) {
