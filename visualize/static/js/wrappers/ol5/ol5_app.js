@@ -1,0 +1,3 @@
+app.onResize = function(percent) {
+  
+};

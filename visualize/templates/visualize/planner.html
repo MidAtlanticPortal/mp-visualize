@@ -411,11 +411,9 @@
     {% else %}
       <script src="{% static 'js/wrappers/wrapper_init.js' %}"></script>
       <!-- LOAD MAP WRAPPERS -->
-      {% if MAP_LIBRARY == 'ol5' %}
-        <script src="{% static 'js/wrappers/ol5/controls.js' %}"></script>
-        <script src="{% static 'js/wrappers/ol5/layers.js' %}"></script>
-        <script src="{% static 'js/wrappers/ol5/ol5_wrapper.js' %}"></script>
-      {% endif %}
+      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_controls.js"></script>
+      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_layers.js"></script>
+      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_wrapper.js"></script>
       <!-- LOAD MAP FOR ALL NON-OL2 TECHS -->
       <script src="{% static 'js/map.js' %}"></script>
     {% endif %}
@@ -445,7 +443,12 @@
     <script src="{% static 'js/drawing.js' %}"></script>
     <script src="{% static 'js/models.js' %}"></script>
     <script src="{% static 'js/server.js' %}"></script>
-    <script src="{% static 'js/app.js' %}"></script>
+    {% if MAP_LIBRARY == 'ol2' %}
+      <script src="{% static 'js/wrappers/ol2/ol2_app.js' %}"></script>
+    {% else %}
+      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_app.js"></script>
+      <script src="{% static 'js/app.js' %}"></script>
+    {% endif %}
 
     <!--<script src="{% static 'js/html2canvas.js' %}"></script>-->
     <!--<script src="{% static 'js/html2canvas.svg.js' %}"></script>-->
