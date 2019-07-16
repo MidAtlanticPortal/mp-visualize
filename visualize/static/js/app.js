@@ -1,12 +1,14 @@
 // save the initial load hash so we can use it if set
 app.hash = window.location.hash;
-app.onResize = function(percent) {
-    app.map.render('map');
-};
+// if (!app.hasOwnProperty('onResize')) {
+//   app.onResize = function(percent) {
+//     app.map.render('map');
+//   };
+// }
 
-$(window).on('resize', function() {
-    app.onResize();
-});
+// $(window).on('resize', function() {
+//     app.onResize();
+// });
 
 // add indexof for typeahead
 if (!Array.prototype.indexOf) {
@@ -33,7 +35,7 @@ app.restoreState = {};
 
 ko.applyBindings(app.viewModel);
 app.viewModel.loadLayersFromServer().done(function() {
-  app.onResize();
+  // app.onResize();
 
   // trigger events that depend on the map
   $(document).trigger('map-ready');
@@ -86,8 +88,8 @@ app.map.setCenter(new OpenLayers.LonLat(-73.24, 38.93).transform(
 new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 7);
 
 $(document).ready(function() {
-  app.onResize();
-  $(window).resize(app.onResize);
+  // app.onResize();
+  // $(window).resize(app.onResize);
 
   //Do not display any warning for missing tiles
   OpenLayers.Util.onImageLoadError = function(){
