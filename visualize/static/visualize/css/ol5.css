@@ -1,0 +1,5 @@
+/* CONTROLS */
+
+body.template-visualize .olControlMousePosition {
+  position: absolute;
+}

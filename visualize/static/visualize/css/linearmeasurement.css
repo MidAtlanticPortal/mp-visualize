@@ -28,7 +28,9 @@ html, body {
 #linear-measurement-box-header i:hover {
   color: #00a564;
 }
-
+/* ol5 */
+.ol-scale-line,
+/* ol2*/
 .olControlScaleLine {
   bottom: 5px;
   right: 35px;

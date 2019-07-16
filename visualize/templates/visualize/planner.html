@@ -21,6 +21,9 @@
         <link href="{% static 'jquery-ui/themes/smoothness/jquery-ui.min.css' %}" type="text/css" rel="stylesheet">
         <link href="{% static 'visualize/css/attribute_report.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/linearmeasurement.css' %}" rel="stylesheet">
+        {% if not MAP_LIBRARY == 'ol2' %}
+          <link href="{% static 'visualize/css/' %}{{ MAP_LIBRARY }}.css" rel="stylesheet">
+        {% endif %}
 {% endblock%}
 
 {% block body_class %}template-visualize{% endblock %}
@@ -411,9 +414,11 @@
     {% else %}
       <script src="{% static 'js/wrappers/wrapper_init.js' %}"></script>
       <!-- LOAD MAP WRAPPERS -->
-      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_controls.js"></script>
       <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_layers.js"></script>
       <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_wrapper.js"></script>
+      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_map.js"></script>
+      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_controls.js"></script>
+      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_events.js"></script>
       <!-- LOAD MAP FOR ALL NON-OL2 TECHS -->
       <script src="{% static 'js/map.js' %}"></script>
     {% endif %}

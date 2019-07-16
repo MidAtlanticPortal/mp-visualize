@@ -2,74 +2,53 @@ app.init = function () {
 
     var map = app.init_map(app.region.map, 'map', app.region.srid, app.region.init_lon, app.region.init_lat, app.region.init_zoom);
 
-    map.addControl(new P97.Controls.LayerLoadProgress({
+    // TODO:
+    if (P97.Controls.hasOwnProperty('LayerLoadProgress')) {
+      map.addControl(new P97.Controls.LayerLoadProgress({
         map: map,
         element: null,
         onStartLoading: function() {
-            this.element.show();
+          this.element.show();
         },
         onLoading: function(num, max, percentStr) {
-            this.element.text(percentStr);
+          this.element.text(percentStr);
         },
         onFinishLoading: function() {
-            this.element.hide();
+          this.element.hide();
         }
+      }));
+    }
 
-    }));
+    // See if addBaseLayers is available in {lib}_map.js
+    if (app.wrapper.map.hasOwnProperty('addBaseLayers')) {
+      app.wrapper.map.addBaseLayers();
+    }
 
-    map.addLayers([app.wrapper.layers.ocean, app.wrapper.layers.osm, app.wrapper.layers.streets, app.wrapper.layers.topo, app.wrapper.layers.satellite, app.wrapper.layers.nautical]);
+    // See if switcher is available in {lib}_controls.js
+    if (app.wrapper.controls.hasOwnProperty('addSwitcher')) {
+      app.wrapper.controls.addSwitcher();
+    }
 
-    map.addControl(new SimpleLayerSwitcher());
+    // See if scale is available in {lib}_controls.js
+    if (app.wrapper.controls.hasOwnProperty('addScale')) {
+      app.wrapper.controls.addScale();
+    }
 
-    //Scale Bar
-    var scaleline = new OpenLayers.Control.ScaleLine({
-      maxWidth: 130,
-      topOutUnits: "mi",
-      topInUnits: "mi",
-      bottomOutUnits: "km",
-      bottomInUnits: "m",
-      geodesic: true
-    });
-    map.addControl(scaleline);
+    // See if zoombox is available in {lib}_controls.js
+    if (app.wrapper.controls.hasOwnProperty('addZoomBox')) {
+      //enables zooming to a given extent on the map by holding down shift key while dragging the mouse
+      app.wrapper.controls.addZoomBox();
+    }
 
-    map.zoomBox = new OpenLayers.Control.ZoomBox( {
-        //enables zooming to a given extent on the map by holding down shift key while dragging the mouse
-    });
+    // See if mousePosition is available in {lib}_controls.js
+    if (app.wrapper.controls.hasOwnProperty('addMousePosition')) {
+      app.wrapper.controls.addMousePosition();
+    }
 
-    map.addControl(map.zoomBox);
-
-    // only allow onetime zooming with box
-    map.events.register("zoomend", null, function () {
-        if (map.zoomBox.active) {
-            app.viewModel.deactivateZoomBox();
-        }
-        if( map.getZoom() < 5)
-        {
-            map.zoomTo(5);
-        }
-        if (map.getZoom() > 13)
-        {
-            map.zoomTo(13);
-        }
-        app.viewModel.zoomLevel(map.getZoom());
-        /*if ( app.viewModel.activeLayers().length ) {
-            $.each(app.viewModel.activeLayers(), function(index, layer) {
-                if (layer.name === 'Aids to Navigation') {
-                    var zoom = map.getZoom();
-                    if (zoom < 10) {
-                        layer.legend = layer.legend.substring(0, layer.legend.lastIndexOf('/')+1) + 'legend_1_Level0_9.png'
-                    } else if (zoom === 10) {
-                        layer.legend = layer.legend.substring(0, layer.legend.lastIndexOf('/')+1) + 'legend_2_Level10.png'
-                    } else if (zoom === 11) {
-                        layer.legend = layer.legend.substring(0, layer.legend.lastIndexOf('/')+1) + 'legend_3_Level11.png'
-                    } else {
-                        layer.legend = layer.legend.substring(0, layer.legend.lastIndexOf('/')+1) + 'legend_4_Level12_13.png'
-                    }
-                }
-            });
-
-        }*/
-    });
+    // See if zoomEnd is available in {lib}_events.js
+    if (app.wrapper.events.hasOwnProperty('addZoomEnd')) {
+      app.wrapper.events.addZoomEnd();
+    }
 
     // map.addControl(new OpenLayers.Control.MousePosition({
     //     element: document.getElementById('pos')

@@ -14,7 +14,30 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
     var center = [center_x, center_y];
   }
 
+  // var layers = [];
+  // for (var i = 0; i < Object.keys(app.wrapper.layers).length; i++) {
+  //   var key = Object.keys(app.wrapper.layers)[i];
+  //   layers.push(app.wrapper.layers[key]);
+  // }
+
+  // ---------- OL5 CONTROLS ------------- //
+  var scaleLineControl = new ol.control.ScaleLine();
+  scaleLineControl.setUnits("us");
+
+  var mousePositionControl = new ol.control.MousePosition({
+    coordinateFormat: ol.coordinate.createStringXY(4),
+    projection: 'EPSG:4326',
+    className: 'olControlMousePosition',
+    undefinedHTML: null
+    // undefinedHTML: '&nbsp;'
+  });
+
   var map = new ol.Map({
+    controls: ol.control.defaults().extend([
+      scaleLineControl,
+      mousePositionControl
+    ]),
+    // layers: layers,
     layers: [
       app.wrapper.layers[base]
     ],

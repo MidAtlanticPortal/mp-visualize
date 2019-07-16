@@ -1,3 +1,4 @@
+app.wrapper.controls = {};
 (function(){
 /**
 LayerLoadProgress - Control that attempts to compute layer loading progress
@@ -152,3 +153,38 @@ window['P97']['Controls'] = window.P97.Controls || {};
 // window['P97']['Controls']['LayerLoadProgress'] = LayerLoadProgress;
 
 })();
+
+// RDH - It's best for the MANY controls (scale, mouse position, etc..)
+//    to be added at map instantiation, so this has been moved into ol5_wrapper.js
+
+/*
+  * app.wrapper.controls.addSwitcher - add a layer switcher control to the map (used for base layers)
+  *@param {null} none
+  */
+// app.wrapper.controls.addSwitcher() {};
+
+/*
+  * app.wrapper.controls.addScale - add a scale bar to the map
+  *@param {null} none
+  */
+// app.wrapper.controls.addScale() {
+// };
+
+/*
+  * app.wrapper.controls.addZoomBox - enable users to drag with shift to zoom to a bbox extent
+  *@param {null} none
+  */
+//RDH: OL5 enables this by default
+// app.wrapper.controls.addZoomBox = function(){};
+
+/**
+  * app.wrapper.controls.addMousePosition - add control for displaying mouse position as coords on map
+  */
+app.wrapper.controls.addMousePosition = function() {
+  $('#map').mouseenter(function() {
+    $('.olControlMousePosition').show();
+  });
+  $('#map').mouseout(function() {
+    $('.olControlMousePosition').hide();
+  })
+};
