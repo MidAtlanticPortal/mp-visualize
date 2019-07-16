@@ -58,6 +58,7 @@ def show_planner(request, template='visualize/planner.html'):
     context = {
         'MEDIA_URL': settings.MEDIA_URL,
         'SOCKET_URL': socket_url,
+        'REGION': settings.PROJECT_REGION,
         'login': 'true',
         'disclaimer': disclaimer_content,
         # WMS Proxy support:
@@ -76,6 +77,7 @@ def show_planner(request, template='visualize/planner.html'):
         'proxy_generic_layer': settings.WMS_PROXY_GENERIC_LAYER,
         'proxy_time_layer': settings.WMS_PROXY_TIME_LAYER,
         'show_watermark': viz_settings.SHOW_WATERMARK,
+        'MAP_LIBRARY': settings.MAP_LIBRARY,
     }
 
     if request.user.is_authenticated:

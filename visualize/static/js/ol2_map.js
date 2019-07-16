@@ -1,6 +1,12 @@
 app.init = function () {
 
-    var map = app.init_map(app.region.map, 'map', app.region.srid, app.region.init_lon, app.region.init_lat, app.region.init_zoom);
+    //to turn basemap indicator off (hide the plus sign)
+    //see email from Matt on 7/26 2:24pm with list of controls
+    var map = new OpenLayers.Map(null, {
+        //allOverlays: true,
+        displayProjection: new OpenLayers.Projection("EPSG:4326"),
+        projection: "EPSG:3857"
+    });
 
     map.addControl(new P97.Controls.LayerLoadProgress({
         map: map,
@@ -17,7 +23,79 @@ app.init = function () {
 
     }));
 
-    map.addLayers([app.wrapper.layers.ocean, app.wrapper.layers.osm, app.wrapper.layers.streets, app.wrapper.layers.topo, app.wrapper.layers.satellite, app.wrapper.layers.nautical]);
+    esriOcean = new OpenLayers.Layer.XYZ("Ocean", "http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/${z}/${y}/${x}", {
+        sphericalMercator: true,
+        isBaseLayer: true,
+        numZoomLevels: 13,
+        attribution: "Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others",
+        textColor: "black"
+    });
+    openStreetMap = new OpenLayers.Layer.OSM("Open Street Map", "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png", {
+        sphericalMercator: true,
+        isBaseLayer: true,
+        numZoomLevels: 13,
+        visibility: false,
+        textColor: "black"
+    });
+    esriStreets = new OpenLayers.Layer.XYZ("ESRI Streets", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${z}/${y}/${x}", {
+        sphericalMercator: true,
+        isBaseLayer: true,
+        numZoomLevels: 13,
+        attribution: "Sources: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, METI, TomTom, and others",
+        buffer: 3,
+        textColor: "black"
+    });
+    esriTopo = new OpenLayers.Layer.XYZ("ESRI Physical", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${z}/${y}/${x}", {
+        sphericalMercator: true,
+        isBaseLayer: true,
+        numZoomLevels: 13,
+        attribution: "Sources: Esri, DeLorme, NAVTEQ, TomTom, Intermap, iPC, USGS, FAO, NPS, NRCAN, GeoBase, and others",
+        buffer: 3,
+        textColor: "black"
+    });
+    esriImagery = new OpenLayers.Layer.XYZ("ESRI Satellite", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}", {
+        sphericalMercator: true,
+        isBaseLayer: true,
+        // numZoomLevels: max_zoom,
+        attribution: "Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and others",
+        buffer: 3,
+        textColor: "white"
+    });
+    nauticalCharts = new OpenLayers.Layer.ArcGIS93Rest("Nautical Charts", "http://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage",
+        {
+            layers: 'null'
+        },
+        {
+            isBaseLayer: true,
+            numZoomLevels: 13,
+            projection: "EPSG:3857",
+            visibility: false,
+            textColor: "black"
+        }
+    );
+    // nauticalCharts = new OpenLayers.Layer.TMS("Nautical Charts", ["http://c3429629.r29.cf0.rackcdn.com/stache/NETiles_layer/"],
+    //     {
+    //         buffer: 1,
+    //         'isBaseLayer': true,
+    //         'sphericalMercator': true,
+    //         getURL: function (bounds) {
+    //             var z = map.getZoom();
+    //             var url = this.url;
+    //             var path = 'blank.png' ;
+    //             if ( z <= 13 && z >= 0 ) {
+    //                 var res = map.getResolution();
+    //                 var x = Math.round((bounds.left - this.maxExtent.left) / (res * this.tileSize.w));
+    //                 var y = Math.round((this.maxExtent.top - bounds.top) / (res * this.tileSize.h));
+    //                 var limit = Math.pow(2, z);
+    //                 var path = (z) + "/" + x + "/" + y + ".png";
+    //             }
+    //             tilepath = url + path;
+    //             return url + path;
+    //         }
+    //     }
+    // );
+
+    map.addLayers([esriOcean, openStreetMap, esriStreets, esriTopo, esriImagery, nauticalCharts]);
 
     map.addControl(new SimpleLayerSwitcher());
 
