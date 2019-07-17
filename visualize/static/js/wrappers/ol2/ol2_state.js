@@ -4,46 +4,26 @@ app.saveStateMode = true;
 
 // save the state of app
 app.getState = function () {
-  if (app.wrapper.map.hasOwnProperty('getCenter')) {
-    var center = app.wrapper.map.getCenter();
-  } else {
-    // OL2 cruft
     var center = app.map.getCenter().transform(
-      new OpenLayers.Projection("EPSG:900913"),
-      new OpenLayers.Projection("EPSG:4326")
-    );
-  }
-  if (app.wrapper.map.hasOwnProperty('getZoom')) {
-    var zoom = app.wrapper.map.getZoom();
-  } else {
-    // OL2 cruft
-    var zoom = app.map.getZoom();
-  }
-  var layers = $.map(app.viewModel.activeLayers(), function(layer) {
-    //return {id: layer.id, opacity: layer.opacity(), isVisible: layer.visible()};
-    return [ layer.id, layer.opacity(), layer.visible() ];
-  });
-
-  if (app.wrapper.map.hasOwnProperty('getBasemap')) {
-    var basemap = app.wrapper.map.getBasemap().name;
-  } else {
-    var basemap = 'ocean';
-  }
-
-  return {
-    x: center.lon.toFixed(2),
-    y: center.lat.toFixed(2),
-    z: zoom,
-    logo: app.viewModel.showLogo(),
-    controls: app.viewModel.showZoomControls(),
-    dls: layers.reverse(),
-    basemap: basemap,
-    themes: {ids: app.viewModel.getOpenThemeIDs()},
-    tab: $('#myTab').find('li.active').data('tab'),
-    legends: app.viewModel.showLegend() ? 'true': 'false',
-    layers: app.viewModel.showLayers() ? 'true': 'false'
-    //and active tab
-  };
+            new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326")),
+                layers = $.map(app.viewModel.activeLayers(), function(layer) {
+                    //return {id: layer.id, opacity: layer.opacity(), isVisible: layer.visible()};
+                    return [ layer.id, layer.opacity(), layer.visible() ];
+                });
+    return {
+        x: center.lon.toFixed(2),
+        y: center.lat.toFixed(2),
+        z: app.map.getZoom(),
+        logo: app.viewModel.showLogo(),
+        controls: app.viewModel.showZoomControls(),
+        dls: layers.reverse(),
+        basemap: app.map.baseLayer.name,
+        themes: {ids: app.viewModel.getOpenThemeIDs()},
+        tab: $('#myTab').find('li.active').data('tab'),
+        legends: app.viewModel.showLegend() ? 'true': 'false',
+        layers: app.viewModel.showLayers() ? 'true': 'false'
+        //and active tab
+    };
 };
 
 $(document).on('map-ready', function () {
@@ -56,7 +36,7 @@ $(document).on('map-ready', function () {
 app.layersAreLoaded = false;
 app.establishLayerLoadState = function () {
     var loadTimer, status;
-    if (app.wrapper.map.getLayers().length === 0) {
+    if (app.map.layers.length === 0) {
         app.layersAreLoaded = true;
     } else {
         loadTimer = setInterval(function () {
@@ -135,10 +115,10 @@ app.loadCompressedState = function(state) {
                 numZoomLevels: 8,
                 attribution: ''
             });
-            app.wrapper.map.addLayers([tilestream]);
-            app.wrapper.map.setBasemap(tilestream);
+            app.map.addLayers([tilestream]);
+            app.map.setBaseLayer(tilestream);
         } else {
-            app.wrapper.map.setBasemap(app.wrapper.map.getLayersByName(state.basemap)[0]);
+            app.map.setBaseLayer(app.map.getLayersByName(state.basemap)[0]);
         }
     }
 
@@ -216,8 +196,9 @@ app.loadCompressedState = function(state) {
 };
 
 app.setMapPosition = function(x, y, z) {
-    app.wrapper.map.setCenter(x, y);
-    app.wrapper.map.setZoom(z);
+    app.map.setCenter(
+        new OpenLayers.LonLat(x, y).transform(
+            new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913") ), z);
 };
 
 // hide buttons and other features for printing
@@ -298,7 +279,7 @@ app.loadState = function(state) {
     }
 
     if (state.basemap) {
-        app.wrapper.map.setBasemap(app.wrapper.map.getLayersByName(state.basemap.name)[0]);
+        app.map.setBaseLayer(app.map.getLayersByName(state.basemap.name)[0]);
     }
     // now that we have our layers
     // to allow for establishing the layer load state
@@ -343,7 +324,7 @@ app.loadState = function(state) {
     // Google.v3 uses EPSG:900913 as projection, so we have to
     // transform our coordinates
     if (state.location) {
-        app.wrapper.map.setCenter(new OpenLayers.LonLat(state.location.x, state.location.y).transform(
+        app.map.setCenter(new OpenLayers.LonLat(state.location.x, state.location.y).transform(
         new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), state.location.zoom);
     }
 };

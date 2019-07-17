@@ -409,8 +409,8 @@
     </script>
 
     {% if MAP_LIBRARY == 'ol2' %}
-      <script src="{% static 'js/wrappers/ol2/controls.js' %}"></script>
-      <script src="{% static 'js/ol2_map.js' %}"></script>
+      <script src="{% static 'js/wrappers/ol2/ol2_controls.js' %}"></script>
+      <script src="{% static 'js/wrappers/ol2/ol2_map.js' %}"></script>
     {% else %}
       <script src="{% static 'js/wrappers/wrapper_init.js' %}"></script>
       <!-- LOAD MAP WRAPPERS -->
@@ -441,7 +441,6 @@
         'proxy_time_layer': '{{ proxy_time_layer }}'
       }
     </script>
-    <script src="{% static 'js/state.js' %}"></script>
     <script src="{% static 'js/bookmarks.js' %}"></script>
     <script src="{% static 'js/scenarios.js' %}"></script>
     <script src="{% static 'js/reports.js' %}"></script>
@@ -449,8 +448,11 @@
     <script src="{% static 'js/models.js' %}"></script>
     <script src="{% static 'js/server.js' %}"></script>
     {% if MAP_LIBRARY == 'ol2' %}
+      <script src="{% static 'js/wrappers/ol2/ol2_state.js' %}"></script>
       <script src="{% static 'js/wrappers/ol2/ol2_app.js' %}"></script>
     {% else %}
+      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_state.js"></script>
+      <script src="{% static 'js/state.js' %}"></script>
       <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_app.js"></script>
       <script src="{% static 'js/app.js' %}"></script>
     {% endif %}

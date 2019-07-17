@@ -1,42 +1,35 @@
-app.wrapper.layers.ocean = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    attributions: "Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others",
-    url: "https://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}",
-  })
-});
+for (var i = 0; i < app.wrapper.baseLayers.length; i++) {
+  var baseLayer = app.wrapper.baseLayers[i];
+  if (baseLayer.technology == 'OSM') {
+    var source = new ol.source.OSM();
+  } else if (baseLayer.technology == 'ArcGIS') {
+    var source = new ol.source.TileArcGISRest({
+      url: baseLayer.url,
+      projection: baseLayer.projection,
+      params: baseLayer.params,
+    })
+  } else {
+    // assume 'XYZ' by default
+    var source = new ol.source.XYZ({
+      attributions: baseLayer.attribution,
+      url: baseLayer.url
+    });
+  }
+  app.wrapper.layers[baseLayer.name] = new ol.layer.Tile({
+    source: source
+  });
+  app.wrapper.layers[baseLayer.name].set('name', baseLayer.name);
+  app.wrapper.layers[baseLayer.name].set('type', 'base');
+  app.wrapper.layers[baseLayer.name].set('textColor', baseLayer.textColor);
+  app.wrapper.layers[baseLayer.name].setVisible(false);
+}
 
-app.wrapper.layers.osm = new ol.layer.Tile({
-  source: new ol.source.OSM()
-});
+var baseLayers = [];
+var keys = Object.keys(app.wrapper.layers);
+for (var i = 0; i < keys.length; i++) {
+  baseLayers.push(app.wrapper.layers[keys[i]]);
+}
 
-app.wrapper.layers.streets = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    attributions:"Sources: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, METI, TomTom, and others",
-    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
-  })
-});
-app.wrapper.layers.topo = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    attributions: 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
-              'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
-              'World_Topo_Map/MapServer/tile/{z}/{y}/{x}'
-  })
-});
-
-app.wrapper.layers.satellite = new ol.layer.Tile({
-  source: new ol.source.XYZ({
-    attributions: "Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and others",
-    url:"https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-  })
-});
-
-app.wrapper.layers.nautical = new ol.layer.Tile({
-  source: new ol.source.TileArcGISRest({
-    url: "https://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage",
-    projection: "EPSG:3857",
-    params: {
-      layers: 'null'
-    },
-  })
-});
+app.wrapper.map.baseLayersGroup = new ol.layer.Group({
+  layers: baseLayers
+})

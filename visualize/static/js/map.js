@@ -2,10 +2,12 @@ app.init = function () {
 
     var map = app.init_map(app.region.map, 'map', app.region.srid, app.region.init_lon, app.region.init_lat, app.region.init_zoom);
 
+    app.map = map;
+
     // TODO:
     if (P97.Controls.hasOwnProperty('LayerLoadProgress')) {
       map.addControl(new P97.Controls.LayerLoadProgress({
-        map: map,
+        map: app.map,
         element: null,
         onStartLoading: function() {
           this.element.show();
@@ -50,348 +52,70 @@ app.init = function () {
       app.wrapper.events.addZoomEnd();
     }
 
-    // map.addControl(new OpenLayers.Control.MousePosition({
-    //     element: document.getElementById('pos')
-    // }));
-
-    map.events.register("moveend", null, function () {
-        // update the url when we move
+    // See if addMoveEnd is available in {lib}_events.js
+    if (app.wrapper.events.hasOwnProperty('addMoveEnd')) {
+      var moveEndFunction = function (evt) {
         app.updateUrl();
-    });
+      };
+      app.wrapper.events.addMoveEnd(moveEndFunction);
+    }
 
-    /*
-    // callback functions for vector attribution (SelectFeature Control)
-    var report = function(e) {
-        var layer = e.feature.layer.layerModel;
+    if (!app.wrapper.map.hasOwnProperty('attributes')) {
+      app.wrapper.map.attributes = [];
+    }
 
-        if ( layer.attributes.length ) {
-            var attrs = layer.attributes,
-                title = layer.name,
-                text = [];
-            app.viewModel.attributeTitle(title);
-            for (var i=0; i<attrs.length; i++) {
-                if ( e.feature.data[attrs[i].field] ) {
-                    text.push({'display': attrs[i].display, 'data': e.feature.data[attrs[i].field]});
-                }
-            }
-            app.viewModel.attributeData(text);
-        }
-    };
-    */
-    /*
-    var clearout = function(e) {
-        //document.getElementById("output").innerHTML = "";
-        app.viewModel.attributeTitle(false);
-        app.viewModel.attributeData(false);
-    };
-    */
+    if (!app.wrapper.map.hasOwnProperty('clickOutput')) {
+      app.wrapper.map.clickOutput = { time: 0, attributes: {} };
+    }
 
-    app.map = map;
+    // See if addUTFGrid is available in {lib}_controls.js
+    if (app.wrapper.controls.hasOwnProperty('addUTFGrid')) {
+      app.wrapper.controls.addUTFGrid();
+    }
 
-    app.map.attributes = [];
-    //app.map.clickOutput = { time: 0, attributes: [] };
-    app.map.clickOutput = { time: 0, attributes: {} };
+    // See if addFeatureClickEvent is available in {lib}_events.js
+    if (app.wrapper.events.hasOwnProperty('addFeatureClickEvent')) {
+      app.wrapper.events.addFeatureClickEvent();
+    }
 
-    //UTF Attribution
-    app.map.UTFControl = new OpenLayers.Control.UTFGrid({
-        //attributes: layer.attributes,
-        layers: [],
-        //events: {fallThrough: true},
-        handlerMode: 'click',
-        callback: function(infoLookup, lonlat, xy) {
-            app.map.utfGridClickHandling(infoLookup, lonlat, xy);
-        }
-    });
-    map.addControl(app.map.UTFControl);
+    // See if addFeatureOverEvent is available in {lib}_events.js
+    if (app.wrapper.events.hasOwnProperty('addFeatureOverEvent')) {
+      app.wrapper.events.addFeatureOverEvent();
+    }
 
-    app.map.utfGridClickHandling = function(infoLookup, lonlat, xy) {
-        var clickAttributes = {};
+    // See if addFeatureOutEvent is available in {lib}_events.js
+    if (app.wrapper.events.hasOwnProperty('addFeatureOutEvent')) {
+      app.wrapper.events.addFeatureOutEvent();
+    }
 
-        for (var idx in infoLookup) {
-            $.each(app.viewModel.visibleLayers(), function (layer_index, potential_layer) {
-              if (potential_layer.type !== 'Vector') {
-                var new_attributes,
-                    info = infoLookup[idx];
-                //debugger;
-                if (info && info.data) {
-                    var newmsg = '',
-                        hasAllAttributes = true,
-                        parentHasAllAttributes = false;
-                    // if info.data has all the attributes we're looking for
-                    // we'll accept this layer as the attribution layer
-                    //if ( ! potential_layer.attributes.length ) {
-                    if (potential_layer.attributes.length) {
-                        hasAllAttributes = true;
-                    } else {
-                        hasAllAttributes = false;
-                    }
-                    //}
-                    $.each(potential_layer.attributes, function (attr_index, attr_obj) {
-                        if ( !(attr_obj.field in info.data) ) {
-                            hasAllAttributes = false;
-                        }
-                    });
-                    if ( !hasAllAttributes && potential_layer.parent) {
-                        parentHasAllAttributes = true;
-                        if ( ! potential_layer.parent.attributes.length ) {
-                            parentHasAllAttributes = false;
-                        }
-                        $.each(potential_layer.parent.attributes, function (attr_index, attr_obj) {
-                            if ( !(attr_obj.field in info.data) ) {
-                                parentHasAllAttributes = false;
-                            }
-                        });
-                    }
-                    if (hasAllAttributes) {
-                        new_attributes = potential_layer.attributes;
-                    } else if (parentHasAllAttributes) {
-                        new_attributes = potential_layer.parent.attributes;
-                    }
-
-                    if (new_attributes) {
-                        var attribute_objs = [];
-                        $.each(new_attributes, function(index, obj) {
-                            if ( potential_layer.compress_attributes ) {
-                                var display = obj.display + ': ' + info.data[obj.field];
-                                attribute_objs.push({'display': display, 'data': ''});
-                            } else {
-                                /*** SPECIAL CASE FOR ENDANGERED WHALE DATA ***/
-                                var value = info.data[obj.field];
-                                if (value === 999999) {
-                                    attribute_objs.push({'display': obj.display, 'data': 'No Survey Effort'});
-                                } else {
-                                    try {
-                                        //set the precision and add any necessary commas
-                                        value = value.toFixed(obj.precision);
-                                        value = app.utils.numberWithCommas(value);
-                                    }
-                                    catch (e) {
-                                        //keep on keeping on
-                                    }
-                                    attribute_objs.push({'display': obj.display, 'data': value});
-                                }
-                            }
-                        });
-                        var title = potential_layer.featureAttributionName,
-                            text = attribute_objs;
-                        if ( potential_layer.name === 'OCS Lease Blocks' ) {
-                            text = app.viewModel.getOCSAttributes(info.data);
-                        } else if ( potential_layer.name === 'Sea Turtles' ) {
-                            text = app.viewModel.getSeaTurtleAttributes(info.data);
-                        } else if ( potential_layer.name === 'Toothed Mammals (All Seasons)' ) {
-                            text = app.viewModel.getToothedMammalAttributes(info.data);
-                        } else if ( potential_layer.name === 'Wind Speed' ) {
-                            text = app.viewModel.getWindSpeedAttributes(info.data);
-                        } else if ( potential_layer.name === 'BOEM Wind Planning Areas' ) {
-                            text = app.viewModel.getWindPlanningAreaAttributes(info.data);
-                        } else if ( potential_layer.name === 'Party & Charter Boat' ) {
-                            text = app.viewModel.adjustPartyCharterAttributes(attribute_objs);
-                        } else if ( potential_layer.name === 'Port Commodity (Points)' ) {
-                            text = app.viewModel.getPortCommodityAttributes(info.data);
-                        } else if ( potential_layer.name === 'Port Commodity' ) {
-                            text = app.viewModel.getPortCommodityAttributes(info.data);
-                        } else if ( potential_layer.name === 'Port Ownership (Points)' ) {
-                            text = app.viewModel.getPortOwnershipAttributes(info.data);
-                        } else if ( potential_layer.name === 'Port Ownership' ) {
-                            text = app.viewModel.getPortOwnershipAttributes(info.data);
-                        } else if ( potential_layer.name === 'Maintained Channels') {
-                            text = app.viewModel.getChannelAttributes(info.data);
-                        } else if ( potential_layer.name === 'Essential Fish Habitats') {
-                            text = app.viewModel.getEFHAttributes(info.data);
-                        } else if ( title === 'Benthic Habitats (North)' || title === 'Benthic Habitats (South)' ) {
-                            title = 'Benthic Habitats';
-                        }
-                        clickAttributes[title] = [{
-                            'name': 'Feature',
-                            'id': potential_layer.featureAttributionName + '-0',
-                            'attributes': text
-                        }];
-                        //app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
-                    }
-                }
-              }
-            });
-
-            $.extend(app.map.clickOutput.attributes, clickAttributes);
-            app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
-
-        }
-        app.viewModel.updateMarker(lonlat);
-        //app.marker.display(true);
-
-    }; //end utfGridClickHandling
-
-    app.map.events.register(layerModel && "featureclick", null, function(e, test) {
-        var layer = e.feature.layer.layerModel || e.feature.layer.scenarioModel;
-        if (layer) {
-            var text = [],
-                title = layer.featureAttributionName;
-
-            if ( layer.scenarioAttributes && layer.scenarioAttributes.length ) {
-                var attrs = layer.scenarioAttributes;
-                for (var i=0; i<attrs.length; i++) {
-                    text.push({'display': attrs[i].title, 'data': attrs[i].data});
-                }
-            } else if ( layer.attributes.length ) {
-                var attrs = layer.attributes;
-
-                for (var i=0; i<attrs.length; i++) {
-                    if ( e.feature.data[attrs[i].field] ) {
-                        text.push({'display': attrs[i].display, 'data': e.feature.data[attrs[i].field]});
-                    }
-                }
-            }
-
-            // the following delay prevents the #map click-event-attributes-clearing from taking place after this has occurred
-            setTimeout( function() {
-                if (text.length) {
-                    app.map.clickOutput.attributes[layer.featureAttributionName] = [{
-                      'name': 'Feature',
-                      'id': layer.featureAttributionName + '-0',
-                      'attributes':text
-                    }];
-                    app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
-                    app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(e.event.xy));
-                }
-                // if (app.marker) {
-                    // app.marker.display(true);
-                // }
-            }, 100);
-
-        }
-
-    });//end featureclick event registration
-
-    //mouseover events
-    app.map.events.register("featureover", null, function(e, test) {
-        var feature = e.feature,
-            layerModel = e.feature.layer.layerModel;
-
-        if (layerModel && layerModel.attributeEvent === 'mouseover') {
-                if (app.map.popups.length) {
-
-                    if ( feature.layer.getZIndex() >= app.map.currentPopupFeature.layer.getZIndex() ) {
-                        app.map.currentPopupFeature.popup.hide();
-                        app.map.createPopup(feature);
-                        app.map.currentPopupFeature = feature;
-                    } else {
-                        app.map.createPopup(feature);
-                        feature.popup.hide();
-                    }
-
-                } else {
-                    app.map.createPopup(feature);
-                    app.map.currentPopupFeature = feature;
-                }
-        }
-
-    });
-
-    app.map.addControl(
-        new OpenLayers.Control.MousePosition({
-            prefix: 'Lat: ',
-            separator: ', Long: ',
-            numDigits: 3,
-            emptyString: '',
-            //OL-2 likes to spit out lng THEN lat
-            //lets reformat that
-            formatOutput: function(lonLat) {
-                var digits = parseInt(this.numDigits);
-                var newHtml =
-                    this.prefix +
-                    lonLat.lat.toFixed(digits) +
-                    this.separator +
-                    lonLat.lon.toFixed(digits) +
-                    this.suffix;
-                return newHtml;
-            },
-        })
-    );
-
-
-    //mouseout events
-    app.map.events.register("featureout", null, function(e, test) {
-        var feature = e.feature,
-            layerModel = e.feature.layer.layerModel;
-
-        if (layerModel && layerModel.attributeEvent === 'mouseover') {
-            //app.map.destroyPopup(feature);
-            app.map.removePopup(feature.popup);
-            if (app.map.popups.length && !app.map.anyVisiblePopups()) {
-                var hiddenPopup = app.map.popups[app.map.popups.length-1];
-                hiddenPopup.show();
-                app.map.currentPopupFeature = hiddenPopup.feature;
-            }
-        }
-
-    });
-
-    app.map.createPopup = function(feature) {
-        var mouseoverAttribute = feature.layer.layerModel.mouseoverAttribute,
-            attributeValue = mouseoverAttribute ? feature.attributes[mouseoverAttribute] : feature.layer.layerModel.name,
-            location = feature.geometry.getBounds().getCenterLonLat();
-
-        if ( ! app.map.getExtent().containsLonLat(location) ) {
-            location = app.map.center;
-        }
-        var popup = new OpenLayers.Popup.FramedCloud(
-            "",
-            location,
-            new OpenLayers.Size(100,100),
-            "<div>" + attributeValue + "</div>",
-            null,
-            false,
-            null
-        );
-        popup.feature = feature;
-        feature.popup = popup;
-        app.map.addPopup(popup);
-    };
+    // See if app.wrapper.map.createPopup is available in {lib}_map.js
 
     app.map.anyVisiblePopups = function() {
-        for (var i=0; i<app.map.popups.length; i+=1) {
+        if (app.wrapper.map.hasOwnProperty('popups')) {
+          for (var i=0; i<app.wrapper.map.popups.length; i+=1) {
             if (app.map.popups[0].visible()) {
-                return true;
+              return true;
             }
-        }
-        return false;
-    };
-
-    // app.map.destroyPopup = function(feature) {
-    //     // remove tooltip
-    //     app.map.removePopup(feature.popup);
-    //     //feature.popup.destroy();
-    //     //feature.popup=null;
-    // }
-
-    app.markers = new OpenLayers.Layer.Markers( "Markers" );
-    var size = new OpenLayers.Size(16,25);
-    var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-    app.markers.icon = new OpenLayers.Icon('/static/visualize/img/red-pin.png', size, offset);
-    app.map.addLayer(app.markers);
-
-
-    //no longer needed?
-    //replaced with #map mouseup and move events in app.js?
-    //place the marker on click events
-    app.map.events.register("click", app.map , function(e){
-        //app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(e.xy));
-        //the following is in place to prevent flash of marker appearing on what is essentially no feature click
-        //display is set to true in the featureclick and utfgridclick handlers (when there is actually a hit)
-        //app.marker.display(false);
-
-        //the following ensures that the location of the marker is not displaced while waiting for web services
-        app.map.clickLocation = app.map.getLonLatFromViewPortPx(e.xy);
-    });
-
-    app.map.removeLayerByName = function(layerName) {
-        for (var i=0; i<app.map.layers.length; i++) {
-            if (app.map.layers[i].name === layerName) {
-                app.map.removeLayer(app.map.layers[i]);
-                i--;
-            }
+          }
+          return false;
+        } else {
+          window.alert("Error: Please inform site owner that map popups are not enabled for current map library");
+          return false;
         }
     };
+
+    // See if app.wrapper.map.addMarkersLayer is abailabel in {lib}_map.js
+    if (app.wrapper.map.hasOwnProperty('addMarkersLayer')) {
+      app.wrapper.map.addMarkersLayer();
+    }
+
+    // See if app.wrapper.events.getClickLocation is available in {lib}_events.js
+    if (app.wrapper.events.hasOwnProperty('registerClickLocationEvent')) {
+      app.wrapper.events.registerClickLocationEvent();
+    }
+
+    // See if app.wrapper.map.removeLayerByName is set in {lib}_map.js
+
 
     app.utils = {};
     app.utils.isNumber = function(n) {
@@ -428,14 +152,14 @@ app.init = function () {
         return undefined;
     }
 
-    setTimeout( function() {
-        if (app.mafmc) {
-            map.removeLayer(openStreetMap);
-            map.removeLayer(googleStreet);
-            map.removeLayer(googleTerrain);
-            map.removeLayer(googleSatellite);
-        }
-    }, 1000);
+    // setTimeout( function() {
+    //     if (app.mafmc) {
+    //         map.removeLayer(openStreetMap);
+    //         map.removeLayer(googleStreet);
+    //         map.removeLayer(googleTerrain);
+    //         map.removeLayer(googleSatellite);
+    //     }
+    // }, 1000);
 
 
     app.menus = {}

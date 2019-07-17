@@ -39,7 +39,7 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
     ]),
     // layers: layers,
     layers: [
-      app.wrapper.layers[base]
+      app.wrapper.map.baseLayersGroup
     ],
     target: target,
     view: new ol.View({
@@ -47,6 +47,7 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
       zoom: zoom
     })
   });
+  app.wrapper.layers[base].setVisible(true);
 
   return map;
 }

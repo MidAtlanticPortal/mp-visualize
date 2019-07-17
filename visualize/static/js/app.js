@@ -69,23 +69,21 @@ app.viewModel.loadLayersFromServer().done(function() {
 
   $('[data-toggle="tooltip"]').tooltip()
 
-  $('#toggleBaselayer').css({'background-image':"url(/static/visualize/img/baselayer-"+app.map.baseLayer.name.split(' ').join('_')+".png)", "color":+app.map.baseLayer.textColor});
+  $('#toggleBaselayer').css({'background-image':"url(/static/visualize/img/baselayer-"+app.wrapper.map.getBasemap().name.split(' ').join('_')+".png)", "color":+app.wrapper.map.getBasemap().textColor});
 
-$(".nav-tabs li.disabled").on("click", function(e) {
-  console.log("SDFA");
-    e.preventDefault();
-    return false;
-});
+  $(".nav-tabs li.disabled").on("click", function(e) {
+    console.log("SDFA");
+      e.preventDefault();
+      return false;
+  });
   // }
 });
 
 // initialize the map
 app.init();
-// Google.v3 uses EPSG:900913 as projection, so we have to
-// transform our coordinates
+
 // TODO: Make map center a configuration value
-app.map.setCenter(new OpenLayers.LonLat(-73.24, 38.93).transform(
-new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 7);
+// app.wrapper.map.setCenter(-73.24, 38.93);
 
 $(document).ready(function() {
   // app.onResize();

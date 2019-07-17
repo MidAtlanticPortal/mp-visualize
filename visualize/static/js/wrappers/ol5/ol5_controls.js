@@ -188,3 +188,138 @@ app.wrapper.controls.addMousePosition = function() {
     $('.olControlMousePosition').hide();
   })
 };
+
+/**
+  * addUTFGrid - add control for handling UTFGrid layers
+  */
+// app.wrapper.controls.addUTFGrid = function(){
+//   // // RDH -- The below code is from OL2
+//   // //UTF Attribution
+//   // app.map.UTFControl = new OpenLayers.Control.UTFGrid({
+//   //   //attributes: layer.attributes,
+//   //   layers: [],
+//   //   //events: {fallThrough: true},
+//   //   handlerMode: 'click',
+//   //   callback: function(infoLookup, lonlat, xy) {
+//   //     app.map.utfGridClickHandling(infoLookup, lonlat, xy);
+//   //   }
+//   // });
+//   // map.addControl(app.map.UTFControl);
+// }
+
+// app.map.utfGridClickHandling = function(infoLookup, lonlat, xy) {
+//     var clickAttributes = {};
+//
+//     for (var idx in infoLookup) {
+//         $.each(app.viewModel.visibleLayers(), function (layer_index, potential_layer) {
+//           if (potential_layer.type !== 'Vector') {
+//             var new_attributes,
+//                 info = infoLookup[idx];
+//             //debugger;
+//             if (info && info.data) {
+//                 var newmsg = '',
+//                     hasAllAttributes = true,
+//                     parentHasAllAttributes = false;
+//                 // if info.data has all the attributes we're looking for
+//                 // we'll accept this layer as the attribution layer
+//                 //if ( ! potential_layer.attributes.length ) {
+//                 if (potential_layer.attributes.length) {
+//                     hasAllAttributes = true;
+//                 } else {
+//                     hasAllAttributes = false;
+//                 }
+//                 //}
+//                 $.each(potential_layer.attributes, function (attr_index, attr_obj) {
+//                     if ( !(attr_obj.field in info.data) ) {
+//                         hasAllAttributes = false;
+//                     }
+//                 });
+//                 if ( !hasAllAttributes && potential_layer.parent) {
+//                     parentHasAllAttributes = true;
+//                     if ( ! potential_layer.parent.attributes.length ) {
+//                         parentHasAllAttributes = false;
+//                     }
+//                     $.each(potential_layer.parent.attributes, function (attr_index, attr_obj) {
+//                         if ( !(attr_obj.field in info.data) ) {
+//                             parentHasAllAttributes = false;
+//                         }
+//                     });
+//                 }
+//                 if (hasAllAttributes) {
+//                     new_attributes = potential_layer.attributes;
+//                 } else if (parentHasAllAttributes) {
+//                     new_attributes = potential_layer.parent.attributes;
+//                 }
+//
+//                 if (new_attributes) {
+//                     var attribute_objs = [];
+//                     $.each(new_attributes, function(index, obj) {
+//                         if ( potential_layer.compress_attributes ) {
+//                             var display = obj.display + ': ' + info.data[obj.field];
+//                             attribute_objs.push({'display': display, 'data': ''});
+//                         } else {
+//                             /*** SPECIAL CASE FOR ENDANGERED WHALE DATA ***/
+//                             var value = info.data[obj.field];
+//                             if (value === 999999) {
+//                                 attribute_objs.push({'display': obj.display, 'data': 'No Survey Effort'});
+//                             } else {
+//                                 try {
+//                                     //set the precision and add any necessary commas
+//                                     value = value.toFixed(obj.precision);
+//                                     value = app.utils.numberWithCommas(value);
+//                                 }
+//                                 catch (e) {
+//                                     //keep on keeping on
+//                                 }
+//                                 attribute_objs.push({'display': obj.display, 'data': value});
+//                             }
+//                         }
+//                     });
+//                     var title = potential_layer.featureAttributionName,
+//                         text = attribute_objs;
+//                     if ( potential_layer.name === 'OCS Lease Blocks' ) {
+//                         text = app.viewModel.getOCSAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Sea Turtles' ) {
+//                         text = app.viewModel.getSeaTurtleAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Toothed Mammals (All Seasons)' ) {
+//                         text = app.viewModel.getToothedMammalAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Wind Speed' ) {
+//                         text = app.viewModel.getWindSpeedAttributes(info.data);
+//                     } else if ( potential_layer.name === 'BOEM Wind Planning Areas' ) {
+//                         text = app.viewModel.getWindPlanningAreaAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Party & Charter Boat' ) {
+//                         text = app.viewModel.adjustPartyCharterAttributes(attribute_objs);
+//                     } else if ( potential_layer.name === 'Port Commodity (Points)' ) {
+//                         text = app.viewModel.getPortCommodityAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Port Commodity' ) {
+//                         text = app.viewModel.getPortCommodityAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Port Ownership (Points)' ) {
+//                         text = app.viewModel.getPortOwnershipAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Port Ownership' ) {
+//                         text = app.viewModel.getPortOwnershipAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Maintained Channels') {
+//                         text = app.viewModel.getChannelAttributes(info.data);
+//                     } else if ( potential_layer.name === 'Essential Fish Habitats') {
+//                         text = app.viewModel.getEFHAttributes(info.data);
+//                     } else if ( title === 'Benthic Habitats (North)' || title === 'Benthic Habitats (South)' ) {
+//                         title = 'Benthic Habitats';
+//                     }
+//                     clickAttributes[title] = [{
+//                         'name': 'Feature',
+//                         'id': potential_layer.featureAttributionName + '-0',
+//                         'attributes': text
+//                     }];
+//                     //app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
+//                 }
+//             }
+//           }
+//         });
+//
+//         $.extend(app.map.clickOutput.attributes, clickAttributes);
+//         app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
+//
+//     }
+//     app.viewModel.updateMarker(lonlat);
+//     //app.marker.display(true);
+//
+// }; //end utfGridClickHandling
