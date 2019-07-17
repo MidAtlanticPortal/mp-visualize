@@ -200,19 +200,7 @@ app.loadCompressedState = function(state) {
         app.viewModel.mapTitle(state.title);
     }
 
-    // Google.v3 uses EPSG:900913 as projection, so we have to
-    // transform our coordinates
     app.setMapPosition(state.x, state.y, state.z);
-    //app.map.setCenter(
-    //    new OpenLayers.LonLat(state.x, state.y).transform(
-    //        new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913") ), state.z);
-
-    // is url is indicating a login request then show the login modal
-    // /visualize/#login=true
-//    if (!app.is_authenticated && state.login) { // not sure
-//        $('#sign-in-modal').modal('show');
-//    }
-
 };
 
 app.setMapPosition = function(x, y, z) {
@@ -339,12 +327,8 @@ app.loadState = function(state) {
         app.viewModel.mapTitle(state.title);
     }
 
-
-    // Google.v3 uses EPSG:900913 as projection, so we have to
-    // transform our coordinates
     if (state.location) {
-        app.wrapper.map.setCenter(new OpenLayers.LonLat(state.location.x, state.location.y).transform(
-        new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), state.location.zoom);
+        app.setMapPosition(state.location.x, state.location.y, state.location.zoom);
     }
 };
 

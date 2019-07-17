@@ -21,7 +21,7 @@ app.wrapper.map.getCenter = function() {
   * @param {float} lat - latitude coordinate (in EPSG:4326) for new center of map view
   */
 app.wrapper.map.setCenter = function(lon, lat) {
-  app.map.getView().setCenter([parseFloat(lon), parseFloat(lat)]);
+  app.map.getView().setCenter(ol.proj.fromLonLat([parseFloat(lon), parseFloat(lat)], 'EPSG:3857'));
 }
 
 /**

@@ -611,6 +611,5 @@ app.setLayerZIndex = function(layer, index) {
 
 
 app.reCenterMap = function () {
-    app.map.setCenter(new OpenLayers.LonLat(app.state.x, app.state.y).transform(
-        new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913")), 7);
+    app.setMapPosition(app.state.x, app.state.y, 7);
 };

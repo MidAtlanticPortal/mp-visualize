@@ -90,10 +90,7 @@ $(document).ready(function() {
   // $(window).resize(app.onResize);
 
   //Do not display any warning for missing tiles
-  OpenLayers.Util.onImageLoadError = function(){
-    this.src = 'http://www.openlayers.org/api/img/blank.gif';
-  };
-  OpenLayers.Tile.Image.useBlankTile=false;
+  // Be sure to set your map tech accordingly.
 
   // if we have the hash state go ahead and load it now
   /*if (app.hash && !app.loginHash) {
@@ -260,15 +257,20 @@ $(document).ready(function() {
   });
 
   // hiding feature attributes on new click events (but ignoring map pan events)
-  app.map.events.register('move', app.map, function() {
-    app.map.mousedrag = true;
-  });
-  $('#map').mouseup( function() {
-    if ( !app.map.mousedrag ) {
-      app.map.clickOutput.attributes = {};
+  var isDragging = false;
+  $('#map')
+  .mousedown(function() {
+    isDragging = false;
+  })
+  .mousemove(function() {
+    isDragging = true;
+  })
+  .mouseup( function() {
+    if ( !isDragging ) {
+      app.wrapper.map.clickOutput.attributes = {};
       app.viewModel.closeAttribution();
     }
-    app.map.mousedrag = false;
+    isDragging = false;
   });
 
   // $('a[data-toggle="tab"]').on('shown', function (e) {

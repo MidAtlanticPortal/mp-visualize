@@ -3,8 +3,8 @@
   * @param {string} base - a layer as defined in wrappers/ol5/layers.js
   * @param {string} target - the id of the map div
   * @param {int} srid - the SRID used to generate this map
-  * @param {int} center_x - Map initial center longitude coordinate
-  * @param {int} center_y - Map initial center latitude coordinate
+  * @param {float} center_x - Map initial center longitude coordinate
+  * @param {float} center_y - Map initial center latitude coordinate
   * @param {int} zoom - Map initial zoom level
   */
 app.init_map = function(base, target, srid, center_x, center_y, zoom){
