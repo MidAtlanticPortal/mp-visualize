@@ -4,6 +4,76 @@ app.init = function () {
 
     app.map = map;
 
+    if (app.wrapper.map.hasOwnProperty('initBaselayerSwitcher')) {
+      app.initBaselayerSwitcher = app.wrapper.map.initBaselayerSwitcher;
+    } else {
+      app.initBaselayerSwitcher = function(base) {
+        html = '';
+        for (var i = 0; i < Object.keys(app.wrapper.baseLayers).length; i++) {
+          var layer = app.wrapper.baseLayers[i];
+          var basey = 'off';
+          if (layer.name == base) {
+            basey = 'on';
+          }
+          html += '<a id="SimpleLayerSwitcher_input_' + layer.name +
+          '" class="basey basey-' + basey + '">' +
+          '<div style="background-image:url(/static/visualize/img/baselayer-' +
+          layer.name + '.png); color:' + layer.textColor +
+          '" onclick="app.setBasemap(\'' + layer.name + '\')">' +
+          layer.verboseName + '</div></a>';
+        }
+        $('#SimpleLayerSwitcher').html(html);
+      };
+    }
+
+    app.initBaselayerSwitcher(app.region.map);
+
+    /**
+      * showBasemaps - add basemap switcher UI element
+      */
+    app.wrapper.map.showBasemaps = function(viewModel, event) {
+      var $layerSwitcher = $('#SimpleLayerSwitcher');
+      if ($layerSwitcher.is(":visible")) {
+          $layerSwitcher.hide();
+      } else {
+          $layerSwitcher.show();
+      }
+    };
+
+    /**
+      * getLayerName - given a string, layer, or other object, try to derive the name value
+      * @param {string|layer|object} layer - the item we want a name of
+      */
+    app.getLayerName = function(layer) {
+      if (app.wrapper.map.hasOwnProperty('getLayerName')) {
+        return app.wrapper.map.getLayerName(layer);
+      } else {
+        if (typeof(layer) == "string") {
+          return layer;
+        } else if (typeof(layer.get) == "function" && layer.get('name')) {
+          return layer.get('name');
+        } else if (Object.keys(layer).indexOf('name')) {
+          return layer.name;
+        } else {
+          return layer.toString();
+        }
+      }
+    }
+
+    /**
+      * app.setBasemap - function to set current basemap and unset old basemap
+      * - also updates related state and UI
+      */
+    app.setBasemap = function(layer) {
+      if (app.wrapper.map.hasOwnProperty('setBasemap')) {
+        app.wrapper.map.setBasemap(layer);
+      }
+      app.updateUrl();
+      $('.basey-on').addClass('basey-off').removeClass('basey-on');
+      layerName = app.getLayerName(layer);
+      $('#SimpleLayerSwitcher_input_' + layerName).addClass('basey-on').removeClass('basey-off');
+    }
+
     // TODO:
     if (P97.Controls.hasOwnProperty('LayerLoadProgress')) {
       map.addControl(new P97.Controls.LayerLoadProgress({

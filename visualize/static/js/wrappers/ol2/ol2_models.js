@@ -1818,10 +1818,16 @@ function viewModel() {
 
     //show/hide the list of basemaps
     self.showBasemaps = function(self, event) {
-      app.wrapper.map.showBasemaps(self, event);
+        var $layerSwitcher = $('#SimpleLayerSwitcher_29'),
+            $button = $('#basemaps'); //$(event.target).closest('.btn');
+        if ($layerSwitcher.is(":visible")) {
+            $layerSwitcher.hide();
+        } else {
+            $layerSwitcher.show();
+        }
     };
     self.showMAFMCBasemaps = function(self) {
-        var $layerSwitcher = $('#SimpleLayerSwitcher');
+        var $layerSwitcher = $('#SimpleLayerSwitcher_29');
         $layerSwitcher.css({ "bottom": "42px", "right": "12px", "width": "138px" });
         setTimeout( function() {
             $layerSwitcher.slideDown(150);

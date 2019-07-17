@@ -7,6 +7,7 @@ app.wrapper = {
   'baseLayers': [
     {
       'name': 'ocean',
+      'verboseName': 'Ocean',
       'url': 'https://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
       'attribution': 'Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others',
       'minZoom': null,
@@ -18,6 +19,7 @@ app.wrapper = {
     },
     {
       'name': 'osm',
+      'verboseName': 'Open Street Map',
       'url': '',
       'attribution': '',
       'minZoom': null,
@@ -28,6 +30,7 @@ app.wrapper = {
     },
     {
       'name': 'streets',
+      'verboseName': 'ESRI Streets',
       'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
       'attribution': 'Sources: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, METI, TomTom, and others',
       'minZoom': null,
@@ -38,6 +41,7 @@ app.wrapper = {
     },
     {
       'name': 'topo',
+      'verboseName': 'ESRI Physical',
       'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
                 'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
       'attribution': 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
@@ -50,6 +54,7 @@ app.wrapper = {
     },
     {
       'name': 'satellite',
+      'verboseName': 'ESRI Satellite',
       'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       'attribution': 'Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and others',
       'minZoom': null,
@@ -60,6 +65,7 @@ app.wrapper = {
     },
     {
       'name': 'nautical',
+      'verboseName': 'Nautical Charts',
       'url': 'https://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage',
       'attribution': 'NOAA',
       'minZoom': null,

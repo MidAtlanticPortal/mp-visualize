@@ -97,6 +97,15 @@ app.wrapper.map.setBasemap = function(layer) {
   var basemapGroup = app.map.getLayers().getArray()[0];
   var basemaps = basemapGroup.getLayers().getArray();
   var current_basemap = app.wrapper.map.getBasemap().layer;
+  // determine if layer is layer object or name
+  if (typeof(layer) == "string") {
+    for (var i = 0; i < basemaps.length; i++) {
+      if (basemaps[i].get('name') == layer) {
+        layer = basemaps[i];
+        break;
+      }
+    }
+  }
   current_basemap.setVisible(false);
   layer.setVisible(true);
 

@@ -14,12 +14,6 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
     var center = [center_x, center_y];
   }
 
-  // var layers = [];
-  // for (var i = 0; i < Object.keys(app.wrapper.layers).length; i++) {
-  //   var key = Object.keys(app.wrapper.layers)[i];
-  //   layers.push(app.wrapper.layers[key]);
-  // }
-
   // ---------- OL5 CONTROLS ------------- //
   var scaleLineControl = new ol.control.ScaleLine();
   scaleLineControl.setUnits("us");
