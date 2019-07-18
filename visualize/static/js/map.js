@@ -418,7 +418,7 @@ app.addArcRestLayerToMap = function(layer) {
     if (app.wrapper.controls.hasOwnProperty('addArcIdentifyControl')) {
       app.wrapper.controls.addArcIdentifyControl(layer);
     } else {
-      console.log('no arcIdentifyControl function defined.');
+      console.log('no addArcIdentifyControl function defined.');
     }
 
     if (app.wrapper.map.hasOwnProperty('addArcRestLayerToMap')) {
@@ -429,101 +429,17 @@ app.addArcRestLayerToMap = function(layer) {
 };
 
 app.addVectorLayerToMap = function(layer) {
-    if (layer.annotated) { // such as the canyon labels in the mafmc project
-        var styleMap = new OpenLayers.StyleMap( {
-            label: "${NAME}",
-            fontColor: "#333",
-            fontSize: "12px",
-            fillColor: layer.color,
-            fillOpacity: layer.fillOpacity,
-            //strokeDashStyle: "dash",
-            //strokeOpacity: 1,
-            strokeColor: layer.color,
-            strokeOpacity: layer.defaultOpacity,
-            //strokeLinecap: "square",
-            //http://dev.openlayers.org/apidocs/files/OpenLayers/Feature/Vector-js.html
-            //title: 'testing'
-            pointRadius: layer.point_radius,
-            externalGraphic: layer.graphic,
-            graphicWidth: 8,
-            graphicHeight: 8,
-            graphicOpacity: layer.defaultOpacity
-        });
+    if (app.wrapper.controls.hasOwnProperty('addVectorIdentifyControl')) {
+      app.wrapper.controls.addVectorIdentifyControl(layer);
     } else {
-        var styleMap = new OpenLayers.StyleMap( {
-            fillColor: layer.color,
-            fillOpacity: layer.fillOpacity,
-            //strokeDashStyle: "dash",
-            //strokeOpacity: 1,
-            strokeColor: layer.outline_color,
-            strokeOpacity: layer.outline_opacity,
-            //strokeLinecap: "square",
-            //http://dev.openlayers.org/apidocs/files/OpenLayers/Feature/Vector-js.html
-            //title: 'testing'
-            pointRadius: layer.point_radius,
-            externalGraphic: layer.graphic,
-            graphicWidth: 8,
-            graphicHeight: 8,
-            graphicOpacity: layer.defaultOpacity
-        });
+      console.log('no addVectorIdentifyControl function defined.');
     }
-    if (layer.name === 'Coral Protection Mockups') {
-        /*styleMap.styles['default']['defaultStyle']['label'] = '${NAME}';
-        styleMap.styles['default']['defaultStyle']['fontColor'] = "red";
-        styleMap.styles['default']['defaultStyle']['fontSize'] = "14px";
-        styleMap.styles['default']['defaultStyle']['labelAlign'] = "cm";
-        styleMap.styles['default']['defaultStyle']['labelOutlineColor'] = "white";
-        styleMap.styles['default']['defaultStyle']['labelOutlineWidth'] = 3;*/
+
+    if (app.wrapper.map.hasOwnProperty('addVectorLayerToMap')) {
+      app.wrapper.map.addVectorLayerToMap(layer);
+    } else {
+      console.log('no addVectorLayerToMap function defined.');
     }
-    if (layer.lookupField) {
-        var mylookup = {};
-        $.each(layer.lookupDetails, function(index, details) {
-            var fillOp = 0.5;
-            //the following are special cases for Shipping Lanes that ensure suitable attribution with proper display
-            if (details.value === 'Precautionary Area') {
-                fillOp = 0.0;
-            } else if (details.value === 'Shipping Safety Fairway') {
-                fillOp = 0.0;
-            } else if (details.value === 'Traffic Lane') {
-                fillOp = 0.0;
-            }
-            mylookup[details.value] = {
-                strokeColor: details.color,
-                strokeDashstyle: details.dashstyle,
-                fill: details.fill,
-                fillColor: details.color,
-                fillOpacity: fillOp,
-                externalGraphic: details.graphic
-            };
-            /*special case for Discharge Flow
-            if (layer.lookupField === "Flow") {
-                mylookup[details.value] = {
-                    strokeColor: layer.color,
-                    pointRadius: details.value * 5
-                };
-                console.log(mylookup);
-            }*/
-        });
-        styleMap.addUniqueValueRules("default", layer.lookupField, mylookup);
-        //styleMap.addUniqueValueRules("select", layer.lookupField, mylookup);
-    }
-    layer.layer = new OpenLayers.Layer.Vector(
-        layer.name,
-        {
-            projection: new OpenLayers.Projection('EPSG:3857'),
-            displayInLayerSwitcher: false,
-            strategies: [new OpenLayers.Strategy.Fixed()],
-            protocol: new OpenLayers.Protocol.HTTP({
-                url: layer.url,
-                format: new OpenLayers.Format.GeoJSON()
-            }),
-            styleMap: styleMap,
-            layerModel: layer,
-            // set minZoom to 9 for annotated layers, set minZoom to some much smaller zoom level for non-annotated layers
-            scales: layer.annotated ? [1000000, 1] : [90000000, 1],
-            units: 'm'
-        }
-    );
 
 };
 

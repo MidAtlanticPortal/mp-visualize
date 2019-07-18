@@ -262,3 +262,52 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
   });
 
 };
+
+app.wrapper.map.addVectorLayerToMap = function(layer) {
+    var iconSize = ol.size.toSize([8,8]);
+    var stroke = new ol.style.Stroke({
+      color: layer.outline_color,
+      opacity: layer.outline_opacity,
+    });
+    var fill = new ol.style.Fill({
+      color: layer.color,
+      opacity: layer.fillOpacity,
+    });
+    var point = new ol.style.Circle({
+      radius: layer.point_radius,
+      fill: fill,
+      stroke: stroke,
+    });
+    // var image = new ol.style.Icon({
+    //   src: layer.graphic,
+    //   size: iconSize,
+    // });
+    var textStroke = new ol.style.Stroke({
+      color: "#333",
+    });
+    var text = new ol.style.Text({
+      text: "${NAME}",
+      stroke: textStroke,
+      font: "12px sans-serif",
+    });
+
+    var style_dict = {
+      fill: fill,
+      // image: image,
+      stroke: stroke
+    };
+    if (layer.annotated){
+      style_dict.text = text;
+    }
+    var styleMap = new ol.style.Style(style_dict);
+
+  layer.layer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          url: layer.url,
+          format: new ol.format.GeoJSON()
+        }),
+        style: styleMap,
+        strategy: new ol.loadingstrategy.all(),
+      }
+  );
+}
