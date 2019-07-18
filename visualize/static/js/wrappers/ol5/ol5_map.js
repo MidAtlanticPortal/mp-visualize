@@ -204,3 +204,36 @@ app.wrapper.map.removeLayerByName = function(layerName) {
       }
   }
 };
+
+/**
+  * postProcessLayer - perform additional post-processing steps on any layer added
+  * @param {object} layer - mp layer instance
+  */
+app.wrapper.map.postProcessLayer = function(layer){
+  layer.layer.set('name', layer.name);
+  layer.layer.set('type', 'overlay');
+  layer.layer.set('mpid', layer.id);
+  app.map.addLayer(layer.layer);
+  layer.layer.opacity = layer.opacity();
+  // layer.layer.setVisibility(true);
+}
+
+/**
+  * addArcRestLayerToMap - add an arcRest layer to the (ol5) map
+  * @param {object} layer - the mp layer definition to add to the map
+  */
+app.wrapper.map.addArcRestLayerToMap = function(layer) {
+  var layerSource = new ol.source.TileArcGISRest({
+    attributions: '',
+    params: {
+      layers: 'show:' + layer.arcgislayers
+    },
+    projection: 'ESPG:3857',
+    url: layer.url,
+  })
+  layer.layer = new ol.layer.Tile({
+    source: layerSource,
+    useInterimTilesOnError: false
+  });
+
+};

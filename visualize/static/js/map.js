@@ -320,9 +320,9 @@ app.addLayerToMap = function(layer) {
             app.addXyzLayerToMap(layer);
         }
     }
-    app.map.addLayer(layer.layer);
-    layer.layer.opacity = layer.opacity();
-    layer.layer.setVisibility(true);
+    if (app.wrapper.map.hasOwnProperty('postProcessLayer')) {
+      app.wrapper.map.postProcessLayer(layer);
+    } 
 };
 
 // add XYZ layer with no utfgrid
@@ -415,129 +415,17 @@ app.addArcRestLayerToMap = function(layer) {
       var identifyUrl = '';
     }
 
-    layer.arcIdentifyControl = new OpenLayers.Control.ArcGisRestIdentify(
-    {
-        eventListeners: {
-            arcfeaturequery: function() {
-                //if ( ! layer.attributesFromWebServices || layer.utfurl ) {
-                if ( layer.utfurl ) { // || layer.name === 'Offshore Wind Compatibility Assessments' ) {
-                    return false;
-                }
-            },
-            //the handler for the return click data
-            resultarrived : function(responseText) {
-                var clickAttributes = {},
-                    jsonFormat = new OpenLayers.Format.JSON(),
-                    returnJSON = jsonFormat.read(responseText.text);
+    if (app.wrapper.controls.hasOwnProperty('addArcIdentifyControl')) {
+      app.wrapper.controls.addArcIdentifyControl(layer);
+    } else {
+      console.log('no arcIdentifyControl function defined.');
+    }
 
-                //data manager opted to disable via DAI
-                if (layer.disable_click) {
-                    return false;
-                }
-
-                if(returnJSON['features'] && returnJSON['features'].length) {
-
-                    var report_features = []
-                    $.each(returnJSON['features'], function(index, feature) {
-                        var attributeObjs = [];
-                        var attributeList = feature['attributes'];
-
-                        if('fields' in returnJSON) {
-                            if (layer.attributes.length) {
-                                for (var i=0; i<layer.attributes.length; i+=1) {
-                                    if (attributeList[layer.attributes[i].field]) {
-                                        var data = attributeList[layer.attributes[i].field],
-                                            field_obj = app.utils.getObjectFromList(returnJSON['fields'], 'name', layer.attributes[i].field);
-                                        if (field_obj && field_obj.type === 'esriFieldTypeDate') {
-                                            data = new Date(data).toDateString();
-                                        } else if (app.utils.isNumber(data)) {
-                                            data = app.utils.formatNumber(data);
-                                        }
-                                        if (data && app.utils.trim(data) !== "") {
-                                            attributeObjs.push({
-                                                'display': layer.attributes[i].display,
-                                                'data': data
-                                            });
-                                        }
-                                    }
-                                }
-                            } else {
-                                $.each(returnJSON['fields'], function(fieldNdx, field) {
-                                    if (field.name.indexOf('OBJECTID') === -1 && field.name.indexOf('CFR_id') === -1) {
-                                        var data = attributeList[field.name]
-                                        if (field.type === 'esriFieldTypeDate') {
-                                            data = new Date(data).toDateString();
-                                        } else if (app.utils.isNumber(data)) {
-                                            data = app.utils.formatNumber(data);
-                                        } else if (typeof(data) == 'string' && (data.indexOf('http') >= 0 || field.name.toLowerCase() == 'link' )) {
-                                            // Make link attributes live!
-                                            str_list = data.split('; ');
-                                            if (str_list.length == 1) {
-                                              str_list = data.split(' ');
-                                            }
-                                            for (var i=0; i < str_list.length; i++) {
-                                              if (str_list[i].indexOf('http') < 0) {
-                                                var list_addr = 'http://' + str_list[i];
-                                              } else {
-                                                var list_addr = str_list[i];
-                                              }
-                                              link_string = '<a href="' + list_addr + '" target="_blank">' + str_list[i] + '</a>';
-                                              str_list[i] = link_string;
-                                            }
-                                            data = str_list.join(' ');
-                                        }
-                                        if (data && app.utils.trim(data) !== "") {
-                                            attributeObjs.push({
-                                                'display': field.alias,
-                                                'data': data
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-                        }
-                        report_features.push({
-                          'name': 'Feature ' + (index+1),
-                          'id': layer.featureAttributionName + '-' + index,
-                          'attributes': attributeObjs
-                        })
-                        return;
-                    });
-                    if ( layer.name === 'Aids to Navigation' ) {
-                        app.viewModel.adjustAidsToNavigationAttributes(report_features[0].attributes);
-                    }
-                }
-
-                if (report_features && report_features.length) {
-                    clickAttributes[layer.featureAttributionName] = report_features;
-                    $.extend(app.map.clickOutput.attributes, clickAttributes);
-                    app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
-                    //app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(responseText.xy));
-                    //the following ensures that the location of the marker has not been displaced while waiting for web services
-                    app.viewModel.updateMarker(app.map.clickLocation);
-                }
-            }
-        },
-        url : identifyUrl,
-        layerid : layer.arcgislayers,
-        sr : 3857,
-        clickTolerance: 2,
-        outFields: '*'
-    });
-    app.map.addControl(layer.arcIdentifyControl);
-
-    layer.layer = new OpenLayers.Layer.ArcGIS93Rest(
-        layer.name,
-        layer.url,
-        {
-            layers: "show:"+layer.arcgislayers,
-            srs: 'EPSG:3857',
-            transparent: true
-        },
-        {
-            isBaseLayer: false
-        }
-    );
+    if (app.wrapper.map.hasOwnProperty('addArcRestLayerToMap')) {
+      app.wrapper.map.addArcRestLayerToMap(layer);
+    } else {
+      console.log('no addArcRestLayerToMap function defined.');
+    }
 };
 
 app.addVectorLayerToMap = function(layer) {
