@@ -78,3 +78,16 @@ app.wrapper = {
     },
   ]
 }
+
+/**
+  * app.getBaseLayerDefinitionByName - given a name, get the initial JSON definition of the layer
+  * @param {sting} name - the name of the layer to recover
+  */
+app.getBaseLayerDefinitionByName = function(name) {
+  for (var i = 0; i < app.wrapper.baseLayers.length; i++) {
+    if (app.wrapper.baseLayers[i].name == name) {
+      return app.wrapper.baseLayers[i];
+    }
+  }
+  return null;
+}

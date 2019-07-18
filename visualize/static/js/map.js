@@ -72,6 +72,13 @@ app.init = function () {
       $('.basey-on').addClass('basey-off').removeClass('basey-on');
       layerName = app.getLayerName(layer);
       $('#SimpleLayerSwitcher_input_' + layerName).addClass('basey-on').removeClass('basey-off');
+      var layerDef = app.getBaseLayerDefinitionByName(layerName);
+      if (layerDef) {
+        $('#toggleBaselayer').css({
+            'background-image': "url(/static/visualize/img/baselayer-" + layerName + ".png)",
+            'color': layerDef.textColor
+        });
+      }
     }
 
     // TODO:
