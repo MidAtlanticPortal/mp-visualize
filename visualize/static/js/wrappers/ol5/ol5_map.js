@@ -263,6 +263,10 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
 
 };
 
+/**
+  * addVectorLayerToMap - add vector layer to the (ol5) map
+  * @param {object} layer - the mp layer definition to add to the map
+  */
 app.wrapper.map.addVectorLayerToMap = function(layer) {
     var iconSize = ol.size.toSize([8,8]);
     var stroke = new ol.style.Stroke({
