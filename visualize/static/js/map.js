@@ -322,7 +322,7 @@ app.addLayerToMap = function(layer) {
     }
     if (app.wrapper.map.hasOwnProperty('postProcessLayer')) {
       app.wrapper.map.postProcessLayer(layer);
-    } 
+    }
 };
 
 // add XYZ layer with no utfgrid
@@ -564,10 +564,9 @@ app.addUtfLayerToMap = function(layer) {
 };
 
 app.setLayerVisibility = function(layer, visibility) {
-    // if layer is in openlayers, hide/show it
-    if (layer.layer) {
-        layer.layer.setVisibility(visibility);
-    }
+  if (app.wrapper.map.hasOwnProperty('setLayerVisibility')) {
+    app.wrapper.map.setLayerVisibility(layer, visibility);
+  }
 };
 
 app.setLayerZIndex = function(layer, index) {

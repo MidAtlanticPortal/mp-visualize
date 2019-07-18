@@ -55,6 +55,30 @@ app.wrapper.map.getLayersByName = function(layerName) {
 }
 
 /**
+  * sortLayers - sort layers by z index
+  */
+app.wrapper.map.sortLayers = function() {
+  // re-ordering map layers by z value
+  app.map.layers = app.wrapper.map.getLayers();
+  app.map.layers.sort(function(a, b) {
+      // ascending sort
+      if (a.hasOwnProperty('state_') && a.state_){
+        if (b.hasOwnProperty('state_') && b.state_) {
+          return a.state_.zIndex - b.state_.zIndex;
+        }
+      }
+      return true;
+  });
+}
+
+app.wrapper.map.setLayerVisibility = function(layer, visibility){
+      // if layer is in openlayers, hide/show it
+      if (layer.layer) {
+          layer.layer.set('visible', visibility);
+      }
+}
+
+/**
   * app.wrapper.map.getZoom - get the current zoom level of the map
   */
 app.wrapper.map.getZoom = function() {
@@ -182,6 +206,7 @@ app.wrapper.map.addMarkersLayer = function() {
   var markerLayer = new ol.layer.Tile({
     source: markerSource
   });
+  app.markers = {};
   // app.map.addLayer(markerLayer);
 
   // OL2 Cruft Below

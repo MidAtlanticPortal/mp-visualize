@@ -1745,7 +1745,9 @@ function viewModel() {
 
     self.closeAttribution = function() {
         self.aggregatedAttributes(false);
-        app.markers.clearMarkers();
+        if (app.markers.hasOwnProperty('clearMarkers')){
+          app.markers.clearMarkers();
+        }
     };
 
     self.updateMarker = function(lonlat) {
@@ -2447,10 +2449,9 @@ function viewModel() {
           }
         }
 
-        // re-ordering map layers by z value
-        app.map.layers.sort(function(a, b) {
-            return a.getZIndex() - b.getZIndex();
-        });
+        if (app.wrapper.map.hasOwnProperty('sortLayers')) {
+          app.wrapper.map.sortLayers();
+        }
 
         // update the url hash
         app.updateUrl();
