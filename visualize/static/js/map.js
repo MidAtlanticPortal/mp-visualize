@@ -327,18 +327,18 @@ app.addLayerToMap = function(layer) {
 
 // add XYZ layer with no utfgrid
 app.addXyzLayerToMap = function(layer) {
-    var opts = { displayInLayerSwitcher: false };
 
-    // adding layer to the map for the first time
-    layer.layer = new OpenLayers.Layer.XYZ(layer.name,
-        layer.url,
-        $.extend({}, opts,
-            {
-                sphericalMercator: true,
-                isBaseLayer: false //previously set automatically when allOverlays was set to true, must now be set manually
-            }
-        )
-    );
+  if (app.wrapper.controls.hasOwnProperty('addXYZIdentifyControl')) {
+    app.wrapper.controls.addXYZIdentifyControl(layer);
+  } else {
+    console.log('no addXYZIdentifyControl function defined.');
+  }
+
+  if (app.wrapper.map.hasOwnProperty('addXYZLayerToMap')) {
+    app.wrapper.map.addXYZLayerToMap(layer);
+  } else {
+    console.log('no addXYZLayerToMap function defined.');
+  }
 };
 
 app.addWmsLayerToMap = function(layer) {

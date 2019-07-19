@@ -315,3 +315,24 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
       }
   );
 }
+
+/**
+  * addXYZLayerToMap - add XYZ layer to the (ol5) map
+  * @param {object} layer - the mp layer definition to add to the map
+  */
+app.wrapper.map.addXYZLayerToMap = function(layer){
+
+  var layerUrl = layer.url;
+  // clean ol2 assumptions in URL formatting:
+  layerUrl = layerUrl.split('${x}').join('{x}');
+  layerUrl = layerUrl.split('${y}').join('{y}');
+  layerUrl = layerUrl.split('${z}').join('{z}');
+
+  var layerSource = new ol.source.XYZ({
+    url: layerUrl,
+  });
+  layer.layer = new ol.layer.Tile({
+    source: layerSource,
+    useInterimTilesOnError: false
+  });
+};
