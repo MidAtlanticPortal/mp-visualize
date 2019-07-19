@@ -238,9 +238,8 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('name', layer.name);
   layer.layer.set('type', 'overlay');
   layer.layer.set('mpid', layer.id);
+  layer.layer.setOpacity(layer.opacity());
   app.map.addLayer(layer.layer);
-  layer.layer.opacity = layer.opacity();
-  // layer.layer.setVisibility(true);
 }
 
 /**
