@@ -310,7 +310,7 @@ app.addLayerToMap = function(layer) {
     if (!layer.layer) {
         if (layer.utfurl || (layer.parent && layer.parent.utfurl)) {
             app.addUtfLayerToMap(layer);
-        } 
+        }
         if (layer.type === 'Vector') {
             app.addVectorLayerToMap(layer);
         } else if (layer.type === 'ArcRest') {
@@ -343,70 +343,19 @@ app.addXyzLayerToMap = function(layer) {
 };
 
 app.addWmsLayerToMap = function(layer) {
-    wms_url = layer.url;
-    wms_proxy = false;
-    layer_params = {
-      layers: layer.wms_slug,
-      transparent: "true"
-    }
-    if (layer.wms_format){
-      layer_params.format = layer.format;
+
+    if (app.wrapper.controls.hasOwnProperty('addWMSIdentifyControl')) {
+      app.wrapper.controls.addWMSIdentifyControl(layer);
     } else {
-      layer_params.format = "image/png";
-    }
-    if (layer.wms_srs){
-      // OL2 - We need to proxy to another WMS that DOES support the current projection
-      if (layer.wms_srs != 'EPSG:3857') {
-        wms_proxy = true;
-        // var time_def_param_key = app.server_constants.time_def_param_key;
-        wms_url = app.server_constants.wms_proxy_url;
-        layer_params[app.server_constants.wms_proxy_mapfile_field] = app.server_constants.wms_proxy_mapfile
-        layer_params[app.server_constants.source_srs_param_key] = layer.srs;
-        layer_params[app.server_constants.conn_param_key] =  layer.url;
-        layer_params[app.server_constants.layer_name_param_key] = layer.wms_slug;
-        if (layer.wms_timing) {
-          layer_params.layers = app.server_constants.proxy_time_layer;
-          layer_params[app.server_constants.time_param_key] = layer.wms_timing;
-          if (layer.wms_time_item) {
-            layer_params[app.server_constants.time_item_param_key] = layer.wms_time_item;
-          }
-        } else {
-          layer_params.layers = app.server_constants.proxy_generic_layer;
-        }
-        layer_params[app.server_constants.format_param_key] = layer.wms_format;
-        layer_params[app.server_constants.version_param_key] = layer.wms_version;
-        layer_params[app.server_constants.style_param_key] = layer.wms_styles;
-      }
-    }
-    if (!wms_proxy) {
-      if (layer.wms_styles){
-        layer_params.styles = layer.wms_styles;
-      }
-      if (layer.wms_timing){
-        layer_params.time = layer.wms_timing;
-      }
-      if (layer.wms_additional){
-        if (layer.wms_additional[0] == '?') {
-          layer.wms_additional = layer.wms_additional.slice(1);
-        }
-        var additional_list = layer.wms_additional.split("&");
-        for (var i = 0; i < additional_list.length; i++) {
-          key_val = additional_list[i].split('=');
-          if (key_val.length == 2) {
-            key = key_val[0];
-            value = key_val[1];
-            layer_params[key] = value;
-          }
-        }
-      }
-
+      console.log('no addWMSIdentifyControl function defined.');
     }
 
-    layer.layer = new OpenLayers.Layer.WMS(
-        layer.name,
-        wms_url,
-        layer_params
-    );
+    if (app.wrapper.map.hasOwnProperty('addWMSLayerToMap')) {
+      app.wrapper.map.addWMSLayerToMap(layer);
+    } else {
+      console.log('no addWMSLayerToMap function defined.');
+    }
+
 };
 
 app.addArcRestLayerToMap = function(layer) {
