@@ -310,7 +310,8 @@ app.addLayerToMap = function(layer) {
     if (!layer.layer) {
         if (layer.utfurl || (layer.parent && layer.parent.utfurl)) {
             app.addUtfLayerToMap(layer);
-        } else if (layer.type === 'Vector') {
+        } 
+        if (layer.type === 'Vector') {
             app.addVectorLayerToMap(layer);
         } else if (layer.type === 'ArcRest') {
             app.addArcRestLayerToMap(layer);
@@ -440,42 +441,19 @@ app.addVectorLayerToMap = function(layer) {
     } else {
       console.log('no addVectorLayerToMap function defined.');
     }
-
 };
 
 app.addUtfLayerToMap = function(layer) {
-    var opts = { displayInLayerSwitcher: false };
-    layer.utfgrid = new OpenLayers.Layer.UTFGrid({
-        layerModel: layer,
-        url: layer.utfurl ? layer.utfurl : layer.parent.utfurl,
-        sphericalMercator: true,
-        //events: {fallThrough: true},
-        utfgridResolution: 4, // default is 2
-        displayInLayerSwitcher: false,
-        useJSONP: false
-    });
-
-    app.map.addLayer(layer.utfgrid);
-
-    if (layer.type === 'ArcRest') {
-        app.addArcRestLayerToMap(layer);
-    } else if (layer.type === 'XYZ') {
-        //maybe just call app.addXyzLayerToMap(layer)
-        app.addXyzLayerToMap(layer);
-        /*
-        layer.layer = new OpenLayers.Layer.XYZ(
-            layer.name,
-            layer.url,
-            $.extend({}, opts,
-                {
-                    sphericalMercator: true,
-                    isBaseLayer: false //previously set automatically when allOverlays was set to true, must now be set manually
-                }
-            )
-        );
-        */
+    if (app.wrapper.controls.hasOwnProperty('addUTFIdentifyControl')) {
+      app.wrapper.controls.addUTFIdentifyControl(layer);
     } else {
-        //debugger;
+      console.log('no addUTFIdentifyControl function defined.');
+    }
+
+    if (app.wrapper.map.hasOwnProperty('addUtfLayerToMap')) {
+      app.wrapper.map.addUtfLayerToMap(layer);
+    } else {
+      console.log('no addUtfLayerToMap function defined.');
     }
 };
 

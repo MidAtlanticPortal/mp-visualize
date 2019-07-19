@@ -244,6 +244,18 @@ app.wrapper.map.postProcessLayer = function(layer){
 }
 
 /**
+  * formatOL5URLTemplate - clear url template of OL2 assumptions and reformat for OL5
+  * @param {string} layerUrl - the OL2 formatted url template
+  */
+app.wrapper.map.formatOL5URLTemplate = function(layerUrl){
+  // clean ol2 assumptions in URL formatting:
+  layerUrl = layerUrl.split('${x}').join('{x}');
+  layerUrl = layerUrl.split('${y}').join('{y}');
+  layerUrl = layerUrl.split('${z}').join('{z}');
+  return layerUrl;
+}
+
+/**
   * addArcRestLayerToMap - add an arcRest layer to the (ol5) map
   * @param {object} layer - the mp layer definition to add to the map
   */
@@ -322,11 +334,7 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
   */
 app.wrapper.map.addXYZLayerToMap = function(layer){
 
-  var layerUrl = layer.url;
-  // clean ol2 assumptions in URL formatting:
-  layerUrl = layerUrl.split('${x}').join('{x}');
-  layerUrl = layerUrl.split('${y}').join('{y}');
-  layerUrl = layerUrl.split('${z}').join('{z}');
+  var layerUrl = app.wrapper.map.formatOL5URLTemplate(layer.url);
 
   var layerSource = new ol.source.XYZ({
     url: layerUrl,
@@ -335,4 +343,26 @@ app.wrapper.map.addXYZLayerToMap = function(layer){
     source: layerSource,
     useInterimTilesOnError: false
   });
+};
+
+/**
+  * addUtfLayerToMap - add UTF Grid layer to the (ol5) map
+  * @param {object} layer - the mp layer definition to add to the map
+  */
+app.wrapper.map.addUtfLayerToMap = function(layer){
+  var utfUrl = layer.utfurl ? layer.utfurl : layer.parent.utfurl
+  utfUrl = app.wrapper.map.formatOL5URLTemplate(utfUrl);
+  var utfSource = new ol.source.UTFGrid({
+    tileJSON: {
+      tiles: [layer.url],
+      grids: [utfUrl],
+    },
+    // jsonp: true,
+  })
+  layer.utfgrid = new ol.layer.Tile({
+    source: utfSource,
+  });
+
+  app.map.addLayer(layer.utfgrid);
+
 };
