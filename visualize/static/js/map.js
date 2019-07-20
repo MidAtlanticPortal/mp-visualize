@@ -359,22 +359,22 @@ app.addWmsLayerToMap = function(layer) {
 };
 
 app.addArcRestLayerToMap = function(layer) {
-    if (layer.url){
-      var identifyUrl = layer.url.replace('export', layer.arcgislayers + '/query');
-    } else {
-      var identifyUrl = '';
-    }
-
-    if (app.wrapper.controls.hasOwnProperty('addArcIdentifyControl')) {
-      app.wrapper.controls.addArcIdentifyControl(layer);
-    } else {
-      console.log('no addArcIdentifyControl function defined.');
-    }
-
     if (app.wrapper.map.hasOwnProperty('addArcRestLayerToMap')) {
       app.wrapper.map.addArcRestLayerToMap(layer);
     } else {
       console.log('no addArcRestLayerToMap function defined.');
+    }
+
+
+    if (app.wrapper.controls.hasOwnProperty('addArcIdentifyControl')) {
+      if (layer.url){
+        var identifyUrl = layer.url.replace('export', layer.arcgislayers + '/query');
+      } else {
+        var identifyUrl = '';
+      }
+      app.wrapper.controls.addArcIdentifyControl(layer, identifyUrl);
+    } else {
+      console.log('no addArcIdentifyControl function defined.');
     }
 };
 

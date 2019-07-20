@@ -238,8 +238,22 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('name', layer.name);
   layer.layer.set('type', 'overlay');
   layer.layer.set('mpid', layer.id);
+  layer.layer.set('tech', layer.type);
+  layer.layer.set('url', layer.url);
+  layer.layer.set('arcgislayers', layer.arcgislayers);
+  layer.layer.set('utfgrid', layer.utfurl || (layer.parent && layer.parent.utfurl));
+  layer.layer.set('mp_layer', layer);
   layer.layer.setOpacity(layer.opacity());
   app.map.addLayer(layer.layer);
+}
+
+/**
+  * getLayerParameter - logic to pull a given common mp parameter from (ol5) layer objects
+  * @param {object} layer - an (ol5) layer object
+  * @param {string} param - a parameter to recover from the layer object, if available
+  */
+app.wrapper.map.getLayerParameter = function(layer, param){
+  return layer.get(param);
 }
 
 /**
@@ -266,6 +280,8 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
     },
     projection: 'ESPG:3857',
     url: layer.url,
+    crossOrigin: 'anonymous',
+
   })
   layer.layer = new ol.layer.Tile({
     source: layerSource,

@@ -61,12 +61,12 @@ app.wrapper.events.addFeatureClickEvent = function(){
   //     // the following delay prevents the #map click-event-attributes-clearing from taking place after this has occurred
   //     setTimeout( function() {
   //       if (text.length) {
-  //         app.map.clickOutput.attributes[layer.featureAttributionName] = [{
+  //         app.wrapper.map.clickOutput.attributes[layer.featureAttributionName] = [{
   //           'name': 'Feature',
   //           'id': layer.featureAttributionName + '-0',
   //           'attributes':text
   //         }];
-  //         app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
+  //         app.viewModel.aggregatedAttributes(app.wrapper.map.clickOutput.attributes);
   //         app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(e.event.xy));
   //       }
   //       // if (app.marker) {

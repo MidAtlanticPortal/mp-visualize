@@ -43,5 +43,38 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
   });
   app.wrapper.layers[base].setVisible(true);
 
+  var layerClickCallback = function(layer, pixelColor) {
+    if (layer.get('utfgrid')) {
+      if (app.wrapper.events.hasOwnProperty('clickOnUTFGridLayerEvent')){
+        app.wrapper.events.clickOnUTFGridLayerEvent(layer, app.wrapper.map.event)
+      }
+    } else if (layer.get('tech') == 'ArcRest'){
+      if (app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
+        app.wrapper.events.clickOnArcRESTLayerEvent(layer, app.wrapper.map.event)
+      }
+    } else if (layer.get('tech') == 'Vector'){
+      if (app.wrapper.events.hasOwnProperty('clickOnVectorLayerEvent')) {
+        app.wrapper.events.clickOnVectorLayerEvent(layer, app.wrapper.map.event)
+      }
+    } else if (layer.get('tech') == 'WMS'){
+      if (app.wrapper.events.hasOwnProperty('clickOnWMSLayerEvent')) {
+        app.wrapper.events.clickOnWMSLayerEvent(layer, app.wrapper.map.event)
+      }
+    } else { //if (layer.get('tech') == 'XYZ'){
+      if (app.wrapper.events.hasOwnProperty('clickOnXYZLayerEvent')) {
+        app.wrapper.events.clickOnXYZLayerEvent(layer, app.wrapper.map.event)
+      }
+    }
+    return true;
+  }
+
+  map.on('singleclick', function (evt) {
+    app.wrapper.map.event = evt;
+    app.wrapper.map.clickOutput = {
+        attributes: []
+    };
+    map.forEachLayerAtPixel(evt.pixel, layerClickCallback);
+  });
+
   return map;
 }
