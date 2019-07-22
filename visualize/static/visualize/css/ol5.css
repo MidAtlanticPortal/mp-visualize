@@ -35,3 +35,8 @@ body.template-visualize .olControlMousePosition {
   color: #58585b;
   border: 1px solid #58585b;
 }
+
+.ol-attribution {
+  left: 0.5em;
+  right: auto;
+}

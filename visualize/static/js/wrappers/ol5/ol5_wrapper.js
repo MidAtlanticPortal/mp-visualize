@@ -23,15 +23,18 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
     projection: 'EPSG:4326',
     className: 'olControlMousePosition',
     undefinedHTML: null
-    // undefinedHTML: '&nbsp;'
   });
 
   var map = new ol.Map({
-    controls: ol.control.defaults().extend([
+    controls: ol.control.defaults({
+      attributionOptions: {
+        'label': 'i',
+        'collapseLabel': '«'
+      }
+    }).extend([
       scaleLineControl,
       mousePositionControl
     ]),
-    // layers: layers,
     layers: [
       app.wrapper.map.baseLayersGroup
     ],
