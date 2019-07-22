@@ -17,7 +17,8 @@ for (var i = 0; i < app.wrapper.baseLayers.length; i++) {
   }
   app.wrapper.layers[baseLayer.name] = new ol.layer.Tile({
     source: source,
-    useInterimTilesOnError: false
+    useInterimTilesOnError: false,
+    zIndex: 0
   });
   app.wrapper.layers[baseLayer.name].set('name', baseLayer.name);
   app.wrapper.layers[baseLayer.name].set('type', 'base');

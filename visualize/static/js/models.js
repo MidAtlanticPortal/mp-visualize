@@ -1745,22 +1745,26 @@ function viewModel() {
 
     self.closeAttribution = function() {
         self.aggregatedAttributes(false);
-        if (app.markers.hasOwnProperty('clearMarkers')){
-          app.markers.clearMarkers();
+        if (app.wrapper.map.hasOwnProperty('clearMarkers')){
+          app.wrapper.map.clearMarkers();
         }
     };
 
-    self.updateMarker = function(lonlat) {
+    self.updateMarker = function(lonlat_orig) {
         //at some point this function is being called without an appropriate lonlat object...
-        if (lonlat.lon && lonlat.lat) {
-            app.markers.clearMarkers();
-            app.marker = new OpenLayers.Marker(lonlat, app.markers.icon);
-            app.marker.map = app.map;
-            //app.marker.display(true);
-            if (app.marker && !$.isEmptyObject(self.aggregatedAttributes()) && self.featureAttribution()) {
-                app.markers.addMarker(app.marker);
-                app.map.setLayerIndex(app.markers, 99);
-            }
+        if (lonlat_orig.hasOwnProperty('lon') && lonlat_orig.hasOwnProperty('lat')) {
+          var lonlat = lonlat_orig;
+        } else if (lonlat_orig.hasOwnProperty('length') && lonlat_orig.length == 2) {
+          var lonlat = {
+            lon: lonlat_orig[0],
+            lat: lonlat_orig[1]
+          }
+        }
+        if (lonlat && lonlat.hasOwnProperty('lon') && lonlat.hasOwnProperty('lat')) {
+            app.wrapper.map.clearMarkers();
+            app.wrapper.map.addMarker(lonlat.lon, lonlat.lat);
+        } else {
+          app.wrapper.map.clearMarkers();
         }
     };
 

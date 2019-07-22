@@ -40,6 +40,20 @@ app.wrapper.map.getLayers = function() {
 }
 
 /**
+  * getOverlays - return all overlay layers on map as an array
+  */
+app.wrapper.map.getOverlays = function() {
+  var layers = app.wrapper.map.getLayers();
+  overlays = [];
+  for (var i=0; i < layers.length; i++) {
+    if (layers[i].get('type') == 'overlay') {
+      overlays.push(layers[i]);
+    }
+  }
+  return overlays;
+}
+
+/**
   * getLayersByName - get all layers added to map that have the provided name
   * @param {string} layerName - the name of all layers to be returned
   */
@@ -186,35 +200,71 @@ app.wrapper.map.createPopup = function(feature) {
   * addMarkersLayer - function to add a vector layer for displaying markers on map
   */
 app.wrapper.map.addMarkersLayer = function() {
-  var iconFeature = new ol.Feature({
-    geometry: new ol.geom.Point([0, 0]),
-    name: 'Marker'
-  });
-  var iconSize = ol.size.toSize([16,25]);
-  var iconStyle = new ol.style.Style({
-    image: new ol.style.Icon({
-      src: '/static/visualize/img/red-pin.png',
-      size: iconSize,
-      offset: [-8, -25],
-      // imgSize: iconSize
-    })
-  });
-  iconFeature.setStyle(iconStyle);
+
   var markerSource = new ol.source.Vector({
-    features: [iconFeature]
+    features: []
   });
-  var markerLayer = new ol.layer.Tile({
+  var markerLayer = new ol.layer.Vector({
     source: markerSource
   });
+  markerLayer.set('name', 'markers');
+  markerLayer.set('type', 'markers');
+  app.wrapper.map.markerLayer = markerLayer;
+  app.map.addLayer(app.wrapper.map.markerLayer);
+  markerLayer.setZIndex(999);
   app.markers = {};
-  // app.map.addLayer(markerLayer);
+}
 
-  // OL2 Cruft Below
-  // app.markers = new OpenLayers.Layer.Markers( "Markers" );
-  // var size = new OpenLayers.Size(16,25);
-  // var offset = new OpenLayers.Pixel(-(size.w/2), -size.h);
-  // app.markers.icon = new OpenLayers.Icon('/static/visualize/img/red-pin.png', size, offset);
-  // app.map.addLayer(app.markers);
+/**
+  * clearMarkers - function to remove all markers from the marker layer
+  */
+app.wrapper.map.clearMarkers = function(){
+  var markerLayer = app.wrapper.map.getMarkerLayer();
+  if (markerLayer) {
+    app.wrapper.map.markerLayer.getSource().clear();
+  }
+
+};
+
+/**
+  * addMarker - add a marker to the marker layer at the given coordinates
+  * @param {float} lon - the longitude coordinate to place the marker (EPSG:4326)
+  * @param {float} lat - the latitude coordinate to place the marker (EPSG:4326)
+  */
+app.wrapper.map.addMarker = function(lon, lat){
+  var iconFeature = new ol.Feature({
+    geometry: new ol.geom.Point(ol.proj.fromLonLat([lon, lat])),
+    name: 'Marker'
+  });
+  var iconStyle = new ol.style.Style({
+    image: new ol.style.Icon( ({
+      anchor: [0.5, 1],
+      src: '/static/visualize/img/red-pin.png',
+      scale: 0.35,
+    }))
+  });
+  iconFeature.setStyle(iconStyle);
+  var markerLayer = app.wrapper.map.getMarkerLayer();
+  if (!markerLayer) {
+
+  }
+  markerLayer.getSource().addFeature(iconFeature);
+
+};
+
+/**
+  * getMarkerLayer - function to identify the marker layer object and return it.
+  */
+app.wrapper.map.getMarkerLayer = function() {
+  var layers = app.map.getLayers().getArray();
+  for (var i = 0; i < layers.length; i++) {
+    var layer = layers[i];
+    if (layer.get('name') == 'markers' && layer.get('type') == 'markers') {
+      return layer;
+    }
+  }
+  app.wrapper.map.addMarkersLayer();
+  return app.wrapper.map.getMarkerLayer();
 }
 
 /**

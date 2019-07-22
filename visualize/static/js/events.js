@@ -146,7 +146,7 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
           app.viewModel.aggregatedAttributes(app.wrapper.map.clickOutput.attributes);
           //app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(responseText.xy));
           //the following ensures that the location of the marker has not been displaced while waiting for web services
-          app.viewModel.updateMarker(app.map.clickLocation);
+          app.viewModel.updateMarker(app.wrapper.map.clickLocation);
         }
       }
     })

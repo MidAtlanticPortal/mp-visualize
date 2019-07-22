@@ -47,6 +47,7 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
   app.wrapper.layers[base].setVisible(true);
 
   var layerClickCallback = function(layer, pixelColor) {
+    console.log('Clicked on layer: ' + layer.get('name'));
     if (layer.get('utfgrid')) {
       if (app.wrapper.events.hasOwnProperty('clickOnUTFGridLayerEvent')){
         app.wrapper.events.clickOnUTFGridLayerEvent(layer, app.wrapper.map.event)
@@ -72,11 +73,16 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
   }
 
   map.on('singleclick', function (evt) {
+    app.wrapper.map.clearMarkers();
+    app.viewModel.closeAttribution();
     app.wrapper.map.event = evt;
     app.wrapper.map.clickOutput = {
         attributes: []
     };
-    map.forEachLayerAtPixel(evt.pixel, layerClickCallback);
+    var overlays = app.wrapper.map.getOverlays();
+    for (var i = 0; i < overlays.length; i++) {
+      layerClickCallback(overlays[i]);
+    }
   });
 
   return map;
