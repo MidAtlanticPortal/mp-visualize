@@ -89,7 +89,7 @@ app.wrapper.events.addFeatureOverEvent = function(){
   });
   app.map.addInteraction(selectHover);
   selectHover.on('select', function(e) {
-    window.alert('Write OL5 code for feature hover in ol5_events.js: app.wrapper.events.addFeatureOverEvent()');
+    console.log('Write OL5 code for feature hover in ol5_events.js: app.wrapper.events.addFeatureOverEvent()');
   });
   // OL2 Cruft below
   // //mouseover events
