@@ -19,29 +19,20 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
       UL: app.map.getCoordinateFromPixel([evt.pixel[0]-2, evt.pixel[1]-2]),
       LR: app.map.getCoordinateFromPixel([evt.pixel[0]-2, evt.pixel[1]-2])
     }
-    // geometry=-8180384.8004717%2C4757443.0945032%2C-8177938.8155669%2C4754997.1095984&
     var geometry = [geometry_raw.UL, geometry_raw.LR].join(',');
     qs.push('geometry=' + geometry);
-    // geometryType=esriGeometryEnvelope&
     var geometryType = 'esriGeometryEnvelope';
     qs.push('geometryType=' + geometryType);
-    // inSR=3857&
     var inSR = 3857;
     qs.push('inSR=' + inSR);
-    // outSR=3857&
     var outSR = 3857;
     qs.push('outSR=' + outSR);
-    // spatialRel=esriSpatialRelIntersects&
     var spatialRel = 'esriSpatialRelIntersects';
     qs.push('spatialRel=' + spatialRel);
-    // f=json&
     var format = 'json';
     qs.push('f=' + format);
-    // returnGeometry=true&
     var returnGeometry = true;
     qs.push('returnGeometry=' + returnGeometry);
-    // outFields=*
-    // var outFields = app.wrapper.map.getLayerParameter(layer, 'mp_layer').esriOutFields;
     var mp_layer = app.wrapper.map.getLayerParameter(layer, 'mp_layer');
     if (mp_layer.attributes.length > 0) {
       var outFieldList = [];
@@ -80,25 +71,6 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
           var attributeList = feature['attributes'];
 
           if('fields' in returnJSON) {
-            // if (mp_layer.attributes.length) {
-            //   for (var i=0; i<mp_layer.attributes.length; i+=1) {
-            //     if (attributeList[mp_layer.attributes[i].field]) {
-            //       var data = attributeList[mp_layer.attributes[i].field],
-            //       field_obj = app.utils.getObjectFromList(returnJSON['fields'], 'name', mp_layer.attributes[i].field);
-            //       if (field_obj && field_obj.type === 'esriFieldTypeDate') {
-            //         data = new Date(data).toDateString();
-            //       } else if (app.utils.isNumber(data)) {
-            //         data = app.utils.formatNumber(data);
-            //       }
-            //       if (data && app.utils.trim(data) !== "") {
-            //         attributeObjs.push({
-            //           'display': mp_layer.attributes[i].display,
-            //           'data': data
-            //         });
-            //       }
-            //     }
-            //   }
-            // } else {
             $.each(returnJSON['fields'], function(fieldNdx, field) {
               if (field.name.indexOf('OBJECTID') === -1 && field.name.indexOf('CFR_id') === -1) {
                 var data = attributeList[field.name]
@@ -131,7 +103,6 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
                 }
               }
             });
-            // }
           }
           report_features.push({
             'name': 'Feature ' + (index+1),
@@ -155,3 +126,14 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
     });
   };
 } //ArcREST Click Event
+
+/**
+  * clickOnVectorLayerEvent - check if id query should be performed, doing it if so.
+  * @param {object} layer - the layer clicked
+  * @param {object} evt - the click event
+  */
+if (!app.wrapper.events.hasOwnProperty('clickOnVectorLayerEvent')) {
+  app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
+    console.log('Write ' + app.map_tech + ' code for feature click in ' + app.map_tech + '_events.js: app.wrapper.events.addFeatureClickEvent()');
+  }
+}
