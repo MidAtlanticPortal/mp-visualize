@@ -410,20 +410,22 @@
       app.region = {{ REGION | safe }};
     </script>
 
-    {% if MAP_LIBRARY == 'ol2' %}
-      <script src="{% static 'js/wrappers/ol2/ol2_controls.js' %}"></script>
-      <script src="{% static 'js/wrappers/ol2/ol2_map.js' %}"></script>
-    {% else %}
-      <script src="{% static 'js/wrappers/wrapper_init.js' %}"></script>
-      <!-- LOAD MAP WRAPPERS -->
-      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_layers.js"></script>
-      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_wrapper.js"></script>
-      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_map.js"></script>
-      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_controls.js"></script>
-      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_events.js"></script>
-      <!-- LOAD MAP FOR ALL NON-OL2 TECHS -->
-      <script src="{% static 'js/map.js' %}"></script>
-    {% endif %}
+    {% block APP_MAP_JAVASCRIPT %}
+      {% if MAP_LIBRARY == 'ol2' %}
+        <script src="{% static 'js/wrappers/ol2/ol2_controls.js' %}"></script>
+        <script src="{% static 'js/wrappers/ol2/ol2_map.js' %}"></script>
+      {% else %}
+          <script src="{% static 'js/wrappers/wrapper_init.js' %}"></script>
+          <!-- LOAD MAP WRAPPERS -->
+          <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_layers.js"></script>
+          <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_wrapper.js"></script>
+          <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_map.js"></script>
+          <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_controls.js"></script>
+          <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_events.js"></script>
+          <!-- LOAD MAP FOR ALL NON-OL2 TECHS -->
+          <script src="{% static 'js/map.js' %}"></script>
+      {% endif %}
+    {% endblock %}
 
     <script>
       app.server_constants = {
