@@ -137,3 +137,98 @@ if (!app.wrapper.events.hasOwnProperty('clickOnVectorLayerEvent')) {
     console.log('Write ' + app.map_tech + ' code for feature click in ' + app.map_tech + '_events.js: app.wrapper.events.addFeatureClickEvent()');
   }
 }
+
+/**
+  * clickOnUTFGridLayerEvent - check if id query should be performed, doing it if so
+  */
+if (!app.wrapper.events.hasOwnProperty('clickOnUTFGridLayerEvent')) {
+  app.wrapper.events.clickOnUTFGridLayerEvent = function(layer, evt){
+    console.log('Write ' + app.map_tech + ' code for UTF click in ' + app.map_tech + '_events.js: app.wrapper.events.clickOnUTFGridLayerEvent()');
+  }
+}
+
+if (!app.wrapper.events.hasOwnProperty('cleanAttributeReportValue')) {
+  /**
+    * cleanAttributeReportValue - ...
+    */
+  // app.wrapper.events.cleanAttributeReportValue = function(mp_layer, entry){
+  //   try {
+  //       //set the precision and add any necessary commas
+  //       value = value.toFixed(obj.precision);
+  //       value = app.utils.numberWithCommas(value);
+  //   }
+  //   catch (e) {
+  //       //keep on keeping on
+  //   }
+  //   attribute_objs.push({'display': obj.display, 'data': value});
+  // }
+
+}
+
+if (!app.wrapper.events.hasOwnProperty('generateAttributeReport')) {
+  /**
+  * generateAttributeReport - given an object of report data and a layer, reformat for attr reporting
+  * @param {object} mp_layer - the mp_layer the report is for
+  * @param {list} data - the list of the data objects to be reported, one per selected feature
+  */
+  app.wrapper.events.generateAttributeReport = function(mp_layer, data){
+    var attr_fields = mp_layer.attributes;
+    var clickAttributes = {};
+    var report_attributes = {};
+    for (var i = 0; i < attr_fields.length; i++) {
+      report_attributes[attr_fields[i].field] = attr_fields[i].display;
+    }
+    var report_features = [];
+    if (data.length > 0){
+      var report_keys = Object.keys(report_attributes);
+      console.log('TODO: Clean report values (app.wrapper.events.cleanAttributeReportValue)!');
+      for (var i = 0; i < data.length; i++) {
+        var attributeObjs = [];
+        var feature = data[i];
+        var attr_keys = Object.keys(feature);
+        if (mp_layer.name == "Essential Fish Habitats" && mp_layer.utfurl && mp_layer.utfurl!= ''){
+          attributeObjs = app.wrapper.events.parseEFHData(data[i]);
+        } else {
+          for (var j = 0; j < attr_keys.length; j++) {
+            var key = attr_keys[j];
+            if (report_keys.length == 0){
+              attributeObjs.push({
+                'display': key,
+                'data': feature[key]
+              });
+            } else if(report_keys.indexOf(key) >= 0) {
+              attributeObjs.push({
+                'display': report_attributes[key],
+                'data': feature[key]
+              });
+            }
+          }
+        }
+        report_features.push({
+          'name': 'Feature ' + (i+1),
+          'id': mp_layer.featureAttributionName + '-' + i,
+          'attributes': attributeObjs
+        });
+      }
+      if (report_features && report_features.length) {
+        clickAttributes[mp_layer.featureAttributionName] = report_features;
+        $.extend(app.wrapper.map.clickOutput.attributes, clickAttributes);
+        app.viewModel.aggregatedAttributes(app.wrapper.map.clickOutput.attributes);
+        //app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(responseText.xy));
+        //the following ensures that the location of the marker has not been displaced while waiting for web services
+        app.viewModel.updateMarker(app.wrapper.map.clickLocation);
+      }
+    }
+  };
+}
+
+if (!app.wrapper.events.hasOwnProperty('parseEFHData')) {
+  /**
+    * parseEFHData - interpret esoteric EFH UTFGrid data
+    * - This is specific to the Mid-Atlantic Portal, and unlikely to be used by other instances of MarinePlanner
+    * @param {object} data - the UTFGrid Data response
+    */
+    app.wrapper.events.parseEFHData = function(data){
+      return app.viewModel.getEFHAttributes(data);
+    }
+}

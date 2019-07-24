@@ -181,6 +181,7 @@ app.wrapper.events.registerClickLocationEvent = function() {
   });
 };
 
+
 /**
   * clickOnVectorLayerEvent - logic to handle when vector layer features are selected.
   * @param {object} layer - the layer clicked
@@ -192,46 +193,28 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
   }
   var selectedFeatures = layer.getSource().getFeaturesAtCoordinate(evt.coordinate);
   var mp_layer = layer.get('mp_layer');
-  var attr_fields = mp_layer.attributes;
-  var clickAttributes = {};
-  var report_attributes = {};
-  for (var i = 0; i < attr_fields.length; i++) {
-    report_attributes[attr_fields[i].field] = attr_fields[i].display;
-  }
-  var report_features = [];
   if (selectedFeatures.length > 0){
-    var report_keys = Object.keys(report_attributes);
+    var featureData = [];
     for (var i = 0; i < selectedFeatures.length; i++) {
-      var attributeObjs = [];
       var feature = selectedFeatures[i];
-      var attr_keys = Object.keys(feature.values_);
-      for (var j = 0; j < attr_keys.length; j++) {
-        if (report_keys.length == 0){
-          attributeObjs.push({
-            'display': attr_keys[j],
-            'data': feature.values_[attr_keys[j]]
-          });
-        } else if(report_keys.indexOf(attr_keys[j]) >= 0) {
-          attributeObjs.push({
-            'display': report_attributes[attr_keys[j]],
-            'data': feature.values_[attr_keys[j]]
-          });
-        }
-      }
-      report_features.push({
-        'name': 'Feature ' + (i+1),
-        'id': mp_layer.featureAttributionName + '-' + i,
-        'attributes': attributeObjs
-      });
+      featureData.push(feature.values_);
     }
-    if (report_features && report_features.length) {
-      clickAttributes[mp_layer.featureAttributionName] = report_features;
-      $.extend(app.wrapper.map.clickOutput.attributes, clickAttributes);
-      app.viewModel.aggregatedAttributes(app.wrapper.map.clickOutput.attributes);
-      //app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(responseText.xy));
-      //the following ensures that the location of the marker has not been displaced while waiting for web services
-      app.viewModel.updateMarker(app.wrapper.map.clickLocation);
-    }
-
+    app.wrapper.events.generateAttributeReport(mp_layer, featureData);
   }
+};
+
+
+/**
+  * clickOnUTFGridLayerEvent - attempt to pull ID data from UTF grid and populate attribute report
+  */
+app.wrapper.events.clickOnUTFGridLayerEvent = function(layer, evt){
+  var mp_layer = layer.get('mp_layer');
+  var utfgrid = mp_layer.utfgrid;
+  var gridSource = utfgrid.getSource();
+  var viewResolution = /** @type {number} */ (app.map.getView().getResolution());
+  var coordinate = evt.coordinate;
+  gridSource.forDataAtCoordinateAndResolution(coordinate, viewResolution,
+    function(data) {
+      app.wrapper.events.generateAttributeReport(mp_layer, [data]);
+    });
 };

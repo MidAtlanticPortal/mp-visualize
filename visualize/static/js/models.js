@@ -384,8 +384,10 @@ function layerModel(options, parent) {
         var layer = this;
         //NEED TO CHECK FOR PARENT LAYER HERE TOO...?
         //the following removes this layers utfgrid from the utfcontrol and prevents continued utf attribution on this layer
-        app.map.UTFControl.layers.splice($.inArray(layer.utfgrid, app.map.UTFControl.layers), 1);
-        app.map.removeLayer(layer.utfgrid);
+        if (app.wrapper.controls.hasOwnProperty('UTFControl')){
+          app.wrapper.controls.UTFControl.layers.splice($.inArray(layer.utfgrid, app.wrapper.controls.UTFControl.layers), 1);
+          app.map.removeLayer(layer.utfgrid);
+        }
     };
 
     // called from deactivateLayer
@@ -674,7 +676,14 @@ function layerModel(options, parent) {
     self.activateUtfGridLayer = function() {
         var layer = this;
 
-        app.map.UTFControl.layers.unshift(layer.utfgrid);
+        if (!app.wrapper.controls.hasOwnProperty('UTFControl')) {
+          app.wrapper.controls.addUTFControl();
+        }
+        if (app.wrapper.controls.hasOwnProperty('activateUTFGridLayer')) {
+          app.wrapper.controls.activateUTFGridLayer(layer.utfgrid);
+        } else {
+          console.log('no function defined to activateUTFGrid layer for ' + app.map_tech);
+        }
     };
 
     // bound to click handler for layer visibility switching in Active panel
@@ -715,8 +724,8 @@ function layerModel(options, parent) {
         app.setLayerVisibility(layer, true);
 
         //add utfgrid if applicable
-        if (layer.utfgrid && app.map.UTFControl.layers.indexOf(layer.utfgrid) === -1) {
-            app.map.UTFControl.layers.splice($.inArray(this, app.viewModel.activeLayers()), 0, layer.utfgrid);
+        if (layer.utfgrid && app.wrapper.controls.hasOwnProperty('UTFControl') && app.wrapper.controls.UTFControl.layers.indexOf(layer.utfgrid) === -1) {
+            app.wrapper.controls.UTFControl.layers.splice($.inArray(this, app.viewModel.activeLayers()), 0, layer.utfgrid);
         }
     };
 
@@ -744,9 +753,9 @@ function layerModel(options, parent) {
         }
 
         //remove related utfgrid layer
-        if (layer.utfgrid) {
+        if (layer.utfgrid && app.wrapper.controls.hasOwnProperty('UTFControl')) {
             //the following removes this layers utfgrid from the utfcontrol and prevents continued utf attribution on this layer
-            app.map.UTFControl.layers.splice($.inArray(this.utfgrid, app.map.UTFControl.layers), 1);
+            app.wrapper.controls.UTFControl.layers.splice($.inArray(this.utfgrid, app.wrapper.controls.UTFControl.layers), 1);
         }
     };
 

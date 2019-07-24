@@ -190,8 +190,12 @@ app.wrapper.controls.addMousePosition = function() {
 };
 
 /**
-  * addUTFGrid - add control for handling UTFGrid layers
+  * addUTFControl - add control for handling UTFGrid layers
   */
+app.wrapper.controls.addUTFControl = function(){
+  // This is not needed for OL5.
+}
+
 // app.wrapper.controls.addUTFGrid = function(){
 //   // // RDH -- The below code is from OL2
 //   // //UTF Attribution
