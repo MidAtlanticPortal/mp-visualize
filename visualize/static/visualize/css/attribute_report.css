@@ -19,3 +19,7 @@
   font-weight: normal;
   overflow-wrap: break-word;
 }
+
+body.template-visualize #aggregated-attribute-content .accordion-inner {
+  margin-left: 15px !important;
+}

@@ -449,24 +449,26 @@
     ### Dependencies:
     models > server > app
     -->
-    <script src="{% static 'js/bookmarks.js' %}"></script>
-    <script src="{% static 'js/scenarios.js' %}"></script>
-    <script src="{% static 'js/reports.js' %}"></script>
-    <script src="{% static 'js/drawing.js' %}"></script>
-    {% if MAP_LIBRARY == 'ol2' %}
-      <script src="{% static 'js/wrappers/ol2/ol2_models.js' %}"></script>
-      <script src="{% static 'js/server.js' %}"></script>
-      <script src="{% static 'js/wrappers/ol2/ol2_state.js' %}"></script>
-      <script src="{% static 'js/wrappers/ol2/ol2_app.js' %}"></script>
-    {% else %}
-      <script src="{% static 'js/models.js' %}"></script>
-      <script src="{% static 'js/server.js' %}"></script>
-      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_state.js"></script>
-      <script src="{% static 'js/state.js' %}"></script>
-      <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_app.js"></script>
-      <script src="{% static 'js/app.js' %}"></script>
-      <script src="{% static 'js/events.js' %}"></script>
-    {% endif %}
+    {% block ADDITIONAL_APP_JAVASCRIPT %}
+      <script src="{% static 'js/bookmarks.js' %}"></script>
+      <script src="{% static 'js/scenarios.js' %}"></script>
+      <script src="{% static 'js/reports.js' %}"></script>
+      <script src="{% static 'js/drawing.js' %}"></script>
+      {% if MAP_LIBRARY == 'ol2' %}
+        <script src="{% static 'js/wrappers/ol2/ol2_models.js' %}"></script>
+        <script src="{% static 'js/server.js' %}"></script>
+        <script src="{% static 'js/wrappers/ol2/ol2_state.js' %}"></script>
+        <script src="{% static 'js/wrappers/ol2/ol2_app.js' %}"></script>
+      {% else %}
+        <script src="{% static 'js/models.js' %}"></script>
+        <script src="{% static 'js/server.js' %}"></script>
+        <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_state.js"></script>
+        <script src="{% static 'js/state.js' %}"></script>
+        <script src="{% static 'js/' %}wrappers/{{ MAP_LIBRARY }}/{{ MAP_LIBRARY }}_app.js"></script>
+        <script src="{% static 'js/app.js' %}"></script>
+        <script src="{% static 'js/events.js' %}"></script>
+      {% endif %}
+    {% endblock %}
 
     <!--<script src="{% static 'js/html2canvas.js' %}"></script>-->
     <!--<script src="{% static 'js/html2canvas.svg.js' %}"></script>-->
