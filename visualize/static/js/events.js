@@ -213,6 +213,67 @@ if (!app.wrapper.events.hasOwnProperty('formatAttributeReportEntry')) {
   };
 };
 
+if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
+  /**
+  * queryWMSFeatureInfo - given a Marine Planner layer and a Query URL, request
+  *     the WMS feature info and display it in the attribute info report
+  * @param {object} mp_layer - the mp_layer the report is for
+  * @param {list} getFeatureInfoUrl - the formatted WMS query URL
+  */
+
+  app.wrapper.events.queryWMSFeatureInfo = function(mp_layer, getFeatureInfoUrl){
+    var image_formats = [
+      'image/png',
+    ];
+    if (image_formats.indexOf(mp_layer.wms_info_format) >=0 ) {
+      data = [{'placeholder': getFeatureInfoUrl}];
+      app.wrapper.events.generateAttributeReport(mp_layer, data);
+      var report_id = mp_layer.name.toLowerCase() + '0';
+      report_id = report_id.split(' ').join('-');
+      if (mp_layer.wms_info_format.indexOf('image') >= 0) {
+        $('#' + report_id).html('<img class="attr_report_img" src="' + getFeatureInfoUrl +'" />');
+      }
+    } else {
+      $.ajax({
+        headers: { "Accept": mp_layer.wms_info_format},
+        type: 'GET',
+        url: '/visualize/proxy/',
+        data: {
+          url: getFeatureInfoUrl,
+        },
+        success: function(data, textStatus, request){
+          // if (mp_layer.wms_info_format == 'text/xml') {
+          if ($.isXMLDoc(data)) {
+            var nodeData = {};
+            // var featureInfoResponse = data.childNodes[0];
+            var featureInfoResponses = data.getElementsByTagName('FeatureInfoResponse');
+            if (featureInfoResponses.length > 0) {
+              // assume length is 1 for now
+              var featureInfoResponse = featureInfoResponses[0];
+              var featureInfos = featureInfoResponse.getElementsByTagName('FeatureInfo');
+              if (featureInfos.length > 0) {
+                //assume length is 1 for now
+                var featureInfo = featureInfos[0];
+                var featureInfoNodes = featureInfo.childNodes;
+                for (var i = 0; i < featureInfoNodes.length; i++) {
+                  if (featureInfoNodes[i].nodeType != Node.TEXT_NODE) {
+                    nodeData[featureInfoNodes[i].tagName] = featureInfoNodes[i].textContent;
+                  }
+                }
+              }
+            }
+            data = [nodeData];
+          }
+          app.wrapper.events.generateAttributeReport(mp_layer, data);
+        },
+        error: function(data, textStatus, request){
+          console.log('error getting WMS feature info.')
+        }
+      });
+    }
+  }
+}
+
 if (!app.wrapper.events.hasOwnProperty('generateAttributeReport')) {
   /**
   * generateAttributeReport - given an object of report data and a layer, reformat for attr reporting
