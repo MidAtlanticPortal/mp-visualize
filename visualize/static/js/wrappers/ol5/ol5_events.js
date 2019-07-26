@@ -218,3 +218,62 @@ app.wrapper.events.clickOnUTFGridLayerEvent = function(layer, evt){
       app.wrapper.events.generateAttributeReport(mp_layer, [data]);
     });
 };
+
+/**
+  * clickOnWMSLayerEvent - attempt to pull ID data from UTF grid and populate attribute report
+  */
+app.wrapper.events.clickOnWMSLayerEvent = function(layer, evt){
+  // Get Capabilities -- we need to know:
+  //  - is 'getFeatureInfo' supported?
+  //  - what format of response is supported?
+  var mp_layer = layer.get('mp_layer');
+  if (mp_layer.hasOwnProperty('wms_info') && mp_layer.wms_info) {
+    // build request
+    var wmsSource = layer.getSource();
+    var view = app.map.getView();
+    var viewResolution = view.getResolution();
+    var viewProjection = view.projection_.code_;
+    var getFeatureInfoUrl = wmsSource.getGetFeatureInfoUrl( evt.coordinate,
+      viewResolution, viewProjection,
+      {
+        'INFO_FORMAT': mp_layer.wms_info_format,
+        'QUERY_LAYERS': mp_layer.wms_slug,
+        'LAYERS': mp_layer.wms_slug
+      }
+    );
+    var static_formats = [
+      'image/png',
+      // 'text/html',
+      // 'text/plain'
+    ]
+    if (static_formats.indexOf(mp_layer.wms_info_format) >=0 ) {
+      data = [{'placeholder': getFeatureInfoUrl}];
+      app.wrapper.events.generateAttributeReport(mp_layer, data);
+      var report_id = mp_layer.name.toLowerCase() + '0';
+      report_id = report_id.split(' ').join('-');
+      if (mp_layer.wms_info_format.indexOf('image') >= 0) {
+        $('#' + report_id).html('<img class="attr_report_img" src="' + getFeatureInfoUrl +'" />');
+      }
+    } else {
+      $.ajax({
+        headers: { "Accept": mp_layer.wms_info_format},
+        type: 'GET',
+        url: '/visualize/proxy/',
+        data: {
+          url: getFeatureInfoUrl,
+        },
+        success: function(data, textStatus, request){
+          if (mp_layer.wms_info_format == 'image/png'){
+            var img = document.createElement('img');
+            img.src= 'data:image/png;base32,' + btoa(unescape(encodeURIComponent(data)));
+            data = [img];
+          }
+          app.wrapper.events.generateAttributeReport(mp_layer, data);
+        },
+        error: function(data, textStatus, request){
+          console.log('error getting WMS feature info.')
+        }
+      });
+    }
+  }
+};

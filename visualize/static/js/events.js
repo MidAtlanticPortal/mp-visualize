@@ -147,6 +147,15 @@ if (!app.wrapper.events.hasOwnProperty('clickOnUTFGridLayerEvent')) {
   }
 }
 
+/**
+  * clickOnWMSLayerEvent - check if id query should be performed, doing it if so
+  */
+if (!app.wrapper.events.hasOwnProperty('clickOnWMSLayerEvent')) {
+  app.wrapper.events.clickOnWMSLayerEvent = function(layer, evt){
+    console.log('Write ' + app.map_tech + ' code for WMS click in ' + app.map_tech + '_events.js: app.wrapper.events.clickOnWMSLayerEvent()');
+  }
+}
+
 if (!app.wrapper.events.hasOwnProperty('formatAttributeReportEntry')) {
   /**
     * formatAttributeReportEntry - given id response data and a layer, format it for display in attributes window
@@ -156,6 +165,15 @@ if (!app.wrapper.events.hasOwnProperty('formatAttributeReportEntry')) {
     */
   app.wrapper.events.formatAttributeReportEntry = function(feature, mp_layer) {
     var attributeObjs = [];
+    try {
+      if (feature instanceof HTMLElement) {
+        attributeObjs.push({
+          'display': null,
+          'data': feature
+        });
+        return attributeObjs;
+      }
+    } catch (error) { /*do nothing*/  }
     var attr_keys = Object.keys(feature);
     var attr_fields = mp_layer.attributes;
     var report_attributes = {};

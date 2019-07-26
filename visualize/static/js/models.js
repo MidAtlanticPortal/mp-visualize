@@ -18,6 +18,8 @@ function layerModel(options, parent) {
     self.wms_timing = options.wms_timing || null;
     self.wms_time_item = options.wms_time_item || null;
     self.wms_additional = options.wms_additional || null;
+    self.wms_info = options.wms_info || false;
+    self.wms_info_format = options.wms_info_format || null;
     self.type = options.type || null
     self.utfurl = options.utfurl || false;
     self.legend = options.legend || false;

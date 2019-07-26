@@ -17,6 +17,20 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http.response import JsonResponse
 from visualize import settings as viz_settings
 
+import urllib
+
+def proxy_request(request):
+    url = request.GET['url']
+    try:
+        proxied_request = urllib.request.urlopen(url)
+        status_code = proxied_request.code
+        mimetype = proxied_request.info().get_content_type()
+        content = proxied_request.read()
+    except urllib.error.HTTPError as e:
+        return HttpResponse(e.msg, status=e.code, content_type='text/plain')
+    else:
+        return HttpResponse(content, status=status_code, content_type=mimetype)
+
 def show_planner(request, template='visualize/planner.html'):
     try:
         socket_url = settings.SOCKET_URL
