@@ -242,27 +242,35 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
           url: getFeatureInfoUrl,
         },
         success: function(data, textStatus, request){
-          // if (mp_layer.wms_info_format == 'text/xml') {
-          if ($.isXMLDoc(data)) {
-            var nodeData = {};
-            // var featureInfoResponse = data.childNodes[0];
-            var featureInfoResponses = data.getElementsByTagName('FeatureInfoResponse');
-            if (featureInfoResponses.length > 0) {
-              // assume length is 1 for now
-              var featureInfoResponse = featureInfoResponses[0];
-              var featureInfos = featureInfoResponse.getElementsByTagName('FeatureInfo');
-              if (featureInfos.length > 0) {
-                //assume length is 1 for now
-                var featureInfo = featureInfos[0];
-                var featureInfoNodes = featureInfo.childNodes;
-                for (var i = 0; i < featureInfoNodes.length; i++) {
-                  if (featureInfoNodes[i].nodeType != Node.TEXT_NODE) {
-                    nodeData[featureInfoNodes[i].tagName] = featureInfoNodes[i].textContent;
+          var static_formats = [
+            'text/html',
+          ];
+          if (static_formats.indexOf(mp_layer.wms_info_format) >=0 ) {
+            app.wrapper.events.generateAttributeReport(mp_layer, [{'placeholder': getFeatureInfoUrl}]);
+            var report_id = mp_layer.name.toLowerCase() + '0';
+            report_id = report_id.split(' ').join('-');
+            $('#' + report_id).html(data);
+            return;
+          } else if ($.isXMLDoc(data)) {
+              var nodeData = {};
+              // var featureInfoResponse = data.childNodes[0];
+              var featureInfoResponses = data.getElementsByTagName('FeatureInfoResponse');
+              if (featureInfoResponses.length > 0) {
+                // assume length is 1 for now
+                var featureInfoResponse = featureInfoResponses[0];
+                var featureInfos = featureInfoResponse.getElementsByTagName('FeatureInfo');
+                if (featureInfos.length > 0) {
+                  //assume length is 1 for now
+                  var featureInfo = featureInfos[0];
+                  var featureInfoNodes = featureInfo.childNodes;
+                  for (var i = 0; i < featureInfoNodes.length; i++) {
+                    if (featureInfoNodes[i].nodeType != Node.TEXT_NODE) {
+                      nodeData[featureInfoNodes[i].tagName] = featureInfoNodes[i].textContent;
+                    }
                   }
                 }
               }
-            }
-            data = [nodeData];
+              data = [nodeData];
           }
           app.wrapper.events.generateAttributeReport(mp_layer, data);
         },
