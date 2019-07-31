@@ -213,13 +213,31 @@ if (!app.wrapper.events.hasOwnProperty('formatAttributeReportEntry')) {
   };
 };
 
+if (!app.wrapper.events.hasOwnProperty('parseGMLFeatureInfoResponse')) {
+  /**
+    * parseGMLFeatureInfoResponse - given a GML response to a GetFeatureInfo query,
+    *     attempt to populate the attribute report with something useful (or punt).
+    * @param {object} mp_layer - the mp_layer the report is for
+    * @param {list} getFeatureInfoUrl - the formatted WMS query URL
+    */
+  app.wrapper.events.parseGMLFeatureInfoResponse = function(mp_layer, data) {
+    if (data.length > 0){
+      app.wrapper.events.generateAttributeReport(mp_layer, [{'placeholder': getFeatureInfoUrl}]);
+      var report_id = mp_layer.name.toLowerCase() + '0';
+      report_id = report_id.split(' ').join('-');
+      $('#' + report_id).html(data);
+    }
+    return;
+  }
+}
+
 if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
   /**
-  * queryWMSFeatureInfo - given a Marine Planner layer and a Query URL, request
-  *     the WMS feature info and display it in the attribute info report
-  * @param {object} mp_layer - the mp_layer the report is for
-  * @param {list} getFeatureInfoUrl - the formatted WMS query URL
-  */
+    * queryWMSFeatureInfo - given a Marine Planner layer and a Query URL, request
+    *     the WMS feature info and display it in the attribute info report
+    * @param {object} mp_layer - the mp_layer the report is for
+    * @param {list} getFeatureInfoUrl - the formatted WMS query URL
+    */
 
   app.wrapper.events.queryWMSFeatureInfo = function(mp_layer, getFeatureInfoUrl){
     var image_formats = [
@@ -251,6 +269,15 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
             report_id = report_id.split(' ').join('-');
             $('#' + report_id).html(data);
             return;
+          } else if (mp_layer.wms_info_format.indexOf('gml') >= 0) {
+            return app.wrapper.events.parseGMLFeatureInfoResponse(mp_layer, data);
+            if (data.length > 0) {
+              var gml_format = new ol.format.GML3();
+              var responses = format.readFeatures(data, {});
+              debugger;
+              console.log(data);
+              return;
+            }
           } else if ($.isXMLDoc(data)) {
               var nodeData = {};
               // var featureInfoResponse = data.childNodes[0];
