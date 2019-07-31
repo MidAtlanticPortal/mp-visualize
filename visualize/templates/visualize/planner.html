@@ -154,204 +154,210 @@
                   </p>
                 </div>
 
-                <div id="left-panel" class="panel panel-default collapsible" data-bind="css: { collapsed: !showLayers() }">
-                    <div class="panel-heading">
-                        <div class="panel-title">
-                            <form class="form-search hide-collapsed" data-bind="submit: layerSearch">
-                                <div class="input-group inner-addon">
-                                    <!-- data-provide="typeahead"  -->
-                                    <input type="text" class="search-box main-search form-control"
-                                           data-bind="value: searchTerm, event: { keyup: keySearch }"
-                                           style="text-overflow: ellipsis;"
-                                           placeholder="Search data" id="data-search-input">
+                {% block left_panel %}
+                  <div id="left-panel" class="panel panel-default collapsible" data-bind="css: { collapsed: !showLayers() }">
+                    {% block left_panel_heading %}
+                      <div class="panel-heading">
+                          <div class="panel-title">
+                              <form class="form-search hide-collapsed" data-bind="submit: layerSearch">
+                                  <div class="input-group inner-addon">
+                                      <!-- data-provide="typeahead"  -->
+                                      <input type="text" class="search-box main-search form-control"
+                                             data-bind="value: searchTerm, event: { keyup: keySearch }"
+                                             style="text-overflow: ellipsis;"
+                                             placeholder="Search data" id="data-search-input">
 
-                                    <i class="fa fa-search right search-icon" data-bind="visible: !searchTermInput()"></i>
-                                    <i class="btn fa fa-close right"style="display:none" data-bind="visible: searchTermInput(), click: clearSearch"></i>
-                                </div>
-                            </form>
-                            <div class="show-collapsed" style="display:none">
-                                <h4>Data Layers</h4>
-                                <div data-bind="visible: activeLayers().length > 0">
-                                    <span data-bind="text: activeLayers().length">0</span> Active
-                                </div>
-                            </div>
-                            <a data-bind="click: toggleLayers" class="collapse-button">
-                                <i class="fa fa-angle-double-left"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="panel-body">
-                        <div class="frame tabs" id="data-panel" data-bind="visible: showLayers()">
+                                      <i class="fa fa-search right search-icon" data-bind="visible: !searchTermInput()"></i>
+                                      <i class="btn fa fa-close right"style="display:none" data-bind="visible: searchTermInput(), click: clearSearch"></i>
+                                  </div>
+                              </form>
+                              <div class="show-collapsed" style="display:none">
+                                  <h4>Data Layers</h4>
+                                  <div data-bind="visible: activeLayers().length > 0">
+                                      <span data-bind="text: activeLayers().length">0</span> Active
+                                  </div>
+                              </div>
+                              <a data-bind="click: toggleLayers" class="collapse-button">
+                                  <i class="fa fa-angle-double-left"></i>
+                              </a>
+                          </div>
+                      </div>
+                    {% endblock left_panel_heading %}
+                    {% block left_panel_body %}
+                      <div class="panel-body">
+                          <div class="frame tabs" id="data-panel" data-bind="visible: showLayers()">
 
-                            <div class="sidebar-nav">
-                                <ul id="myTab" class="nav nav-tabs">
-                                    <li data-tab="active">
-                                        <h4>
-                                            <a href="#active" data-toggle="tab" id="activeTab">Active
-                                                <span data-bind="visible: visibleLayers().length > 0">
-                                                    &#8226;&nbsp;<span class="count" data-bind="text: visibleLayers().length">0</span>
-                                                </span>
-                                            </a>
-                                        </h4>
-                                    </li>
-                                    <li data-tab="designs">
-                                        <h4>
-                                            <a href="#designs" data-toggle="tab" id="designsTab">MyPlanner</a>
-                                        </h4>
-                                    </li>
-                                    <li class="active" data-tab="data" >
-                                        <h4>
-                                            <a href="#data" data-toggle="tab" id="dataTab">Data</a>
-                                        </h4>
-                                    </li>
-                                    <li data-tab="legend" >
-                                        <h4>
-                                            <a href="#legend" data-toggle="tab" id="legendTab">Legend</a>
-                                        </h4>
-                                    </li>
-                                </ul>
-                                <div id="myTabContent" class="tab-content">
-                                    <!-- ACTIVE TAB -->
-                                    <div class="tab-pane " id="active">
-                                        <div data-bind="visible: activeLayers().length === 0">
-                                            <div style="padding: 10px;">
-                                                <p>
-                                                    You currently have no activated data layers.
-                                                </p>
-                                                <p>
-                                                    Data layers that are activated in the Data panel will appear in this Active panel.
-                                                </p>
-                                                <p>
-                                                    Data layers in the Active panel can be adjusted in terms of their transparency and their ordering on the map.
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
-                                            <li data-bind="visible: (!$data.hasOwnProperty('is_multilayer') || !$data.is_multilayer())">
-                                                <div class="active-wrapper">
-                                                    {% include "visualize/includes/active-layer-row.html" %}
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <!-- END ACTIVE TAB -->
-                                    <!-- DATA TAB -->
-                                    <div class="tab-pane active " id="data">
-                                        <div class="accordion-wrapper">
-                                            <!-- data accordion -->
-                                            <div id="data-accordion">
-                                                <div class="accordion" data-bind="foreach: themes">
-                                                    <!-- ko ifnot: isCompanionTheme() -->
-                                                    <div class="accordion-group">
-                                                        <div class="accordion-heading" data-bind="click: setOpenTheme, css: { 'active': isOpenTheme() }">
-                                                            <div>
-                                                                <a class="accordion-toggle">
-                                                                    <span data-bind="text: name">Themes</span></a>
-                                                            </div>
-                                                        </div>
-                                                        <div class="accordion-body collapse" data-bind="css: { 'in': isOpenTheme() }">
-                                                            <div class="accordion-inner">
-                                                                <!-- ko if: isMarineLife() -->
-                                                                <img src="/static/visualize/img/mdat-ajax.gif"
-                                                                     id="mdat-load">
-                                                                <ul  class="unstyled" data-bind="foreach: layers ">
-                                                                    <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
-                                                                        {% include "visualize/includes/mdat-sublayer-search.html" %}
-                                                                    </li>
-                                                                </ul>
-                                                                <!-- /ko -->
-                                                                <!-- ko if: isVTR() -->
-                                                                <img src="/static/visualize/img/mdat-ajax.gif"
-                                                                     id="vtr-load">
-                                                                <ul  class="unstyled" data-bind="foreach: layers ">
-                                                                    <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
-                                                                        {% include "visualize/includes/vtr-cas.html" %}
-                                                                    </li>
-                                                                </ul>
-                                                                <!-- /ko -->
-                                                                <!-- ko ifnot: isMarineLife() -->
-                                                                <!-- ko ifnot: isVTR() -->
-                                                                <ul  class="unstyled" data-bind="foreach: layers ">
-                                                                    <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
-                                                                        {% include "visualize/includes/catalog-layer-row.html" %}
-                                                                    </li>
-                                                                </ul>
-                                                                <!-- /ko -->
-                                                                <!-- /ko -->
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!-- /ko -->
-                                                </div>
-                                            </div>
-                                            <!-- /data-accordion -->
-                                        </div>
-                                    </div>
-                                    <!-- END DATA TAB -->
+                              <div class="sidebar-nav">
+                                  <ul id="myTab" class="nav nav-tabs">
+                                      <li data-tab="active">
+                                          <h4>
+                                              <a href="#active" data-toggle="tab" id="activeTab">Active
+                                                  <span data-bind="visible: visibleLayers().length > 0">
+                                                      &#8226;&nbsp;<span class="count" data-bind="text: visibleLayers().length">0</span>
+                                                  </span>
+                                              </a>
+                                          </h4>
+                                      </li>
+                                      <li data-tab="designs">
+                                          <h4>
+                                              <a href="#designs" data-toggle="tab" id="designsTab">MyPlanner</a>
+                                          </h4>
+                                      </li>
+                                      <li class="active" data-tab="data" >
+                                          <h4>
+                                              <a href="#data" data-toggle="tab" id="dataTab">Data</a>
+                                          </h4>
+                                      </li>
+                                      <li data-tab="legend" >
+                                          <h4>
+                                              <a href="#legend" data-toggle="tab" id="legendTab">Legend</a>
+                                          </h4>
+                                      </li>
+                                  </ul>
+                                  <div id="myTabContent" class="tab-content">
+                                      <!-- ACTIVE TAB -->
+                                      <div class="tab-pane " id="active">
+                                          <div data-bind="visible: activeLayers().length === 0">
+                                              <div style="padding: 10px;">
+                                                  <p>
+                                                      You currently have no activated data layers.
+                                                  </p>
+                                                  <p>
+                                                      Data layers that are activated in the Data panel will appear in this Active panel.
+                                                  </p>
+                                                  <p>
+                                                      Data layers in the Active panel can be adjusted in terms of their transparency and their ordering on the map.
+                                                  </p>
+                                              </div>
+                                          </div>
+                                          <ul class="unstyled list" data-bind="sortable: { data: activeLayers, options: {  } }">
+                                              <li data-bind="visible: (!$data.hasOwnProperty('is_multilayer') || !$data.is_multilayer())">
+                                                  <div class="active-wrapper">
+                                                      {% include "visualize/includes/active-layer-row.html" %}
+                                                  </div>
+                                              </li>
+                                          </ul>
+                                      </div>
+                                      <!-- END ACTIVE TAB -->
+                                      <!-- DATA TAB -->
+                                      <div class="tab-pane active " id="data">
+                                          <div class="accordion-wrapper">
+                                              <!-- data accordion -->
+                                              <div id="data-accordion">
+                                                  <div class="accordion" data-bind="foreach: themes">
+                                                      <!-- ko ifnot: isCompanionTheme() -->
+                                                      <div class="accordion-group">
+                                                          <div class="accordion-heading" data-bind="click: setOpenTheme, css: { 'active': isOpenTheme() }">
+                                                              <div>
+                                                                  <a class="accordion-toggle">
+                                                                      <span data-bind="text: name">Themes</span></a>
+                                                              </div>
+                                                          </div>
+                                                          <div class="accordion-body collapse" data-bind="css: { 'in': isOpenTheme() }">
+                                                              <div class="accordion-inner">
+                                                                  <!-- ko if: isMarineLife() -->
+                                                                  <img src="/static/visualize/img/mdat-ajax.gif"
+                                                                       id="mdat-load">
+                                                                  <ul  class="unstyled" data-bind="foreach: layers ">
+                                                                      <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
+                                                                          {% include "visualize/includes/mdat-sublayer-search.html" %}
+                                                                      </li>
+                                                                  </ul>
+                                                                  <!-- /ko -->
+                                                                  <!-- ko if: isVTR() -->
+                                                                  <img src="/static/visualize/img/mdat-ajax.gif"
+                                                                       id="vtr-load">
+                                                                  <ul  class="unstyled" data-bind="foreach: layers ">
+                                                                      <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
+                                                                          {% include "visualize/includes/vtr-cas.html" %}
+                                                                      </li>
+                                                                  </ul>
+                                                                  <!-- /ko -->
+                                                                  <!-- ko ifnot: isMarineLife() -->
+                                                                  <!-- ko ifnot: isVTR() -->
+                                                                  <ul  class="unstyled" data-bind="foreach: layers ">
+                                                                      <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
+                                                                          {% include "visualize/includes/catalog-layer-row.html" %}
+                                                                      </li>
+                                                                  </ul>
+                                                                  <!-- /ko -->
+                                                                  <!-- /ko -->
+                                                              </div>
+                                                          </div>
+                                                      </div>
+                                                      <!-- /ko -->
+                                                  </div>
+                                              </div>
+                                              <!-- /data-accordion -->
+                                          </div>
+                                      </div>
+                                      <!-- END DATA TAB -->
 
-                                    <!-- DESIGNS TAB -->
-                                    {% if user.is_authenticated %}
-                                    {% include "visualize/scenarios.html" %}
-                                    {% else %}
-                                    <div class="tab-pane " id="designs">
-                                        <div style="padding: 10px">
-                                            <p>Please log in with your Ocean Data Portal account to access MyPlanner.</p>
-                                            <p>MyPlanner provides: </p>
-                                                <ul>
-                                                    <li>Creating and sharing of Map View Bookmarks</li>
-                                                    <li>Drawing and highlighting map areas</li>
-                                                    <li>Ocean area comparisions by lease blocks grids</li>
-                                                </ul>
-                                            <p>
-                                                <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in here</a>.  If you do not have an account,
-                                                <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>register here</a>.
-                                            </p>
-                                            <p><a href="/join">Learn more about MyPlanner</a></p>
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                    <!-- END DESIGNS TAB -->
-                                    <!-- LEGEND TAB -->
-                                    <div class="tab-pane" id="legend">
-                                        <div id="embedded-legend-wrapper">
-                                            <div id="embedded-legend-content">
-                                                <div style="padding: 10px">
-                                                    <div data-bind="visible: activeLegendLayers().length == 0">
-                                                        No data layers containing legends are activated.
-                                                    </div>
+                                      <!-- DESIGNS TAB -->
+                                      {% if user.is_authenticated %}
+                                      {% include "visualize/scenarios.html" %}
+                                      {% else %}
+                                      <div class="tab-pane " id="designs">
+                                          <div style="padding: 10px">
+                                              <p>Please log in with your Ocean Data Portal account to access MyPlanner.</p>
+                                              <p>MyPlanner provides: </p>
+                                                  <ul>
+                                                      <li>Creating and sharing of Map View Bookmarks</li>
+                                                      <li>Drawing and highlighting map areas</li>
+                                                      <li>Ocean area comparisions by lease blocks grids</li>
+                                                  </ul>
+                                              <p>
+                                                  <a data-bind='attr: { href: "{% url 'account:index' %}" + "?next=" + encodeURIComponent(currentURL()) }'>Log in here</a>.  If you do not have an account,
+                                                  <a data-bind='attr: { href: "{% url 'account:register' %}" + "?next=" + encodeURIComponent(currentURL()) }'>register here</a>.
+                                              </p>
+                                              <p><a href="/join">Learn more about MyPlanner</a></p>
+                                          </div>
+                                      </div>
+                                      {% endif %}
+                                      <!-- END DESIGNS TAB -->
+                                      <!-- LEGEND TAB -->
+                                      <div class="tab-pane" id="legend">
+                                          <div id="embedded-legend-wrapper">
+                                              <div id="embedded-legend-content">
+                                                  <div style="padding: 10px">
+                                                      <div data-bind="visible: activeLegendLayers().length == 0">
+                                                          No data layers containing legends are activated.
+                                                      </div>
 
-                                                    <div data-bind="foreach: activeLegendLayers">
-                                                    <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
-                                                        <div style="padding-bottom: 18px;">
-                                                            <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
-                                                            <p class="legend-subtitle" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
-                                                            <span data-bind="if: legend">
-                                                                <div data-bind="if: legend['elements']">
-                                                                    <div data-bind="foreach: legend['elements']">
-                                                                        <div>
-                                                                            <img data-bind="attr: {src: swatch}" />
-                                                                            <span data-bind="text: label" style="font-size: 11px; font-weight: bold;"></span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div data-bind="if: !legend['elements']">
-                                                                    <div data-bind="css: { 'in': legendVisibility }" style="padding: 5px 0 0 10px;">
-                                                                        <img data-bind="attr: { src: legend }" />
-                                                                    </div>
-                                                                </div>
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- END LEGEND TAB -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                                                      <div data-bind="foreach: activeLegendLayers">
+                                                      <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
+                                                          <div style="padding-bottom: 18px;">
+                                                              <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
+                                                              <p class="legend-subtitle" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
+                                                              <span data-bind="if: legend">
+                                                                  <div data-bind="if: legend['elements']">
+                                                                      <div data-bind="foreach: legend['elements']">
+                                                                          <div>
+                                                                              <img data-bind="attr: {src: swatch}" />
+                                                                              <span data-bind="text: label" style="font-size: 11px; font-weight: bold;"></span>
+                                                                          </div>
+                                                                      </div>
+                                                                  </div>
+                                                                  <div data-bind="if: !legend['elements']">
+                                                                      <div data-bind="css: { 'in': legendVisibility }" style="padding: 5px 0 0 10px;">
+                                                                          <img data-bind="attr: { src: legend }" />
+                                                                      </div>
+                                                                  </div>
+                                                              </span>
+                                                          </div>
+                                                      </div>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                      <!-- END LEGEND TAB -->
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                    {% endblock left_panel_body %}
+                  </div>
+                {% endblock left_panel %}
             </div>
             <span class="timestamp" data-bind="visible: mapTitle"><span data-bind="text: new Date().toString('M/d/yyyy HH:mm')"></span></span>
         </div>
