@@ -246,50 +246,22 @@ app.wrapper.events.clickOnWMSLayerEvent = function(layer, evt){
 };
 
 /**
-  * parseGMLFeatureInfoResponse - given a GML response to a GetFeatureInfo query,
+  * reportGMLAttributes - given a GML response to a GetFeatureInfo query,
   *     attempt to populate the attribute report with something useful (or punt).
   * @param {object} mp_layer - the mp_layer the report is for
   * @param {list} getFeatureInfoUrl - the formatted WMS query URL
   */
-app.wrapper.events.parseGMLFeatureInfoResponse = function(mp_layer, data) {
-  if (data.length > 0) {
-    try{
-      var gml_format = new ol.format.GML3();
-      var responses = gml_format.readFeatures(data, {});
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-      var responses = [];
-    }
-    if (responses.length < 1) {
-      try{
-        var xml_data = $.parseXML(data);
-        var nodeData = {};
-        var ignoreTags = [
-          'gml:boundedBy',
-          'gml:Box',
-          'gml:coordinates'
-        ]
-        for (var i = 0; i < xml_data.all.length; i++) {
-          var node = xml_data.all[i];
-          var anticipated_prefixes = [
-            'gml:',
-            'geonode:'
-          ]
-          for (var prefix_idx = 0; prefix_idx < anticipated_prefixes.length; prefix_idx++) {
-            var prefix = anticipated_prefixes[prefix_idx];
-            if (node.children.length == 0 && node.tagName.indexOf(prefix) >= 0 && ignoreTags.indexOf(node.tagName) < 0) {
-              var nodeNameList = node.tagName.split(prefix);
-              var nodeName = nodeNameList[nodeNameList.length-1];
-              nodeData[node.tagName.split(prefix)[1]] = node.textContent;
-            }
-          }
-        }
-        app.wrapper.events.generateAttributeReport(mp_layer, [nodeData]);
-      } catch (error) {
-        console.log(error);
-      }
-    }
+app.wrapper.events.reportGMLAttributes = function(mp_layer, data) {
+  var reported = false;
+  try{
+    var gml_format = new ol.format.GML3();
+    var responses = gml_format.readFeatures(data, {});
+    console.log(data);
+    // TODO: Actually get attributes of feature(s) and report attributes
+    // reported = true;
+  } catch (error) {
+    console.log(error);
+    var responses = [];
   }
-  return;
+  return reported;
 }

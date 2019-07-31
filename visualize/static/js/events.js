@@ -220,15 +220,44 @@ if (!app.wrapper.events.hasOwnProperty('parseGMLFeatureInfoResponse')) {
     * @param {object} mp_layer - the mp_layer the report is for
     * @param {list} getFeatureInfoUrl - the formatted WMS query URL
     */
-  app.wrapper.events.parseGMLFeatureInfoResponse = function(mp_layer, data) {
-    if (data.length > 0){
-      app.wrapper.events.generateAttributeReport(mp_layer, [{'placeholder': getFeatureInfoUrl}]);
-      var report_id = mp_layer.name.toLowerCase() + '0';
-      report_id = report_id.split(' ').join('-');
-      $('#' + report_id).html(data);
+    app.wrapper.events.parseGMLFeatureInfoResponse = function(mp_layer, data) {
+      if (data.length > 0) {
+        var reported = false;
+        if (app.wrapper.events.hasOwnProperty('reportGMLAttributes')) {
+          reported = app.wrapper.events.reportGMLAttributes(mp_layer, data);
+        }
+        if (!reported) {
+          try{
+            var xml_data = $.parseXML(data);
+            var nodeData = {};
+            var ignoreTags = [
+              'gml:boundedBy',
+              'gml:Box',
+              'gml:coordinates'
+            ]
+            for (var i = 0; i < xml_data.all.length; i++) {
+              var node = xml_data.all[i];
+              var anticipated_prefixes = [
+                'gml:',
+                'geonode:'
+              ]
+              for (var prefix_idx = 0; prefix_idx < anticipated_prefixes.length; prefix_idx++) {
+                var prefix = anticipated_prefixes[prefix_idx];
+                if (node.children.length == 0 && node.tagName.indexOf(prefix) >= 0 && ignoreTags.indexOf(node.tagName) < 0) {
+                  var nodeNameList = node.tagName.split(prefix);
+                  var nodeName = nodeNameList[nodeNameList.length-1];
+                  nodeData[node.tagName.split(prefix)[1]] = node.textContent;
+                }
+              }
+            }
+            app.wrapper.events.generateAttributeReport(mp_layer, [nodeData]);
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      }
+      return;
     }
-    return;
-  }
 }
 
 if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
