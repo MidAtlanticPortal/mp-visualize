@@ -29,7 +29,8 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
     controls: ol.control.defaults({
       attributionOptions: {
         'label': 'i',
-        'collapseLabel': '«'
+        'collapseLabel': '«',
+        'collapsible': true,
       }
     }).extend([
       scaleLineControl,
