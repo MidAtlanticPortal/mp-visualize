@@ -321,12 +321,14 @@ function layerModel(options, parent) {
         return visibleSubLayers;
     };
 
-    self.deactivateLayer = function() {
+    self.deactivateLayer = function(is_companion) {
         var layer = this;
 
-        //de-activate companion layer should happen prior to base
-        if (layer.hasCompanion) {
+        if (typeof is_companion == 'undefined' || is_companion == false) {
+          //de-activate companion layer should happen prior to base
+          if (layer.hasCompanion) {
             self.deactivateCompanion();
+          }
         }
         //deactivate layer
         self.deactivateBaseLayer();
@@ -541,7 +543,7 @@ function layerModel(options, parent) {
                   var companionLayer = activeCompanionLayers[i];
                   // if only 1 parent layer, then it's this layer
                   if (companionLayer.companionLayers.length == 1) {
-                    companionLayer.deactivateLayer();
+                    companionLayer.deactivateLayer(true);
                   } else {
                     var companionLayerActivelyShared = false;
                     for (var j = 0; j < companionLayer.companionLayers.length; j++) {
@@ -550,7 +552,7 @@ function layerModel(options, parent) {
                       }
                     }
                     if (!companionLayerActivelyShared) {
-                      companionLayer.deactivateLayer();
+                      companionLayer.deactivateLayer(true);
                     }
                   }
                 }
@@ -567,7 +569,7 @@ function layerModel(options, parent) {
         ga('send', 'event', 'Layers Activated', action);
     };
 
-    self.activateLayer = function() {
+    self.activateLayer = function(is_companion) {
         var layer = this;
 
         // if legend is not provided, try using legend from web services
@@ -612,15 +614,17 @@ function layerModel(options, parent) {
                 self.visible(true);
             }
 
-            //activate companion layers
-            if (layer.hasCompanion) {
+            if (typeof is_companion == "undefined" || is_companion == false) {
+              //activate companion layers
+              if (layer.hasCompanion) {
                 if (layer.parentMDATDirectory) {
-                    if (!layer.parentMDATDirectory.searchQueryable) {
-                        self.activateCompanionLayer()
-                    }
+                  if (!layer.parentMDATDirectory.searchQueryable) {
+                    self.activateCompanionLayer()
+                  }
                 } else {
-                    self.activateCompanionLayer();
+                  self.activateCompanionLayer();
                 }
+              }
             }
 
             //activate multilayer groups
@@ -763,7 +767,7 @@ function layerModel(options, parent) {
                         return k.id == layer.id
                     })
                     if (companionLayer.length > 0) {
-                        l.activateLayer();
+                        l.activateLayer(true); // prevent companion infinite loop
                         layer.companion.push(l);
                     }
                 }
@@ -1245,6 +1249,14 @@ function layerModel(options, parent) {
             $(layerID).css('display', 'none');
         } else {
             self.showingLayerAttribution(true);
+            $(layerID).css('display', 'block');
+        }
+    };
+    self.toggleFeatureAttribution = function(target_id) {
+        var layerID = '#' + app.viewModel.convertToSlug(target_id.id);
+        if ( $(layerID).is(':visible') ) {
+            $(layerID).css('display', 'none');
+        } else {
             $(layerID).css('display', 'block');
         }
     };

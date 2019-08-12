@@ -300,7 +300,11 @@ app.init = function () {
                         } else if ( title === 'Benthic Habitats (North)' || title === 'Benthic Habitats (South)' ) {
                             title = 'Benthic Habitats';
                         }
-                        clickAttributes[title] = text;
+                        clickAttributes[title] = [{
+                            'name': 'Feature',
+                            'id': potential_layer.featureAttributionName + '-0',
+                            'attributes': text
+                        }];
                         //app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
                     }
                 }
@@ -340,7 +344,11 @@ app.init = function () {
             // the following delay prevents the #map click-event-attributes-clearing from taking place after this has occurred
             setTimeout( function() {
                 if (text.length) {
-                    app.map.clickOutput.attributes[layer.featureAttributionName] = text;
+                    app.map.clickOutput.attributes[layer.featureAttributionName] = [{
+                      'name': 'Feature',
+                      'id': layer.featureAttributionName + '-0',
+                      'attributes':text
+                    }];
                     app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
                     app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(e.event.xy));
                 }
@@ -726,76 +734,80 @@ app.addArcRestLayerToMap = function(layer) {
                 }
 
                 if(returnJSON['features'] && returnJSON['features'].length) {
-                    var attributeObjs = [];
 
+                    var report_features = []
                     $.each(returnJSON['features'], function(index, feature) {
-                        if(index == 0) {
-                            var attributeList = feature['attributes'];
+                        var attributeObjs = [];
+                        var attributeList = feature['attributes'];
 
-                            if('fields' in returnJSON) {
-                                if (layer.attributes.length) {
-                                    for (var i=0; i<layer.attributes.length; i+=1) {
-                                        if (attributeList[layer.attributes[i].field]) {
-                                            var data = attributeList[layer.attributes[i].field],
-                                                field_obj = app.utils.getObjectFromList(returnJSON['fields'], 'name', layer.attributes[i].field);
-                                            if (field_obj && field_obj.type === 'esriFieldTypeDate') {
-                                                data = new Date(data).toDateString();
-                                            } else if (app.utils.isNumber(data)) {
-                                                data = app.utils.formatNumber(data);
-                                            }
-                                            if (data && app.utils.trim(data) !== "") {
-                                                attributeObjs.push({
-                                                    'display': layer.attributes[i].display,
-                                                    'data': data
-                                                });
-                                            }
+                        if('fields' in returnJSON) {
+                            if (layer.attributes.length) {
+                                for (var i=0; i<layer.attributes.length; i+=1) {
+                                    if (attributeList[layer.attributes[i].field]) {
+                                        var data = attributeList[layer.attributes[i].field],
+                                            field_obj = app.utils.getObjectFromList(returnJSON['fields'], 'name', layer.attributes[i].field);
+                                        if (field_obj && field_obj.type === 'esriFieldTypeDate') {
+                                            data = new Date(data).toDateString();
+                                        } else if (app.utils.isNumber(data)) {
+                                            data = app.utils.formatNumber(data);
+                                        }
+                                        if (data && app.utils.trim(data) !== "") {
+                                            attributeObjs.push({
+                                                'display': layer.attributes[i].display,
+                                                'data': data
+                                            });
                                         }
                                     }
-                                } else {
-                                    $.each(returnJSON['fields'], function(fieldNdx, field) {
-                                        if (field.name.indexOf('OBJECTID') === -1 && field.name.indexOf('CFR_id') === -1) {
-                                            var data = attributeList[field.name]
-                                            if (field.type === 'esriFieldTypeDate') {
-                                                data = new Date(data).toDateString();
-                                            } else if (app.utils.isNumber(data)) {
-                                                data = app.utils.formatNumber(data);
-                                            } else if (typeof(data) == 'string' && (data.indexOf('http') >= 0 || field.name.toLowerCase() == 'link' )) {
-                                                // Make link attributes live!
-                                                str_list = data.split('; ');
-                                                if (str_list.length == 1) {
-                                                  str_list = data.split(' ');
-                                                }
-                                                for (var i=0; i < str_list.length; i++) {
-                                                  if (str_list[i].indexOf('http') < 0) {
-                                                    var list_addr = 'http://' + str_list[i];
-                                                  } else {
-                                                    var list_addr = str_list[i];
-                                                  }
-                                                  link_string = '<a href="' + list_addr + '" target="_blank">' + str_list[i] + '</a>';
-                                                  str_list[i] = link_string;
-                                                }
-                                                data = str_list.join(' ');
-                                            }
-                                            if (data && app.utils.trim(data) !== "") {
-                                                attributeObjs.push({
-                                                    'display': field.alias,
-                                                    'data': data
-                                                });
-                                            }
-                                        }
-                                    });
                                 }
+                            } else {
+                                $.each(returnJSON['fields'], function(fieldNdx, field) {
+                                    if (field.name.indexOf('OBJECTID') === -1 && field.name.indexOf('CFR_id') === -1) {
+                                        var data = attributeList[field.name]
+                                        if (field.type === 'esriFieldTypeDate') {
+                                            data = new Date(data).toDateString();
+                                        } else if (app.utils.isNumber(data)) {
+                                            data = app.utils.formatNumber(data);
+                                        } else if (typeof(data) == 'string' && (data.indexOf('http') >= 0 || field.name.toLowerCase() == 'link' )) {
+                                            // Make link attributes live!
+                                            str_list = data.split('; ');
+                                            if (str_list.length == 1) {
+                                              str_list = data.split(' ');
+                                            }
+                                            for (var i=0; i < str_list.length; i++) {
+                                              if (str_list[i].indexOf('http') < 0) {
+                                                var list_addr = 'http://' + str_list[i];
+                                              } else {
+                                                var list_addr = str_list[i];
+                                              }
+                                              link_string = '<a href="' + list_addr + '" target="_blank">' + str_list[i] + '</a>';
+                                              str_list[i] = link_string;
+                                            }
+                                            data = str_list.join(' ');
+                                        }
+                                        if (data && app.utils.trim(data) !== "") {
+                                            attributeObjs.push({
+                                                'display': field.alias,
+                                                'data': data
+                                            });
+                                        }
+                                    }
+                                });
                             }
-                            return;
                         }
+                        report_features.push({
+                          'name': 'Feature ' + (index+1),
+                          'id': layer.featureAttributionName + '-' + index,
+                          'attributes': attributeObjs
+                        })
+                        return;
                     });
                     if ( layer.name === 'Aids to Navigation' ) {
-                        app.viewModel.adjustAidsToNavigationAttributes(attributeObjs);
+                        app.viewModel.adjustAidsToNavigationAttributes(report_features[0].attributes);
                     }
                 }
 
-                if (attributeObjs && attributeObjs.length) {
-                    clickAttributes[layer.featureAttributionName] = attributeObjs;
+                if (report_features && report_features.length) {
+                    clickAttributes[layer.featureAttributionName] = report_features;
                     $.extend(app.map.clickOutput.attributes, clickAttributes);
                     app.viewModel.aggregatedAttributes(app.map.clickOutput.attributes);
                     //app.viewModel.updateMarker(app.map.getLonLatFromViewPortPx(responseText.xy));

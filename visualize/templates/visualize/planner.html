@@ -12,6 +12,7 @@
         {% endif %}
         <link rel="stylesheet" type="text/css" href="{% static 'js/lib/openlayers/theme/default/style.css' %}">
         <link href="{% static 'bower_components/jquery-ui/themes/smoothness/jquery-ui.min.css' %}" type="text/css" rel="stylesheet">
+        <link href="{% static 'visualize/css/attribute_report.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/linearmeasurement.css' %}" rel="stylesheet">
 {% endblock%}
 
@@ -68,20 +69,7 @@
                               Basemaps
                         </div>
                 </div>
-                <!-- the following container is used to estimate width for the actual Aggregated Attribution Overlay -->
-                <div id="aggregated-attribute-overlay-test" style="position: absolute; visibility: hidden; height: auto; width: auto; top:0px">
-                    <div data-bind="foreach: attributeLayers()" style="overflow: hidden; max-height: 10px;">
-                        <div data-bind="css: {display: $root.aggregatedAttributes()[featureAttributionName] ? 'block' : 'none'}">
-                            <h4 data-bind="text: featureAttributionName"></h4>
-                            <dl data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
-                                <dt>
-                                    <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
-                                    <span style="font-weight: normal" data-bind="html: data"></span>
-                                </dt>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
+
                 <!-- Aggregated Attribution Overlay -->
                 <div id="aggregated-attribute-overlay" data-bind="visible: aggregatedAttributes && showFeatureAttribution, style: {width: aggregatedAttributesWidth}" style="display: none">
                     <div id="aggregated-attribute-heading">
@@ -97,16 +85,29 @@
                                         </a>
                                     </div>
                                     <div class="accordion-body collapse in" data-bind="attr: { id: $root.convertToSlug(featureAttributionName) }" >
-                                        <div class="accordion-inner">
-                                            <dl data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
-                                                <dt>
-                                                    <!-- ko if: $data.hasOwnProperty("tab") -->
-                                                    <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                                                    <!-- /ko -->
-                                                    <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
-                                                    <span style="font-weight: normal" data-bind="html: data"></span>
-                                                </dt>
-                                            </dl>
+                                        <div class="accordion-inner feature-attributes">
+                                          <div data-bind="foreach: { data: $root.aggregatedAttributes()[featureAttributionName], afterAdd:$root.updateMarker }">
+                                            <div class="accordion-heading" data-bind="visible: $root.aggregatedAttributes()[$parent.featureAttributionName].length > 1">
+                                                <a class="accordion-toggle feature-attributes-title" data-bind="click: $parent.toggleFeatureAttribution">
+                                                    <span data-bind="text: $data.name"></span>
+                                                </a>
+                                            </div>
+                                            <div class="accordion-body collapse in" data-bind="attr: { id: $root.convertToSlug($data.id) }" >
+                                                <div class="accordion-inner">
+
+                                                  <dl data-bind="foreach: { data: $data.attributes }">
+                                                      <dt>
+                                                          <!-- ko if: $data.hasOwnProperty("tab") -->
+                                                          <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                                          <!-- /ko -->
+                                                          <span data-bind="text: display"></span><span data-bind="visible: display && data ? true : data===0">:</span>
+                                                          <span class="attribute-text" data-bind="html: data"></span>
+                                                      </dt>
+                                                  </dl>
+                                                </div>
+                                            </div>
+                                          </div>
+
                                         </div>
                                     </div>
                                 </div>
