@@ -260,6 +260,16 @@ if (!app.wrapper.events.hasOwnProperty('parseGMLFeatureInfoResponse')) {
     }
 }
 
+app.wrapper.events.fakeSluggify = function(to_slug){
+  to_slug = to_slug.split(' ').join('-');
+  var special_chars = ['(', ')', '[',']','{','}','!','@','#','$','%','^','&','*','.',',','<','>','?',"\'","\"",":",";","\\","|","~","`"];
+  for (var i = 0; i < special_chars.length; i++) {
+    to_slug = to_slug.split(special_chars[i]).join('');
+  }
+  return to_slug;
+}
+
+
 if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
   /**
     * queryWMSFeatureInfo - given a Marine Planner layer and a Query URL, request
@@ -272,14 +282,23 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
     var image_formats = [
       'image/png',
     ];
+    var static_formats = [
+      'text/html',
+    ];
     if (image_formats.indexOf(mp_layer.wms_info_format) >=0 ) {
       data = [{'placeholder': getFeatureInfoUrl}];
       app.wrapper.events.generateAttributeReport(mp_layer, data);
       var report_id = mp_layer.name.toLowerCase() + '0';
-      report_id = report_id.split(' ').join('-');
+      report_id = app.wrapper.events.fakeSluggify(report_id);
       if (mp_layer.wms_info_format.indexOf('image') >= 0) {
         $('#' + report_id).html('<img class="attr_report_img" src="' + getFeatureInfoUrl +'" />');
       }
+    } else if (static_formats.indexOf(mp_layer.wms_info_format) >=0 ) {
+      data = [{'placeholder': getFeatureInfoUrl}];
+      app.wrapper.events.generateAttributeReport(mp_layer, data);
+      var report_id = mp_layer.name.toLowerCase() + '0';
+      report_id = app.wrapper.events.fakeSluggify(report_id);
+      data = $('#' + report_id).html('<iframe class="attr_report_img" src="' + getFeatureInfoUrl +'" />');
     } else {
       $.ajax({
         headers: { "Accept": mp_layer.wms_info_format},
@@ -289,16 +308,7 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
           url: getFeatureInfoUrl,
         },
         success: function(data, textStatus, request){
-          var static_formats = [
-            'text/html',
-          ];
-          if (static_formats.indexOf(mp_layer.wms_info_format) >=0 ) {
-            app.wrapper.events.generateAttributeReport(mp_layer, [{'placeholder': getFeatureInfoUrl}]);
-            var report_id = mp_layer.name.toLowerCase() + '0';
-            report_id = report_id.split(' ').join('-');
-            $('#' + report_id).html(data);
-            return;
-          } else if (mp_layer.wms_info_format.indexOf('gml') >= 0) {
+          if (mp_layer.wms_info_format.indexOf('gml') >= 0) {
             return app.wrapper.events.parseGMLFeatureInfoResponse(mp_layer, data);
             if (data.length > 0) {
               var gml_format = new ol.format.GML3();
