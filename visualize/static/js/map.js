@@ -825,8 +825,12 @@ app.addArcRestLayerToMap = function(layer) {
         }
     );
     tile_size = new OpenLayers.Size(
-        w = app.map.size.w,
-        h = app.map.size.h
+        w = 512,
+        h = 512
+        //w = app.map.size.w,
+        //h = app.map.size.h
+        //w = app.map.size.w/4,
+        //h = app.map.size.h/2
     );
     layer.layer.setTileSize(tile_size);
 };
