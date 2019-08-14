@@ -24,6 +24,7 @@ function layerModel(options, parent) {
     self.legendVisibility = ko.observable(false);
     self.legendTitle = options.legend_title || false;
     self.legendSubTitle = options.legend_subtitle || false;
+    self.show_legend = options.show_legend || null;
     self.themes = ko.observableArray();
     self.attributes = options.attributes ? options.attributes.attributes : [];
     self.compress_attributes = options.attributes ? options.attributes.compress_attributes : false;
@@ -1874,7 +1875,7 @@ function viewModel() {
 
     self.activeLegendLayers = ko.computed(function() {
         var layers = $.map(self.visibleLegendLayers(), function(layer) {
-            if ((layer.legend || layer.legendTitle) && (!layer.is_multilayer() || layer.is_visible_multilayer())) {
+            if ((layer.legend || layer.legendTitle) && (!layer.is_multilayer() || layer.is_visible_multilayer()) && layer.show_legend) {
                 return layer;
             }
         });
