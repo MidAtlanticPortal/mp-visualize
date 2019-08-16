@@ -26,7 +26,11 @@ function layerModel(options, parent) {
     self.legendVisibility = ko.observable(false);
     self.legendTitle = options.legend_title || false;
     self.legendSubTitle = options.legend_subtitle || false;
-    self.show_legend = options.show_legend || null;
+    if (options.hasOwnProperty('show_legend') && options.show_legend == false) {
+      self.show_legend = false;
+    } else {
+      self.show_legend = true;
+    }
     self.themes = ko.observableArray();
     self.attributes = options.attributes ? options.attributes.attributes : [];
     self.compress_attributes = options.attributes ? options.attributes.compress_attributes : false;
