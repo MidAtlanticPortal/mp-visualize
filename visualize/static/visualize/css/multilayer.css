@@ -79,13 +79,13 @@
   overflow-x: hidden;
 }
 
-body.template-visualize .btn.btn-marco {
+body.template-visualize .btn.btn-planner {
   background-color: #00a564;
   border-radius: 0.3rem;
   border: 1px solid #00a564;
 }
 
-body.template-visualize .btn.btn-marco:hover {
+body.template-visualize .btn.btn-planner:hover {
   background-color: black;
   border: 1px solid black;
 }
