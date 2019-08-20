@@ -1319,6 +1319,11 @@ function layerModel(options, parent) {
         layer.showSublayers(false);
     };
 
+    self.showSlider = function(layer, e) {
+      $('#activeTab').trigger('click');
+      $('#myTab li[data-tab="active"]').trigger('click');
+    };
+
     return self;
 } // end layerModel
 
@@ -3379,6 +3384,13 @@ function viewModel() {
             aidType["data"] = "FD (Undocumented)";
         }
     }
+
+    self.checkShowSliderButtons = function() {
+      return $('#myTab li[data-tab="data"]').hasClass('active');
+    };
+
+    self.showSliderButtons = ko.observable($.deparam(window.location.hash.slice(1)).tab == "data");
+
 
     return self;
 } //end viewModel
