@@ -66,10 +66,10 @@ app.viewModel.loadLayersFromServer().done(function() {
       autoSelect: true,
       items: 20,
       minLength: 2
-    });    
+    });
   }
 
-  $('[data-toggle="tooltip"]').tooltip()
+  $('[data-toggle="tooltip"]').tooltip();
 
   $('#toggleBaselayer').css({'background-image':"url(/static/visualize/img/baselayer-"+app.wrapper.map.getBasemap().name.split(' ').join('_')+".png)", "color":+app.wrapper.map.getBasemap().textColor});
 
@@ -78,7 +78,7 @@ app.viewModel.loadLayersFromServer().done(function() {
       e.preventDefault();
       return false;
   });
-  // }
+
 });
 
 // initialize the map
@@ -278,11 +278,14 @@ $(document).ready(function() {
   // $('a[data-toggle="tab"]').on('shown', function (e) {
   $('#myTab li').on('click', function(e) {
     setTimeout(function() {
+      app.viewModel.showSliderButtons(app.viewModel.checkShowSliderButtons());
+    }, 10);
+    setTimeout(function() {
       app.updateUrl();
     }, 100);
   });
 
-  $('[data-toggle="tooltip"]').tooltip()
+  $('[data-toggle="tooltip"]').tooltip();
 
 });
 
