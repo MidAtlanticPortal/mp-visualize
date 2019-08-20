@@ -78,3 +78,19 @@
 #active.tab-pane.active {
   overflow-x: hidden;
 }
+
+body.template-visualize .btn.btn-marco {
+  background-color: #00a564;
+  border-radius: 0.3rem;
+  border: 1px solid #00a564;
+}
+
+body.template-visualize .btn.btn-marco:hover {
+  background-color: black;
+  border: 1px solid black;
+}
+
+body.template-visualize .btn.btn-slider {
+    height: 25px;
+    padding: 3px;
+}
