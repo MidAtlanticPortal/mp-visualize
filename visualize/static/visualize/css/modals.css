@@ -1,0 +1,26 @@
+.modal-help-container {
+  overflow: auto;
+  max-height: 35vh;
+}
+
+body.template-visualize .btn-link.modal-help-toggle {
+  color: #00a564;
+}
+
+#map-wms-modal .remove-wms {
+  display: unset;
+}
+
+.close-arcRest-modal {
+  float: left;
+}
+
+.remove-wms-form,
+.clone-wms-form {
+  color: #22408f;
+}
+
+.remove-wms-form:hover,
+.clone-wms-form:hover {
+  color: #00a564;
+}
