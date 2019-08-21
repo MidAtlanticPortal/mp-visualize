@@ -5,7 +5,7 @@ app.init = function () {
     var map = new OpenLayers.Map(null, {
         //allOverlays: true,
         displayProjection: new OpenLayers.Projection("EPSG:4326"),
-        projection: "EPSG:3857"
+        projection: "EPSG:3857",
     });
 
     map.addControl(new P97.Controls.LayerLoadProgress({
@@ -833,18 +833,26 @@ app.addArcRestLayerToMap = function(layer) {
             transparent: true
         },
         {
-            isBaseLayer: false
+            isBaseLayer: false,
+            singleTile: true,
+            ratio: 1
         }
     );
-    tile_size = new OpenLayers.Size(
-        w = 512,
-        h = 512
-        //w = app.map.size.w,
-        //h = app.map.size.h
-        //w = app.map.size.w/4,
-        //h = app.map.size.h/2
-    );
-    layer.layer.setTileSize(tile_size);
+    // tile_size = new OpenLayers.Size(
+    //     // w = app.map.size.w,
+    //     // h = app.map.size.h
+    //     w = 512,
+    //     h = 512
+    // );
+    // layer.layer.setTileSize(tile_size);
+
+    //Tile self-healing - retry for image on failed request.
+    layer.layer.events.register('tileerror', this, function(evt) {
+      console.log('tileerror on layer: ' + evt.object.name);
+      setTimeout(function () {
+        evt.object.redraw(true);
+      }, 100);
+    })
 };
 
 app.addVectorLayerToMap = function(layer) {
