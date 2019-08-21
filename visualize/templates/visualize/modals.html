@@ -144,7 +144,7 @@
                 <h4 class="modal-title" id="map-wms-modal-label">Session Based ArcRest Layer Input</h4>
             </div>
             <form id="sessionForm" data-bind="submit: submitWMSSession">
-                <div class="modal-body">
+                <div class="modal-body" id="arcRestFormBody">
                   <p>This form allows you to add layers from arbitrary ArcRest servers. <br />
                     <b><u>This is an advanced feature</u></b>: please consult the help links below or the manager of your desired ArcRest server for troubleshooting.</p>
                     <div id="wmsForms">
@@ -153,7 +153,6 @@
                                <label for="wmsName">Layer Name
                                  <button type="button" class="modal-help-toggle btn btn-link" data-toggle="collapse" data-target="#arcRestNameFieldHelp" aria-expanded="false" aria-controls="arcRestNameFieldHelp">Help</button>
                                </label>
-                               <!-- <div class="modal-form-help" data-bind="visible: app.viewModel.showArcRestModalHelp()"> -->
                                <div id="arcRestNameFieldHelp" class="modal-form-help collapse">
                                  <div class="well modal-help-container">
                                    The <b>Layer Name</b> field will determine how the layer will be titled in your "Active" tab in the left navigation panel.
@@ -172,62 +171,30 @@
                                <label for="wmsUrl">URL Path
                                  <button type="button" class="modal-help-toggle btn btn-link" data-toggle="collapse" data-target="#arcRestUrlFieldHelp" aria-expanded="false" aria-controls="arcRestUrlFieldHelp">Help</button>
                                </label>
-                               <div id="arcRestUrlFieldHelp" class="modal-form-help collapse"> <!-- data-bind="visible: app.viewModel.showArcRestModalHelp()" -->
+                               <div id="arcRestUrlFieldHelp" class="modal-form-help collapse">
                                  <div class="well modal-help-container">
                                    The <b>URL Path</b> is the "end point" of an external ArcGIS Server. It will look something like:<br />
+                                   <i class="arcRest-example-url">https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer/export</i><br />
                                    <br />
-                                   <i>"https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer/export"</i><br />
-                                   <br />
-                                   The pieces are easier to understand than that full url:
+                                   To break that into east-to-understand pieces:
                                    <ul>
                                      <li>
-                                       Your Domain
-                                       <ul><li>i.e.: https://mgelmaps.env.duke.edu</li></ul>
+                                       Your <b>Domain</b> (i.e.: https://mgelmaps.env.duke.edu)
                                      </li>
                                      <li>
-                                       Your ArcRest Services directory
-                                       <ul><li>
-                                         i.e.:
-                                         <a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services">
-                                           /mdat/rest/services
-                                         </a>
-                                       </li></ul>
+                                       Your ArcRest <b>Services directory</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services">/mdat/rest/services</a>)
                                      </li>
                                      <li>
-                                       Your ArcRest Service Folder
-                                       <ul><li>
-                                         i.e.:
-                                         <a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT">
-                                           /MDAT
-                                         </a>
-                                       </li></ul>
+                                       Your ArcRest <b>Service Folder</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT">/MDAT</a>)
                                      </li>
                                      <li>
-                                       Your ArcRest Service
-                                       <ul><li>
-                                         i.e.:
-                                         <a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer">
-                                           /Avian_Abundance_CI90
-                                         </a>
-                                       </li></ul>
+                                       Your ArcRest <b>Service</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer">/Avian_Abundance_CI90</a>)
                                      </li>
                                      <li>
-                                       Your ArcRest Service Type
-                                       <ul><li>
-                                         Generally
-                                         <a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer">
-                                           "/MapServer"
-                                         </a>
-                                         or "/FeatureServer"
-                                       </li></ul>
+                                       Your ArcRest <b>Service Type</b> (Generally <a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer">"/MapServer"</a> or "/FeatureServer")
                                      </li>
                                      <li>
-                                       The "Export Map" operation (if supported)
-                                       <ul><li>
-                                         <a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer/export">
-                                           /export
-                                         </a>
-                                       </li></ul>
+                                       The <b>"Export Map"</b> operation (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer/export">/export</a>)
                                      </li>
                                  </div>
                                </div>
@@ -240,7 +207,7 @@
                             </div>
                             <div class="form-group">
                                 <label for="wmsLayerId">IDs <button type="button" class="modal-help-toggle btn btn-link" data-toggle="collapse" data-target="#arcRestIDsFieldHelp" aria-expanded="false" aria-controls="arcRestIDsFieldHelp">Help</button></label>
-                                <div id="arcRestIDsFieldHelp" class="modal-form-help collapse"> <!--data-bind="visible: app.viewModel.showArcRestModalHelp()" -->
+                                <div id="arcRestIDsFieldHelp" class="modal-form-help collapse">
                                   <div class="well modal-help-container">
                                     The <b>IDs</b> field is where you choose which layers you wish to add to the map by specifying their IDs.<br />
                                     <br />
@@ -261,6 +228,7 @@
                             <div class="text-right remove-wms">
                               <span class="remove-wms-form"><i class="fa fa-minus deep-blue "></i>&nbsp;Remove this Form Entry</span>
                             </div>
+                            <hr />
                         </div>
                     </div>
                     <div class="text-right">
