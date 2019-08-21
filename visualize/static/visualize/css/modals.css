@@ -24,3 +24,32 @@ body.template-visualize .btn-link.modal-help-toggle {
 .clone-wms-form:hover {
   color: #00a564;
 }
+
+.arcRest-example-url {
+  overflow-wrap: break-word;
+}
+
+.modal-content {
+  max-height: 88vh;
+}
+
+#map-wms-modal #arcRestFormBody.modal-body{
+  max-height: calc(100vh - 201px);
+}
+.modal-body {
+  overflow: auto;
+  max-height: calc(100vh - 250px);
+}
+
+.modal-footer {
+  bottom: 0;
+}
+
+#feedback-modal .modal-content .modal-body .wrap iframe,
+#feedback-modal iframe {
+  height: 81vh;
+}
+
+#feedback-modal .modal-body {
+  max-height: unset;
+}

@@ -361,6 +361,8 @@ $('#map-wms-modal').on('click', cloneForm, function() {
   toggleFormClone(cloneForm, elm);
 
   formCount++;
+  template.find('.modal-help-toggle').remove();
+  template.find('.modal-form-help').remove();
   var form = template.clone().find(':input').val("").each(function(){
       //set id to store the updated form number
       var newId = this.id + formCount;
