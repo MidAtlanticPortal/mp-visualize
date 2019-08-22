@@ -75,6 +75,11 @@ app.viewModel.loadLayersFromServer().done(function() {
       return false;
   });
 
+  setTimeout(function() {
+    app.viewModel.showSliderButtons(app.viewModel.checkShowSliderButtons());
+  }, 10);
+
+
 });
 
 // initialize the map

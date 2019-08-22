@@ -93,4 +93,19 @@ body.template-visualize .btn.btn-planner:hover {
 body.template-visualize .btn.btn-slider {
     height: 25px;
     padding: 3px;
+    font-size: 11px;
+}
+
+body.template-visualize .btn.btn-slider  i.fa.fa-play {
+  font-size: 8px;
+}
+
+div.tooltip.fade.right.in {
+  border: 1px solid black;
+  padding: 0px;
+  border-radius: 2px;
+}
+
+div.tooltip.fade.right.in div.tooltip-arrow {
+  margin-left: -5px;
 }
