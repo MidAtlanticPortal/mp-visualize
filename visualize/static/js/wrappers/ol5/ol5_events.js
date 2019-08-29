@@ -38,11 +38,15 @@ app.wrapper.events.addFeatureClickEvent = function(){
     if (e.selected.length > 0) {
       for (var i = 0; i < e.selected.length; i++) {
         var layer = e.selected[0].getLayer(app.map);
+        if (!layer){
+          // This seems to work for VectorTile layers
+          layer = app.viewModel.getLayerByOLId(e.target.getLayer(e.selected[0]).ol_uid).layer;
+        }
         if (layer){
           var mp_layer = layer.get('mp_layer');
           if (mp_layer.attributeEvent == "click"){
             if (app.wrapper.events.hasOwnProperty('clickOnVectorLayerEvent')) {
-              app.wrapper.events.clickOnVectorLayerEvent();
+              app.wrapper.events.clickOnVectorLayerEvent(layer, e);
             }
           }
         }
@@ -191,7 +195,13 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
   if (!layer){
     return;
   }
-  var selectedFeatures = layer.getSource().getFeaturesAtCoordinate(evt.coordinate);
+  if (evt.hasOwnProperty('coordinate')) {
+    var selectedFeatures = layer.getSource().getFeaturesAtCoordinate(evt.coordinate);
+  } else if (evt.hasOwnProperty('selected')) {
+    var selectedFeatures = evt.selected;
+  } else {
+    var selectedFeatures = [];
+  }
   var mp_layer = layer.get('mp_layer');
   if (selectedFeatures.length > 0){
     var featureData = [];

@@ -341,47 +341,55 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
 };
 
 /**
+  * createOLStyleMap - interpret style from layer record into an OpenLayers styleMap
+  * @param {object} layer - the mp layer definition to derive the style from
+  */
+app.wrapper.map.createOLStyleMap = function(layer){
+  var iconSize = ol.size.toSize([8,8]);
+  var stroke = new ol.style.Stroke({
+    color: layer.outline_color,
+    opacity: layer.outline_opacity,
+  });
+  var fill = new ol.style.Fill({
+    color: layer.color,
+    opacity: layer.fillOpacity,
+  });
+  var point = new ol.style.Circle({
+    radius: layer.point_radius,
+    fill: fill,
+    stroke: stroke,
+  });
+  // var image = new ol.style.Icon({
+  //   src: layer.graphic,
+  //   size: iconSize,
+  // });
+  var textStroke = new ol.style.Stroke({
+    color: "#333",
+  });
+  var text = new ol.style.Text({
+    text: "${NAME}",
+    stroke: textStroke,
+    font: "12px sans-serif",
+  });
+
+  var style_dict = {
+    fill: fill,
+    // image: image,
+    stroke: stroke
+  };
+  if (layer.annotated){
+    style_dict.text = text;
+  }
+  var styleMap = new ol.style.Style(style_dict);
+  return styleMap;
+}
+
+/**
   * addVectorLayerToMap - add vector layer to the (ol5) map
   * @param {object} layer - the mp layer definition to add to the map
   */
 app.wrapper.map.addVectorLayerToMap = function(layer) {
-    var iconSize = ol.size.toSize([8,8]);
-    var stroke = new ol.style.Stroke({
-      color: layer.outline_color,
-      opacity: layer.outline_opacity,
-    });
-    var fill = new ol.style.Fill({
-      color: layer.color,
-      opacity: layer.fillOpacity,
-    });
-    var point = new ol.style.Circle({
-      radius: layer.point_radius,
-      fill: fill,
-      stroke: stroke,
-    });
-    // var image = new ol.style.Icon({
-    //   src: layer.graphic,
-    //   size: iconSize,
-    // });
-    var textStroke = new ol.style.Stroke({
-      color: "#333",
-    });
-    var text = new ol.style.Text({
-      text: "${NAME}",
-      stroke: textStroke,
-      font: "12px sans-serif",
-    });
-
-    var style_dict = {
-      fill: fill,
-      // image: image,
-      stroke: stroke
-    };
-    if (layer.annotated){
-      style_dict.text = text;
-    }
-    var styleMap = new ol.style.Style(style_dict);
-
+  var styleMap = app.wrapper.map.createOLStyleMap(layer);
   layer.layer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: layer.url,
@@ -465,6 +473,29 @@ app.wrapper.map.addWMSLayerToMap = function(layer) {
   layer.layer = new ol.layer.Tile({
     source: wmsSource
   });
+}
+
+/**
+  * addVectorTileLayerToMap - add Vector Tile layer to the (ol5) map
+  * @param {object} layer - the mp layer definition to add to the map
+  */
+app.wrapper.map.addVectorTileLayerToMap = function(layer) {
+    var layerUrl = app.wrapper.map.formatOL5URLTemplate(layer.url);
+    var styleMap = app.wrapper.map.createOLStyleMap(layer);
+
+    var layerSource = new ol.source.VectorTile({
+      attributions: '',  //TODO: get layer attributions
+      format: new ol.format.MVT({
+        featureClass: ol.Feature
+      }),
+      url: layerUrl
+    });
+
+    layer.layer = new ol.layer.VectorTile({
+      declutter: true,
+      source: layerSource,
+      style: styleMap
+    });
 }
 
 /**

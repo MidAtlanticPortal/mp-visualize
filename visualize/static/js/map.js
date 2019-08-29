@@ -317,6 +317,8 @@ app.addLayerToMap = function(layer) {
             app.addArcRestLayerToMap(layer);
         } else if (layer.type === 'WMS') {
             app.addWmsLayerToMap(layer);
+        } else if (layer.type === 'VectorTile') {
+            app.addVectorTileLayerToMap(layer);
         } else { //if XYZ with no utfgrid
             app.addXyzLayerToMap(layer);
         }
@@ -391,6 +393,20 @@ app.addVectorLayerToMap = function(layer) {
       console.log('no addVectorLayerToMap function defined.');
     }
 };
+
+app.addVectorTileLayerToMap = function(layer) {
+  if (app.wrapper.controls.hasOwnProperty('addVectorTileIdentifyControl')) {
+    app.wrapper.controls.addVectorIdentifyControl(layer);
+  } else {
+    console.log('no addVectorTileIdentifyControl function defined');
+  }
+
+  if (app.wrapper.map.hasOwnProperty('addVectorTileLayerToMap')) {
+    app.wrapper.map.addVectorTileLayerToMap(layer);
+  } else {
+    console.log('no addVectorTileLayerToMap function defined.');
+  }
+}
 
 app.addUtfLayerToMap = function(layer) {
     if (app.wrapper.controls.hasOwnProperty('addUTFIdentifyControl')) {
