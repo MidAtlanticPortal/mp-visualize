@@ -28,7 +28,11 @@ app.viewModel.getLayerByOLId = function(id) {
             //find sublayers by ID
             if (subLayerArray.length > 0) {
                 var sublayer_list = $.grep(subLayerArray, function(layer) {
+                  if (layer.hasOwnProperty('layer') && layer.layer) {
                     return layer.layer.ol_uid === id;
+                  } else {
+                    return false;
+                  }
                 });
                 if (sublayer_list.length > 0) {
                     return sublayer_list[0];
