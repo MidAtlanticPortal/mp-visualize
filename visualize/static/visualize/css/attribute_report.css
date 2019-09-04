@@ -25,5 +25,9 @@ body.template-visualize #aggregated-attribute-content .accordion-inner {
 }
 
 .attr_report_img {
-  max-width: 225px;
+  width: 100%;
+}
+
+.attr_report_img html {
+  overflow-x: hidden;
 }

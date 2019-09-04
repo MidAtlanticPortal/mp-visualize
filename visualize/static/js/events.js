@@ -284,6 +284,7 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
     ];
     var static_formats = [
       'text/html',
+      'text/plain'
     ];
     if (image_formats.indexOf(mp_layer.wms_info_format) >=0 ) {
       data = [{'placeholder': getFeatureInfoUrl}];
@@ -310,13 +311,6 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
         success: function(data, textStatus, request){
           if (mp_layer.wms_info_format.indexOf('gml') >= 0) {
             return app.wrapper.events.parseGMLFeatureInfoResponse(mp_layer, data);
-            if (data.length > 0) {
-              var gml_format = new ol.format.GML3();
-              var responses = format.readFeatures(data, {});
-              debugger;
-              console.log(data);
-              return;
-            }
           } else if ($.isXMLDoc(data)) {
               var nodeData = {};
               // var featureInfoResponse = data.childNodes[0];
@@ -337,6 +331,15 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
                 }
               }
               data = [nodeData];
+          } else if (typeof(data) == "object" && data.hasOwnProperty('type') && data.type == "FeatureCollection") {
+            nodeData = [];
+            if (data.hasOwnProperty('features') && data.features.length > 0) {
+              for (var i = 0; i < data.features.length; i++) {
+                var feature = data.features[i];
+                nodeData.push(feature.properties);
+              }
+            }
+            data = nodeData;
           }
           app.wrapper.events.generateAttributeReport(mp_layer, data);
         },
