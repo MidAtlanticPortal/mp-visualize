@@ -1683,29 +1683,38 @@ function viewModel() {
     self.layerIndex = {};
     self.layerSearchIndex = {};
 
-    self.bookmarks = new bookmarksModel();
-    self.isBookmarksOpen = ko.observable(false);
-    self.bookmarkEmail = ko.observable();
-    self.toggleBookmarksOpen = function(force) {
+    try {
+      self.bookmarks = new bookmarksModel();
+      self.isBookmarksOpen = ko.observable(false);
+      self.bookmarkEmail = ko.observable();
+      self.toggleBookmarksOpen = function(force) {
         $('#designsTab').tab('show');
 
         if (force == 'open') {
-            self.isBookmarksOpen(true);
+          self.isBookmarksOpen(true);
         }
         else if (force == 'close') {
-            self.isBookmarksOpen(false);
+          self.isBookmarksOpen(false);
         }
         else {
-            self.isBookmarksOpen(!self.isBookmarksOpen());
+          self.isBookmarksOpen(!self.isBookmarksOpen());
         }
 
         if (self.isBookmarksOpen()) {
-            app.viewModel.bookmarks.getBookmarks();
+          app.viewModel.bookmarks.getBookmarks();
         }
+      }
+    } catch(err) {
+      console.log(err);
     }
 
-    self.scenarios = new scenariosModel();
-    self.scenarios.reports = new reportsModel();
+    try {
+      self.scenarios = new scenariosModel();
+      self.scenarios.reports = new reportsModel();
+    } catch(err) {
+      console.log(err);
+    }
+
 
     self.mapLinks = new mapLinksModel();
 

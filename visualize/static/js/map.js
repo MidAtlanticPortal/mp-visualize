@@ -82,7 +82,7 @@ app.init = function () {
     }
 
     // TODO:
-    if (P97.Controls.hasOwnProperty('LayerLoadProgress')) {
+    if (typeof(P97) != 'undefined' && P97.Controls.hasOwnProperty('LayerLoadProgress')) {
       map.addControl(new P97.Controls.LayerLoadProgress({
         map: app.map,
         element: null,
@@ -240,61 +240,63 @@ app.init = function () {
 
 
     app.menus = {}
-    app.menus.bookmark = [
-        new ContextualMenu.Item("Share Bookmark", app.viewModel.bookmarks.showSharingModal, 'fa fa-link'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Delete Bookmark", app.viewModel.bookmarks.removeBookmark, 'fa fa-times-circle red')
-    ];
 
-    app.menus.sharedDrawing = [
-        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToDrawing, 'fa fa-search-plus'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfDrawing, 'fa fa-copy')
-    ];
+    if(typeof ContextualMenu != 'undefined'){
+      app.menus.bookmark = [
+          new ContextualMenu.Item("Share Bookmark", app.viewModel.bookmarks.showSharingModal, 'fa fa-link'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Delete Bookmark", app.viewModel.bookmarks.removeBookmark, 'fa fa-times-circle red')
+      ];
 
-    app.menus.drawing = [
-        new ContextualMenu.Item("Edit", app.viewModel.scenarios.editDrawing, 'fa fa-edit'),
-        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToDrawing, 'fa fa-search-plus'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Share…", app.viewModel.scenarios.shareDrawing, 'fa fa-share-alt'),
-        new ContextualMenu.Item("Export…", app.viewModel.exportGeometry.showDialog.bind(app.viewModel.exportGeometry), 'far fa-file'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Delete Drawing", app.viewModel.scenarios.deleteDrawing, 'fa fa-times-circle red')
-    ];
+      app.menus.sharedDrawing = [
+          new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToDrawing, 'fa fa-search-plus'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfDrawing, 'fa fa-copy')
+      ];
 
-    app.menus.sharedLeaseBlockCollection = [
-        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToLeaseBlockCollection, 'fa fa-search-plus'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfLeaseBlockCollection, 'fa fa-copy')
-    ];
+      app.menus.drawing = [
+          new ContextualMenu.Item("Edit", app.viewModel.scenarios.editDrawing, 'fa fa-edit'),
+          new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToDrawing, 'fa fa-search-plus'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Share…", app.viewModel.scenarios.shareDrawing, 'fa fa-share-alt'),
+          new ContextualMenu.Item("Export…", app.viewModel.exportGeometry.showDialog.bind(app.viewModel.exportGeometry), 'far fa-file'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Delete Drawing", app.viewModel.scenarios.deleteDrawing, 'fa fa-times-circle red')
+      ];
 
-    app.menus.leaseBlockCollection = [
-        new ContextualMenu.Item("Edit", app.viewModel.scenarios.editLeaseBlockCollection, 'fa fa-edit'),
-        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToLeaseBlockCollection, 'fa fa-search-plus'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Share", app.viewModel.scenarios.shareLeaseBlockCollection, 'fa fa-share-alt'),
-        new ContextualMenu.Item("Export…", app.viewModel.exportGeometry.showDialog.bind(app.viewModel.exportGeometry), 'far fa-file'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Delete Lease Block Collection", app.viewModel.scenarios.deleteLeaseBlockCollection, 'fa fa-times-circle red')
-    ];
+      app.menus.sharedLeaseBlockCollection = [
+          new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToLeaseBlockCollection, 'fa fa-search-plus'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfLeaseBlockCollection, 'fa fa-copy')
+      ];
 
-    app.menus.sharedWindEnergySiting = [
-        new ContextualMenu.Item("Zoom To", function(){console.info("sharedWindEnergySiting: Zoom To")}, 'fa fa-search-plus'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfWindEnergySiting, 'fa fa-copy')
-    ];
+      app.menus.leaseBlockCollection = [
+          new ContextualMenu.Item("Edit", app.viewModel.scenarios.editLeaseBlockCollection, 'fa fa-edit'),
+          new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToLeaseBlockCollection, 'fa fa-search-plus'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Share", app.viewModel.scenarios.shareLeaseBlockCollection, 'fa fa-share-alt'),
+          new ContextualMenu.Item("Export…", app.viewModel.exportGeometry.showDialog.bind(app.viewModel.exportGeometry), 'far fa-file'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Delete Lease Block Collection", app.viewModel.scenarios.deleteLeaseBlockCollection, 'fa fa-times-circle red')
+      ];
 
-    app.menus.windEnergySiting = [
-        new ContextualMenu.Item("Edit", app.viewModel.scenarios.editWindEnergySiting, 'fa fa-edit'),
-        new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToWindEnergySiting, 'fa fa-search-plus'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Share", app.viewModel.scenarios.shareWindEnergySiting, 'fa fa-share-alt'),
-        new ContextualMenu.Item("Export…", app.viewModel.exportGeometry.showDialog.bind(app.viewModel.exportGeometry), 'far fa-file'),
-        new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Delete Wind Energy Siting", app.viewModel.scenarios.deleteWindEnergySiting, 'fa fa-times-circle red')
-    ];
+      app.menus.sharedWindEnergySiting = [
+          new ContextualMenu.Item("Zoom To", function(){console.info("sharedWindEnergySiting: Zoom To")}, 'fa fa-search-plus'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Create Copy", app.viewModel.scenarios.createCopyOfWindEnergySiting, 'fa fa-copy')
+      ];
 
-    $(function() {
+      app.menus.windEnergySiting = [
+          new ContextualMenu.Item("Edit", app.viewModel.scenarios.editWindEnergySiting, 'fa fa-edit'),
+          new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToWindEnergySiting, 'fa fa-search-plus'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Share", app.viewModel.scenarios.shareWindEnergySiting, 'fa fa-share-alt'),
+          new ContextualMenu.Item("Export…", app.viewModel.exportGeometry.showDialog.bind(app.viewModel.exportGeometry), 'far fa-file'),
+          new ContextualMenu.Divider(),
+          new ContextualMenu.Item("Delete Wind Energy Siting", app.viewModel.scenarios.deleteWindEnergySiting, 'fa fa-times-circle red')
+      ];
+
+      $(function() {
         // manually bind up the context menu here, otherwise ko will complain
         // that we're binding the same element twice (MP's viewmodel applies
         // to the entire page
@@ -303,7 +305,17 @@ app.init = function () {
         // fix for top nav's negative margin
         app.menuModel.setCorrectionOffset(0, 0);
         ko.applyBindings(app.menuModel, document.querySelector('#context-menu'));
-    });
+      });
+
+    } else {
+      app.menus.bookmark = [];
+      app.menus.sharedDrawing = [];
+      app.menus.drawing = [];
+      app.menus.sharedLeaseBlockCollection = [];
+      app.menus.leaseBlockCollection = [];
+      app.menus.sharedWindEnergySiting = [];
+      app.menus.windEnergySiting = [];
+    }
 };
 
 app.addLayerToMap = function(layer) {
@@ -326,6 +338,7 @@ app.addLayerToMap = function(layer) {
     if (app.wrapper.map.hasOwnProperty('postProcessLayer')) {
       app.wrapper.map.postProcessLayer(layer);
     }
+    return layer;
 };
 
 // add XYZ layer with no utfgrid

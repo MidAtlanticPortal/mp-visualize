@@ -100,6 +100,18 @@ app.wrapper.map.getZoom = function() {
 }
 
 /**
+  * app.wrapper.map.setMouseWheelZoom - enable or disable mouse wheel zoom interaction
+  * @param {boolean} set_active - whether or not your enabling or disabling mouse wheel zoom
+  */
+app.wrapper.map.setMouseWheelZoom = function(set_active) {
+  app.map.getInteractions().forEach(function (interaction) {
+    if(interaction instanceof ol.interaction.MouseWheelZoom) {
+      interaction.setActive(set_active);
+    }
+  });
+};
+
+/**
   * app.wrapper.map.getBasemap - get info about the current active base layer
   */
 app.wrapper.map.getBasemap = function() {
@@ -293,7 +305,11 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('arcgislayers', layer.arcgislayers);
   layer.layer.set('utfgrid', layer.utfurl || (layer.parent && layer.parent.utfurl));
   layer.layer.set('mp_layer', layer);
-  layer.layer.setOpacity(layer.opacity());
+  if (typeof(layer.opacity) == 'function') {
+    layer.layer.setOpacity(layer.opacity());
+  } else {
+    layer.layer.setOpacity(layer.opacity);
+  }
   app.map.addLayer(layer.layer);
 }
 
@@ -337,6 +353,8 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
     source: layerSource,
     useInterimTilesOnError: false
   });
+
+  return layer;
 
 };
 
@@ -399,6 +417,7 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
         strategy: new ol.loadingstrategy.all(),
       }
   );
+  return layer;
 }
 
 /**
@@ -473,6 +492,8 @@ app.wrapper.map.addWMSLayerToMap = function(layer) {
   layer.layer = new ol.layer.Tile({
     source: wmsSource
   });
+
+  return layer;
 }
 
 /**
@@ -496,6 +517,7 @@ app.wrapper.map.addVectorTileLayerToMap = function(layer) {
       source: layerSource,
       style: styleMap
     });
+    return layer;
 }
 
 /**
@@ -513,6 +535,7 @@ app.wrapper.map.addXYZLayerToMap = function(layer){
     source: layerSource,
     useInterimTilesOnError: false
   });
+  return layer;
 };
 
 /**
@@ -534,5 +557,7 @@ app.wrapper.map.addUtfLayerToMap = function(layer){
   });
 
   app.map.addLayer(layer.utfgrid);
+
+  return layer;
 
 };

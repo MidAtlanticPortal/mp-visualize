@@ -4,6 +4,7 @@ app.wrapper = {
   'map': {},
   'controls': {},
   'state': {},
+  'map_library': {},
   'baseLayers': [
     {
       'name': 'ocean',
