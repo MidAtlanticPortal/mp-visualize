@@ -29,8 +29,12 @@ body.template-visualize .btn-link.modal-help-toggle {
   overflow-wrap: break-word;
 }
 
+.modal-dialog {
+  height: calc(100vh - 60px); /* 30px margin */
+}
+
 .modal-content {
-  max-height: 88vh;
+  max-height: calc(100vh - 60px); /* 30px margin */
 }
 
 #map-wms-modal #arcRestFormBody.modal-body{
