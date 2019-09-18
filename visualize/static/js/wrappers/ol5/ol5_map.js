@@ -300,7 +300,13 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('name', layer.name);
   layer.layer.set('type', 'overlay');
   layer.layer.set('mpid', layer.id);
-  layer.layer.set('tech', layer.type);
+  if (layer.hasOwnProperty('type')) {
+    layer.layer.set('tech', layer.type);
+  } else if (layer.hasOwnProperty('layer_type')) {
+    layer.layer.set('tech', layer.layer_type);
+  } else {
+    layer.layer.set('tech', null);
+  }
   layer.layer.set('url', layer.url);
   layer.layer.set('arcgislayers', layer.arcgislayers);
   layer.layer.set('utfgrid', layer.utfurl || (layer.parent && layer.parent.utfurl));
