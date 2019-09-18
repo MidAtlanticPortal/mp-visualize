@@ -197,9 +197,6 @@ body.template-visualize{
         .accordion-heading{
             background-color: $light-gray;
         }
-        @media (max-height: 450px) {
-           display: none;
-        }
     }
 
     dl{

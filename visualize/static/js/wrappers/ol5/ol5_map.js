@@ -130,8 +130,15 @@ app.wrapper.map.setMouseWheelZoom = function(set_active) {
   * app.wrapper.map.getBasemap - get info about the current active base layer
   */
 app.wrapper.map.getBasemap = function() {
-  var basemapGroup = app.map.getLayers().getArray()[0];
-  var basemaps = basemapGroup.getLayers().getArray();
+  var mapGroups = app.map.getLayers().getArray();
+  var basemaps = [];
+  for (var i=0; i < mapGroups.length; i++) {
+    var basemapGroup = mapGroups[i];
+    if ('getLayers' in basemapGroup || basemapGroup.hasOwnProperty('getLayers')) {
+      var basemaps = basemapGroup.getLayers().getArray();
+      i = mapGroups.length; //break
+    }
+  }
   var basemap = false;
   for (var i = 0; i < basemaps.length; i++) {
     if (basemaps[i].getVisible()) {
