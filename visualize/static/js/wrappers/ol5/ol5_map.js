@@ -33,6 +33,21 @@ app.wrapper.map.setZoom = function(zoom) {
 }
 
 /**
+  * animateView - animate panning and zooming the map view to a new location
+  * @param {array} center - the X and Y coordinates {floats} for the new view center
+  * @param {int} zoom - the zoom level to set the map to
+  * @param {int} duration - the number of milliseconds to take to transition the view
+  */
+app.wrapper.map.animateView = function(center, zoom, duration) {
+  var view = app.map.getView();
+  view.animate({
+    center: ol.proj.fromLonLat(center),
+    zoom: zoom,
+    duration: duration
+  })
+}
+
+/**
   * getLayers - return all layers on map as an array
   */
 app.wrapper.map.getLayers = function() {
