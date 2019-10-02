@@ -32,7 +32,8 @@ app.state = {
 app.restoreState = {};
 
 ko.applyBindings(app.viewModel);
-app.viewModel.loadLayersFromServer().done(function() {
+// app.viewModel.loadLayersFromServer().done(function() {
+app.viewModel.initLeftNav().done(function() {
   app.onResize();
 
   // trigger events that depend on the map
