@@ -1346,8 +1346,6 @@ function themeModel(options) {
     var self = this;
     self.name = options.display_name;
     self.id = options.id;
-    self.description = ko.observable(options.description);
-    self.learn_link = options.learn_link;
     self.is_visible = options.is_visible;
     self.slug_name = options.name;
 
@@ -1359,20 +1357,41 @@ function themeModel(options) {
         ga('send', 'event', 'Themes Activated', action);
     };
 
+    //Get Theme's layers if not done yet
+    self.getLayers = function(setOpenTheme) {
+      var theme = this;
+      $.ajax({
+        url: '/data_manager/get_layers_for_theme/' + theme.id,
+        success: function(data) {
+          theme.layers = data.layers;
+          if (setOpenTheme){
+            theme.setOpenTheme();
+          }
+        },
+        error: function(data) {
+          console.log('error getting layers for Theme "' + theme.name + '".');
+        }
+      })
+    }
+
     //add to open themes
     self.setOpenTheme = function() {
         var theme = this;
 
         // ensure data tab is activated
         $('#dataTab').tab('show');
-
-        if (self.isOpenTheme(theme)) {
+        if (theme.layers.length == 0) {
+          theme.getLayers(true);
+        } else {
+          if (self.isOpenTheme(theme)) {
             //app.viewModel.activeTheme(null);
             app.viewModel.openThemes.remove(theme);
-        } else {
+          } else {
             app.viewModel.openThemes.push(theme);
             self.trackTheme(theme.name);
+          }
         }
+
     };
 
     //is in openThemes
@@ -1389,7 +1408,6 @@ function themeModel(options) {
         var theme = this;
         app.viewModel.activeTheme(theme);
         app.viewModel.activeThemeName(self.name);
-        app.viewModel.themeText(theme.description());
     };
 
     // is active theme

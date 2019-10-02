@@ -134,3 +134,47 @@ app.viewModel.loadLayersFromServer = function() {
 		app.viewModel.loadLayers(data);
 	});
 };
+
+// Begin Cacheless Overhaul
+app.viewModel.initLeftNav = function() {
+  return $.getJSON('/data_manager/get_themes', function(data) {
+    app.viewModel.getSearchData();
+    app.viewModel.loadThemes(data);
+  })
+};
+
+app.viewModel.loadThemes = function(data) {
+  var self = app.viewModel;
+
+  // load themes
+    $.each(data.themes, function(i, themeFixture) {
+      if (themeFixture) {
+        var layers = [],
+            theme = new themeModel(themeFixture);
+        if (theme.is_visible) {
+            self.themes.push(theme);
+        } else {
+            self.hiddenThemes.push(theme);
+        }
+      }
+    });
+};
+
+app.viewModel.getSearchData = function() {
+  $.ajax({
+    url: '/data_manager/get_layer_search_data',
+    success: function(data) {
+      var keys = Object.keys(data);
+      for (var i = 0; i < keys.length; i++) {
+        var searchKey = keys[i];
+        app.viewModel.layerSearchIndex[searchKey] = {
+            layer: data[searchKey].layer,
+            theme: data[searchKey].theme
+        };
+      }
+    },
+    error: function(data) {
+      console.log('failed to get layer search typeahead data');
+    }
+  });
+}

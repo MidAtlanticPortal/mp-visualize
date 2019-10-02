@@ -34,8 +34,9 @@ app.state = {
 app.restoreState = {};
 
 ko.applyBindings(app.viewModel);
-app.viewModel.loadLayersFromServer().done(function() {
-  // app.onResize();
+// app.viewModel.loadLayersFromServer().done(function() {
+app.viewModel.initLeftNav().done(function() {
+  // app.onResize(); // RDH 20191119 - this was commented out for 2019 upgrades, but may be needed for cacheless.
 
   // trigger events that depend on the map
   $(document).trigger('map-ready');
