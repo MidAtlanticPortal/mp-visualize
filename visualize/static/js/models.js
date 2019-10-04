@@ -3,115 +3,20 @@ function layerModel(options, parent) {
         $descriptionTemp;
 
     // properties
-    self.id = options.id || null;
-    self.name = options.name || null;
-    self.featureAttributionName = self.name;
-    self.order = options.order;
-    self.url = options.url || null;
-    self.data_url = options.data_url || null;
-    self.arcgislayers = options.arcgis_layers || 0;
-    self.wms_slug = options.wms_slug || null;
-    self.wms_version = options.wms_version || null;
-    self.wms_format = options.wms_format || null;
-    self.wms_srs = options.wms_srs || null;
-    self.wms_styles = options.wms_styles || null;
-    self.wms_timing = options.wms_timing || null;
-    self.wms_time_item = options.wms_time_item || null;
-    self.wms_additional = options.wms_additional || null;
-    self.type = options.type || null
-    self.utfurl = options.utfurl || false;
-    self.legend = options.legend || false;
+    self.fullyLoaded = false;
+
     self.legendVisibility = ko.observable(false);
-    self.legendTitle = options.legend_title || false;
-    self.legendSubTitle = options.legend_subtitle || false;
-    if (options.hasOwnProperty('show_legend') && options.show_legend == false) {
-      self.show_legend = false;
-    } else {
-      self.show_legend = true;
-    }
+
     self.themes = ko.observableArray();
-    self.attributes = options.attributes ? options.attributes.attributes : [];
-    self.compress_attributes = options.attributes ? options.attributes.compress_attributes : false;
-    self.attributeEvent = options.attributes ? options.attributes.event : [];
-    self.mouseoverAttribute = options.attributes ? options.attributes.mouseover_attribute : false;
-    self.lookupField = options.lookups ? options.lookups.field : null;
-    self.lookupDetails = options.lookups ? options.lookups.details : [];
-    self.color = options.color || "#ee9900";
-    self.outline_color = options.outline_color || self.color;
-    self.fillOpacity = options.fill_opacity || 0.0;
-    self.disable_click = options.disable_arcgis_attributes || false;
     self.description = ko.observable();
 
-    if ( options.opacity === 0 ) {
-        self.defaultOpacity = options.opacity;
-    } else {
-        self.defaultOpacity = options.opacity || 0.5;
-    }
-    self.opacity = ko.observable(self.defaultOpacity);
-    self.outline_opacity = options.outline_opacity || self.defaultOpacity;
-    self.point_radius = options.point_radius || 2;
-    self.graphic = options.graphic || null;
-    self.annotated = options.annotated || false;
-
     self.isDisabled = ko.observable(false);
-    if (options.is_disabled) {
-        self.isDisabled(options.is_disabled);
-    }
     self.disabledMessage = ko.observable(false);
-    if (options.disabled_message) {
-        self.disabledMessage(options.disabled_message);
-    }
-    if (self.annotated && app.viewModel.zoomLevel() < 9) {
-        self.isDisabled(true);
-        self.disabledMessage(options.disabled_message);
-    }
 
     //on-the-fly session layers
     self.wmsSession = ko.observable(false);
-    if (options.wmsSession) {
-        self.wmsSession(options.wmsSession)
-    }
 
-    // mdat/marine life layers
-    self.isMDAT = options.isMDAT || false;
-    self.parentMDATDirectory = options.parentDirectory || null;
-
-    // VTR/CAS life layers
-    self.isVTR = options.isVTR || false;
-    self.dateRangeDirectory = options.dateRangeDirectory || null;
-
-    //tied to the layer that's a companion of another layer
-    self.companionLayers = options.companion_layers || false;
-    //has companion layer(s)
-    self.hasCompanion = options.has_companion || false;
-
-    self.is_multilayer_parent = options.is_multilayer_parent || false;
-    self.is_multilayer = ko.observable((options.is_multilayer && !options.is_multilayer_parent) || false);
     self.is_visible_multilayer = ko.observable(false);
-
-    self.associated_multilayers = options.associated_multilayers || [];
-    self.dimensions = options.dimensions || [];
-    self.multilayerValueLookup = {};
-    self.activeMultilayer = false;
-    self.multilayerSliderState = [];
-
-    self.searchQueryable = options.search_query || false;
-
-    app.viewModel.zoomLevel.subscribe( function() {
-        if (self.annotated && app.viewModel.zoomLevel() < 9) {
-            self.isDisabled(true);
-            self.disabledMessage(options.disabled_message);
-            $('.annotated.disabled').popover({
-                delay: {'show': 500},
-                trigger: 'hover'//,
-                //template: '<div class="popover layer-popover"><div class="arrow"></div><div class="popover-inner layer-tooltip"><div class="popover-content"><p></p></div></div></div>'
-            });
-        } else if (self.annotated && app.viewModel.zoomLevel() >= 9) {
-            self.isDisabled(false);
-            self.disabledMessage(false);
-            $('.annotated').popover('destroy');
-        }
-    });
 
     //these are necessary to prevent knockout errors when offering non-designs in Active panel
     self.sharedBy = ko.observable(false);
@@ -119,15 +24,254 @@ function layerModel(options, parent) {
     self.selectedGroups = ko.observableArray();
     self.shared = ko.observable(false);
 
-    if (self.featureAttributionName === 'OCS Lease Blocks') {
+    // is description active
+    self.infoActive = ko.observable(false);
+
+    // is the layer in the active panel?
+    self.active = ko.observable(false);
+    // is the layer visible?
+    self.visible = ko.observable(false);
+
+    self.activeSublayer = ko.observable(false);
+    self.visibleSublayer = ko.observable(false);
+
+    // is the layer a checkbox layer
+    self.isCheckBoxLayer = ko.observable(false);
+
+    self.data_url = ko.observable(options.data_url || null);
+    self.kml = ko.observable(options.kml || null);
+    self.data_download = ko.observable(options.data_download || null);
+    self.metadata = ko.observable(options.metadata || null);
+    self.source = ko.observable(options.source || null);
+
+    self.setOptions = function(options, parent) {
+
+      self.id = options.id || null;
+      self.name = options.name || null;
+      self.featureAttributionName = self.name;
+      self.order = options.order;
+      self.url = options.url || null;
+      self.data_url(options.data_url || null);
+      self.arcgislayers = options.arcgis_layers || 0;
+      self.wms_slug = options.wms_slug || null;
+      self.wms_version = options.wms_version || null;
+      self.wms_format = options.wms_format || null;
+      self.wms_srs = options.wms_srs || null;
+      self.wms_styles = options.wms_styles || null;
+      self.wms_timing = options.wms_timing || null;
+      self.wms_time_item = options.wms_time_item || null;
+      self.wms_additional = options.wms_additional || null;
+      self.type = options.type || null
+      self.utfurl = options.utfurl || false;
+      self.legend = options.legend || false;
+
+      app.viewModel.zoomLevel.subscribe( function() {
+          if (self.annotated && app.viewModel.zoomLevel() < 9) {
+              self.isDisabled(true);
+              self.disabledMessage(options.disabled_message);
+              $('.annotated.disabled').popover({
+                  delay: {'show': 500},
+                  trigger: 'hover'//,
+                  //template: '<div class="popover layer-popover"><div class="arrow"></div><div class="popover-inner layer-tooltip"><div class="popover-content"><p></p></div></div></div>'
+              });
+          } else if (self.annotated && app.viewModel.zoomLevel() >= 9) {
+              self.isDisabled(false);
+              self.disabledMessage(false);
+              $('.annotated').popover('destroy');
+          }
+      });
+
+      self.legendTitle = options.legend_title || false;
+      self.legendSubTitle = options.legend_subtitle || false;
+      if (options.hasOwnProperty('show_legend') && options.show_legend == false) {
+        self.show_legend = false;
+      } else {
+        self.show_legend = true;
+      }
+
+      self.attributes = options.attributes ? options.attributes.attributes : [];
+      self.compress_attributes = options.attributes ? options.attributes.compress_attributes : false;
+      self.attributeEvent = options.attributes ? options.attributes.event : [];
+      self.mouseoverAttribute = options.attributes ? options.attributes.mouseover_attribute : false;
+      self.lookupField = options.lookups ? options.lookups.field : null;
+      self.lookupDetails = options.lookups ? options.lookups.details : [];
+      self.color = options.color || "#ee9900";
+      self.outline_color = options.outline_color || self.color;
+      self.fillOpacity = options.fill_opacity || 0.0;
+      self.disable_click = options.disable_arcgis_attributes || false;
+
+      if ( options.opacity === 0 ) {
+        self.defaultOpacity = options.opacity;
+      } else {
+        self.defaultOpacity = options.opacity || 0.5;
+      }
+      self.opacity = ko.observable(self.defaultOpacity);
+      self.outline_opacity = options.outline_opacity || self.defaultOpacity;
+      self.point_radius = options.point_radius || 2;
+      self.graphic = options.graphic || null;
+      self.annotated = options.annotated || false;
+
+      if (options.is_disabled) {
+        self.isDisabled(options.is_disabled);
+      }
+      if (options.disabled_message) {
+        self.disabledMessage(options.disabled_message);
+      }
+      if (self.annotated && app.viewModel.zoomLevel() < 9) {
+        self.isDisabled(true);
+        self.disabledMessage(options.disabled_message);
+      }
+
+      if (options.wmsSession) {
+        self.wmsSession(options.wmsSession)
+      }
+
+      // mdat/marine life layers
+      self.isMDAT = options.isMDAT || false;
+      self.parentMDATDirectory = options.parentDirectory || null;
+
+      // VTR/CAS life layers
+      self.isVTR = options.isVTR || false;
+      self.dateRangeDirectory = options.dateRangeDirectory || null;
+
+      //tied to the layer that's a companion of another layer
+      self.companionLayers = options.companion_layers || false;
+      //has companion layer(s)
+      self.hasCompanion = options.has_companion || false;
+
+      self.is_multilayer_parent = options.is_multilayer_parent || false;
+      self.is_multilayer = ko.observable((options.is_multilayer && !options.is_multilayer_parent) || false);
+
+      self.associated_multilayers = options.associated_multilayers || [];
+      self.dimensions = options.dimensions || [];
+      self.multilayerValueLookup = {};
+      self.activeMultilayer = false;
+      self.multilayerSliderState = [];
+
+      self.searchQueryable = options.search_query || false;
+
+      if (self.featureAttributionName === 'OCS Lease Blocks') {
         self.featureAttributionName = 'OCS Lease Blocks';
-    } else if (self.featureAttributionName === 'Party & Charter Boat') {
+      } else if (self.featureAttributionName === 'Party & Charter Boat') {
         self.featureAttributionName = 'Party & Charter Boat Trips';
-    } else if (self.featureAttributionName === 'Benthic Habitats (North)' ) {
+      } else if (self.featureAttributionName === 'Benthic Habitats (North)' ) {
         self.featureAttributionName = 'Benthic Habitats';
-    } else if (self.featureAttributionName === 'Benthic Habitats (South)' ) {
+      } else if (self.featureAttributionName === 'Benthic Habitats (South)' ) {
         self.featureAttributionName = 'Benthic Habitats';
+      }
+
+      //legends for actual WMS LAYERS
+      if (!self.legend && self.url && self.type=='WMS' && self.wms_slug && self.wms_version) {
+        self.legend = self.url + 'SERVICE=WMS&VERSION=' +
+        self.wms_version + '&layer=' +
+        self.wms_slug +
+        "&REQUEST=GetLegendGraphic&FORMAT=image/png"
+      }
+
+      // set target blank for all links
+      if (options.description) {
+        $descriptionTemp = $("<div/>", {
+          html: options.description
+        });
+        $descriptionTemp.find('a').each(function() {
+          $(this).attr('target', '_blank');
+        });
+        self.description($descriptionTemp.html());
+      } else {
+        self.description(null);
+      }
+
+      // set overview text for Learn More option
+      if (options.overview) {
+        $overviewTemp = $("<div/>", {
+          html: options.overview
+        });
+        $overviewTemp.find('a').each(function() {
+          $(this).attr('target', '_blank');
+        });
+        self.overview = $overviewTemp.html();
+      } else if (parent && parent.overview) {
+        self.overview = parent.overview;
+      } else if (self.description()) {
+        self.overview = self.description();
+      } else if (parent && parent.description()) {
+        self.overview = parent.description();
+      } else {
+        self.overview = null;
+      }
+
+      // set data source and data notes text
+      self.data_source = options.data_source || null;
+      if (! self.data_source && parent && parent.data_source) {
+        self.data_source = parent.data_source;
+      }
+      self.data_notes = options.data_notes || null;
+      if (! self.data_notes && parent && parent.data_notes) {
+        self.data_notes = parent.data_notes;
+      }
+
+      // set download links
+      self.kml(options.kml || null);
+      self.data_download(options.data_download || null);
+      self.learn_more = options.learn_more || null;
+      self.metadata(options.metadata || null);
+      self.source(options.source || null);
+      self.tiles = options.tiles || null;
+
+      if (self.type === 'checkbox') {
+        self.isCheckBoxLayer(true);
+      }
+
+      self.has_sublayers = options.has_sublayers || false;
+      self.subLayers = [];
+      if (options.subLayers) {
+        for (var i = 0; i < options.subLayers.length; i++) {
+          var new_sublayer = new layerModel(options.subLayers[i], self);
+          self.subLayers.push(new_sublayer);
+        }
+      }
+
+      // save a ref to the parent, if it exists
+      if (parent) {
+        self.parent = parent;
+        self.fullName = self.parent.name + " (" + self.name + ")";
+        if ( ! self.legendTitle ) {
+          self.legendTitle = self.parent.legendTitle;
+        }
+        if ( ! self.legendSubTitle ) {
+          self.legendSubTitle = self.parent.legendSubTitle;
+        }
+      } else {
+        self.fullName = self.name;
+      }
+
+      // opacity
+      self.opacity.subscribe(function(newOpacity) {
+          if (self.layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
+              self.layer.styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
+              self.layer.styleMap.styles['default'].defaultStyle.graphicOpacity = newOpacity;
+              //fill is currently turned off for many of the vector layers
+              //the following should not override the zeroed out fill opacity
+              //however we do still need to account for shipping lanes (in which styling is handled via lookup)
+              if (self.fillOpacity > 0) {
+                  var newFillOpacity = self.fillOpacity - (self.defaultOpacity - newOpacity);
+                  self.layer.styleMap.styles['default'].defaultStyle.fillOpacity = newFillOpacity;
+              }
+              self.layer.redraw();
+          } else {
+              self.layer.setOpacity(newOpacity);
+          }
+          if (self.activeMultilayer) {
+            self.activeMultilayer.opacity(newOpacity);
+          }
+      });
+
+
     }
+
+    self.setOptions(options, parent);
+
+
 
     getArcGISJSONLegend = function(self, protocol) {
       if (self.url.indexOf('?') < 0) {
@@ -169,46 +313,6 @@ function layerModel(options, parent) {
       });
     }
 
-    //legends for actual WMS LAYERS
-    if (!self.legend && self.url && self.type=='WMS' && self.wms_slug && self.wms_version) {
-        self.legend = self.url + 'SERVICE=WMS&VERSION=' +
-                      self.wms_version + '&layer=' +
-                      self.wms_slug +
-                      "&REQUEST=GetLegendGraphic&FORMAT=image/png"
-    }
-
-    // set target blank for all links
-    if (options.description) {
-        $descriptionTemp = $("<div/>", {
-            html: options.description
-        });
-        $descriptionTemp.find('a').each(function() {
-            $(this).attr('target', '_blank');
-        });
-        self.description($descriptionTemp.html());
-    } else {
-        self.description(null);
-    }
-
-    // set overview text for Learn More option
-    if (options.overview) {
-        $overviewTemp = $("<div/>", {
-            html: options.overview
-        });
-        $overviewTemp.find('a').each(function() {
-            $(this).attr('target', '_blank');
-        });
-        self.overview = $overviewTemp.html();
-    } else if (parent && parent.overview) {
-        self.overview = parent.overview;
-    } else if (self.description()) {
-        self.overview = self.description();
-    } else if (parent && parent.description()) {
-        self.overview = parent.description();
-    } else {
-        self.overview = null;
-    }
-
     getArcGISJSONDescription = function(self, protocol) {
       var url = self.url.replace('/export', '/'+self.arcgislayers) + '?f=pjson';
       if (protocol == "https:") {
@@ -235,77 +339,7 @@ function layerModel(options, parent) {
       });
     }
 
-    // set data source and data notes text
-    self.data_source = options.data_source || null;
-    if (! self.data_source && parent && parent.data_source) {
-        self.data_source = parent.data_source;
-    }
-    self.data_notes = options.data_notes || null;
-    if (! self.data_notes && parent && parent.data_notes) {
-        self.data_notes = parent.data_notes;
-    }
 
-    // set download links
-    self.kml = options.kml || null;
-    self.data_download = options.data_download || null;
-    self.learn_more = options.learn_more || null;
-    self.metadata = options.metadata || null;
-    self.source = options.source || null;
-    self.tiles = options.tiles || null;
-
-    // opacity
-    self.opacity.subscribe(function(newOpacity) {
-        if (self.layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
-            self.layer.styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
-            self.layer.styleMap.styles['default'].defaultStyle.graphicOpacity = newOpacity;
-            //fill is currently turned off for many of the vector layers
-            //the following should not override the zeroed out fill opacity
-            //however we do still need to account for shipping lanes (in which styling is handled via lookup)
-            if (self.fillOpacity > 0) {
-                var newFillOpacity = self.fillOpacity - (self.defaultOpacity - newOpacity);
-                self.layer.styleMap.styles['default'].defaultStyle.fillOpacity = newFillOpacity;
-            }
-            self.layer.redraw();
-        } else {
-            self.layer.setOpacity(newOpacity);
-        }
-        if (self.activeMultilayer) {
-          self.activeMultilayer.opacity(newOpacity);
-        }
-    });
-
-    // is description active
-    self.infoActive = ko.observable(false);
-
-    // is the layer a checkbox layer
-    self.isCheckBoxLayer = ko.observable(false);
-    if (self.type === 'checkbox') {
-        self.isCheckBoxLayer(true);
-    }
-
-    // is the layer in the active panel?
-    self.active = ko.observable(false);
-    // is the layer visible?
-    self.visible = ko.observable(false);
-
-    self.activeSublayer = ko.observable(false);
-    self.visibleSublayer = ko.observable(false);
-
-    self.subLayers = [];
-
-    // save a ref to the parent, if it exists
-    if (parent) {
-        self.parent = parent;
-        self.fullName = self.parent.name + " (" + self.name + ")";
-        if ( ! self.legendTitle ) {
-            self.legendTitle = self.parent.legendTitle;
-        }
-        if ( ! self.legendSubTitle ) {
-            self.legendSubTitle = self.parent.legendSubTitle;
-        }
-    } else {
-        self.fullName = self.name;
-    }
 
 
     self.toggleLegendVisibility = function() {
@@ -1120,80 +1154,109 @@ function layerModel(options, parent) {
         return newPath
     }
 
+    self.getFullLayerRecord = function(callbackType) {
+      var layer = this;
+      $.ajax({
+        // type: 'GET',
+        // dataType: 'jsonp',
+        url: '/data_manager/get_layer_details/' + layer.id,
+        success: function(data) {
+          layer.setOptions(data, layer.parent);
+          layer.fullyLoaded = true;
+          if (callbackType == 'toggleDescription') {
+            layer.toggleDescription(layer);
+          } else {
+            // if something else, do something else
+            layer.toggleActive(layer);
+          }
+        },
+        error: function(data) {
+          console.log('Failed to pull full layer record for ' + layer.name);
+        }
+
+      })
+
+    }
+
     // bound to click handler for layer switching
     self.toggleActive = function(self, event) {
         var activeLayer = app.viewModel.activeLayer();
         var activeParentLayer = app.viewModel.activeParentLayer();
         var layer = this;
 
-        layer.is_multilayer(false);
+        if (!layer.fullyLoaded) {
+          layer.getFullLayerRecord('toggleActive');
+        } else {
 
-        //are the active and current layers the same
-        if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
-            // are these CAS/VTR layers?
-            if (activeLayer.dateRangeDirectory && typeof activeLayer.parentDirectory == 'Function') {
-                activeLayer.parentDirectory.showSublayers(false);
-            }
-            //is sublayer already active
-            else if (activeLayer && typeof activeLayer.showSublayers == 'Function' ) {
-                if (activeLayer && activeLayer.showSublayers()) {
-                    //if radio sublayer
-                    if (!activeLayer.isCheckBoxLayer()) {
-                        activeLayer.showSublayers(false);
-                    }
-                }
-            //check if a parent layer is active
-            //checkbox sublayer has been clicked prior to opening another sublayer
-            } else if (activeParentLayer && layer.parent !== activeParentLayer) {
-                app.viewModel.activeParentLayer().showSublayers(false);
-            }
-        }
+          layer.is_multilayer(false);
 
-        // save a ref to the active layer for editing,etc
-        app.viewModel.activeLayer(layer);
+          //are the active and current layers the same
+          if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
+              // are these CAS/VTR layers?
+              if (activeLayer.dateRangeDirectory && typeof activeLayer.parentDirectory == 'Function') {
+                  activeLayer.parentDirectory.showSublayers(false);
+              }
+              //is sublayer already active
+              else if (activeLayer && typeof activeLayer.showSublayers == 'Function' ) {
+                  if (activeLayer && activeLayer.showSublayers()) {
+                      //if radio sublayer
+                      if (!activeLayer.isCheckBoxLayer()) {
+                          activeLayer.showSublayers(false);
+                      }
+                  }
+              //check if a parent layer is active
+              //checkbox sublayer has been clicked prior to opening another sublayer
+              } else if (activeParentLayer && layer.parent !== activeParentLayer) {
+                  app.viewModel.activeParentLayer().showSublayers(false);
+              }
+          }
 
-        //handle possible dropdown/sublayer behavior
-        if (layer.subLayers.length) {
-            app.viewModel.activeParentLayer(layer);
-            if ( app.embeddedMap ) { // if data viewer is mobile app
-                $('.carousel').carousel('prev');
-                $('#mobile-data-right-button').show();
-                $('#mobile-map-right-button').hide();
-            }
-            if (!layer.showSublayers()) {
-                //show drop-down menu
-                layer.showSublayers(true);
-            } else {
-                //hide drop-down menu
-                layer.showSublayers(false);
-            }
-            return;
-        }
+          // save a ref to the active layer for editing,etc
+          app.viewModel.activeLayer(layer);
 
-        // start saving restore state again and remove restore state message from map view
-        app.saveStateMode = true;
-        app.viewModel.error(null);
-        //app.viewModel.unloadedDesigns = [];
+          //handle possible dropdown/sublayer behavior
+          if (layer.subLayers.length) {
+              app.viewModel.activeParentLayer(layer);
+              if ( app.embeddedMap ) { // if data viewer is mobile app
+                  $('.carousel').carousel('prev');
+                  $('#mobile-data-right-button').show();
+                  $('#mobile-map-right-button').hide();
+              }
+              if (!layer.showSublayers()) {
+                  //show drop-down menu
+                  layer.showSublayers(true);
+              } else {
+                  //hide drop-down menu
+                  layer.showSublayers(false);
+              }
+              return;
+          }
 
-        if (layer.active()) { // if layer is active
-            layer.deactivateLayer();
-        } else { // otherwise layer is not currently active
-            layer.activateLayer();
-        }
+          // start saving restore state again and remove restore state message from map view
+          app.saveStateMode = true;
+          app.viewModel.error(null);
+          //app.viewModel.unloadedDesigns = [];
 
-        //check if mdat/marine-life-library still has activeLayers
-        if (layer.isMDAT) {
-            var parentDirArray = [];
+          if (layer.active()) { // if layer is active
+              layer.deactivateLayer();
+          } else { // otherwise layer is not currently active
+              layer.activateLayer();
+          }
 
-            if (app.viewModel.activeLayers().length > 0) {
-               parentDirArray = $.grep(app.viewModel.activeLayers(), function(lyr) {
-                   return layer.parentMDATDirectory === lyr.parentMDATDirectory;
-               });
-            }
+          //check if mdat/marine-life-library still has activeLayers
+          if (layer.isMDAT) {
+              var parentDirArray = [];
 
-            if (parentDirArray.length == 0) {
-                layer.parentMDATDirectory.visible(false);
-            }
+              if (app.viewModel.activeLayers().length > 0) {
+                 parentDirArray = $.grep(app.viewModel.activeLayers(), function(lyr) {
+                     return layer.parentMDATDirectory === lyr.parentMDATDirectory;
+                 });
+              }
+
+              if (parentDirArray.length == 0) {
+                  layer.parentMDATDirectory.visible(false);
+              }
+          }
         }
     };
 
@@ -1268,22 +1331,26 @@ function layerModel(options, parent) {
 
     // display descriptive text below the map
     self.toggleDescription = function(layer) {
-        // if no description is provided, try using the web services description
-        if ( (!self.overview || !self.description()) && self.url && (self.arcgislayers !== -1) ) {
-          try {
-            getArcGISJSONDescription(self, window.location.protocol);
-          } catch (err) {
-            if (window.location.protocol == "http:") {
-              console.log(err);
-            } else {
-              getArcGISJSONDescription(self, "http:");
+        if (!layer.fullyLoaded) {
+          layer.getFullLayerRecord('toggleDescription');
+        } else {
+          // if no description is provided, try using the web services description
+          if ( (!self.overview || !self.description()) && self.url && (self.arcgislayers !== -1) ) {
+            try {
+              getArcGISJSONDescription(self, window.location.protocol);
+            } catch (err) {
+              if (window.location.protocol == "http:") {
+                console.log(err);
+              } else {
+                getArcGISJSONDescription(self, "http:");
+              }
             }
           }
-        }
-        if ( ! layer.infoActive() ) {
+          if ( ! layer.infoActive() ) {
             self.showDescription(layer);
-        } else {
+          } else {
             self.hideDescription(layer);
+          }
         }
     };
 
@@ -1348,7 +1415,12 @@ function themeModel(options) {
       $.ajax({
         url: '/data_manager/get_layers_for_theme/' + theme.id,
         success: function(data) {
-          theme.layers = data.layers;
+          layer_objects = [];
+          for (var i = 0; i < data.layers.length; i++) {
+            new_layer = new layerModel(data.layers[i]);
+            layer_objects.push(new_layer)
+          }
+          theme.layers(layer_objects);
           if (setOpenTheme){
             theme.setOpenTheme();
           }
@@ -1365,7 +1437,7 @@ function themeModel(options) {
 
         // ensure data tab is activated
         $('#dataTab').tab('show');
-        if (theme.layers.length == 0) {
+        if (theme.layers().length == 1 && theme.layers()[0].id == null || theme.layers().length == 0) {
           theme.getLayers(true);
         } else {
           if (self.isOpenTheme(theme)) {
