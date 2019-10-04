@@ -151,6 +151,8 @@ app.viewModel.loadThemes = function(data) {
       if (themeFixture) {
         var layers = [],
             theme = new themeModel(themeFixture);
+            layer = new layerModel({has_sublayers: false, id: null, name: 'Loading...'});
+            theme.layers([layer]);
         if (theme.is_visible) {
             self.themes.push(theme);
         } else {
