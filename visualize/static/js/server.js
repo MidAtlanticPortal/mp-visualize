@@ -169,11 +169,68 @@ app.viewModel.getSearchData = function() {
       var keys = Object.keys(data);
       for (var i = 0; i < keys.length; i++) {
         var searchKey = keys[i];
-        app.viewModel.layerSearchIndex[searchKey] = {
-            layer: data[searchKey].layer,
-            theme: data[searchKey].theme
-        };
+        if (! data[searchKey].layer.has_sublayers) {
+          var searchText = data[searchKey].layer.name + ' ' +
+          data[searchKey].theme.name + ' ' +
+          data[searchKey].theme.description + ' ' +
+          data[searchKey].layer.description + ' ' +
+          data[searchKey].layer.overview;
+          app.viewModel.layerSearchIndex[searchKey] = {
+            layer: data[searchKey].layer.id,
+            searchText: searchText,
+            theme: data[searchKey].theme.id
+          };
+        } else {
+          for (var j = 0; j < data[searchKey].layer.sublayers.length; j++) {
+            var subLayer = data[searchKey].layer.sublayers[j];
+            var searchText = subLayer.name + ' ' +
+                data[searchKey].theme.display_name + ' / ' +
+                data[searchKey].theme.description + ' ' +
+                data[searchKey].layer.name + ' ' +
+                data[searchKey].layer.overview + ' ' +
+                data[searchKey].layer.description;
+            // var searchKey = subLayer.name;
+
+            if (subLayer.name !== 'Data Under Development') {
+                app.viewModel.layerSearchIndex[subLayer.name] = {
+                    layer: subLayer.id,
+                    searchText: searchText,
+                    theme: data[searchKey].theme
+                };
+            }
+          }
+        }
       }
+      app.typeAheadSource = (function () {
+              var items = [];
+              for (var searchTerm in app.viewModel.layerSearchIndex) {
+                  items.push({
+                      'name': searchTerm
+                  });
+              }
+              return items;
+      })();
+      // autocomplete for filter
+      // See bootstrap3-typeahead docs
+      $('.main-search').typeahead({
+        source: app.typeAheadSource,
+        displayText: function(item) {
+          return item.name;
+        },
+        matcher: function (item) {
+          // custom search matching on object titles
+          var it = item.name;
+          return ~it.toLowerCase().indexOf(this.query.toLowerCase());
+        },
+        afterSelect: function() {
+          // replace the search box contents with the user's actual input
+          // otherwise it will be replaced by the display text of the chosen item
+          $('#data-search-input').val(app.viewModel.searchTermInput());
+        },
+        autoSelect: true,
+        items: 20,
+        minLength: 2
+      });
     },
     error: function(data) {
       console.log('failed to get layer search typeahead data');

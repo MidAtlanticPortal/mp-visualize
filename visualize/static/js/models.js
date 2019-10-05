@@ -230,7 +230,7 @@ function layerModel(options, parent) {
       self.subLayers = [];
       if (options.subLayers) {
         for (var i = 0; i < options.subLayers.length; i++) {
-          var new_sublayer = new layerModel(options.subLayers[i], self);
+          var new_sublayer = app.viewModel.getOrCreateLayer(options.subLayers[i], self, 'return', null)
           self.subLayers.push(new_sublayer);
         }
       }
@@ -1013,6 +1013,10 @@ function layerModel(options, parent) {
     };
 
     self.ajaxMDAT = function(self, event) {
+      if (!self.fullyLoaded) {
+        self.getFullLayerRecord('ajaxMDAT', event);
+      } else {
+
         if (self.showSublayers() === true) {
             self.showSublayers(false);
             return false;
@@ -1059,12 +1063,18 @@ function layerModel(options, parent) {
                 }
             })
         }
+      }
     }
 
     // array of VTR/CAS date ranges
     self.dateRanges = ko.observableArray();
 
     self.ajaxVTR = function(self, event) {
+
+      if (!self.fullyLoaded) {
+        self.getFullLayerRecord('ajaxVTR', event);
+      } else {
+
         if (self.showSublayers() === true) {
             self.showSublayers(false);
             return false;
@@ -1108,6 +1118,7 @@ function layerModel(options, parent) {
                 $parentDirs.show();
             })
         }
+      }
     }
 
     // array of VTR/CAS ports
@@ -1167,21 +1178,36 @@ function layerModel(options, parent) {
         return newPath
     }
 
-    self.getFullLayerRecord = function(callbackType) {
+    self.performAction = function(callbackType, event) {
+      var layer = this;
+      if (callbackType == 'toggleDescription') {
+        layer.toggleDescription(layer);
+      } else if (callbackType == 'ajaxVTR') {
+        layer.ajaxVTR(layer, event);
+      } else if (callbackType == 'ajaxMDAT') {
+        layer.ajaxMDAT(layer, event);
+      } else if (callbackType == 'activateLayer') {
+        layer.activateLayer();
+      } else {
+        // if something else, do something else
+        layer.toggleActive(layer, event);
+      }
+    }
+
+    self.getFullLayerRecord = function(callbackType, event) {
       var layer = this;
       $.ajax({
-        // type: 'GET',
-        // dataType: 'jsonp',
         url: '/data_manager/get_layer_details/' + layer.id,
         success: function(data) {
-          layer.setOptions(data, layer.parent);
-          layer.fullyLoaded = true;
-          if (callbackType == 'toggleDescription') {
-            layer.toggleDescription(layer);
-          } else {
-            // if something else, do something else
-            layer.toggleActive(layer);
+          var parent = null;
+          if (data.parent){
+            parent = app.viewModel.getOrCreateLayer(data.parent, null, 'return', null);
           }
+          layer.setOptions(data, parent);
+          layer.fullyLoaded = true;
+          app.viewModel.layerIndex[layer.id.toString()] = layer;
+          layer.performAction(callbackType, event);
+
         },
         error: function(data) {
           console.log('Failed to pull full layer record for ' + layer.name);
@@ -1198,7 +1224,7 @@ function layerModel(options, parent) {
         var layer = this;
 
         if (!layer.fullyLoaded) {
-          layer.getFullLayerRecord('toggleActive');
+          layer.getFullLayerRecord('toggleActive', event);
         } else {
 
           layer.is_multilayer(false);
@@ -1345,7 +1371,7 @@ function layerModel(options, parent) {
     // display descriptive text below the map
     self.toggleDescription = function(layer) {
         if (!layer.fullyLoaded) {
-          layer.getFullLayerRecord('toggleDescription');
+          layer.getFullLayerRecord('toggleDescription', null);
         } else {
           // if no description is provided, try using the web services description
           if ( self.type == "ArcRest" && (!self.overview || !self.description()) && self.url && (self.arcgislayers !== -1) ) {
@@ -1430,7 +1456,8 @@ function themeModel(options) {
         success: function(data) {
           layer_objects = [];
           for (var i = 0; i < data.layers.length; i++) {
-            new_layer = new layerModel(data.layers[i]);
+            new_layer = app.viewModel.getOrCreateLayer(data.layers[i], null, 'return', null);
+            new_layer.themes.push(theme);
             layer_objects.push(new_layer)
           }
           theme.layers(layer_objects);
@@ -2285,7 +2312,7 @@ function viewModel() {
             arcgis_layers: layer.id
         };
 
-        var mdatLayer = new layerModel(mdatObj),
+        var mdatLayer = app.viewModel.getOrCreateLayer(mdatObj, null, 'return', null),
             avianAbundance = '/MDAT/Avian_Abundance',
             avianOccurrence = '/MDAT/Avian_Occurrence';
 
@@ -2347,8 +2374,7 @@ function viewModel() {
             arcgis_layers: layer.id
         };
 
-        var vtrLayer = new layerModel(vtrObj);
-        vtrLayer.activateLayer();
+        var vtrLayer = app.viewModel.getOrCreateLayer(vtrObj, null, 'activateLayer', null);
 
     };
 
@@ -2373,8 +2399,7 @@ function viewModel() {
                 }
             })
             //add options to layer
-            var wmsLayer = new layerModel(lyrObj);
-            wmsLayer.activateLayer();
+            var wmsLayer = app.viewModel.getOrCreateLayer(lyrObj, null, 'activateLayer', null);
         });
         $('#map-wms-modal').modal('hide');
     };
@@ -2427,8 +2452,21 @@ function viewModel() {
         self.showPointerInfo(!self.showPointerInfo());
     };
 
+    self.getThemeById = function(id) {
+      var themes = self.themes();
+      for (var i = 0; i < themes.length; i++) {
+        if (themes[i].id == id) {
+          return themes[i];
+        }
+      }
+      return null;
+    }
+
     // get layer by id
     self.getLayerById = function(id) {
+        if (app.viewModel.layerIndex[id] instanceof layerModel) {
+          return app.viewModel.layerIndex[id];
+        }
         for (var x=0; x<self.themes().length; x++) {
             var layer_list = $.grep(self.themes()[x].layers(), function(layer) {
                 return layer.id === id;
@@ -2456,6 +2494,34 @@ function viewModel() {
         }
         return false;
     };
+
+
+    /**
+      * @function getOrCreateLayer - if a layerModel object with the given id exists, return it.
+      *    if not, create it.
+      * @param {object} layer_obj - an object describing the layer with at least 'id' and 'name' fields
+      * @param {object} parent - the layer's parent object (used if creating new layerModel object)
+      * @param {string} action - the name of the action to be taken if the layer needs to be loaded first
+      * @param {event} event - an optional event that triggered this request to be passed on when loading the layer
+      */
+    self.getOrCreateLayer = function(layer_obj, parent, action, event) {
+      var layer = self.getLayerById(layer_obj.id);
+      if (!layer) {
+        var layer = new layerModel(layer_obj, parent);
+        if (layer.id) {
+          // dynamic layers do not come with IDs
+          app.viewModel.layerIndex[layer.id.toString()] = layer;
+        }
+      }
+      if (action == 'return'){
+        return layer;
+      } else if (layer.fullyLoaded || layer.isMDAT || layer.isVTR ) {
+        layer.performAction(action, event);
+      } else {
+        layer.getFullLayerRecord(action, event);
+      }
+      return null;
+    }
 
     self.getLayerBySlug = function(slug) {
         for (var x=0; x<self.themes().length; x++) {
@@ -2492,10 +2558,25 @@ function viewModel() {
             return false;
         }
         //self.activeTheme(theme);
-        if (self.openThemes.indexOf(found.theme) === -1) {
-            self.openThemes.push(found.theme);
+        if (!(found.theme instanceof themeModel)) {
+          found.theme = app.viewModel.getThemeById(found.theme.id);
         }
-        found.layer.activateLayer();
+        if (self.openThemes.indexOf(found.theme) === -1) {
+          // self.openThemes.push(found.theme);
+
+          found.theme.setOpenTheme();
+          window.setTimeout(function() {
+            $('#activeTab').tab('show');
+          }, 400);
+        }
+        if (found.layer instanceof layerModel) {
+          found.layer.activateLayer();
+        } else {
+          var layer_obj = {id:found.layer, name:"Loading..."};
+          var parent = null;
+          var action = null;
+          app.viewModel.getOrCreateLayer(layer_obj, parent, 'activateLayer', action);
+        }
         self.searchTerm($('.typeahead .active').text());
     };
     self.keySearch = function(_, event) {

@@ -46,30 +46,6 @@ app.viewModel.initLeftNav().done(function() {
     app.loadStateFromHash(app.hash);
   }
 
-  // autocomplete for filter
-  // See bootstrap3-typeahead docs
-  if ($('.main-search').length > 0) {
-    $('.main-search').typeahead({
-      source: app.typeAheadSource,
-      displayText: function(item) {
-        return item.name;
-      },
-      matcher: function (item) {
-        // custom search matching on object titles
-        var it = item.name;
-        return ~it.toLowerCase().indexOf(this.query.toLowerCase());
-      },
-      afterSelect: function() {
-        // replace the search box contents with the user's actual input
-        // otherwise it will be replaced by the display text of the chosen item
-        $('#data-search-input').val(app.viewModel.searchTermInput());
-      },
-      autoSelect: true,
-      items: 20,
-      minLength: 2
-    });
-  }
-
   $('[data-toggle="tooltip"]').tooltip();
 
   $('#toggleBaselayer').css({'background-image':"url(/static/visualize/img/baselayer-"+app.wrapper.map.getBasemap().name.split(' ').join('_')+".png)", "color":+app.wrapper.map.getBasemap().textColor});
