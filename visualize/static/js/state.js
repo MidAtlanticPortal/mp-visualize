@@ -83,7 +83,12 @@ app.loadCompressedState = function(state) {
                     }
                 }
             } else {
-                unloadedDesigns.push({id: id, opacity: opacity, isVisible: isVisible});
+                if (!isNaN(id)){
+                  var layer_obj = {'name': 'loading...', 'id': id, 'opacity': opacity, 'isVisible': isVisible};
+                  app.viewModel.getOrCreateLayer(layer_obj, null, 'activateLayer', null);
+                } else {
+                  unloadedDesigns.push({id: id, opacity: opacity, isVisible: isVisible});
+                }
             }
        }
        if ( unloadedDesigns.length ) {
