@@ -28,9 +28,16 @@ app.getState = function () {
 
 $(document).on('map-ready', function () {
     if ($('#disclaimer-modal').length > 0){
-      $('#disclaimer-modal').modal('show');
+      try {
+        $('#disclaimer-modal').modal('show');
+        app.state = app.getState();
+      } catch {
+        setTimeout(function(){
+          $('#disclaimer-modal').modal('show');
+          app.state = app.getState();
+        }, 1000)
+      }
     }
-    app.state = app.getState();
 });
 
 app.layersAreLoaded = false;
@@ -69,7 +76,7 @@ app.activateHashStateLayers = function() {
     var layerStatus = app.hashStateLayers[i].status
     if (layerStatus instanceof layerModel) {
       if (app.viewModel.activeLayers().indexOf(layerStatus) < 0) {
-        layerStatus.activateLayer();
+        layerStatus.activateLayer("nocompanion");
         if (app.hashStateLayers[i].visible == "false" || app.hashStateLayers[i].visible == false) {
           if (layerStatus.visible()){
             layerStatus.toggleVisible();

@@ -663,7 +663,7 @@ function layerModel(options, parent) {
                 self.visible(true);
             }
 
-            if (typeof is_companion == "undefined" || is_companion == false) {
+            if (typeof is_companion == "undefined" || is_companion == false || is_companion != "nocompanion") {
               //activate companion layers
               if (layer.hasCompanion) {
                 if (layer.parentMDATDirectory) {
@@ -821,6 +821,17 @@ function layerModel(options, parent) {
                     }
                 }
             });
+        }
+        if (layer.hasCompanion && (!layer.hasOwnProperty('companion') || layer.companion.length < 1)) {
+          layer.companion = [];
+          for (var i = 0; i < layer.companionLayers.length; i++) {
+            var companion_description = layer.companionLayers[i];
+            var companion_layer = app.viewModel.getOrCreateLayer(companion_description, null, "return", null);
+            layer.companion.push(companion_layer);
+            if (!companion_layer.active()) {
+              app.viewModel.getOrCreateLayer(companion_description, null, "activateLayer", null);
+            }
+          }
         }
     }
 
@@ -1175,29 +1186,29 @@ function layerModel(options, parent) {
         return newPath
     }
 
-    self.performAction = function(callbackType, event) {
+    self.performAction = function(callbackType, evt) {
       var layer = this;
       if (callbackType == 'toggleDescription') {
         layer.toggleDescription(layer);
       } else if (callbackType == 'ajaxVTR') {
-        layer.ajaxVTR(layer, event);
+        layer.ajaxVTR(layer, evt);
       } else if (callbackType == 'ajaxMDAT') {
-        layer.ajaxMDAT(layer, event);
+        layer.ajaxMDAT(layer, evt);
       } else if (callbackType == 'activateLayer') {
         layer.activateLayer();
       } else if (callbackType == 'updateHashStateLayers') {
         if (layer.fullyLoaded){
           app.updateHashStateLayers(layer.id, layer, null)
         } else {
-          layer.getFullLayerRecord(callbackType, event);
+          layer.getFullLayerRecord(callbackType, evt);
         }
       } else {
         // if something else, do something else
-        layer.toggleActive(layer, event);
+        layer.toggleActive(layer, evt);
       }
     }
 
-    self.getFullLayerRecord = function(callbackType, event) {
+    self.getFullLayerRecord = function(callbackType, evt) {
       var layer = this;
       $.ajax({
         url: '/data_manager/get_layer_details/' + layer.id,
@@ -1214,7 +1225,7 @@ function layerModel(options, parent) {
           layer.setOptions(data, parent);
           layer.fullyLoaded = true;
           app.viewModel.layerIndex[layer.id.toString()] = layer;
-          layer.performAction(callbackType, event);
+          layer.performAction(callbackType, evt);
 
         },
         error: function(data) {
