@@ -102,12 +102,18 @@ function layerModel(options, parent) {
       self.fillOpacity = options.fill_opacity || 0.0;
       self.disable_click = options.disable_arcgis_attributes || false;
 
-      if ( options.opacity === 0 ) {
-        self.defaultOpacity = options.opacity;
+      if (!self.hasOwnProperty('opacity')) {
+        if ( !options.opacity === 0 ) {
+          self.defaultOpacity = options.opacity;
+        } else {
+          self.defaultOpacity = options.opacity || 0.5;
+        }
+        self.opacity = ko.observable(self.defaultOpacity);
       } else {
-        self.defaultOpacity = options.opacity || 0.5;
+        if (options.hasOwnProperty('opacity') && options.opacity) {
+          self.opacity(options.opacity);
+        }
       }
-      self.opacity = ko.observable(self.defaultOpacity);
       self.outline_opacity = options.outline_opacity || self.defaultOpacity;
       self.outline_width = options.outline_width || 1;
       self.point_radius = options.point_radius || 2;
@@ -251,25 +257,29 @@ function layerModel(options, parent) {
 
       // opacity
       self.opacity.subscribe(function(newOpacity) {
-          // RDH 20191105 - this came in as a string - ol6 chokes on string passed to layer.setOpacity
-          newOpacity = parseFloat(newOpacity);
-          if (self.layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
-              self.layer.styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
-              self.layer.styleMap.styles['default'].defaultStyle.graphicOpacity = newOpacity;
-              //fill is currently turned off for many of the vector layers
-              //the following should not override the zeroed out fill opacity
-              //however we do still need to account for shipping lanes (in which styling is handled via lookup)
-              if (self.fillOpacity > 0) {
-                  var newFillOpacity = self.fillOpacity - (self.defaultOpacity - newOpacity);
-                  self.layer.styleMap.styles['default'].defaultStyle.fillOpacity = newFillOpacity;
-              }
-              self.layer.redraw();
+        // RDH 20191105 - this came in as a string - ol6 chokes on string passed to layer.setOpacity
+        newOpacity = parseFloat(newOpacity);
+        if (self.hasOwnProperty('layer')) {
+          if (self.layer.CLASS_NAME && self.layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
+            self.layer.styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
+            self.layer.styleMap.styles['default'].defaultStyle.graphicOpacity = newOpacity;
+            //fill is currently turned off for many of the vector layers
+            //the following should not override the zeroed out fill opacity
+            //however we do still need to account for shipping lanes (in which styling is handled via lookup)
+            if (self.fillOpacity > 0) {
+              var newFillOpacity = self.fillOpacity - (self.defaultOpacity - newOpacity);
+              self.layer.styleMap.styles['default'].defaultStyle.fillOpacity = newFillOpacity;
+            }
+            self.layer.redraw();
           } else {
-              self.layer.setOpacity(newOpacity);
+            self.layer.setOpacity(newOpacity);
           }
+        }
+        if (self.hasOwnProperty('activeMultilayer')) {
           if (self.activeMultilayer) {
             self.activeMultilayer.opacity(newOpacity);
           }
+        }
       });
 
 
@@ -1188,6 +1198,12 @@ function layerModel(options, parent) {
         layer.ajaxMDAT(layer, event);
       } else if (callbackType == 'activateLayer') {
         layer.activateLayer();
+      } else if (callbackType == 'updateHashStateLayers') {
+        if (layer.fullyLoaded){
+          app.updateHashStateLayers(layer.id, layer, null)
+        } else {
+          layer.getFullLayerRecord(callbackType, event);
+        }
       } else {
         // if something else, do something else
         layer.toggleActive(layer, event);
@@ -1203,6 +1219,11 @@ function layerModel(options, parent) {
           if (data.parent){
             parent = app.viewModel.getOrCreateLayer(data.parent, null, 'return', null);
           }
+          // don't override good data with defaults (info from hash such as opacity and visible):
+          if (layer.hasOwnProperty('opacity') && layer.opacity()) {
+            data.opacity = layer.opacity();
+          }
+
           layer.setOptions(data, parent);
           layer.fullyLoaded = true;
           app.viewModel.layerIndex[layer.id.toString()] = layer;
