@@ -55,6 +55,58 @@ app.establishLayerLoadState = function () {
     }
 
 };
+
+/**
+  * function app.activateHashStateLayers
+  *   Loops through list of layers to activate on load (from state) and activates
+  *   them in order, stopping if the next one isn't loaded yet. Since this gets
+  *   called every time a layer is loaded from the state, and keeps going until
+  *   if either finds a missing layer or the end, it should load the layers in order
+  *   regardless of what order they come back from the AJAX calls.
+  */
+app.activateHashStateLayers = function() {
+  for (var i = 0; i < app.hashStateLayers.length; i++) {
+    var layerStatus = app.hashStateLayers[i].status
+    if (layerStatus instanceof layerModel) {
+      if (app.viewModel.activeLayers().indexOf(layerStatus) < 0) {
+        layerStatus.activateLayer();
+        if (app.hashStateLayers[i].visible == "false" || app.hashStateLayers[i].visible == false) {
+          if (layerStatus.visible()){
+            layerStatus.toggleVisible();
+          }
+        }
+      }
+    } else {
+      break;
+    }
+  }
+}
+
+app.updateHashStateLayers = function(id, status, visible) {
+  if (!app.hasOwnProperty('hashStateLayers')) {
+    app.hashStateLayers = [];
+  }
+
+  var match_found = false;
+  for (var i = 0; i < app.hashStateLayers.length; i++) {
+    if (app.hashStateLayers[i].id == id) {
+      app.hashStateLayers[i].status = status;
+      match_found = true;
+      break;
+    }
+  }
+  if (!match_found){
+    app.hashStateLayers.push({
+      id: id,
+      status: status,
+      visible: visible
+    });
+  }
+
+  app.activateHashStateLayers();
+
+}
+
 // load compressed state (the url was getting too long so we're compressing it
 app.loadCompressedState = function(state) {
     // turn off active laters
@@ -68,6 +120,7 @@ app.loadCompressedState = function(state) {
     // turn on the layers that should be active
     if (state.dls) {
         var unloadedDesigns = [];
+
         for (x=0; x < state.dls.length; x=x+3) {
             var id = state.dls[x+2],
                 opacity = state.dls[x+1],
@@ -84,8 +137,9 @@ app.loadCompressedState = function(state) {
                 }
             } else {
                 if (!isNaN(id)){
-                  var layer_obj = {'name': 'loading...', 'id': id, 'opacity': opacity, 'isVisible': isVisible};
-                  app.viewModel.getOrCreateLayer(layer_obj, null, 'activateLayer', null);
+                  var layer_obj = {'name': 'loading...', 'id': id, 'opacity': parseFloat(opacity), 'isVisible': isVisible};
+                  app.updateHashStateLayers(id, null, isVisible);
+                  app.viewModel.getOrCreateLayer(layer_obj, null, 'updateHashStateLayers', null);
                 } else {
                   unloadedDesigns.push({id: id, opacity: opacity, isVisible: isVisible});
                 }
