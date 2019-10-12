@@ -605,22 +605,30 @@ app.init = function () {
 };
 
 app.addLayerToMap = function(layer) {
+  if (layer instanceof layerModel && layer.fullyLoaded) {
     if (!layer.layer) {
-        if (layer.utfurl || (layer.parent && layer.parent.utfurl)) {
-            app.addUtfLayerToMap(layer);
-        } else if (layer.type === 'Vector') {
-            app.addVectorLayerToMap(layer);
-        } else if (layer.type === 'ArcRest') {
-            app.addArcRestLayerToMap(layer);
-        } else if (layer.type === 'WMS') {
-            app.addWmsLayerToMap(layer);
-        } else { //if XYZ with no utfgrid
-            app.addXyzLayerToMap(layer);
-        }
+      if (layer.utfurl || (layer.parent && layer.parent.utfurl)) {
+        app.addUtfLayerToMap(layer);
+      } else if (layer.type === 'Vector') {
+        app.addVectorLayerToMap(layer);
+      } else if (layer.type === 'ArcRest') {
+        app.addArcRestLayerToMap(layer);
+      } else if (layer.type === 'WMS') {
+        app.addWmsLayerToMap(layer);
+      } else { //if XYZ with no utfgrid
+        app.addXyzLayerToMap(layer);
+      }
     }
     app.map.addLayer(layer.layer);
     layer.layer.opacity = layer.opacity();
     layer.layer.setVisibility(true);
+  } else {
+    if (layer instanceof layerModel) {
+      app.viewModel.getFullLayerRecord('addLayerToMap', null);
+    } else {
+      app.viewModel.getOrCreateLayer(layer, null, 'addLayerToMap', null);
+    }
+  }
 };
 
 // add XYZ layer with no utfgrid

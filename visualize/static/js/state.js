@@ -8,7 +8,11 @@ app.getState = function () {
             new OpenLayers.Projection("EPSG:900913"), new OpenLayers.Projection("EPSG:4326")),
                 layers = $.map(app.viewModel.activeLayers(), function(layer) {
                     //return {id: layer.id, opacity: layer.opacity(), isVisible: layer.visible()};
-                    return [ layer.id, layer.opacity(), layer.visible() ];
+                    if (!layer.is_multilayer()){
+                      return [ layer.id, layer.opacity(), layer.visible() ];
+                    } else {
+                      return null;
+                    }
                 });
     return {
         x: center.lon.toFixed(2),

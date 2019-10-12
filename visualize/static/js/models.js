@@ -621,69 +621,79 @@ function layerModel(options, parent) {
     self.activateLayer = function(is_companion) {
         var layer = this;
 
-        // if legend is not provided, try using legend from web services
-        if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
-          try {
-            getArcGISJSONLegend(self, window.location.protocol);
-          } catch (err) {
-            if (window.location.protocol == "http:") {
-              console.log(err);
-            } else {
-              getArcGISJSONLegend(self, "http:");
-            }
-          }
+        if (layer instanceof layerModel) {
+          if (layer.fullyLoaded) {
 
-        }
-
-        if (!layer.active() && layer.type !== 'placeholder' && !layer.isDisabled()) {
-
-            self.activateBaseLayer();
-
-            // save reference in parent layer
-            if (layer.parent) {
-                self.activateParentLayer();
-            }
-
-            //add utfgrid if applicable
-            if (layer.utfgrid) {
-                self.activateUtfGridLayer();
-            }
-
-            //activate arcIdentifyControl (if applicable)
-            if (layer.arcIdentifyControl) {
-                layer.arcIdentifyControl.activate();
-            }
-
-            //activate marine life layers
-            if (layer.isMDAT) {
-                self.parentMDATDirectory.visible(true);
-            }
-
-            if (layer.isVTR) {
-                self.visible(true);
-            }
-
-            if (typeof is_companion == "undefined" || is_companion == false || is_companion != "nocompanion") {
-              //activate companion layers
-              if (layer.hasCompanion) {
-                if (layer.parentMDATDirectory) {
-                  if (!layer.parentMDATDirectory.searchQueryable) {
-                    self.activateCompanionLayer()
-                  }
+            // if legend is not provided, try using legend from web services
+            if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
+              try {
+                getArcGISJSONLegend(self, window.location.protocol);
+              } catch (err) {
+                if (window.location.protocol == "http:") {
+                  console.log(err);
                 } else {
-                  self.activateCompanionLayer();
+                  getArcGISJSONLegend(self, "http:");
                 }
               }
+
             }
 
-            //activate multilayer groups
-            if (layer.is_multilayer_parent && layer.dimensions.length > 0){
-              self.activateMultiLayers();
-              self.buildMultilayerValueLookup();
-            }
+            if (!layer.active() && layer.type !== 'placeholder' && !layer.isDisabled()) {
 
-            self.trackLayer(layer.name);
+              self.activateBaseLayer();
+
+              // save reference in parent layer
+              if (layer.parent) {
+                self.activateParentLayer();
+              }
+
+              //add utfgrid if applicable
+              if (layer.utfgrid) {
+                self.activateUtfGridLayer();
+              }
+
+              //activate arcIdentifyControl (if applicable)
+              if (layer.arcIdentifyControl) {
+                layer.arcIdentifyControl.activate();
+              }
+
+              //activate marine life layers
+              if (layer.isMDAT) {
+                self.parentMDATDirectory.visible(true);
+              }
+
+              if (layer.isVTR) {
+                self.visible(true);
+              }
+
+              if (typeof is_companion == "undefined" || is_companion == false || is_companion != "nocompanion") {
+                //activate companion layers
+                if (layer.hasCompanion) {
+                  if (layer.parentMDATDirectory) {
+                    if (!layer.parentMDATDirectory.searchQueryable) {
+                      self.activateCompanionLayer()
+                    }
+                  } else {
+                    self.activateCompanionLayer();
+                  }
+                }
+              }
+
+              //activate multilayer groups
+              if (layer.is_multilayer_parent && layer.dimensions.length > 0){
+                self.activateMultiLayers();
+                self.buildMultilayerValueLookup();
+              }
+
+              self.trackLayer(layer.name);
+            }
+          } else {
+            layer.getFullLayerRecord('activateLayer', is_companion);
+          }
+        } else {
+          app.viewModel.getOrCreateLayer(layer, null, 'activateLayer', is_companion);
         }
+
     };
 
     // called from activateLayer
@@ -851,13 +861,23 @@ function layerModel(options, parent) {
 
     self.activateMultiLayers = function() {
         var layer = this;
-        multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
-        for (var i = 0; i < multilayers.length; i++) {
-          mlayer = app.viewModel.getLayerById(multilayers[i]);
+
+        layer.multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
+        app.viewModel.trackMultilayerLoad(layer, true, null);
+
+        for (var i = 0; i < layer.multilayers.length; i++) {
+          var mlayer = app.viewModel.getLayerById(layer.multilayers[i]);
+          if (!mlayer) {
+            mlayer = app.viewModel.getOrCreateLayer({id: layer.multilayers[i]}, layer, 'return', null);
+          }
           if (mlayer) {
             mlayer.is_multilayer(true);
-            mlayer.activateLayer();
-            mlayer.opacity(0);
+            if (mlayer.fullyLoaded){
+              mlayer.activateLayer();
+              mlayer.opacity(0);
+            } else {
+              mlayer.getFullLayerRecord('multilayer', layer);
+            }
           }
         }
     };
@@ -1190,6 +1210,8 @@ function layerModel(options, parent) {
       var layer = this;
       if (callbackType == 'toggleDescription') {
         layer.toggleDescription(layer);
+      } else if (callbackType == 'toggleActive') {
+        layer.toggleActive(layer, evt);
       } else if (callbackType == 'ajaxVTR') {
         layer.ajaxVTR(layer, evt);
       } else if (callbackType == 'ajaxMDAT') {
@@ -1202,9 +1224,12 @@ function layerModel(options, parent) {
         } else {
           layer.getFullLayerRecord(callbackType, evt);
         }
-      } else {
-        // if something else, do something else
-        layer.toggleActive(layer, evt);
+      } else if (callbackType == 'addLayerToMap') {
+        app.addLayerToMap(layer);
+      } else if (callbackType == 'multilayer') {
+        layer.activateLayer();
+        layer.opacity(0);
+        app.viewModel.trackMultilayerLoad(evt, false, layer.id.toString());
       }
     }
 
@@ -2509,7 +2534,7 @@ function viewModel() {
     /**
       * @function getOrCreateLayer - if a layerModel object with the given id exists, return it.
       *    if not, create it.
-      * @param {object} layer_obj - an object describing the layer with at least 'id' and 'name' fields
+      * @param {object} layer_obj - an object describing the layer with at least 'id' field
       * @param {object} parent - the layer's parent object (used if creating new layerModel object)
       * @param {string} action - the name of the action to be taken if the layer needs to be loaded first
       * @param {event} event - an optional event that triggered this request to be passed on when loading the layer
@@ -2517,6 +2542,9 @@ function viewModel() {
     self.getOrCreateLayer = function(layer_obj, parent, action, event) {
       var layer = self.getLayerById(layer_obj.id);
       if (!layer) {
+        if (!layer_obj.hasOwnProperty('name')) {
+          layer_obj.name = 'Loading...';
+        }
         var layer = new layerModel(layer_obj, parent);
         if (layer.id) {
           // dynamic layers do not come with IDs
@@ -3593,6 +3621,46 @@ function viewModel() {
     };
 
     self.showSliderButtons = ko.observable($.deparam(window.location.hash.slice(1)).tab == "data");
+
+
+    /**
+      * @function trackMultilayerLoad - keep track of the status of loading multilayer layers (sliders) via ajax
+      * @param {string} parentLayer - the multilayer parent layerModel instance
+      * @param {boolean} init - whether you're starting a fresh load of multilayers, or are just updating the status
+      * @param {string} updateId - the ID (string) of the layer that has just finished loading (optional)
+      */
+    self.trackMultilayerLoad = function(parentLayer, init, updateId) {
+      if (!self.hasOwnProperty('multilayerLoadStatus')) {
+        self.multilayerLoadStatus = {};
+      }
+      if (!parentLayer.hasOwnProperty('multilayers')) {
+        parentLayer.multilayers = self.getMultilayerIds(parentLayer.associated_multilayers, []);
+      }
+      var parentLayerId = parentLayer.id.toString();
+      var idList = parentLayer.multilayers;
+      if (init || Object.keys(self.multilayerLoadStatus).indexOf(parentLayerId) < 0) {
+        var statusObject = {};
+        for (var i = 0; i < idList.length; i++) {
+          statusObject[idList[i].toString()] = {
+            loaded: false
+          }
+        }
+        self.multilayerLoadStatus[parentLayerId] = statusObject;
+      } else {
+        var all_loaded = true;
+        self.multilayerLoadStatus[parentLayerId][updateId].loaded = true;
+        var statusObject = self.multilayerLoadStatus[parentLayerId];
+        for (var i = 0; i < idList.length; i++) {
+          if (statusObject[idList[i].toString()].loaded == false) {
+            var all_loaded = false;
+            break;
+          }
+        }
+        if (all_loaded) {
+          parentLayer.buildMultilayerValueLookup();
+        }
+      }
+    }
 
 
     return self;
