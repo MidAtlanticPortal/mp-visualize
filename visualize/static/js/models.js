@@ -1520,7 +1520,8 @@ function themeModel(options) {
         var theme = this;
 
         // ensure data tab is activated
-        $('#dataTab').tab('show');
+          //RDH 2019-10-11: Why?
+        // $('#dataTab').tab('show');
         if (theme.layers().length == 1 && theme.layers()[0].id == null || theme.layers().length == 0) {
           theme.getLayers(true);
         } else {
