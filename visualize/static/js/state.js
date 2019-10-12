@@ -21,7 +21,11 @@ app.getState = function () {
   }
   var layers = $.map(app.viewModel.activeLayers(), function(layer) {
     //return {id: layer.id, opacity: layer.opacity(), isVisible: layer.visible()};
-    return [ layer.id, layer.opacity(), layer.visible() ];
+    if (!layer.is_multilayer()){
+      return [ layer.id, layer.opacity(), layer.visible() ];
+    } else {
+      return null;
+    }
   });
 
   if (app.wrapper.map.hasOwnProperty('getBasemap')) {

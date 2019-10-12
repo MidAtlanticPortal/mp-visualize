@@ -319,26 +319,34 @@ app.init = function () {
 };
 
 app.addLayerToMap = function(layer) {
+  if (layer instanceof layerModel && layer.fullyLoaded) {
     if (!layer.layer) {
-        if (layer.utfurl || (layer.parent && layer.parent.utfurl)) {
-            app.addUtfLayerToMap(layer);
-        }
-        if (layer.type === 'Vector') {
-            app.addVectorLayerToMap(layer);
-        } else if (layer.type === 'ArcRest') {
-            app.addArcRestLayerToMap(layer);
-        } else if (layer.type === 'WMS') {
-            app.addWmsLayerToMap(layer);
-        } else if (layer.type === 'VectorTile') {
-            app.addVectorTileLayerToMap(layer);
-        } else { //if XYZ with no utfgrid
-            app.addXyzLayerToMap(layer);
-        }
+      if (layer.utfurl || (layer.parent && layer.parent.utfurl)) {
+        app.addUtfLayerToMap(layer);
+      }
+      if (layer.type === 'Vector') {
+        app.addVectorLayerToMap(layer);
+      } else if (layer.type === 'ArcRest') {
+        app.addArcRestLayerToMap(layer);
+      } else if (layer.type === 'WMS') {
+        app.addWmsLayerToMap(layer);
+      } else if (layer.type === 'VectorTile') {
+        app.addVectorTileLayerToMap(layer);
+      } else { //if XYZ with no utfgrid
+        app.addXyzLayerToMap(layer);
+      }
     }
     if (app.wrapper.map.hasOwnProperty('postProcessLayer')) {
       app.wrapper.map.postProcessLayer(layer);
     }
-    return layer;
+  } else {
+    if (layer instanceof layerModel) {
+      app.viewModel.getFullLayerRecord('addLayerToMap', null);
+    } else {
+      app.viewModel.getOrCreateLayer(layer, null, 'addLayerToMap', null);
+    }
+  }
+  return layer;
 };
 
 // add XYZ layer with no utfgrid
