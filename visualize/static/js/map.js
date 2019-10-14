@@ -624,7 +624,7 @@ app.addLayerToMap = function(layer) {
     layer.layer.setVisibility(true);
   } else {
     if (layer instanceof layerModel) {
-      app.viewModel.getFullLayerRecord('addLayerToMap', null);
+      layer.getFullLayerRecord('addLayerToMap', null);
     } else {
       app.viewModel.getOrCreateLayer(layer, null, 'addLayerToMap', null);
     }
