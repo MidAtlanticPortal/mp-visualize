@@ -1243,6 +1243,8 @@ function layerModel(options, parent) {
         layer.activateLayer();
         layer.opacity(0);
         app.viewModel.trackMultilayerLoad(evt, false, layer.id.toString());
+      } else if (callbackType == 'layerSearch') {
+        app.viewModel.layerSearch();
       }
     }
 
@@ -1720,8 +1722,6 @@ function ExportGeometry() {
     this.dialog = $('#export-geometry');
 }
 ExportGeometry.prototype.showDialog = function(object) {
-    console.log("Object =", object);
-
     // The dialog borrows "sharingLayer" to display the object
     app.viewModel.scenarios.sharingLayer(object);
     this.dialog.modal('show');
@@ -2615,12 +2615,42 @@ function viewModel() {
     self.layerSearch = function() {
         var found = self.layerSearchIndex[self.searchTerm()];
         if (!found) {
-            console.log("Did not find search term", self.searchTerm())
+            console.log("Did not find search term", self.searchTerm());
             return false;
+        }
+        if (!(found.layer instanceof layerModel)) {
+          if (typeof found.layer == "string") {
+            found.layer = parseInt(found.layer);
+          }
+          if (Number.isInteger(found.layer)) {
+            if (app.viewModel.layerIndex[found.layer.toString()] instanceof layerModel) {
+              found.layer = app.viewModel.layerIndex[found.layer.toString()];
+            } else {
+              app.viewModel.getOrCreateLayer({id: found.layer}, null, 'layerSearch', null);
+              return false;
+            }
+          } else if (found.layer.hasOwnProperty('id') || Object.keys(found.layer).indexOf('id') >= 0) {
+            app.viewModel.getOrCreateLayer({id: found.layer.id}, null, 'layerSearch', null);
+            return false;
+          } else {
+            console.log("Did not find search term", self.searchTerm());
+            return false;
+          }
+        }
+        if (!found.layer.fullyLoaded) {
+          found.layer.getFullLayerRecord('layerSearch', null);
+          return false;
         }
         //self.activeTheme(theme);
         if (!(found.theme instanceof themeModel)) {
-          found.theme = app.viewModel.getThemeById(found.theme.id);
+          if (Number.isInteger(found.theme)) {
+            found.theme = app.viewModel.getThemeById(found.theme);
+          } else if (found.theme.hasOwnProperty('id')) {
+            found.theme = app.viewModel.getThemeById(found.theme.id);
+          } else {
+            console.log("Did not find theme for layer indicated.");
+            return false;
+          }
         }
         if (self.openThemes.indexOf(found.theme) === -1) {
           // self.openThemes.push(found.theme);
