@@ -2384,7 +2384,7 @@ function viewModel() {
             self.openThemes.push(found.theme);
         }
         found.layer.activateLayer();
-        self.searchTerm($('.typeahead .active').text());
+        self.searchTerm($('#data-search-input').text());
     };
     self.keySearch = function(_, event) {
         // Capture user input before it gets wiped
@@ -2395,7 +2395,7 @@ function viewModel() {
             self.layerSearch();
         }
         $('ul.typeahead').on('click', 'li', function () {
-            self.searchTerm($('.typeahead .active').text());
+            self.searchTerm($(this).text());
             self.layerSearch();
             //search($(this).text());
         });
