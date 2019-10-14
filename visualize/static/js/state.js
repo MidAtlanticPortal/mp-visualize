@@ -21,7 +21,7 @@ app.getState = function () {
   }
   var layers = $.map(app.viewModel.activeLayers(), function(layer) {
     //return {id: layer.id, opacity: layer.opacity(), isVisible: layer.visible()};
-    if (!layer.is_multilayer()){
+    if (!layer.hasOwnProperty('is_multilayer') || !layer.is_multilayer()){
       return [ layer.id, layer.opacity(), layer.visible() ];
     } else {
       return null;
@@ -178,7 +178,13 @@ app.loadCompressedState = function(state) {
        }
        if ( unloadedDesigns.length ) {
             app.viewModel.unloadedDesigns = unloadedDesigns;
-            $('#designsTab').tab('show'); //to activate the loading of designs
+            try {
+              $('#designsTab').tab('show'); //to activate the loading of designs
+            } catch {
+              setTimeout(function(){
+                $('#designsTab').tab('show');
+              }, 700)
+            }
        }
     }
 
