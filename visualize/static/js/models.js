@@ -628,7 +628,7 @@ function layerModel(options, parent) {
         var layer = this;
 
         if (layer instanceof layerModel) {
-          if (layer.fullyLoaded) {
+          if (layer.fullyLoaded || layer.isMDAT || layer.isVTR) {
 
             // if legend is not provided, try using legend from web services
             if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
@@ -1250,31 +1250,37 @@ function layerModel(options, parent) {
 
     self.getFullLayerRecord = function(callbackType, evt) {
       var layer = this;
-      $.ajax({
-        url: '/data_manager/get_layer_details/' + layer.id,
-        success: function(data) {
-          var parent = null;
-          if (data.parent){
-            parent = app.viewModel.getOrCreateLayer(data.parent, null, 'return', null);
+      if (layer.isMDAT || layer.isVTR) {
+        layer.fullyLoaded = true;
+        layer.performAction(callbackType, evt);
+      } else {
+
+        $.ajax({
+          url: '/data_manager/get_layer_details/' + layer.id,
+          success: function(data) {
+            var parent = null;
+            if (data.parent){
+              parent = app.viewModel.getOrCreateLayer(data.parent, null, 'return', null);
+            }
+            // don't override good data with defaults (info from hash such as opacity and visible):
+            if (layer.hasOwnProperty('opacity') && layer.opacity()) {
+              data.opacity = layer.opacity();
+            }
+
+            layer.setOptions(data, parent);
+            layer.fullyLoaded = true;
+            app.viewModel.layerIndex[layer.id.toString()] = layer;
+            layer.performAction(callbackType, evt);
+
+          },
+          error: function(data) {
+            console.log('Failed to pull full layer record for ' + layer.name);
           }
-          // don't override good data with defaults (info from hash such as opacity and visible):
-          if (layer.hasOwnProperty('opacity') && layer.opacity()) {
-            data.opacity = layer.opacity();
-          }
 
-          layer.setOptions(data, parent);
-          layer.fullyLoaded = true;
-          app.viewModel.layerIndex[layer.id.toString()] = layer;
-          layer.performAction(callbackType, evt);
+        });
+      }
 
-        },
-        error: function(data) {
-          console.log('Failed to pull full layer record for ' + layer.name);
-        }
-
-      })
-
-    }
+    };
 
     // bound to click handler for layer switching
     self.toggleActive = function(self, event) {

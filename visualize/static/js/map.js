@@ -341,7 +341,7 @@ app.addLayerToMap = function(layer) {
     }
   } else {
     if (layer instanceof layerModel) {
-      app.viewModel.getFullLayerRecord('addLayerToMap', null);
+      layer.getFullLayerRecord('addLayerToMap', null);
     } else {
       app.viewModel.getOrCreateLayer(layer, null, 'addLayerToMap', null);
     }
