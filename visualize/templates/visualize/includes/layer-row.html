@@ -100,8 +100,8 @@
     </div>
     <div class="layer-text">
         <span data-bind="truncatedText: description, maxTextLength: 200"></span>
-        <!-- ko if: $data.hasOwnProperty('data_url') && $data.data_url() -->
-        <a data-bind="attr: {href: $data.data_url()}" target="_blank">read more</a>.
+        <!-- ko if: $data.hasOwnProperty('data_url') && $data.data_url -->
+        <a data-bind="attr: {href: $data.data_url}" target="_blank">read more</a>.
         <!-- /ko -->
     </div>
 </div>
