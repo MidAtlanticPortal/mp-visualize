@@ -358,10 +358,22 @@ app.loadState = function(state) {
     app.establishLayerLoadState();
 
     if (state.activeTab && state.activeTab.tab === 'active') {
-        $('#activeTab').tab('show');
+        try {
+          $('#activeTab').tab('show');
+        } catch {
+          setTimeout(function(){
+            $('#activeTab').tab('show');
+          }, 7000)
+        }
     } else {
         if (state.activeTab || state.openThemes) {
-            $('#dataTab').tab('show');
+            try {
+              $('#dataTab').tab('show');
+            } catch {
+              setTimeout(function(){
+                $('#dataTab').tab('show');
+              }, 7000)
+            }
             if (state.openThemes) {
                 $.each(app.viewModel.themes(), function (i, theme) {
                     if ( $.inArray(theme.id, state.openThemes.ids) !== -1 || $.inArray(theme.id.toString(), state.openThemes.ids) !== -1 ) {
