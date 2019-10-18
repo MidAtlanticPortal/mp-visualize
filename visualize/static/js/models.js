@@ -1245,6 +1245,10 @@ function layerModel(options, parent) {
         $.ajax({
           url: '/data_manager/get_layer_details/' + layer.id,
           success: function(data) {
+            if (data.hasOwnProperty('name')) {
+              layer.name = data.name;
+              app.viewModel.layerIndex[layer.id.toString()] = layer;
+            }
             var parent = null;
             if (data.parent){
               parent = app.viewModel.getOrCreateLayer(data.parent, null, 'return', null);
@@ -2557,6 +2561,8 @@ function viewModel() {
           // dynamic layers do not come with IDs
           app.viewModel.layerIndex[layer.id.toString()] = layer;
         }
+      } else if (layer.name.toLowerCase() == "loading..." && layer_obj.hasOwnProperty('name')) {
+        layer.name = layer_obj.name;
       }
       if (action == 'return'){
         return layer;
