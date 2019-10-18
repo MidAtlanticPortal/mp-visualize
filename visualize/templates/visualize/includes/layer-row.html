@@ -12,14 +12,14 @@
             </a>
         <!-- /ko -->
         </td>
-        <!-- ko if: $data.hasOwnProperty('is_multilayer_parent') && $data.is_multilayer_parent -->
-        <td class="slider-button" data-bind="visible: (active() && app.viewModel.showSliderButtons() && $data.hasOwnProperty('is_multilayer_parent') && $data.is_multilayer_parent)">
+
+        <td class="slider-button" data-bind="visible: (active() && app.viewModel.showSliderButtons() && $data.hasOwnProperty('is_multilayer_parent') && $data.is_multilayer_parent())">
           <a class="btn btn-primary btn-planner btn-slider" data-bind="click: showSlider" data-toggle="tooltip" data-placement="right" data-title="Toggle slider in Active tab">
             View Slider&nbsp;
             <i class="fa fa-play" aria-hidden="true"></i>
           </a>
         </td>
-        <!-- /ko -->
+        
         <td class="layer-name">
             <a class="btn btn-layer" data-bind='click: {% block "nameAction" %}toggleActive{% endblock %}'>
               <table>
@@ -108,8 +108,8 @@
 <!-- /ko -->
 
 {% block "after" %}
-<!-- ko if: $data.hasOwnProperty('is_multilayer_parent') && $data.is_multilayer_parent -->
-<div data-bind="foreach: dimensions; visible: $data.is_multilayer_parent">
+<!-- ko if: $data.hasOwnProperty('is_multilayer_parent') && $data.is_multilayer_parent() -->
+<div data-bind="foreach: dimensions; visible: $data.is_multilayer_parent()">
   <table class="slider-table" data-bind="visible: nodes.length>1">
     <tr class="slider-row">
       <!-- ko if: $data.animated -->

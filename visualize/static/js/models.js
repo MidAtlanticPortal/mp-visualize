@@ -145,7 +145,7 @@ function layerModel(options, parent) {
       //has companion layer(s)
       self.hasCompanion = options.has_companion || false;
 
-      self.is_multilayer_parent = options.is_multilayer_parent || false;
+      self.is_multilayer_parent = ko.observable(options.is_multilayer_parent || false);
       self.is_multilayer = ko.observable((options.is_multilayer && !options.is_multilayer_parent) || false);
 
       self.associated_multilayers = options.associated_multilayers || [];
@@ -400,7 +400,7 @@ function layerModel(options, parent) {
             layer.arcIdentifyControl.deactivate();
         }
 
-        if (layer.is_multilayer_parent && layer.dimensions.length > 0){
+        if (layer.is_multilayer_parent() && layer.dimensions.length > 0){
           self.deactivateMultiLayers();
         }
 
@@ -680,7 +680,7 @@ function layerModel(options, parent) {
               }
 
               //activate multilayer groups
-              if (layer.is_multilayer_parent && layer.dimensions.length > 0){
+              if (layer.is_multilayer_parent() && layer.dimensions.length > 0){
                 self.activateMultiLayers();
                 self.buildMultilayerValueLookup();
               }
@@ -746,7 +746,7 @@ function layerModel(options, parent) {
             self.setVisible(layer);
         }
 
-        if (layer.is_multilayer_parent && layer.dimensions.length > 0){
+        if (layer.is_multilayer_parent() && layer.dimensions.length > 0){
           var multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
           for (var i = 0; i < multilayers.length; i++) {
             var mlayer = app.viewModel.getLayerById(multilayers[i]);
@@ -2712,7 +2712,7 @@ function viewModel() {
             }
 
             // multilayer sliders need to be redrawn after dragging to reorder
-            if (layer.is_multilayer_parent) {
+            if (layer.is_multilayer_parent()) {
               multilayer_parents[index.toString()] = layer;
             }
             index--;
@@ -2740,7 +2740,7 @@ function viewModel() {
         app.updateUrl();
 
         $.each(self.activeLayers(), function(i, layer) {
-          if (layer.is_multilayer_parent) {
+          if (layer.is_multilayer_parent()) {
             if ($('#'+ layer.id + '_' + layer.dimensions[0].label + '_multilayerslider').length == 0 || $('#'+ layer.id + '_' + layer.dimensions[0].label + '_multilayerslider').html() == "") {
               try {
                 setTimeout(function() {
