@@ -94,7 +94,7 @@ app.loadCompressedState = function(state) {
             app.viewModel.unloadedDesigns = unloadedDesigns;
             try {
               $('#designsTab').tab('show'); //to activate the loading of designs
-            } catch {
+            } catch(err) {
               setTimeout(function(){
                 $('#designsTab').tab('show');
               }, 700)
