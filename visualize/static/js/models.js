@@ -6,7 +6,6 @@ function layerModel(options, parent) {
     self.fullyLoaded = false;
 
     self.legendVisibility = ko.observable(false);
-
     self.themes = ko.observableArray();
     self.description = ko.observable();
 
@@ -3665,7 +3664,6 @@ function viewModel() {
 
     self.showSliderButtons = ko.observable($.deparam(window.location.hash.slice(1)).tab == "data");
 
-
     /**
       * @function trackMultilayerLoad - keep track of the status of loading multilayer layers (sliders) via ajax
       * @param {string} parentLayer - the multilayer parent layerModel instance
@@ -3704,7 +3702,6 @@ function viewModel() {
         }
       }
     }
-
 
     return self;
 } //end viewModel
