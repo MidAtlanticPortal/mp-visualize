@@ -252,6 +252,8 @@ function layerModel(options, parent) {
 
     // opacity
     self.opacity.subscribe(function(newOpacity) {
+        // RDH 20191105 - this came in as a string - ol6 chokes on string passed to layer.setOpacity
+        newOpacity = parseFloat(newOpacity);
         if (self.layer.CLASS_NAME === "OpenLayers.Layer.Vector") {
             self.layer.styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
             self.layer.styleMap.styles['default'].defaultStyle.graphicOpacity = newOpacity;
@@ -1275,7 +1277,7 @@ function layerModel(options, parent) {
     // display descriptive text below the map
     self.toggleDescription = function(layer) {
         // if no description is provided, try using the web services description
-        if ( (!self.overview || !self.description()) && self.url && (self.arcgislayers !== -1) ) {
+        if ( self.type == "ArcRest" && (!self.overview || !self.description()) && self.url && (self.arcgislayers !== -1) ) {
           try {
             getArcGISJSONDescription(self, window.location.protocol);
           } catch (err) {
