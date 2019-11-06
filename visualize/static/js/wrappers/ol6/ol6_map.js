@@ -391,7 +391,6 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
   * @param {object} layer - the mp layer definition to derive the style from
   */
 app.wrapper.map.createOLStyleMap = function(layer){
-  // var iconSize = ol.size.toSize([8,8]);
   var stroke = new ol.style.Stroke({
     color: layer.outline_color,
     width: layer.outline_opacity,
@@ -403,7 +402,7 @@ app.wrapper.map.createOLStyleMap = function(layer){
   if (layer.graphic && layer.graphic.length > 0) {
     var image = new ol.style.Icon({
       src: layer.graphic,
-      size: iconSize,
+      size: ol.size.toSize([8,8])
     });
   } else {
     var image = new ol.style.Circle({
@@ -474,8 +473,145 @@ app.wrapper.map.createOLStyleMap = function(layer){
   */
 app.wrapper.map.addVectorLayerToMap = function(layer) {
   var styles = app.wrapper.map.createOLStyleMap(layer);
+  var lookupField = layer.lookupField;
+  var lookupDetails = layer.lookupDetails;
+  var default_opacity = layer.opacity;
+  var point_radius = layer.point_radius;
+  var default_width = layer.outline_opacity; //RDH 20191105 - we're hijacking this to serve as stroke width
+  var default_color = layer.color;
+  var default_stroke_color = layer.outline_color;
+
   var styleFunction = function(feature) {
-    return styles[feature.getGeometry().getType()];
+    var featureStyle = styles[feature.getGeometry().getType()];
+    var new_style = false;
+    var default_fill = featureStyle.getFill();
+    if (!default_fill) {
+      default_fill = { color: default_color, opacity: default_opacity};
+    }
+    var default_stroke = featureStyle.getStroke();
+    if (!default_stroke) {
+      default_stroke = { color: default_stroke_color, width: default_width};
+    }
+    var default_text = featureStyle.getText();
+    for (var i = 0; i < lookupDetails.length; i++) {
+      var detail = lookupDetails[i];
+      if (detail.value.toString() == feature.getProperties()[lookupField].toString()) {
+        if (detail.fill) {
+          var fill_color = detail.color;
+          var fill_opacity = default_opacity;
+          var stroke_color = default_stroke.color;
+          var stroke_width = default_stroke.width;
+        } else {
+          var fill_color = default_color; // null?
+          var fill_opacity = default_opacity; // 0?
+          var stroke_color = detail.color;
+          var stroke_width = default_stroke.width;
+        }
+        switch(detail.dashstyle) {
+          case 'dot':
+            var stroke_dash = [1,6];
+            break;
+          case 'dash':
+            var stroke_dash = [6,6];
+            break;
+          case 'dashdot':
+            var stroke_dash = [6,6,2,6];
+            break;
+          case 'longdash':
+            var stroke_dash = [12,6];
+            break;
+          case 'longdashdot':
+            var stroke_dash = [12,6,2,6];
+            break;
+          case 'solid':
+            var stroke_dash = null;
+            break;
+          default:
+            var stroke_dash = null;
+        }
+
+        var new_fill = new ol.style.Fill({
+          color: null,
+          opacity: fill_opacity
+        });
+        var new_stroke = new ol.style.Stroke({
+          color: stroke_color,
+          width: stroke_width,
+          lineDash: stroke_dash
+        });
+        if (detail.graphic && detail.graphic.length > 0) {
+          var new_image = new ol.style.Icon({
+            src: detail.graphic,
+            size: ol.size.toSize(point_radius)
+          });
+        } else {
+          var new_image = new ol.style.Circle({
+            radius: point_radius,
+            fill: new_fill,
+            stroke: new_stroke,
+          });
+        }
+
+        switch(feature.getGeometry().getType()) {
+          case 'Point':
+            var new_style = new ol.style.Style({
+              image: new_image
+            });
+            break;
+          case 'LineString':
+            var new_style = new ol.style.Style({
+              stroke: new_stroke
+            });
+            break;
+          case 'MultiLineString':
+            var new_style = new ol.style.Style({
+              stroke: new_stroke
+            });
+            break;
+          case 'MultiPoint':
+            var new_style = new ol.style.Style({
+              image: new_image
+            });
+            break;
+          case 'MultiPolygon':
+            var new_style = new ol.style.Style({
+              stroke: new_stroke,
+              fill: new_fill
+            });
+            break;
+          case 'Polygon':
+            var new_style = new ol.style.Style({
+              stroke: new_stroke,
+              fill: new_fill
+            });
+            break;
+          case 'GeometryCollection':
+            var new_style = new ol.style.Style({
+              stroke: new_stroke,
+              fill: new_fill,
+              image: new_image
+            });
+          case 'Circle':
+            var new_style = new ol.style.Style({
+              stroke: new_stroke,
+              fill: new_fill
+            });
+            break;
+          default:
+            var new_style = new ol.style.Style({
+              stroke: new_stroke,
+              fill: new_fill,
+              image: new_image
+            });
+        }
+        break;
+      }
+    }
+    if (new_style) {
+      return new_style;
+    } else {
+      return featureStyle;
+    }
   };
   layer.layer = new ol.layer.Vector({
         source: new ol.source.Vector({

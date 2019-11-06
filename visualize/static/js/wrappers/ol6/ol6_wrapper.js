@@ -114,7 +114,7 @@ ol.Feature.prototype.getLayer = function(map) {
         }
     };
     //loop through map layers
-    map.getLayers().forEach(function(layer){
+    app.map.getLayers().forEach(function(layer){
         if (layer instanceof ol.layer.Group) {
             layer.getLayers().forEach(check);
         } else {
