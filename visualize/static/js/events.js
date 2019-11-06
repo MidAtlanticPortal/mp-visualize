@@ -17,7 +17,7 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
     // buffer click by two pixels each direction and use that for selection envelope
     var geometry_raw = {
       UL: app.map.getCoordinateFromPixel([evt.pixel[0]-2, evt.pixel[1]-2]),
-      LR: app.map.getCoordinateFromPixel([evt.pixel[0]-2, evt.pixel[1]-2])
+      LR: app.map.getCoordinateFromPixel([evt.pixel[0]+2, evt.pixel[1]+2])
     }
     var geometry = [geometry_raw.UL, geometry_raw.LR].join(',');
     qs.push('geometry=' + geometry);
