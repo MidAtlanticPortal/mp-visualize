@@ -243,7 +243,7 @@ app.wrapper.events.clickOnWMSLayerEvent = function(layer, evt){
     var view = app.map.getView();
     var viewResolution = view.getResolution();
     var viewProjection = view.projection_.code_;
-    var getFeatureInfoUrl = wmsSource.getGetFeatureInfoUrl( evt.coordinate,
+    var getFeatureInfoUrl = wmsSource.getFeatureInfoUrl( evt.coordinate,
       viewResolution, viewProjection,
       {
         'INFO_FORMAT': mp_layer.wms_info_format,
