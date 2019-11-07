@@ -46,8 +46,10 @@ function layerModel(options, parent) {
     }
     self.opacity = ko.observable(self.defaultOpacity);
     self.outline_opacity = options.outline_opacity || self.defaultOpacity;
+    self.outline_width = options.outline_width || 1;
     self.point_radius = options.point_radius || 2;
     self.graphic = options.graphic || null;
+    self.graphic_scale = options.graphic_scale || null;
     self.annotated = options.annotated || false;
 
     self.isDisabled = ko.observable(false);

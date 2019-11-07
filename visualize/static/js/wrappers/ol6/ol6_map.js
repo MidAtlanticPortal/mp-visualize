@@ -393,7 +393,7 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
 app.wrapper.map.createOLStyleMap = function(layer){
   var stroke = new ol.style.Stroke({
     color: layer.outline_color,
-    width: layer.outline_opacity,
+    width: layer.outline_width
   });
   var fill = new ol.style.Fill({
     color: layer.color,
@@ -402,7 +402,10 @@ app.wrapper.map.createOLStyleMap = function(layer){
   if (layer.graphic && layer.graphic.length > 0) {
     var image = new ol.style.Icon({
       src: layer.graphic,
-      size: ol.size.toSize([8,8])
+      anchor: [0.5, 0.5],
+      scale: layer.graphic_scale,
+      anchorXUnits: 'fraction',
+      anchorYUnits: 'fraction',
     });
   } else {
     var image = new ol.style.Circle({
@@ -477,12 +480,13 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
   var lookupDetails = layer.lookupDetails;
   var default_opacity = layer.opacity;
   var point_radius = layer.point_radius;
-  var default_width = layer.outline_opacity; //RDH 20191105 - we're hijacking this to serve as stroke width
+  var default_width = layer.outline_width;
   var default_color = layer.color;
   var default_stroke_color = layer.outline_color;
 
   var styleFunction = function(feature) {
     var featureStyle = styles[feature.getGeometry().getType()];
+
     var new_style = false;
     var default_fill = featureStyle.getFill();
     if (!default_fill) {
@@ -541,7 +545,10 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
         if (detail.graphic && detail.graphic.length > 0) {
           var new_image = new ol.style.Icon({
             src: detail.graphic,
-            size: ol.size.toSize(point_radius)
+            anchor: [0.5, 0.5],
+            scale: detail.graphic_scale,
+            anchorXUnits: 'fraction',
+            anchorYUnits: 'fraction',
           });
         } else {
           var new_image = new ol.style.Circle({
