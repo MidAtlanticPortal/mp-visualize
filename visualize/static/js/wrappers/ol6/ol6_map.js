@@ -501,9 +501,12 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
           var fill_opacity = default_opacity;
           var stroke_color = default_stroke.color;
           var stroke_width = default_stroke.width;
+          var new_fill = new ol.style.Fill({
+            color: fill_color,
+            opacity: fill_opacity
+          });
         } else {
-          var fill_color = default_color; // null?
-          var fill_opacity = default_opacity; // 0?
+          var new_fill = null;
           var stroke_color = detail.color;
           var stroke_width = default_stroke.width;
         }
@@ -530,10 +533,6 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
             var stroke_dash = null;
         }
 
-        var new_fill = new ol.style.Fill({
-          color: null,
-          opacity: fill_opacity
-        });
         var new_stroke = new ol.style.Stroke({
           color: stroke_color,
           width: stroke_width,
@@ -607,6 +606,7 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
         break;
       }
     }
+
     if (new_style) {
       return new_style;
     } else {
