@@ -356,9 +356,11 @@ app.wrapper.map.getLayerParameter = function(layer, param){
   */
 app.wrapper.map.formatOL5URLTemplate = function(layerUrl){
   // clean ol2 assumptions in URL formatting:
-  layerUrl = layerUrl.split('${x}').join('{x}');
-  layerUrl = layerUrl.split('${y}').join('{y}');
-  layerUrl = layerUrl.split('${z}').join('{z}');
+  if (layerUrl && layerUrl != '') {
+    layerUrl = layerUrl.split('${x}').join('{x}');
+    layerUrl = layerUrl.split('${y}').join('{y}');
+    layerUrl = layerUrl.split('${z}').join('{z}');
+  }
   return layerUrl;
 }
 
@@ -503,15 +505,21 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
         if (detail.fill) {
           var fill_color = detail.color;
           var fill_opacity = default_opacity;
-          var stroke_color = default_stroke.color;
-          var stroke_width = default_stroke.width;
           var new_fill = new ol.style.Fill({
             color: fill_color,
             opacity: fill_opacity
           });
         } else {
           var new_fill = null;
-          var stroke_color = detail.color;
+        }
+        if (detail.hasOwnProperty('stroke_color') && detail.stroke_color && detail.stroke_color != '') {
+          var stroke_color = detail.stroke_color;
+        } else {
+          var stroke_color = default_stroke.color;
+        }
+        if (detail.hasOwnProperty('stroke_width') && typeof(detail.stroke_width) == "number" && detail.stroke_width >= 0) {
+          var stroke_width = detail.stroke_width;
+        } else {
           var stroke_width = default_stroke.width;
         }
         switch(detail.dashstyle) {
