@@ -377,6 +377,10 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
     projection: 'ESPG:3857',
     url: layer.url,
     crossOrigin: 'anonymous',
+    tilePixelRatio: 1,
+    tileGrid: new ol.tilegrid.createXYZ({
+      tileSize: [2500, 2500]      // RDH 20191118 - "singleTile" replacement hack.
+    }),
 
   })
   layer.layer = new ol.layer.Tile({
