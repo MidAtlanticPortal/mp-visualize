@@ -52,4 +52,5 @@ body.template-visualize .btn-link.modal-help-toggle {
 
 #feedback-modal .modal-body {
   max-height: unset;
+  padding: 0;
 }
