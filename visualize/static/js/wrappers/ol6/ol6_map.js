@@ -379,7 +379,7 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
     crossOrigin: 'anonymous',
     tilePixelRatio: 1,
     tileGrid: new ol.tilegrid.createXYZ({
-      tileSize: [2500, 2500]      // RDH 20191118 - "singleTile" replacement hack.
+      tileSize: [1024, 1024]      // RDH 20191118 - "singleTile" replacement hack.
     }),
 
   })
