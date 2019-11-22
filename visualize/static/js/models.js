@@ -1292,6 +1292,24 @@ function layerModel(options, parent) {
         var activeParentLayer = app.viewModel.activeParentLayer();
         var layer = this;
 
+        //handle possible dropdown/sublayer behavior
+        if (layer.subLayers.length) {
+            app.viewModel.activeParentLayer(layer);
+            if ( app.embeddedMap ) { // if data viewer is mobile app
+                $('.carousel').carousel('prev');
+                $('#mobile-data-right-button').show();
+                $('#mobile-map-right-button').hide();
+            }
+            if (!layer.showSublayers()) {
+                //show drop-down menu
+                layer.showSublayers(true);
+            } else {
+                //hide drop-down menu
+                layer.showSublayers(false);
+            }
+            return;
+        }
+
         if (!layer.fullyLoaded) {
           layer.getFullLayerRecord('toggleActive', event);
         } else {
@@ -1322,23 +1340,7 @@ function layerModel(options, parent) {
           // save a ref to the active layer for editing,etc
           app.viewModel.activeLayer(layer);
 
-          //handle possible dropdown/sublayer behavior
-          if (layer.subLayers.length) {
-              app.viewModel.activeParentLayer(layer);
-              if ( app.embeddedMap ) { // if data viewer is mobile app
-                  $('.carousel').carousel('prev');
-                  $('#mobile-data-right-button').show();
-                  $('#mobile-map-right-button').hide();
-              }
-              if (!layer.showSublayers()) {
-                  //show drop-down menu
-                  layer.showSublayers(true);
-              } else {
-                  //hide drop-down menu
-                  layer.showSublayers(false);
-              }
-              return;
-          }
+
 
           // start saving restore state again and remove restore state message from map view
           app.saveStateMode = true;
