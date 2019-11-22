@@ -695,6 +695,7 @@ function layerModel(options, parent) {
             }
           } else {
             layer.getFullLayerRecord('activateLayer', is_companion);
+            layer.visible(true);
           }
         } else {
           app.viewModel.getOrCreateLayer(layer, null, 'activateLayer', is_companion);
@@ -1224,7 +1225,7 @@ function layerModel(options, parent) {
       if (callbackType == 'toggleDescription') {
         layer.toggleDescription(layer);
       } else if (callbackType == 'toggleActive') {
-        layer.toggleActive(layer, evt);
+        layer.finishToggleActive(layer, evt);
       } else if (callbackType == 'ajaxVTR') {
         layer.ajaxVTR(layer, evt);
       } else if (callbackType == 'ajaxMDAT') {
@@ -1288,8 +1289,6 @@ function layerModel(options, parent) {
 
     // bound to click handler for layer switching
     self.toggleActive = function(self, event) {
-        var activeLayer = app.viewModel.activeLayer();
-        var activeParentLayer = app.viewModel.activeParentLayer();
         var layer = this;
 
         //handle possible dropdown/sublayer behavior
@@ -1310,64 +1309,79 @@ function layerModel(options, parent) {
             return;
         }
 
+        if (layer.active()) { // if layer is active
+            layer.deactivateLayer();
+        } else { // otherwise layer is not currently active
+            layer.activateLayer();
+        }
+
         if (!layer.fullyLoaded) {
           layer.getFullLayerRecord('toggleActive', event);
         } else {
-
-          layer.is_multilayer(false);
-
-          //are the active and current layers the same
-          if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
-              // are these CAS/VTR layers?
-              if (activeLayer.dateRangeDirectory && typeof activeLayer.parentDirectory == 'Function') {
-                  activeLayer.parentDirectory.showSublayers(false);
-              }
-              //is sublayer already active
-              else if (activeLayer && typeof activeLayer.showSublayers == 'Function' ) {
-                  if (activeLayer && activeLayer.showSublayers()) {
-                      //if radio sublayer
-                      if (!activeLayer.isCheckBoxLayer()) {
-                          activeLayer.showSublayers(false);
-                      }
-                  }
-              //check if a parent layer is active
-              //checkbox sublayer has been clicked prior to opening another sublayer
-              } else if (activeParentLayer && layer.parent !== activeParentLayer) {
-                  app.viewModel.activeParentLayer().showSublayers(false);
-              }
-          }
-
-          // save a ref to the active layer for editing,etc
-          app.viewModel.activeLayer(layer);
-
-
-
-          // start saving restore state again and remove restore state message from map view
-          app.saveStateMode = true;
-          app.viewModel.error(null);
-          //app.viewModel.unloadedDesigns = [];
-
-          if (layer.active()) { // if layer is active
-              layer.deactivateLayer();
-          } else { // otherwise layer is not currently active
-              layer.activateLayer();
-          }
-
-          //check if mdat/marine-life-library still has activeLayers
-          if (layer.isMDAT) {
-              var parentDirArray = [];
-
-              if (app.viewModel.activeLayers().length > 0) {
-                 parentDirArray = $.grep(app.viewModel.activeLayers(), function(lyr) {
-                     return layer.parentMDATDirectory === lyr.parentMDATDirectory;
-                 });
-              }
-
-              if (parentDirArray.length == 0) {
-                  layer.parentMDATDirectory.visible(false);
-              }
-          }
+          self.finishToggleActive(self, event);
         }
+
+        // save a ref to the active layer for editing,etc
+        app.viewModel.activeLayer(layer);
+
+        // start saving restore state again and remove restore state message from map view
+        app.saveStateMode = true;
+        app.viewModel.error(null);
+
+    };
+
+    self.finishToggleActive = function(self, event) {
+      var activeLayer = app.viewModel.activeLayer();
+      var activeParentLayer = app.viewModel.activeParentLayer();
+      var layer = this;
+
+      layer.is_multilayer(false);
+
+      //are the active and current layers the same
+      if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
+          // are these CAS/VTR layers?
+          if (activeLayer.dateRangeDirectory && typeof activeLayer.parentDirectory == 'Function') {
+              activeLayer.parentDirectory.showSublayers(false);
+          }
+          //is sublayer already active
+          else if (activeLayer && typeof activeLayer.showSublayers == 'Function' ) {
+              if (activeLayer && activeLayer.showSublayers()) {
+                  //if radio sublayer
+                  if (!activeLayer.isCheckBoxLayer()) {
+                      activeLayer.showSublayers(false);
+                  }
+              }
+          //check if a parent layer is active
+          //checkbox sublayer has been clicked prior to opening another sublayer
+          } else if (activeParentLayer && layer.parent !== activeParentLayer) {
+              app.viewModel.activeParentLayer().showSublayers(false);
+          }
+      }
+
+      // save a ref to the active layer for editing,etc
+      app.viewModel.activeLayer(layer);
+
+      // start saving restore state again and remove restore state message from map view
+      app.saveStateMode = true;
+      app.viewModel.error(null);
+      //app.viewModel.unloadedDesigns = [];
+
+
+
+      //check if mdat/marine-life-library still has activeLayers
+      if (layer.isMDAT) {
+          var parentDirArray = [];
+
+          if (app.viewModel.activeLayers().length > 0) {
+             parentDirArray = $.grep(app.viewModel.activeLayers(), function(lyr) {
+                 return layer.parentMDATDirectory === lyr.parentMDATDirectory;
+             });
+          }
+
+          if (parentDirArray.length == 0) {
+              layer.parentMDATDirectory.visible(false);
+          }
+      }
     };
 
     self.raiseLayer = function(layer, event) {
