@@ -1532,9 +1532,6 @@ function themeModel(options) {
             layer_objects.push(new_layer)
           }
           theme.layers(layer_objects);
-          if (setOpenTheme){
-            theme.setOpenTheme();
-          }
         },
         error: function(data) {
           console.log('error getting layers for Theme "' + theme.name + '".');
@@ -1546,19 +1543,18 @@ function themeModel(options) {
     self.setOpenTheme = function() {
         var theme = this;
 
+        if (self.isOpenTheme(theme)) {
+          app.viewModel.openThemes.remove(theme);
+        } else {
+          app.viewModel.openThemes.push(theme);
+          self.trackTheme(theme.name);
+        }
+
         // ensure data tab is activated
           //RDH 2019-10-11: Why?
         // $('#dataTab').tab('show');
         if (theme.layers().length == 1 && theme.layers()[0].id == null || theme.layers().length == 0) {
           theme.getLayers(true);
-        } else {
-          if (self.isOpenTheme(theme)) {
-            //app.viewModel.activeTheme(null);
-            app.viewModel.openThemes.remove(theme);
-          } else {
-            app.viewModel.openThemes.push(theme);
-            self.trackTheme(theme.name);
-          }
         }
 
     };
