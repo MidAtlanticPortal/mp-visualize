@@ -24,6 +24,12 @@ for (var i = 0; i < app.wrapper.baseLayers.length; i++) {
   app.wrapper.layers[baseLayer.name].set('type', 'base');
   app.wrapper.layers[baseLayer.name].set('textColor', baseLayer.textColor);
   app.wrapper.layers[baseLayer.name].setVisible(false);
+  if (baseLayer.maxZoom) {
+    app.wrapper.layers[baseLayer.name].set('maxZoom', baseLayer.maxZoom);
+  }
+  if (baseLayer.minZoom) {
+    app.wrapper.layers[baseLayer.name].set('minZoom', baseLayer.minZoom);
+  }
 }
 
 var baseLayers = [];
@@ -32,6 +38,18 @@ for (var i = 0; i < keys.length; i++) {
   baseLayers.push(app.wrapper.layers[keys[i]]);
 }
 
+app.wrapper.map.defaultBaseLayer = new ol.layer.Tile({
+  source: new ol.source.XYZ({
+    attributions: 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
+              'rest/services/World_Topo_Map/MapServer">ArcGIS</a>',
+    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
+              'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
+    maxZoom: 19
+  }),
+  useInterimTilesOnError: false,
+  zIndex: 0
+});
+
 app.wrapper.map.baseLayersGroup = new ol.layer.Group({
   layers: baseLayers
-})
+});

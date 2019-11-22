@@ -73,7 +73,7 @@ app.wrapper.map.getOverlays = function() {
   * @param {string} layerName - the name of all layers to be returned
   */
 app.wrapper.map.getLayersByName = function(layerName) {
-  var layers = app.map.getLayers().getArray()[0].getLayers().getArray();
+  var layers = app.map.getLayers().getArray()[app.wrapper.map.baselayersIndex].getLayers().getArray();
   var return_layers = []
   for (var i=0; i < layers.length; i++) {
     if (layers[i].get('name') == layerName) {
@@ -166,7 +166,7 @@ app.wrapper.map.getBasemap = function() {
   * @param {object} layer - the name of the layer to set as the live basemap
   */
 app.wrapper.map.setBasemap = function(layer) {
-  var basemapGroup = app.map.getLayers().getArray()[0];
+  var basemapGroup = app.map.getLayers().getArray()[app.wrapper.map.baselayersIndex];
   var basemaps = basemapGroup.getLayers().getArray();
   var current_basemap = app.wrapper.map.getBasemap().layer;
   // determine if layer is layer object or name

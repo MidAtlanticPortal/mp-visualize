@@ -37,6 +37,7 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
       mousePositionControl
     ]),
     layers: [
+      app.wrapper.map.defaultBaseLayer,
       app.wrapper.map.baseLayersGroup
     ],
     target: target,
@@ -45,7 +46,7 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
       zoom: zoom
     })
   });
-  app.wrapper.layers[base].setVisible(true);
+  app.wrapper.map.baselayersIndex = 1;
 
   var layerClickCallback = function(layer, pixelColor) {
     if (layer.get('utfgrid')) {
