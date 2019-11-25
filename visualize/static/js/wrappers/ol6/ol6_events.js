@@ -274,4 +274,57 @@ app.wrapper.events.reportGMLAttributes = function(mp_layer, data) {
     var responses = [];
   }
   return reported;
+};
+
+/**
+  * layerLoadStart - 'layer loading' event to be added to layerModels
+  * @param {object} layerModel - the layerModel to add layer loading logic to
+  */
+app.wrapper.events.layerLoadStart = function(layerModel) {
+  layerModel.loadStatus('loading');
+  if (layerModel.hasOwnProperty('parent') && layerModel.parent) {
+    layerModel.parent.loadStatus('loading');
+  }
+}
+
+/**
+  * addLayerLoadStart - apply 'layer loading' event to layerModel
+  * @param {object} layerModel - the layerModel to add layer loading logic to
+  */
+app.wrapper.events.addLayerLoadStart = function(layerModel) {
+  layerModel.layer.getSource().on('tileloadstart', app.wrapper.events.layerLoadStart(layerModel));
+  layerModel.layer.on('prerender', app.wrapper.events.layerLoadStart(layerModel));
+}
+
+/**
+  * layerLoadEnd - the 'layer loaded' event to be added to layerModels
+  * @param {object} layerModel - the layerModel to add layer loaded logic to
+  */
+app.wrapper.events.layerLoadEnd = function(layerModel) {
+  layerModel.loadStatus(false);
+  if (layerModel.hasOwnProperty('parent') && layerModel.parent) {
+    layerModel.parent.loadStatus(false);
+  }
+}
+
+/**
+  * addLayerLoadEnd - apply 'layer loaded' event to layerModel
+  * @param {object} layerModel - the layerModel to add layer loaded logic to
+  */
+app.wrapper.events.addLayerLoadEnd = function(layerModel) {
+  layerModel.layer.getSource().on('tileloadend', app.wrapper.events.layerLoadEnd(layerModel));
+  layerModel.layer.on('postrender', app.wrapper.events.layerLoadEnd(layerModel));
+}
+
+/**
+  * addLayerLoadError - apply 'layer loading error' event to layerModel
+  * @param {object} layerModel - the layerModel to add layer loading error logic to
+  */
+app.wrapper.events.addLayerLoadError = function(layerModel) {
+  layerModel.layer.getSource().on('tileloaderror', function() {
+    layerModel.loadStatus('error');
+    if (layerModel.hasOwnProperty('parent') && layerModel.parent) {
+      layerModel.parent.loadStatus('error');
+    }
+  });
 }

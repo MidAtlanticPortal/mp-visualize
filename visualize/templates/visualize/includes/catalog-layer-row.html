@@ -5,7 +5,11 @@
         <li data-bind="foreach: subLayers">
       <!-- ko if: !isCheckBoxLayer() -->
               <a data-bind="click: toggleActive">
-                  <span><i class="far green" data-bind="css: { 'fa-check-circle': visible(), 'fa-circle': ! visible() }"></i></span>
+                  <span>
+                    <i class="far green" data-bind="visible: !loadStatus(), css: { 'fa-check-circle': visible(), 'fa-circle': ! visible() }"></i>
+                    <i class="fas fa-spinner fa-spin"  data-bind="visible: $data.loadStatus()=='loading'"></i>
+                    <i style="color:red" title="error loading layer" class="fas fa-times-circle"  data-bind="visible: $data.loadStatus()=='error'"></i>
+                  </span>
                   <span class="deep-blue uppercase" data-bind="text: name"></span>
               </a>
       <!-- /ko -->

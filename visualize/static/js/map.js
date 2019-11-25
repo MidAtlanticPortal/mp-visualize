@@ -336,6 +336,17 @@ app.addLayerToMap = function(layer) {
         app.addXyzLayerToMap(layer);
       }
     }
+    if (app.wrapper.events.hasOwnProperty('addLayerLoadStart')) {
+      app.wrapper.events.addLayerLoadStart(layer);
+    }
+
+    if (app.wrapper.events.hasOwnProperty('addLayerLoadEnd')) {
+      app.wrapper.events.addLayerLoadEnd(layer);
+    }
+
+    if (app.wrapper.events.hasOwnProperty('addLayerLoadError')) {
+      app.wrapper.events.addLayerLoadError(layer);
+    }
     if (app.wrapper.map.hasOwnProperty('postProcessLayer')) {
       app.wrapper.map.postProcessLayer(layer);
     }

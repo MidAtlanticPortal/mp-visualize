@@ -338,7 +338,12 @@ app.wrapper.map.postProcessLayer = function(layer){
   } else {
     layer.layer.setOpacity(layer.opacity);
   }
-  app.map.addLayer(layer.layer);
+  try {
+    app.map.addLayer(layer.layer);
+  } catch(err) {
+    console.log(err);
+    layer.loadStatus('error');
+  }
 }
 
 /**
@@ -365,7 +370,7 @@ app.wrapper.map.formatOL5URLTemplate = function(layerUrl){
 }
 
 /**
-  * addArcRestLayerToMap - add an arcRest layer to the (ol5) map
+  * addArcRestLayerToMap - add an arcRest layer to the (ol6) map
   * @param {object} layer - the mp layer definition to add to the map
   */
 app.wrapper.map.addArcRestLayerToMap = function(layer) {
