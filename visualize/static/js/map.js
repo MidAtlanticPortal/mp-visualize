@@ -604,6 +604,8 @@ app.init = function () {
     });
 };
 
+
+
 app.addLayerToMap = function(layer) {
   if (layer instanceof layerModel && layer.fullyLoaded) {
     if (!layer.layer) {
@@ -619,6 +621,21 @@ app.addLayerToMap = function(layer) {
         app.addXyzLayerToMap(layer);
       }
     }
+
+    layer.layer.events.register('loadstart', layer, function() {
+      layer.loadStatus('loading');
+      if (layer.hasOwnProperty('parent') && layer.parent) {
+        layer.parent.loadStatus('loading');
+      }
+    });
+
+    layer.layer.events.register('loadend', layer, function() {
+      layer.loadStatus(false);
+      if (layer.hasOwnProperty('parent') && layer.parent) {
+        layer.parent.loadStatus(false);
+      }
+    });
+
     app.map.addLayer(layer.layer);
     layer.layer.opacity = layer.opacity();
     layer.layer.setVisibility(true);

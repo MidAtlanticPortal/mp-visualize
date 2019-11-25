@@ -12,6 +12,8 @@ function layerModel(options, parent) {
     self.isDisabled = ko.observable(false);
     self.disabledMessage = ko.observable(false);
 
+    self.loadStatus = ko.observable(false);
+
     //on-the-fly session layers
     self.wmsSession = ko.observable(false);
 
@@ -372,6 +374,11 @@ function layerModel(options, parent) {
     self.deactivateLayer = function(is_companion) {
         var layer = this;
 
+        layer.loadStatus(false);
+        if (layer.hasOwnProperty('parent') && layer.parent) {
+          layer.parent.loadStatus(false);
+        }
+
         if (typeof is_companion == 'undefined' || is_companion == false) {
           //de-activate companion layer should happen prior to base
           if (layer.hasCompanion) {
@@ -619,6 +626,8 @@ function layerModel(options, parent) {
 
     self.activateLayer = function(is_companion) {
         var layer = this;
+
+        layer.loadStatus("loading");
 
         if (layer instanceof layerModel) {
           if (layer.fullyLoaded || layer.isMDAT || layer.isVTR) {
