@@ -276,6 +276,18 @@ app.wrapper.events.reportGMLAttributes = function(mp_layer, data) {
   return reported;
 };
 
+app.wrapper.events.tileSources = [
+  'XYZ',
+  'ArcRest',
+  'WMS',
+];
+
+app.wrapper.events.imageSources = [];
+app.wrapper.events.vectorSources = [
+  'Vector',
+  'VectorTile',
+];
+
 /**
   * layerLoadStart - 'layer loading' event to be added to layerModels
   * @param {object} layerModel - the layerModel to add layer loading logic to
@@ -292,8 +304,21 @@ app.wrapper.events.layerLoadStart = function(layerModel) {
   * @param {object} layerModel - the layerModel to add layer loading logic to
   */
 app.wrapper.events.addLayerLoadStart = function(layerModel) {
-  layerModel.layer.getSource().on('tileloadstart', app.wrapper.events.layerLoadStart(layerModel));
-  layerModel.layer.on('prerender', app.wrapper.events.layerLoadStart(layerModel));
+  if (app.wrapper.events.tileSources.indexOf(layerModel.type) >= 0) {
+    layerModel.layer.getSource().on('tileloadstart', function() {
+      app.wrapper.events.layerLoadStart(layerModel);
+    });
+  }
+  if (app.wrapper.events.imageSources.indexOf(layerModel.type) >= 0) {
+    layerModel.layer.getSource().on('imageloadstart', function() {
+      app.wrapper.events.layerLoadStart(layerModel);
+    });
+  }
+  if (app.wrapper.events.vectorSources.indexOf(layerModel.type) >= 0) {
+    layerModel.layer.on('prerender', function() {
+      app.wrapper.events.layerLoadStart(layerModel);
+    });
+  }
 }
 
 /**
@@ -312,8 +337,34 @@ app.wrapper.events.layerLoadEnd = function(layerModel) {
   * @param {object} layerModel - the layerModel to add layer loaded logic to
   */
 app.wrapper.events.addLayerLoadEnd = function(layerModel) {
-  layerModel.layer.getSource().on('tileloadend', app.wrapper.events.layerLoadEnd(layerModel));
-  layerModel.layer.on('postrender', app.wrapper.events.layerLoadEnd(layerModel));
+  if (app.wrapper.events.tileSources.indexOf(layerModel.type) >= 0) {
+    layerModel.layer.getSource().on('tileloadend', function() {
+      app.wrapper.events.layerLoadEnd(layerModel);
+    });
+  }
+  if (app.wrapper.events.imageSources.indexOf(layerModel.type) >= 0) {
+    layerModel.layer.getSource().on('imageloadend', function() {
+      app.wrapper.events.layerLoadEnd(layerModel);
+    });
+  }
+  if (app.wrapper.events.vectorSources.indexOf(layerModel.type) >= 0) {
+    layerModel.layer.on('postrender', function() {
+      app.wrapper.events.layerLoadEnd(layerModel);
+    });
+  }
+}
+
+/**
+  * layerLoadError - the 'layer loading error' event to add to layerModels
+  * @param {object} layerModel - the layerModel to add layer loading error logic to
+  */
+app.wrapper.events.layerLoadError = function(layerModel) {
+  if (layerModel.loadStatus()) {
+    layerModel.loadStatus('error');
+    if (layerModel.hasOwnProperty('parent') && layerModel.parent) {
+      layerModel.parent.loadStatus('error');
+    }
+  }
 }
 
 /**
@@ -321,10 +372,14 @@ app.wrapper.events.addLayerLoadEnd = function(layerModel) {
   * @param {object} layerModel - the layerModel to add layer loading error logic to
   */
 app.wrapper.events.addLayerLoadError = function(layerModel) {
-  layerModel.layer.getSource().on('tileloaderror', function() {
-    layerModel.loadStatus('error');
-    if (layerModel.hasOwnProperty('parent') && layerModel.parent) {
-      layerModel.parent.loadStatus('error');
-    }
-  });
+  if (app.wrapper.events.tileSources.indexOf(layerModel.type) >= 0) {
+    layerModel.layer.getSource().on('tileloaderror', function() {
+      app.wrapper.events.layerLoadError(layerModel);
+    });
+  }
+  if (app.wrapper.events.imageSources.indexOf(layerModel.type) >= 0 && !layerModel.is_multilayer_parent()) {
+    layerModel.layer.getSource().on('imageloaderror', function() {
+      app.wrapper.events.layerLoadError(layerModel);
+    });
+  }
 }

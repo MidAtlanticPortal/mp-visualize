@@ -338,12 +338,8 @@ app.wrapper.map.postProcessLayer = function(layer){
   } else {
     layer.layer.setOpacity(layer.opacity);
   }
-  try {
-    app.map.addLayer(layer.layer);
-  } catch(err) {
-    console.log(err);
-    layer.loadStatus('error');
-  }
+  
+  app.map.addLayer(layer.layer);
 }
 
 /**
