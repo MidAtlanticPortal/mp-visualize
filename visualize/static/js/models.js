@@ -1537,7 +1537,7 @@ function themeModel(options) {
     };
 
     //Get Theme's layers if not done yet
-    self.getLayers = function(setOpenTheme) {
+    self.getLayers = function() {
       var theme = this;
       $.ajax({
         url: '/data_manager/get_layers_for_theme/' + theme.id,
@@ -1571,7 +1571,7 @@ function themeModel(options) {
           //RDH 2019-10-11: Why?
         // $('#dataTab').tab('show');
         if (theme.layers().length == 1 && theme.layers()[0].id == null || theme.layers().length == 0) {
-          theme.getLayers(true);
+          theme.getLayers();
         }
 
     };

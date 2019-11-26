@@ -158,6 +158,9 @@ app.viewModel.loadThemes = function(data) {
         } else {
             self.hiddenThemes.push(theme);
         }
+        if (theme.name.toLowerCase() == 'companion') {
+            theme.getLayers();
+        }
       }
     });
 };
