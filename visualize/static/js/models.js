@@ -631,7 +631,7 @@ function layerModel(options, parent) {
 
         if (layer instanceof layerModel) {
           if (layer.fullyLoaded || layer.isMDAT || layer.isVTR) {
-            if (layer.hasOwnProperty('type') && layer.type == 'placeholder') {
+            if (!layer.hasOwnProperty('url') || !layer.url || layer.url.length < 1 || layer.hasOwnProperty('type') && layer.type == 'placeholder') {
               layer.loadStatus(false);
             }
 
