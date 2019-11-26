@@ -640,6 +640,10 @@ function layerModel(options, parent) {
         if (layer instanceof layerModel) {
           if (layer.fullyLoaded || layer.isMDAT || layer.isVTR) {
 
+            if (!layer.hasOwnProperty('url') || !layer.url || layer.url.length < 1 || layer.hasOwnProperty('type') && layer.type == 'placeholder') {
+              layer.loadStatus(false);
+            }
+
             // if legend is not provided, try using legend from web services
             if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
               try {
@@ -1108,6 +1112,7 @@ function layerModel(options, parent) {
                 $mdatSpinner.hide();
                 $parentDirs.show();
                 self.toggleActive();
+                app.viewModel.activeLayer(layer);
                 if (layer.showSublayers()) {
                     $layerText.val('');
                     //focus() instantiates typeahead search in models.js
@@ -1286,6 +1291,10 @@ function layerModel(options, parent) {
             layer.fullyLoaded = true;
             app.viewModel.layerIndex[layer.id.toString()] = layer;
             layer.performAction(callbackType, evt);
+
+            if (!data.hasOwnProperty('url') || !data.url || !data.url.length > 0 || data.hasOwnProperty('type') && data.type == 'placeholder') {
+              layer.loadStatus(false);
+            }
 
           },
           error: function(data) {
@@ -1544,7 +1553,7 @@ function themeModel(options) {
     };
 
     //Get Theme's layers if not done yet
-    self.getLayers = function(setOpenTheme) {
+    self.getLayers = function() {
       var theme = this;
       $.ajax({
         url: '/data_manager/get_layers_for_theme/' + theme.id,
@@ -1578,7 +1587,7 @@ function themeModel(options) {
           //RDH 2019-10-11: Why?
         // $('#dataTab').tab('show');
         if (theme.layers().length == 1 && theme.layers()[0].id == null || theme.layers().length == 0) {
-          theme.getLayers(true);
+          theme.getLayers();
         }
 
     };

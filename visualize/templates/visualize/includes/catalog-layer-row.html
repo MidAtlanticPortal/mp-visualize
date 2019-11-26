@@ -3,7 +3,7 @@
 {% block "after" %}
       <ul class="dropdown-menu dropdown-menu-right layer-menu">
         <li data-bind="foreach: subLayers">
-      <!-- ko if: !isCheckBoxLayer() -->
+      <!-- ko if: !$parent.isCheckBoxLayer() -->
               <a data-bind="click: toggleActive">
                   <span>
                     <i class="far green" data-bind="visible: !loadStatus(), css: { 'fa-check-circle': visible(), 'fa-circle': ! visible() }"></i>
@@ -13,9 +13,14 @@
                   <span class="deep-blue uppercase" data-bind="text: name"></span>
               </a>
       <!-- /ko -->
-      <!-- ko if: isCheckBoxLayer() -->
+      <!-- ko if: $parent.isCheckBoxLayer() -->
               <a data-bind="click: toggleActive" style="padding-left: 15px">
-                  <span><i class="far green" data-bind="css: { 'fa-check-square': visible(), 'fa-square': ! visible() }"></i></span>
+                  <span>
+                    <i class="far green" data-bind="visible: !$data.loadStatus(), css: { 'fa-check-square': visible(), 'fa-square': ! visible() }"></i>
+                    <i class="fas fa-spinner fa-spin"  data-bind="visible: $data.loadStatus()=='loading'"></i>
+                    <i style="color:red" title="error loading layer" class="fas fa-times-circle"  data-bind="visible: $data.loadStatus()=='error'"></i>
+                  </span>
+                  </span>
                   <span class="deep-blue uppercase" data-bind="text: name"></span>
               </a>
       <!-- /ko -->

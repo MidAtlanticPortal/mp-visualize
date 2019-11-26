@@ -304,20 +304,22 @@ app.wrapper.events.layerLoadStart = function(layerModel) {
   * @param {object} layerModel - the layerModel to add layer loading logic to
   */
 app.wrapper.events.addLayerLoadStart = function(layerModel) {
-  if (app.wrapper.events.tileSources.indexOf(layerModel.type) >= 0) {
-    layerModel.layer.getSource().on('tileloadstart', function() {
-      app.wrapper.events.layerLoadStart(layerModel);
-    });
-  }
-  if (app.wrapper.events.imageSources.indexOf(layerModel.type) >= 0) {
-    layerModel.layer.getSource().on('imageloadstart', function() {
-      app.wrapper.events.layerLoadStart(layerModel);
-    });
-  }
-  if (app.wrapper.events.vectorSources.indexOf(layerModel.type) >= 0) {
-    layerModel.layer.on('prerender', function() {
-      app.wrapper.events.layerLoadStart(layerModel);
-    });
+  if (layerModel.layer.hasOwnProperty('url') && layerModel.layer.url && layerModel.layer.url.length > 0 && layerModel.type.toLowerCase() != 'placeholder') {
+    if (app.wrapper.events.tileSources.indexOf(layerModel.type) >= 0) {
+      layerModel.layer.getSource().on('tileloadstart', function() {
+        app.wrapper.events.layerLoadStart(layerModel);
+      });
+    }
+    if (app.wrapper.events.imageSources.indexOf(layerModel.type) >= 0) {
+      layerModel.layer.getSource().on('imageloadstart', function() {
+        app.wrapper.events.layerLoadStart(layerModel);
+      });
+    }
+    if (app.wrapper.events.vectorSources.indexOf(layerModel.type) >= 0) {
+      layerModel.layer.on('prerender', function() {
+        app.wrapper.events.layerLoadStart(layerModel);
+      });
+    }
   }
 }
 
