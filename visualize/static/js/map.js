@@ -622,21 +622,28 @@ app.addLayerToMap = function(layer) {
       }
     }
 
-    layer.layer.events.register('loadstart', layer, function() {
-      layer.loadStatus('loading');
-      if (layer.hasOwnProperty('parent') && layer.parent) {
-        layer.parent.loadStatus('loading');
-      }
-    });
+    if (layer.layer.hasOwnProperty('url') && layer.layer.url && layer.layer.url.length > 0 && layer.type != 'placeholder') {
+      layer.layer.events.register('loadstart', layer, function() {
+        layer.loadStatus('loading');
+        if (layer.hasOwnProperty('parent') && layer.parent) {
+          layer.parent.loadStatus('loading');
+        }
+      });
 
-    layer.layer.events.register('loadend', layer, function() {
-      layer.loadStatus(false);
-      if (layer.hasOwnProperty('parent') && layer.parent) {
-        layer.parent.loadStatus(false);
-      }
-    });
+      layer.layer.events.register('loadend', layer, function() {
+        layer.loadStatus(false);
+        if (layer.hasOwnProperty('parent') && layer.parent) {
+          layer.parent.loadStatus(false);
+        }
+      });
+    }
 
-    app.map.addLayer(layer.layer);
+    try {
+      app.map.addLayer(layer.layer);
+    } catch(err) {
+      console.log(err);
+      layer.loadStatus('error');
+    }
     layer.layer.opacity = layer.opacity();
     layer.layer.setVisibility(true);
   } else {

@@ -631,6 +631,9 @@ function layerModel(options, parent) {
 
         if (layer instanceof layerModel) {
           if (layer.fullyLoaded || layer.isMDAT || layer.isVTR) {
+            if (layer.hasOwnProperty('type') && layer.type == 'placeholder') {
+              layer.loadStatus(false);
+            }
 
             // if legend is not provided, try using legend from web services
             if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
@@ -1093,6 +1096,7 @@ function layerModel(options, parent) {
                 $mdatSpinner.hide();
                 $parentDirs.show();
                 self.toggleActive();
+                app.viewModel.activeLayer(layer);
                 if (layer.showSublayers()) {
                     $layerText.val('');
                     //focus() instantiates typeahead search in models.js
@@ -1271,6 +1275,10 @@ function layerModel(options, parent) {
             layer.fullyLoaded = true;
             app.viewModel.layerIndex[layer.id.toString()] = layer;
             layer.performAction(callbackType, evt);
+
+            if (!data.hasOwnProperty('url') || !data.url || !data.url.length > 0 || data.hasOwnProperty('type') && data.type == 'placeholder') {
+              layer.loadStatus(false);
+            }
 
           },
           error: function(data) {
