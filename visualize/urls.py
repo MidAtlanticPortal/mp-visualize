@@ -2,6 +2,7 @@ from django.conf.urls import patterns, url
 from views import (show_embedded_map,
                    show_mafmc_map, show_mobile_map, show_planner)
 from django.views.generic.base import TemplateView
+from visualize import rpc
 urlpatterns = patterns('',
     url(r'^experiment$', TemplateView.as_view(template_name='visualize/experiment.html')),
     url(r'^map', show_embedded_map, name="embedded_map"),
