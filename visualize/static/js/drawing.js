@@ -4,6 +4,8 @@ function drawingModel(options) {
 
     var ret = scenarioModel.apply(this, arguments);
 
+    self.loadStatus = ko.observable(false);
+
     //self.isSelectionModel = true;
 
     //self.pointControl = new OpenLayers.Control.DrawFeature(pointLayer, OpenLayers.Handler.Point);
