@@ -630,7 +630,7 @@ function layerModel(options, parent) {
         layer.loadStatus("loading");
 
         if (layer instanceof layerModel) {
-          if (layer.fullyLoaded || layer.isMDAT || layer.isVTR) {
+          if (layer.fullyLoaded || layer.isMDAT || layer.isVTR || layer.wmsSession()) {
             if (!layer.hasOwnProperty('url') || !layer.url || layer.url.length < 1 || layer.hasOwnProperty('type') && layer.type == 'placeholder') {
               layer.loadStatus(false);
             }
@@ -673,7 +673,7 @@ function layerModel(options, parent) {
                 self.parentMDATDirectory.visible(true);
               }
 
-              if (layer.isVTR) {
+              if (layer.isVTR || layer.wmsSession()) {
                 self.visible(true);
               }
 
@@ -1250,7 +1250,7 @@ function layerModel(options, parent) {
 
     self.getFullLayerRecord = function(callbackType, evt) {
       var layer = this;
-      if (layer.isMDAT || layer.isVTR) {
+      if (layer.isMDAT || layer.isVTR || layer.hasOwnProperty('wmsSession') && layer.wmsSession()) {
         layer.fullyLoaded = true;
         layer.performAction(callbackType, evt);
       } else {
@@ -2459,6 +2459,13 @@ function viewModel() {
             var lyrObj = new Object();
             lyrObj.type = 'ArcRest';
             lyrObj.wmsSession = true;
+            var id_exists = true;
+            for(var i=0; id_exists == true && i < 1000; i++) {
+              lyrObj.id = 'user_layer_' + i;
+              if (Object.keys(app.viewModel.layerIndex).indexOf(lyrObj.id) < 0) {
+                id_exists = false;
+              }
+            }
 
             $(this).find(':input').each(function() {
                 var inputField = ($(this).attr("name"));
@@ -2586,7 +2593,6 @@ function viewModel() {
         }
         var layer = new layerModel(layer_obj, parent);
         if (layer.id) {
-          // dynamic layers do not come with IDs
           app.viewModel.layerIndex[layer.id.toString()] = layer;
         }
       } else if (layer.name.toLowerCase() == "loading..." && layer_obj.hasOwnProperty('name')) {
@@ -2594,7 +2600,7 @@ function viewModel() {
       }
       if (action == 'return'){
         return layer;
-      } else if (layer.fullyLoaded || layer.isMDAT || layer.isVTR ) {
+      } else if (layer.fullyLoaded || layer.isMDAT || layer.isVTR || layer_obj.hasOwnProperty('wmsSession') ) {
         layer.performAction(action, event);
       } else {
         layer.getFullLayerRecord(action, event);
