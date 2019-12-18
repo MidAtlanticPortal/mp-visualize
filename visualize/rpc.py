@@ -80,6 +80,23 @@ def get_bookmarks(**kwargs):
             })
     return content
 
+@rpcmethod(login_required=False)
+def load_bookmark(bookmark_id, **kwargs):
+    """Retrive a bookmark by ID - ownership is irrelevant.
+    """
+    request = kwargs['request']
+
+    bookmark = Bookmark.objects.get(pk=bookmark_id)
+    content = [{
+        'uid': bookmark.uid,
+        # 'name': bookmark.name,
+        # 'description': bookmark.description,
+        'hash': bookmark.url_hash,
+        # 'sharing_groups': sharing_groups,
+        'json': bookmark.json,
+    }]
+    return content
+
 @rpcmethod(login_required=True)
 def remove_bookmark(key, **kwargs):
     request = kwargs['request']

@@ -68,8 +68,7 @@ function bookmarkModel(options) {
     // get the url from a bookmark
     self.getBookmarkUrl = function() {
         var host = window.location.href.split('#')[0];
-        return host + "#" + self.getBookmarkHash();
-        //return host + "#" + self.state;
+        return host + "#bookmark=" + self.id.replace(/\D/g,''); //We just want the integer ID, this strips away all non-numeric text
     };
 
     self.getBookmarkState = function() {
@@ -137,6 +136,17 @@ function bookmarksModel(options) {
             }
         }
         return memberList;
+    };
+
+    self.loadBookmarkFromHash = function(bookmark_id) {
+      $.jsonrpc('load_bookmark', [bookmark_id], {
+          success: function(result) {
+            app.loadState(JSON.parse(result[0].json));
+          },
+          error: function(result) {
+
+          }
+      });
     };
 
     self.getCurrentBookmarkURL = function() {

@@ -320,6 +320,11 @@ app.borderLess = function () {
 app.loadState = function(state) {
     var loadTimer;
 
+    if (state.hasOwnProperty('bookmark') && !isNaN(state.bookmark)) {
+      app.viewModel.bookmarks.loadBookmarkFromHash(state.bookmark);
+      return;
+    }
+
     // if the request is to load and display a single, named layer
     for ( key in state ) {
         if (state.hasOwnProperty(key)) {
