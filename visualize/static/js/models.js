@@ -669,7 +669,7 @@ function layerModel(options, parent) {
               }
 
               //activate marine life layers
-              if (layer.isMDAT) {
+              if (layer.isMDAT && self.hasOwnProperty('parentMDATDirectory') && self.parentMDATDirectory) {
                 self.parentMDATDirectory.visible(true);
               }
 
@@ -2386,6 +2386,14 @@ function viewModel() {
             arcgis_layers: layer.id
         };
 
+        var id_exists = true;
+        for(var i=0; id_exists == true && i < 1000; i++) {
+          mdatObj.id = 'mdat_layer_' + i;
+          if (Object.keys(app.viewModel.layerIndex).indexOf(mdatObj.id) < 0) {
+            id_exists = false;
+          }
+        }
+
         var mdatLayer = app.viewModel.getOrCreateLayer(mdatObj, null, 'return', null),
             avianAbundance = '/MDAT/Avian_Abundance',
             avianOccurrence = '/MDAT/Avian_Occurrence';
@@ -2447,6 +2455,14 @@ function viewModel() {
             url: layer.url+'/MapServer/export',
             arcgis_layers: layer.id
         };
+
+        var id_exists = true;
+        for(var i=0; id_exists == true && i < 1000; i++) {
+          vtrObj.id = 'vtr_layer_' + i;
+          if (Object.keys(app.viewModel.layerIndex).indexOf(vtrObj.id) < 0) {
+            id_exists = false;
+          }
+        }
 
         var vtrLayer = app.viewModel.getOrCreateLayer(vtrObj, null, 'activateLayer', null);
 
@@ -2600,7 +2616,7 @@ function viewModel() {
       }
       if (action == 'return'){
         return layer;
-      } else if (layer.fullyLoaded || layer.isMDAT || layer.isVTR || layer_obj.hasOwnProperty('wmsSession') ) {
+      } else if (layer.fullyLoaded || layer.isMDAT || layer.isVTR || (layer_obj.hasOwnProperty('wmsSession') && layer_obj.wmsSession) ) {
         layer.performAction(action, event);
       } else {
         layer.getFullLayerRecord(action, event);
