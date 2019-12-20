@@ -35,7 +35,7 @@ $(document).on('map-ready', function () {
       try {
         $('#disclaimer-modal').modal('show');
         app.state = app.getState();
-      } catch {
+      } catch (e) {
         setTimeout(function(){
           $('#disclaimer-modal').modal('show');
           app.state = app.getState();
@@ -399,7 +399,7 @@ app.loadState = function(state) {
     if (state.activeTab && state.activeTab.tab === 'active') {
         try {
           $('#activeTab').tab('show');
-        } catch {
+        } catch (e) {
           setTimeout(function(){
             $('#activeTab').tab('show');
           }, 7000)
@@ -408,7 +408,7 @@ app.loadState = function(state) {
         if (state.activeTab || state.openThemes) {
             try {
               $('#dataTab').tab('show');
-            } catch {
+            } catch (e) {
               setTimeout(function(){
                 $('#dataTab').tab('show');
               }, 7000)
