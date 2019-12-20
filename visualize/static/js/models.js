@@ -913,6 +913,13 @@ function layerModel(options, parent) {
           }
         }
         self.toggleMultilayer(sliderValues);
+      } else {
+        // There is a bug where the slider stops working and the layer stays put
+          //Somehow multilayerValueLookup is getting set to {}. I don't know how/why
+          // but this takes care of the problem - RDH 2019-12-20
+        if (Object.keys(self.multilayerValueLookup).length == 0) {
+          self.buildMultilayerValueLookup();
+        }
       }
     };
 
