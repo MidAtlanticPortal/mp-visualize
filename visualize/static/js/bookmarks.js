@@ -8,7 +8,11 @@ function bookmarkModel(options) {
     self.name = options.name;
     self.description = options.description;
     self.state = options.state || null;
-    self.json = JSON.parse(options.json) || {};
+    try {
+      self.json = JSON.parse(options.json) || {};
+    } catch (e) {
+      self.json = {};
+    }
 
     self.shared = ko.observable();
     self.sharedByName = options.sharedByName || null;
@@ -41,7 +45,11 @@ function bookmarkModel(options) {
     // load state from bookmark
     self.loadBookmark = function() {
         app.saveStateMode = false;
-        app.loadState(self.json);
+        if (self.hasOwnProperty('json') && self.json && JSON.stringify(self.json) != "{}" && self.json instanceof Object && Object.keys(self.json).length > 0) {
+          app.loadState(self.json);
+        } else {
+          app.loadState(self.state);
+        }
 
         app.viewModel.bookmarks.activeBookmark(self.name);
 
@@ -288,10 +296,15 @@ function bookmarksModel(options) {
         new_layer.name = layer_record.name;
         new_layer.id = layer_record.id; //should = app_state_json.dls[i]
         new_layer.order = order;
-        new_layer.dynamic = layer_record.isMDAT || layer_record.isVTR || layer_record.wmsSession();
+        try {
+          new_layer.dynamic = layer_record.isMDAT || layer_record.isVTR || layer_record.wmsSession();
+          new_layer.isUserLayer = layer_record.wmsSession();
+        } catch (e) {
+          new_layer.dynamic = false;
+          new_layer.isUserLayer = false;
+        }
         new_layer.isMDAT = layer_record.isMDAT;
         new_layer.isVTR = layer_record.isVTR;
-        new_layer.isUserLayer = layer_record.wmsSession();
 
         if (new_layer.type == "ArcRest") {
           new_layer.arcgislayers = layer_record.arcgislayers;

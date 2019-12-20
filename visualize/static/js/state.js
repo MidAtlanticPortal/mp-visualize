@@ -129,7 +129,7 @@ app.addKnownLayerFromState = function(id, opacity, isVisible, unloadedDesigns) {
           }
       }
   } else {
-      if (!isNaN(id)){
+      if (!isNaN(parseInt(id))){
         var layer_obj = {'name': 'loading...', 'id': id, 'opacity': parseFloat(opacity), 'isVisible': isVisible};
         app.updateHashStateLayers(id, null, isVisible);
         app.viewModel.getOrCreateLayer(layer_obj, null, 'updateHashStateLayers', null);
@@ -169,7 +169,9 @@ app.loadCompressedState = function(state) {
           var dynamicLayer = app.viewModel.getOrCreateLayer(lyrObj, null, 'activateLayer', null);
 
         }
-        unloadedDesigns = app.addKnownLayerFromState(layer.id.toString(), layer.opacity, layer.visible, unloadedDesigns);
+        if (layer.hasOwnProperty('id') && layer.id) {
+          unloadedDesigns = app.addKnownLayerFromState(layer.id.toString(), layer.opacity, layer.visible, unloadedDesigns);
+        }
       }
       if ( unloadedDesigns.length ) {
            app.viewModel.unloadedDesigns = unloadedDesigns;
