@@ -23,21 +23,28 @@ app.init = function () {
 
     }));
 
-    esriOcean = new OpenLayers.Layer.XYZ("Ocean", "http://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/${z}/${y}/${x}", {
+    esriOcean = new OpenLayers.Layer.XYZ("Ocean", "https://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
         attribution: "Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others",
         textColor: "black"
     });
-    openStreetMap = new OpenLayers.Layer.OSM("Open Street Map", "http://a.tile.openstreetmap.org/${z}/${x}/${y}.png", {
+    esriGray = new OpenLayers.Layer.XYZ("Gray", "https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/${z}/${y}/${x}", {
+        sphericalMercator: true,
+        isBaseLayer: true,
+        numZoomLevels: 13,
+        attribution: "Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others",
+        textColor: "black"
+    });
+    openStreetMap = new OpenLayers.Layer.OSM("Open Street Map", "https://a.tile.openstreetmap.org/${z}/${x}/${y}.png", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
         visibility: false,
         textColor: "black"
     });
-    esriStreets = new OpenLayers.Layer.XYZ("ESRI Streets", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${z}/${y}/${x}", {
+    esriStreets = new OpenLayers.Layer.XYZ("ESRI Streets", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
@@ -45,7 +52,7 @@ app.init = function () {
         buffer: 3,
         textColor: "black"
     });
-    esriTopo = new OpenLayers.Layer.XYZ("ESRI Physical", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${z}/${y}/${x}", {
+    esriTopo = new OpenLayers.Layer.XYZ("ESRI Physical", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
         numZoomLevels: 13,
@@ -53,7 +60,7 @@ app.init = function () {
         buffer: 3,
         textColor: "black"
     });
-    esriImagery = new OpenLayers.Layer.XYZ("ESRI Satellite", "http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}", {
+    esriImagery = new OpenLayers.Layer.XYZ("ESRI Satellite", "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${y}/${x}", {
         sphericalMercator: true,
         isBaseLayer: true,
         // numZoomLevels: max_zoom,
@@ -61,7 +68,7 @@ app.init = function () {
         buffer: 3,
         textColor: "white"
     });
-    nauticalCharts = new OpenLayers.Layer.ArcGIS93Rest("Nautical Charts", "http://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage",
+    nauticalCharts = new OpenLayers.Layer.ArcGIS93Rest("Nautical Charts", "https://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage",
         {
             layers: 'null'
         },
@@ -95,7 +102,7 @@ app.init = function () {
     //     }
     // );
 
-    map.addLayers([esriOcean, openStreetMap, esriStreets, esriTopo, esriImagery, nauticalCharts]);
+    map.addLayers([esriOcean, esriGray, openStreetMap, esriStreets, esriTopo, esriImagery, nauticalCharts]);
 
     map.addControl(new SimpleLayerSwitcher());
 
