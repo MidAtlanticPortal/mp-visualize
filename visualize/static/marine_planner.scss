@@ -769,6 +769,15 @@ body.template-visualize{
       line-height: normal;
     }
 
+    .sublayer-toggle-title {
+      width: 100%;
+      padding-left: 5px;
+    }
+
+    .checkbox-sublayer-toggle-title {
+      padding-left: 15px;
+    }
+
     #legend-popover{
         top: $map-padding-top;
         right: $map-padding-right + 45px;
