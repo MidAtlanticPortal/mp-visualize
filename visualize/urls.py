@@ -1,6 +1,6 @@
 try:
     from django.urls import re_path, include
-except ModuleNotFoundError as e:
+except (ModuleNotFoundError, ImportError) as e:
     from django.conf.urls import url as re_path, include
 from .views import (show_embedded_map,
                    show_mafmc_map, show_mobile_map, show_planner, proxy_request)

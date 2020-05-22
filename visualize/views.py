@@ -58,7 +58,7 @@ def show_planner(request, template='visualize/planner.html'):
                     self.fed.append(d)
                 def get_data(self):
                     return ''.join(self.fed)
-        except ModuleNotFoundError as e:
+        except (ModuleNotFoundError, ImportError) as e:
             from io import StringIO
             from html.parser import HTMLParser
 
