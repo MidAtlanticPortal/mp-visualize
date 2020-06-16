@@ -30,6 +30,17 @@ app.wrapper = {
       'textColor': 'black'
     },
     {
+      'name': 'Open Street Map',
+      'verboseName': 'Open Street Map',
+      'url': '',
+      'attribution': '',
+      'minZoom': null,
+      'maxZoom': null,
+      'bounds': [],
+      'technology': 'OSM',
+      'textColor': 'black'
+    },
+    {
       'name': 'streets',
       'verboseName': 'ESRI Streets',
       'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
@@ -86,7 +97,7 @@ app.wrapper = {
   */
 app.getBaseLayerDefinitionByName = function(name) {
   for (var i = 0; i < app.wrapper.baseLayers.length; i++) {
-    if (app.wrapper.baseLayers[i].name == name) {
+    if (app.wrapper.baseLayers[i].name.toLowerCase() == name.toLowerCase()) {
       return app.wrapper.baseLayers[i];
     }
   }

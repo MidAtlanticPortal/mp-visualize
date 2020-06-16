@@ -172,7 +172,7 @@ app.wrapper.map.setBasemap = function(layer) {
   // determine if layer is layer object or name
   if (typeof(layer) == "string") {
     for (var i = 0; i < basemaps.length; i++) {
-      if (basemaps[i].get('name') == layer) {
+      if (basemaps[i].get('name').toLowerCase() == layer.toLowerCase()) {
         layer = basemaps[i];
         break;
       }
@@ -185,7 +185,7 @@ app.wrapper.map.setBasemap = function(layer) {
   var match_found = false;
   var name_match_found = false;
   for (var i=0; i < basemaps.length; i++) {
-    if (basemaps[i].get('name') == layer.get('name')) {
+    if (basemaps[i].get('name').toLowerCase() == layer.get('name').toLowerCase()) {
       name_match_found = true;
     }
     if (basemaps[i] == layer) {
@@ -338,7 +338,7 @@ app.wrapper.map.postProcessLayer = function(layer){
   } else {
     layer.layer.setOpacity(layer.opacity);
   }
-  
+
   app.map.addLayer(layer.layer);
 }
 
