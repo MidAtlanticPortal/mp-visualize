@@ -8,6 +8,7 @@ app.wrapper = {
   'baseLayers': [
     {
       'name': 'ocean',
+      'altName': 'ocean',
       'verboseName': 'Ocean',
       'url': 'https://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
       'attribution': 'Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others',
@@ -20,17 +21,7 @@ app.wrapper = {
     },
     {
       'name': 'osm',
-      'verboseName': 'Open Street Map',
-      'url': '',
-      'attribution': '',
-      'minZoom': null,
-      'maxZoom': null,
-      'bounds': [],
-      'technology': 'OSM',
-      'textColor': 'black'
-    },
-    {
-      'name': 'Open Street Map',
+      'altName': 'Open Street Map',
       'verboseName': 'Open Street Map',
       'url': '',
       'attribution': '',
@@ -42,6 +33,7 @@ app.wrapper = {
     },
     {
       'name': 'streets',
+      'altName': 'streets',
       'verboseName': 'ESRI Streets',
       'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}',
       'attribution': 'Sources: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, METI, TomTom, and others',
@@ -53,6 +45,7 @@ app.wrapper = {
     },
     {
       'name': 'topo',
+      'altName': 'Physical',
       'verboseName': 'ESRI Physical',
       'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
                 'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
@@ -66,6 +59,7 @@ app.wrapper = {
     },
     {
       'name': 'satellite',
+      'altName': 'satellite',
       'verboseName': 'ESRI Satellite',
       'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
       'attribution': 'Sources: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and others',
@@ -77,6 +71,7 @@ app.wrapper = {
     },
     {
       'name': 'nautical',
+      'altName': 'nautical',
       'verboseName': 'Nautical Charts',
       'url': 'https://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage',
       'attribution': 'NOAA',
@@ -97,7 +92,7 @@ app.wrapper = {
   */
 app.getBaseLayerDefinitionByName = function(name) {
   for (var i = 0; i < app.wrapper.baseLayers.length; i++) {
-    if (app.wrapper.baseLayers[i].name.toLowerCase() == name.toLowerCase()) {
+    if (app.wrapper.baseLayers[i].name.toLowerCase() == name.toLowerCase() || app.wrapper.baseLayers[i].altName.toLowerCase() == name.toLowerCase()) {
       return app.wrapper.baseLayers[i];
     }
   }

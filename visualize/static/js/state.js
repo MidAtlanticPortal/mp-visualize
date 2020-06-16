@@ -204,7 +204,12 @@ app.loadCompressedState = function(state) {
     }
 
     if (state.basemap) {
-        app.setBasemap(app.wrapper.map.getLayersByName(state.basemap)[0]);
+      basemap = app.wrapper.map.getLayersByName(state.basemap)[0];
+      if (!basemap) {
+        // It's okay, app.setBasemap knows how to handle strings now!
+        basemap = state.basemap;
+      }
+      app.setBasemap(basemap);
     }
 
     app.establishLayerLoadState();

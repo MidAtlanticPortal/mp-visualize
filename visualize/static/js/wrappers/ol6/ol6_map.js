@@ -172,7 +172,7 @@ app.wrapper.map.setBasemap = function(layer) {
   // determine if layer is layer object or name
   if (typeof(layer) == "string") {
     for (var i = 0; i < basemaps.length; i++) {
-      if (basemaps[i].get('name').toLowerCase() == layer.toLowerCase()) {
+      if (basemaps[i].get('name').toLowerCase() == app.getBaseLayerDefinitionByName(layer).name.toLowerCase()) {
         layer = basemaps[i];
         break;
       }
