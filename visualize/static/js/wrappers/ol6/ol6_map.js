@@ -334,10 +334,14 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('utfgrid', layer.utfurl || (layer.parent && layer.parent.utfurl));
   layer.layer.set('mp_layer', layer);
   if (typeof(layer.opacity) == 'function') {
-    layer.layer.setOpacity(layer.opacity());
+    layerOpacity = layer.opacity();
   } else {
-    layer.layer.setOpacity(layer.opacity);
+    layerOpacity = layer.opacity;
   }
+  if (typeof(layerOpacity) == 'string') {
+    layerOpacity = parseFloat(layerOpacity);
+  }
+  layer.layer.setOpacity(layerOpacity);
 
   app.map.addLayer(layer.layer);
 }

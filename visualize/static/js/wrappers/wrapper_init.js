@@ -8,7 +8,7 @@ app.wrapper = {
   'baseLayers': [
     {
       'name': 'ocean',
-      'altName': 'ocean',
+      'altName': 'ESRI Ocean',
       'verboseName': 'Ocean',
       'url': 'https://services.arcgisonline.com/ArcGIS/rest/services/Ocean_Basemap/MapServer/tile/{z}/{y}/{x}',
       'attribution': 'Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others',
