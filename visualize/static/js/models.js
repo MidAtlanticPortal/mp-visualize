@@ -638,7 +638,10 @@ function layerModel(options, parent) {
             // if legend is not provided, try using legend from web services
             if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
               try {
-                getArcGISJSONLegend(self, window.location.protocol);
+                setTimeout(function() {
+                    // On Macs the legend seems to get overwritten w/o this timeout.
+                    getArcGISJSONLegend(self, window.location.protocol);
+                }, 1000);
               } catch (err) {
                 if (window.location.protocol == "http:") {
                   console.log(err);
