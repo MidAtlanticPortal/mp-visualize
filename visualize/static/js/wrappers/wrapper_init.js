@@ -5,6 +5,7 @@ app.wrapper = {
   'controls': {},
   'state': {},
   'map_library': {},
+  'scenarios': {},
   'baseLayers': [
     {
       'name': 'ocean',

@@ -146,6 +146,9 @@ function layerModel(options, parent) {
       self.isVTR = options.isVTR || false;
       self.dateRangeDirectory = options.dateRangeDirectory || null;
 
+      self.isDrawingModel = options.isDrawingModel || false;
+      self.isSelectionModel = options.isSelectionModel || false;
+
       //tied to the layer that's a companion of another layer
       self.companionLayers = options.companion_layers || false;
       //has companion layer(s)
@@ -1266,7 +1269,7 @@ function layerModel(options, parent) {
 
     self.getFullLayerRecord = function(callbackType, evt) {
       var layer = this;
-      if (layer.isMDAT || layer.isVTR) {
+      if (layer.isMDAT || layer.isVTR || layer.isDrawingModel || layer.isSelectionModel) {
         layer.fullyLoaded = true;
         layer.performAction(callbackType, evt);
       } else {

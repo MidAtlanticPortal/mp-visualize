@@ -103,7 +103,11 @@ app.wrapper.map.sortLayers = function() {
 app.wrapper.map.setLayerVisibility = function(layer, visibility){
       // if layer is in openlayers, hide/show it
       if (layer.layer) {
-          layer.layer.set('visible', visibility);
+          if (layer.layer instanceof layerModel) {
+            layer.layer.layer.set('visible', visibility);
+          } else {
+            layer.layer.set('visible', visibility);
+          }
       }
 }
 
