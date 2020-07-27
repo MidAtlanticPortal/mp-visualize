@@ -48,6 +48,8 @@ app.wrapper.events.addFeatureClickEvent = function(){
             if (app.wrapper.events.hasOwnProperty('clickOnVectorLayerEvent')) {
               app.wrapper.events.clickOnVectorLayerEvent(layer, e);
             }
+          } else if (mp_layer.isDrawingModel){
+            app.wrapper.events.clickOnVectorLayerEvent(layer, e);
           }
         }
       }
@@ -207,7 +209,17 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
     var featureData = [];
     for (var i = 0; i < selectedFeatures.length; i++) {
       var feature = selectedFeatures[i];
-      featureData.push(feature.values_);
+      if (mp_layer.isDrawingModel) {
+        area_m2 = app.wrapper.map_library.getArea(feature.getGeometry());
+        area_mi2 = app.wrapper.map_library.m2ToMi2(area_m2);
+        feature_values = {
+          'area': area_mi2,
+          'description': feature.values_.description
+        }
+        featureData.push(feature_values);
+      } else {
+        featureData.push(feature.values_);
+      }
     }
     app.wrapper.events.generateAttributeReport(mp_layer, featureData);
   }
