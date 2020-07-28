@@ -53,3 +53,12 @@ app.wrapper.map.defaultBaseLayer = new ol.layer.Tile({
 app.wrapper.map.baseLayersGroup = new ol.layer.Group({
   layers: baseLayers
 });
+
+app.wrapper.layer_functions.getLayerExtent = function(layer) {
+  if (layer.hasOwnProperty('layer') && 'getSource' in layer.layer) {
+    extent = layer.layer.getSource().getExtent();
+    return extent;
+    // app.wrapper.map.zoomToExtent(extent);
+  }
+  return null;
+}

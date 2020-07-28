@@ -1079,6 +1079,7 @@ function scenarioModel(options) {
             }
             app.viewModel.scenarios.activeSelections().push(scenario);
         }
+        self.active(true);
     };
 
     self.deactivateLayer = function() {
@@ -1095,7 +1096,8 @@ function scenarioModel(options) {
 
         scenario.opacity(scenario.defaultOpacity);
         app.setLayerVisibility(scenario, false);
-        app.viewModel.activeLayers.remove(scenario);
+        // app.viewModel.activeLayers.remove(scenario);
+        scenario.layer.deactivateLayer()
 
         app.viewModel.removeFromAggregatedAttributes(scenario.name);
         /*
@@ -1425,14 +1427,7 @@ function scenariosModel(options) {
             if (!scenario.active()) {
                 scenario.activateLayer();
             }
-            app.map.zoomToExtent(layer.getDataExtent());
-            if (scenario.uid.indexOf('leaseblockselection') !== -1) {
-                app.map.zoomOut();
-                app.map.zoomOut();
-            } else if (scenario.uid.indexOf('drawing') !== -1) {
-                app.map.zoomOut();
-                app.map.zoomOut();
-            }
+            app.wrapper.map.zoomToBufferedExtent(app.wrapper.layer_functions.getLayerExtent(layer), 0.2);
         } else {
             self.addScenarioToMap(scenario, {zoomTo: true});
         }
@@ -1712,6 +1707,7 @@ function scenariosModel(options) {
                     //reasigning opacity here, as opacity wasn't 'catching' on state load for scenarios
                     scenario.opacity(opacity);
                     scenario.layer = layer;
+                    scenario.layer.scenarioModel = scenario;
                 } else { //create new scenario
                     //only do the following if creating a scenario
                     var properties = feature.features[0].properties;

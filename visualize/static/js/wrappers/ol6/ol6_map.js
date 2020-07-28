@@ -33,6 +33,37 @@ app.wrapper.map.setZoom = function(zoom) {
 }
 
 /**
+  * zoomToExtent - focus the map on a given extent
+  * @param {list} extent - the extent to set the map to
+  */
+app.wrapper.map.zoomToExtent = function(extent) {
+  app.map.getView().fit(extent, {'duration': 1000});
+}
+
+/**
+  * zoomToBufferedExtent - focus the map on a given extent + x% buffer
+  * @param {list} extent - the extent to set the map to
+  * @param {float} extent - the Percent buffer to add to each side of the extent
+  *   if 1 or less, treat as 1 = 100%
+  *   if greater than 1, tread as 1 = 1%
+  */
+app.wrapper.map.zoomToBufferedExtent = function(extent, buffer) {
+  if (buffer > 1.0) {
+    buffer = buffer/100.0;
+  }
+  width = Math.abs(extent[2]-extent[0]);
+  height = Math.abs(extent[3]-extent[1]);
+  w_buffer = width * buffer;
+  h_buffer = height * buffer;
+  buf_west = extent[0] - w_buffer;
+  buf_east = extent[2] + w_buffer;
+  buf_south = extent[1] - h_buffer;
+  buf_north = extent[3] + h_buffer;
+  buffered_extent = [buf_west, buf_south, buf_east, buf_north];
+  app.wrapper.map.zoomToExtent(buffered_extent);
+}
+
+/**
   * animateView - animate panning and zooming the map view to a new location
   * @param {array} center - the X and Y coordinates {floats} for the new view center
   * @param {int} zoom - the zoom level to set the map to
@@ -44,6 +75,13 @@ app.wrapper.map.animateView = function(center, zoom, duration) {
     center: ol.proj.fromLonLat(center),
     zoom: zoom,
     duration: duration
+  })
+}
+
+app.wrapper.map.zoomOut = function() {
+  app.map.getView().animate({
+    zoom: app.map.getView().getZoom() - 1,
+    duration: 250
   })
 }
 
@@ -103,10 +141,14 @@ app.wrapper.map.sortLayers = function() {
 app.wrapper.map.setLayerVisibility = function(layer, visibility){
       // if layer is in openlayers, hide/show it
       if (layer.layer) {
-          if (layer.layer instanceof layerModel) {
+          if (layer.layer instanceof layerModel && layer.layer.hasOwnProperty('layer') && layer.layer.layer) {
             layer.layer.layer.set('visible', visibility);
           } else {
-            layer.layer.set('visible', visibility);
+            if (layer.layer.hasOwnProperty('setVisible')) {
+              layer.layer.setVisible(visibility);
+            } else {
+              layer.layer.set('visible', visibility);
+            }
           }
       }
 }

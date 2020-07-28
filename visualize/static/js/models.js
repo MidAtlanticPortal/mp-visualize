@@ -408,6 +408,11 @@ function layerModel(options, parent) {
             self.deactivateSublayer();
         }
 
+        if (layer.hasOwnProperty('scenarioModel')) {
+          layer.scenarioModel.active(false);
+          layer.scenarioModel.visible(false);
+        }
+
         //de-activate arcIdentifyControl (if applicable)
         if (layer.arcIdentifyControl) {
             layer.arcIdentifyControl.deactivate();
@@ -1333,6 +1338,10 @@ function layerModel(options, parent) {
 
         if (layer.active()) { // if layer is active
             layer.deactivateLayer();
+
+            if (layer.hasOwnProperty('scenarioModel') && event) {
+              layer.scenarioModel.deactivateLayer(self, false);
+            }
         } else { // otherwise layer is not currently active
             layer.activateLayer();
         }
@@ -1536,6 +1545,14 @@ function layerModel(options, parent) {
       $('#activeTab').trigger('click');
       $('#myTab li[data-tab="active"]').trigger('click');
     };
+
+    self.getDataExtent = function(layer, event) {
+      if (app.wrapper.layer_functions.hasOwnProperty('getLayerExtent')) {
+        app.wrapper.layer_functions.getLayerExtent(self);
+      } else {
+        console.log('function "app.wrapper.layer_functions.getLayerExtent" not defined for layer for ' + app.map_tech);
+      }
+    }
 
     return self;
 } // end layerModel

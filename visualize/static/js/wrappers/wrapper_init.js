@@ -1,5 +1,6 @@
 app.wrapper = {
   'layers': {},
+  'layer_functions': {},
   'events': {},
   'map': {},
   'controls': {},
