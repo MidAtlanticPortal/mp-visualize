@@ -244,20 +244,25 @@
                                                                 <table>
                                                                     <tr>
                                                                         <td class="text">
-                                                                        <span rel="tooltip"
-                                                                              data-bind="visible: shared, attr: {title: sharedBy}">
-                                                                            <i class="fa fa-user"></i>
-                                                                        </span>
-                                                                        <span rel="tooltip"
-                                                                              data-bind="visible: selectedGroups().length, attr: {title: sharedWith}">
-                                                                            <i class="fa fa-group"></i>
-                                                                        </span>
+                                                                            <span rel="tooltip"
+                                                                                  data-bind="visible: shared, attr: {title: sharedBy}">
+                                                                                <i class="fa fa-user"></i>
+                                                                            </span>
+                                                                            <span rel="tooltip"
+                                                                                  data-bind="visible: selectedGroups().length, attr: {title: sharedWith}">
+                                                                                <i class="fa fa-group"></i>
+                                                                            </span>
                                                                             <span data-bind='text: name'></span>
                                                                         </td>
-                                                                        <td class="add-on">
+                                                                        <td class="add-on" data-bind="with: layer, visible: layer">
                                                                             <i class="fa fa-check-circle"
                                                                                data-bind="css: { 'fa-check-circle': active() && visible(), 'fas': active() && visible(), 'fa-circle': !(active() && visible()), 'far': !(active() && visible()) }"></i>
                                                                         </td>
+                                                                        <!-- ko ifnot: layer -->
+                                                                        <td class="add-on">
+                                                                          <i class="fa fa-circle far"></i>
+                                                                        </td>
+                                                                        <!-- /ko -->
                                                                     </tr>
                                                                 </table>
                                                             </a>

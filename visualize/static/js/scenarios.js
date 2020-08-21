@@ -1037,12 +1037,13 @@ function scenarioModel(options) {
     self.defaultOpacity = options.opacity || 0.8;
     self.opacity = ko.observable(self.defaultOpacity);
     self.type = 'Vector';
+    self.layer = ko.observable(false);
 
     self.opacity.subscribe( function(newOpacity) {
-        if ( self.layer ) {
-            self.layer.styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
-            self.layer.styleMap.styles['default'].defaultStyle.fillOpacity = newOpacity;
-            self.layer.redraw();
+        if ( self.layer() ) {
+            self.layer().styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
+            self.layer().styleMap.styles['default'].defaultStyle.fillOpacity = newOpacity;
+            self.layer().redraw();
         } else {
             //debugger;
         }
@@ -1057,7 +1058,7 @@ function scenarioModel(options) {
         //app.viewModel.unloadedDesigns = [];
 
         //app.viewModel.activeLayer(layer);
-        if (scenario.active()) { // if layer is active, then deactivate
+        if (scenario.layer() && scenario.layer().active()) { // if layer is active, then deactivate
             scenario.deactivateLayer();
         } else { // otherwise layer is not currently active, so activate
             scenario.activateLayer();
@@ -1069,7 +1070,7 @@ function scenarioModel(options) {
         var scenario = this;
         app.viewModel.scenarios.addScenarioToMap(scenario);
         if (scenario.isDrawingModel ) {
-
+          scenario.layer().activateLayer();
         } else if ( scenario.isSelectionModel ) {
             for (var i=0; i < app.viewModel.scenarios.activeSelections().length; i=i+1) {
                 if(app.viewModel.scenarios.activeSelections()[i].id === scenario.id) {
@@ -1095,9 +1096,9 @@ function scenarioModel(options) {
         }
 
         scenario.opacity(scenario.defaultOpacity);
-        app.setLayerVisibility(scenario, false);
+        app.setLayerVisibility(scenario.layer(), false);
         // app.viewModel.activeLayers.remove(scenario);
-        scenario.layer.deactivateLayer()
+        scenario.layer().deactivateLayer()
 
         app.viewModel.removeFromAggregatedAttributes(scenario.name);
         /*
@@ -1182,8 +1183,8 @@ function scenarioModel(options) {
         //remove from activeLayers
         app.viewModel.activeLayers.remove(scenario);
         //remove from app.map
-        if (scenario.layer) {
-            app.map.removeLayer(scenario.layer);
+        if (scenario.layer()) {
+            app.map.removeLayer(scenario.layer());
         }
         //remove from scenarioList
         app.viewModel.scenarios.scenarioList.remove(scenario);
@@ -1422,8 +1423,8 @@ function scenariosModel(options) {
     };
 
     self.zoomToScenario = function(scenario) {
-        if (scenario.layer) {
-            var layer = scenario.layer;
+        if (scenario.layer()) {
+            var layer = scenario.layer();
             if (!scenario.active()) {
                 scenario.activateLayer();
             }
@@ -1706,8 +1707,8 @@ function scenariosModel(options) {
                 if ( scenario ) {
                     //reasigning opacity here, as opacity wasn't 'catching' on state load for scenarios
                     scenario.opacity(opacity);
-                    scenario.layer = layer;
-                    scenario.layer.scenarioModel = scenario;
+                    scenario.layer(layer);
+                    scenario.layer().scenarioModel = scenario;
                 } else { //create new scenario
                     //only do the following if creating a scenario
                     var properties = feature.features[0].properties;
@@ -1742,8 +1743,8 @@ function scenariosModel(options) {
                         self.toggleScenariosOpen('open');
                         self.zoomToScenario(scenario);
                     }
-                    scenario.layer = layer;
-                    scenario.layer.scenarioModel = scenario;
+                    scenario.layer(layer);
+                    scenario.layer().scenarioModel = scenario;
                     scenario.active(true);
                     scenario.visible(true);
 
@@ -1814,7 +1815,7 @@ function scenariosModel(options) {
                 //     }
                 // }
                 // app.addLayerToMap(scenario.layer);
-                scenario.layer.activateLayer();
+                scenario.layer().activateLayer();
                 //add scenario to Active tab
                 // app.viewModel.activeLayers.remove(function(item) { return item.uid === scenario.uid; } );
                 // app.viewModel.activeLayers.unshift(scenario);
