@@ -1069,17 +1069,17 @@ function scenarioModel(options) {
     self.activateLayer = function() {
         var scenario = this;
         app.viewModel.scenarios.addScenarioToMap(scenario);
-        if (scenario.isDrawingModel ) {
-          scenario.layer().activateLayer();
-        } else if ( scenario.isSelectionModel ) {
-            for (var i=0; i < app.viewModel.scenarios.activeSelections().length; i=i+1) {
-                if(app.viewModel.scenarios.activeSelections()[i].id === scenario.id) {
-                    app.viewModel.scenarios.activeSelections().splice(i,1);
-                    i = i-1;
-                }
-            }
-            app.viewModel.scenarios.activeSelections().push(scenario);
-        }
+        // if (scenario.id.indexOf('drawing') !== -1) {
+        // } else
+        // if ( scenario.isSelectionModel ) {
+        //     for (var i=0; i < app.viewModel.scenarios.activeSelections().length; i=i+1) {
+        //         if(app.viewModel.scenarios.activeSelections()[i].id === scenario.id) {
+        //             app.viewModel.scenarios.activeSelections().splice(i,1);
+        //             i = i-1;
+        //         }
+        //     }
+        //     app.viewModel.scenarios.activeSelections().push(scenario);
+        // }
         self.active(true);
     };
 
