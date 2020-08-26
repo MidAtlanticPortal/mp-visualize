@@ -4,6 +4,11 @@ body.template-visualize .olControlMousePosition {
   position: absolute;
 }
 
+body.template-visualize .SimpleLayerSwitcher {
+  max-width: 495px;
+  width: 495px;
+}
+
 .ol-zoom {
   position: absolute;
   bottom: 44px;

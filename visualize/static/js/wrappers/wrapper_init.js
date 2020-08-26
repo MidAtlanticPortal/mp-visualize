@@ -22,6 +22,19 @@ app.wrapper = {
       'textColor': 'black'
     },
     {
+      'name': "gray",
+      'altName': 'Gray',
+      'verboseName': 'Gray',
+      'url': 'https://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+      'attribution': 'Sources: Esri, GEBCO, NOAA, National Geographic, DeLorme, NAVTEQ, Geonames.org, and others',
+      'minZoom': null,
+      'maxZoom': 13,
+      'bounds': [],
+      'projection': '',
+      'technology': 'XYZ',
+      'textColor': 'black'
+    },
+    {
       'name': 'osm',
       'altName': 'Open Street Map',
       'verboseName': 'Open Street Map',
