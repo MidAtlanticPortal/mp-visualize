@@ -381,14 +381,14 @@ body.template-visualize{
         right: 150px;
         background-color: $gray-light;
         border: 2px solid $gray-light;
-        max-width: 450px;
+        max-width: 495px;
         text-align: left;
         background: $gray-light;
         opacity: 1;
         border-radius: 0px;
         display: none;
         overflow: hidden;
-        width: 425px;
+        width: 495px;
     }
 
     .SimpleLayerSwitcher a.basey {
@@ -728,11 +728,51 @@ body.template-visualize{
         margin-left: 5px;
     }
 
+    .sublayer-status {
+      right: 1em;
+      position: absolute;
+    }
+
     table.catalog-data {
 
         a{
             white-space: inherit;
         }
+    }
+
+    .sublayer-dropdown {
+      width: 90%;
+    }
+
+    .sublayer-dropdown li {
+      display: flex;
+    }
+
+    .sublayer-dropdown li a:hover {
+      text-decoration: none;
+      color: black;
+      background-color: #e7e7e8;
+    }
+
+    .sublayer-dropdown li a.btn-slider:hover {
+      color: white;
+    }
+
+    .sublayer-title {
+      display: inline-block;
+      padding-left: 2rem;
+      text-indent: -2rem;
+      padding-right: 5px;
+      line-height: normal;
+    }
+
+    .sublayer-toggle-title {
+      width: 100%;
+      padding-left: 5px;
+    }
+
+    .checkbox-sublayer-toggle-title {
+      padding-left: 15px;
     }
 
     #legend-popover{
@@ -1066,11 +1106,35 @@ td ul.dropdown-menu {
     .tooltip-inner {
         max-width: 1000px;
     }
+    .tooltip-arrow {
+      border-bottom-color: #00a564;
+    }
 }
+
+.tooltip.fade.top.in {
+    .tooltip-inner {
+        max-width: 1000px;
+    }
+    .tooltip-arrow {
+      border-top-color: #00a564;
+    }
+}
+
 .tooltip.fade.right.in {
     .tooltip-inner {
         max-width: 100%;
     }
+    .tooltip-arrow {
+      border-right-color: #00a564;
+    }
+}
+.tooltip.fade.left.in {
+  .tooltip-inner {
+      max-width: 100%;
+  }
+  .tooltip-arrow {
+    border-left-color: #00a564;
+  }
 }
 
 #map-wms-modal {

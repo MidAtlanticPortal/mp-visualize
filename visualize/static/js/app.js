@@ -51,7 +51,6 @@ app.viewModel.initLeftNav().done(function() {
   $('#toggleBaselayer').css({'background-image':"url(/static/visualize/img/baselayer-"+app.wrapper.map.getBasemap().name.split(' ').join('_')+".png)", "color":+app.wrapper.map.getBasemap().textColor});
 
   $(".nav-tabs li.disabled").on("click", function(e) {
-    console.log("SDFA");
       e.preventDefault();
       return false;
   });
@@ -59,8 +58,6 @@ app.viewModel.initLeftNav().done(function() {
   setTimeout(function() {
     app.viewModel.showSliderButtons(app.viewModel.checkShowSliderButtons());
   }, 10);
-
-
 });
 
 // initialize the map

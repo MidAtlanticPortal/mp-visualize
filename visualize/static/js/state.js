@@ -138,6 +138,28 @@ app.updateHashStateLayers = function(id, status, visible) {
 
 }
 
+app.addKnownLayerFromState = function(id, opacity, isVisible, unloadedDesigns) {
+  if (app.viewModel.layerIndex[id]) {
+      app.viewModel.layerIndex[id].activateLayer();
+      app.viewModel.layerIndex[id].opacity(opacity);
+      //obviously not understanding something here...
+      if (isVisible || !isVisible) {
+          if (isVisible !== 'true' && isVisible !== true) {
+              app.viewModel.layerIndex[id].toggleVisible();
+          }
+      }
+  } else {
+      if (!isNaN(parseInt(id))){
+        var layer_obj = {'name': 'loading...', 'id': id, 'opacity': parseFloat(opacity), 'isVisible': isVisible};
+        app.updateHashStateLayers(id, null, isVisible);
+        app.viewModel.getOrCreateLayer(layer_obj, null, 'updateHashStateLayers', null);
+      } else {
+        unloadedDesigns.push({id: id, opacity: opacity, isVisible: isVisible});
+      }
+  }
+  return unloadedDesigns
+}
+
 // load compressed state (the url was getting too long so we're compressing it
 app.loadCompressedState = function(state) {
     // turn off active laters
@@ -149,7 +171,32 @@ app.loadCompressedState = function(state) {
         layer.deactivateLayer();
     });
     // turn on the layers that should be active
-    if (state.dls) {
+    if (state.layers && state.layers instanceof Array) {
+      var unloadedDesigns = [];
+      for(var i = 0; i < state.layers.length; i++) {
+        var layer = state.layers[i];
+        if (layer.dynamic) {
+          var lyrObj = {
+            type: layer.type,
+            wmsSession: layer.isUserLayer,
+            id: layer.id,
+            name: layer.name,
+            url: layer.url,
+            arcgis_layers: layer.arcgislayers,
+            isVTR: layer.isVTR,
+            isMDAT: layer.isMDAT,
+          }
+          var dynamicLayer = app.viewModel.getOrCreateLayer(lyrObj, null, 'activateLayer', null);
+
+        }
+        if (layer.hasOwnProperty('id') && layer.id) {
+          unloadedDesigns = app.addKnownLayerFromState(layer.id.toString(), layer.opacity, layer.visible, unloadedDesigns);
+        }
+      }
+      if ( unloadedDesigns.length ) {
+           app.viewModel.unloadedDesigns = unloadedDesigns;
+      }
+    } else if (state.dls) {
         var unloadedDesigns = [];
 
         for (x=0; x < state.dls.length; x=x+3) {
@@ -157,24 +204,7 @@ app.loadCompressedState = function(state) {
                 opacity = state.dls[x+1],
                 isVisible = state.dls[x];
 
-            if (app.viewModel.layerIndex[id]) {
-                app.viewModel.layerIndex[id].activateLayer();
-                app.viewModel.layerIndex[id].opacity(opacity);
-                //obviously not understanding something here...
-                if (isVisible || !isVisible) {
-                    if (isVisible !== 'true' && isVisible !== true) {
-                        app.viewModel.layerIndex[id].toggleVisible();
-                    }
-                }
-            } else {
-                if (!isNaN(id)){
-                  var layer_obj = {'name': 'loading...', 'id': id, 'opacity': parseFloat(opacity), 'isVisible': isVisible};
-                  app.updateHashStateLayers(id, null, isVisible);
-                  app.viewModel.getOrCreateLayer(layer_obj, null, 'updateHashStateLayers', null);
-                } else {
-                  unloadedDesigns.push({id: id, opacity: opacity, isVisible: isVisible});
-                }
-            }
+            unloadedDesigns = app.addKnownLayerFromState(id, opacity, isVisible, unloadedDesigns);
        }
        if ( unloadedDesigns.length ) {
             app.viewModel.unloadedDesigns = unloadedDesigns;
@@ -292,6 +322,11 @@ app.borderLess = function () {
 
 app.loadState = function(state) {
     var loadTimer;
+
+    if (state.hasOwnProperty('bookmark') && !isNaN(state.bookmark)) {
+      app.viewModel.bookmarks.loadBookmarkFromHash(state.bookmark);
+      return;
+    }
 
     // if the request is to load and display a single, named layer
     for ( key in state ) {

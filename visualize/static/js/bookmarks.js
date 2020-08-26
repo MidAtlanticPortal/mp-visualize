@@ -8,6 +8,11 @@ function bookmarkModel(options) {
     self.name = options.name;
     self.description = options.description;
     self.state = options.state || null;
+    try {
+      self.json = JSON.parse(options.json) || {};
+    } catch (e) {
+      self.json = {};
+    }
 
     self.shared = ko.observable();
     self.sharedByName = options.sharedByName || null;
@@ -40,7 +45,11 @@ function bookmarkModel(options) {
     // load state from bookmark
     self.loadBookmark = function() {
         app.saveStateMode = false;
-        app.loadState(self.getBookmarkState());
+        if (self.hasOwnProperty('json') && self.json && JSON.stringify(self.json) != "{}" && self.json instanceof Object && Object.keys(self.json).length > 0) {
+          app.loadState(self.json);
+        } else {
+          app.loadState(self.state);
+        }
 
         app.viewModel.bookmarks.activeBookmark(self.name);
 
@@ -67,8 +76,7 @@ function bookmarkModel(options) {
     // get the url from a bookmark
     self.getBookmarkUrl = function() {
         var host = window.location.href.split('#')[0];
-        return host + "#" + self.getBookmarkHash();
-        //return host + "#" + self.state;
+        return host + "#bookmark=" + self.id.replace(/\D/g,''); //We just want the integer ID, this strips away all non-numeric text
     };
 
     self.getBookmarkState = function() {
@@ -136,6 +144,17 @@ function bookmarksModel(options) {
             }
         }
         return memberList;
+    };
+
+    self.loadBookmarkFromHash = function(bookmark_id) {
+      $.jsonrpc('load_bookmark', [bookmark_id], {
+          success: function(result) {
+            app.loadState(JSON.parse(result[0].json));
+          },
+          error: function(result) {
+
+          }
+      });
     };
 
     self.getCurrentBookmarkURL = function() {
@@ -249,12 +268,64 @@ function bookmarksModel(options) {
 
     // handle the bookmark submit
     self.addBookmark = function(name, description) {
-        $.jsonrpc('add_bookmark',
-                  [
-                   name,
-                   description,
-                   window.location.hash.slice(1)], // TODO: self.get_location()
-                  {complete: self.getBookmarks});
+      var app_state_json = app.getState();
+      var state_json = {
+        x: app_state_json.x,
+        y: app_state_json.y,
+        z: app_state_json.z,
+        basemap: app_state_json.basemap,
+        layers: [],
+        themes: app_state_json.themes,
+        panel: app_state_json.layers,
+        // RDH 2019-12-12: I don't think the below values are used
+        legends: app_state_json.legends,
+        control: app_state_json.control,
+        logo: app_state_json.logo
+      }
+      var order = 0;
+      for (var i = 0; i < app_state_json.dls.length; i++) {
+        var new_layer = {
+          visible: app_state_json.dls[i]
+        }
+        i++;
+        new_layer.opacity = app_state_json.dls[i];
+        i++;
+        layer_record = app.viewModel.getLayerById(app_state_json.dls[i]);
+        new_layer.type = layer_record.type;
+        new_layer.url = layer_record.url;
+        new_layer.name = layer_record.name;
+        new_layer.id = layer_record.id; //should = app_state_json.dls[i]
+        new_layer.order = order;
+        try {
+          new_layer.dynamic = layer_record.isMDAT || layer_record.isVTR || layer_record.wmsSession();
+          new_layer.isUserLayer = layer_record.wmsSession();
+        } catch (e) {
+          new_layer.dynamic = false;
+          new_layer.isUserLayer = false;
+        }
+        new_layer.isMDAT = layer_record.isMDAT;
+        new_layer.isVTR = layer_record.isVTR;
+
+        if (new_layer.type == "ArcRest") {
+          new_layer.arcgislayers = layer_record.arcgislayers;
+        } else {
+          new_layer.arcgislayers = null;
+        }
+
+        state_json.layers.push(new_layer);
+
+        order++;
+
+      }
+      $.jsonrpc('add_bookmark',
+               [
+                 name,
+                 description,
+                 window.location.hash.slice(1),
+                 JSON.stringify(state_json),
+               ],
+               {complete: self.getBookmarks}
+      );
     }
 
     // get bookmark sharing groups for this user
@@ -286,6 +357,7 @@ function bookmarksModel(options) {
                 local_bookmarks.push({
                     'name': existingBookmarks[i].name,
                     'hash': existingBookmarks[i].hash,
+                    'json': existingBookmarks[i].json,
                     'sharing_groups': existingBookmarks[i].sharingGroups
                 });
             }
@@ -302,6 +374,7 @@ function bookmarksModel(options) {
                         state: $.deparam(bookmarks[i].hash),
                         name: bookmarks[i].name,
                         description: bookmarks[i].description,
+                        json: bookmarks[i].json,
                         uid: bookmarks[i].uid,
                         shared: bookmarks[i].shared,
                         sharedByUser: bookmarks[i].shared_by_user,

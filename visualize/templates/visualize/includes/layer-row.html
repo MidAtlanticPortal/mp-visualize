@@ -12,13 +12,14 @@
             </a>
         <!-- /ko -->
         </td>
-
+        <!-- ko if: $data instanceof layerModel -->
         <td class="slider-button" data-bind="visible: (active() && app.viewModel.showSliderButtons() && $data.hasOwnProperty('is_multilayer_parent') && $data.is_multilayer_parent())">
           <a class="btn btn-primary btn-planner btn-slider" data-bind="click: showSlider" data-toggle="tooltip" data-placement="right" data-title="Toggle slider in Active tab">
             View Slider&nbsp;
             <i class="fa fa-play" aria-hidden="true"></i>
           </a>
         </td>
+        <!-- /ko -->
 
         <td class="layer-name">
             <a class="btn btn-layer" data-bind='click: {% block "nameAction" %}toggleActive{% endblock %}'>
@@ -36,9 +37,14 @@
                     <span class="deep-blue uppercase" data-bind="text: name"></span>
                   </td>
                   <td class="add-on">
+                    <!--
                     <i class="fa fa-check-circle"  data-bind="visible: !$data.loadStatus(), css: { 'fa-check-circle': active() && visible(), 'fa': active() && visible(), 'fa-circle': !(active() && visible()), 'far': !(active() && visible()) }"></i>
                     <i class="fas fa-spinner fa-spin"  data-bind="visible: $data.loadStatus()=='loading'"></i>
                     <i style="color:red" title="error loading layer" class="fas fa-times-circle"  data-bind="visible: $data.loadStatus()=='error'"></i>
+                    -->
+                     <i class="fa fa-check-circle" data-bind="visible: !loadStatus(), css: { 'fa-check-circle': active() && visible(), 'fa': active() && visible(), 'fa-circle': !(active() && visible()), 'far': !(active() && visible()) }"  data-toggle="tooltip" data-placement="left" title="" data-original-title="Toggle Visibility"></i>
+                     <i class="fas fa-spinner fa-spin"  data-bind="visible: $data.loadStatus()=='loading'"></i>
+                     <i style="color:red" title="error loading layer" class="fas fa-times-circle"  data-bind="visible: $data.loadStatus()=='error'"></i>
                   </td>
                 </tr>
               </table>
@@ -118,7 +124,7 @@
         <td class="animated-slider-cell">
           <div class="slider multilayerslider" data-bind="attr: {id: $parent.id + '_' + label + '_multilayerslider'}"></div>
         </td>
-        <td class='animation-check-container'>
+        <td class='animation-check-container'  data-toggle="tooltip" data-placement="left" title="" data-original-title="Animate">
           <input type="checkbox" data-bind="attr: {id: $parent.id + '_animate_multilayerslider'}" class="animate-checkmark" name="animate" value="animate">
           <label data-bind="attr: {for: $parent.id + '_animate_multilayerslider'}">
             <i class="fa fa-play" aria-hidden="true"></i>

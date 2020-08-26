@@ -318,6 +318,8 @@ app.init = function () {
     }
 };
 
+
+
 app.addLayerToMap = function(layer) {
   if (layer instanceof layerModel && layer.fullyLoaded) {
     if (!layer.layer) {

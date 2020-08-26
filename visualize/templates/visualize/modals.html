@@ -141,11 +141,11 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="map-wms-modal-label">Session Based ArcRest Layer Input</h4>
+                <h4 class="modal-title" id="map-wms-modal-label">Session-Based ArcRest Layer Input Tool</h4>
             </div>
             <form id="sessionForm" data-bind="submit: submitWMSSession">
                 <div class="modal-body" id="arcRestFormBody">
-                  <p>This form allows you to add layers from arbitrary ArcRest servers. <br />
+                  <p>This form allows you to add external map layers from arbitrary ArcRest servers. <br />
                     <b><u>This is an advanced feature</u></b>: please consult the help links below or the manager of your desired ArcRest server for troubleshooting.</p>
                     <div id="wmsForms">
                         <div class="wmsForm">
@@ -164,7 +164,7 @@
                                       id="wmsName"
                                       placeholder="Layer"
                                       pattern=".{3,}"
-                                      required title="Layer Name is Too Short"
+                                      required title="Layer Name requires at least 3 characters."
                                       >
                             </div>
                             <div class="form-group">
@@ -174,28 +174,32 @@
                                <div id="arcRestUrlFieldHelp" class="modal-form-help collapse">
                                  <div class="well modal-help-container">
                                    The <b>URL Path</b> is the "end point" of an external ArcGIS Server. It will look something like:<br />
-                                   <i class="arcRest-example-url">https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer/export</i><br />
+                                   <i class="arcRest-example-url">https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer</i><br />
                                    <br />
-                                   To break that into east-to-understand pieces:
-                                   <ul>
-                                     <li>
-                                       Your <b>Domain</b> (i.e.: https://mgelmaps.env.duke.edu)
-                                     </li>
-                                     <li>
-                                       Your ArcRest <b>Services directory</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services">/mdat/rest/services</a>)
-                                     </li>
-                                     <li>
-                                       Your ArcRest <b>Service Folder</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT">/MDAT</a>)
-                                     </li>
-                                     <li>
-                                       Your ArcRest <b>Service</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer">/Avian_Abundance_CI90</a>)
-                                     </li>
-                                     <li>
-                                       Your ArcRest <b>Service Type</b> (Generally <a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer">"/MapServer"</a> or "/FeatureServer")
-                                     </li>
-                                     <li>
-                                       The <b>"Export Map"</b> operation (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer/export">/export</a>)
-                                     </li>
+                                   Paste/type the URL of the external layer in the URL Path field. Type “/export” at the end of the URL.
+                                   <!--
+                                     To break that into east-to-understand pieces:
+                                     <ul>
+                                       <li>
+                                         Your <b>Domain</b> (i.e.: https://mgelmaps.env.duke.edu)
+                                       </li>
+                                       <li>
+                                         Your ArcRest <b>Services directory</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services">/mdat/rest/services</a>)
+                                       </li>
+                                       <li>
+                                         Your ArcRest <b>Service Folder</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT">/MDAT</a>)
+                                       </li>
+                                       <li>
+                                         Your ArcRest <b>Service</b> (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer">/Avian_Abundance_CI90</a>)
+                                       </li>
+                                       <li>
+                                         Your ArcRest <b>Service Type</b> (Generally <a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer">"/MapServer"</a> or "/FeatureServer")
+                                       </li>
+                                       <li>
+                                         The <b>"Export Map"</b> operation (<a target="_blank" href="https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Avian_Abundance_CI90/MapServer/export">/export</a>)
+                                       </li>
+                                     </ul>
+                                    -->
                                  </div>
                                </div>
                                <input type="url"

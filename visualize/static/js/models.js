@@ -6,7 +6,6 @@ function layerModel(options, parent) {
     self.fullyLoaded = false;
 
     self.legendVisibility = ko.observable(false);
-
     self.themes = ko.observableArray();
     self.description = ko.observable();
 
@@ -117,10 +116,10 @@ function layerModel(options, parent) {
         }
       }
       self.outline_opacity = options.outline_opacity || self.defaultOpacity;
-      self.outline_width = options.outline_width || 1;
+      self.outline_width = options.outline_width || 1;  // This was removed in one branch (RDH: 2020-08-25)
       self.point_radius = options.point_radius || 2;
       self.graphic = options.graphic || null;
-      self.graphic_scale = options.graphic_scale || null;
+      self.graphic_scale = options.graphic_scale || null;  // This was removed in one branch (RDH: 2020-08-25)
       self.annotated = options.annotated || false;
 
       if (options.is_disabled) {
@@ -145,7 +144,6 @@ function layerModel(options, parent) {
       // VTR/CAS life layers
       self.isVTR = options.isVTR || false;
       self.dateRangeDirectory = options.dateRangeDirectory || null;
-
       self.isDrawingModel = options.isDrawingModel || false;
       self.isSelectionModel = options.isSelectionModel || false;
 
@@ -286,7 +284,6 @@ function layerModel(options, parent) {
           }
         }
       });
-
     }
 
     self.setOptions(options, parent);
@@ -359,7 +356,6 @@ function layerModel(options, parent) {
       });
     }
 
-
     self.toggleLegendVisibility = function() {
         var layer = this;
         layer.legendVisibility(!layer.legendVisibility());
@@ -418,7 +414,7 @@ function layerModel(options, parent) {
             layer.arcIdentifyControl.deactivate();
         }
 
-        if (layer.is_multilayer_parent() && layer.dimensions.length > 0){
+        if (layer instanceof layerModel && layer.is_multilayer_parent() && layer.dimensions.length > 0){
           self.deactivateMultiLayers();
         }
 
@@ -646,24 +642,25 @@ function layerModel(options, parent) {
         }
 
         if (layer instanceof layerModel) {
-          if (layer.fullyLoaded || layer.isMDAT || layer.isVTR) {
-
+          if (layer.fullyLoaded || layer.isMDAT || layer.isVTR || layer.wmsSession()) {
             if (!layer.hasOwnProperty('url') || !layer.url || layer.url.length < 1 || layer.hasOwnProperty('type') && layer.type == 'placeholder') {
               layer.loadStatus(false);
             }
 
             // if legend is not provided, try using legend from web services
             if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
-              try {
-                getArcGISJSONLegend(self, window.location.protocol);
-              } catch (err) {
-                if (window.location.protocol == "http:") {
-                  console.log(err);
-                } else {
-                  getArcGISJSONLegend(self, "http:");
-                }
-              }
-
+              setTimeout(function() {
+                  try {
+                    // On Macs the legend seems to get overwritten w/o this timeout.
+                    getArcGISJSONLegend(self, window.location.protocol);
+                  } catch (err) {
+                    if (window.location.protocol == "http:") {
+                      console.log(err);
+                    } else {
+                      getArcGISJSONLegend(self, "http:");
+                    }
+                  }
+                }, 1000);
             }
 
             if (!layer.active() && layer.type !== 'placeholder' && !layer.isDisabled()) {
@@ -686,11 +683,11 @@ function layerModel(options, parent) {
               }
 
               //activate marine life layers
-              if (layer.isMDAT) {
+              if (layer.isMDAT && self.hasOwnProperty('parentMDATDirectory') && self.parentMDATDirectory) {
                 self.parentMDATDirectory.visible(true);
               }
 
-              if (layer.isVTR) {
+              if (layer.isVTR || layer.wmsSession()) {
                 self.visible(true);
               }
 
@@ -708,7 +705,7 @@ function layerModel(options, parent) {
               }
 
               //activate multilayer groups
-              if (layer.is_multilayer_parent() && layer.dimensions.length > 0){
+              if (layer instanceof layerModel && layer.is_multilayer_parent() && layer.dimensions.length > 0){
                 self.activateMultiLayers();
                 self.buildMultilayerValueLookup();
               }
@@ -782,7 +779,7 @@ function layerModel(options, parent) {
             self.setVisible(layer);
         }
 
-        if (layer.is_multilayer_parent() && layer.dimensions.length > 0){
+        if (layer instanceof layerModel && layer.is_multilayer_parent() && layer.dimensions.length > 0){
           var multilayers = self.getMultilayerIds(layer.associated_multilayers, []);
           for (var i = 0; i < multilayers.length; i++) {
             var mlayer = app.viewModel.getLayerById(multilayers[i]);
@@ -937,6 +934,13 @@ function layerModel(options, parent) {
           }
         }
         self.toggleMultilayer(sliderValues);
+      } else {
+        // There is a bug where the slider stops working and the layer stays put
+          //Somehow multilayerValueLookup is getting set to {}. I don't know how/why
+          // but this takes care of the problem - RDH 2019-12-20
+        if (Object.keys(self.multilayerValueLookup).length == 0) {
+          self.buildMultilayerValueLookup();
+        }
       }
     };
 
@@ -1274,7 +1278,7 @@ function layerModel(options, parent) {
 
     self.getFullLayerRecord = function(callbackType, evt) {
       var layer = this;
-      if (layer.isMDAT || layer.isVTR || layer.isDrawingModel || layer.isSelectionModel) {
+      if (layer.isMDAT || layer.isVTR || layer.isDrawingModel || layer.isSelectionModel || layer.hasOwnProperty('wmsSession') && layer.wmsSession()) {
         layer.fullyLoaded = true;
         layer.performAction(callbackType, evt);
       } else {
@@ -1370,18 +1374,19 @@ function layerModel(options, parent) {
 
       //are the active and current layers the same
       if (layer !== activeLayer && typeof activeLayer !== 'undefined') {
-          // are these CAS/VTR layers?
-          if (activeLayer.dateRangeDirectory && typeof activeLayer.parentDirectory == 'Function') {
-              activeLayer.parentDirectory.showSublayers(false);
+        // are these CAS/VTR layers?
+        if (activeLayer.dateRangeDirectory && typeof activeLayer.parentDirectory == 'Function') {
+          activeLayer.parentDirectory.showSublayers(false);
+        }
+        //is sublayer already active
+        else if (activeLayer && typeof activeLayer.showSublayers == 'Function' ) {
+          if (activeLayer && activeLayer.showSublayers()) {
+            //if radio sublayer
+            if (!activeLayer.isCheckBoxLayer()) {
+              activeLayer.showSublayers(false);
+            }
           }
-          //is sublayer already active
-          else if (activeLayer && typeof activeLayer.showSublayers == 'Function' ) {
-              if (activeLayer && activeLayer.showSublayers()) {
-                  //if radio sublayer
-                  if (!activeLayer.isCheckBoxLayer()) {
-                      activeLayer.showSublayers(false);
-                  }
-              }
+
           //check if a parent layer is active
           //checkbox sublayer has been clicked prior to opening another sublayer
           } else if (activeParentLayer && layer.parent !== activeParentLayer) {
@@ -1396,8 +1401,6 @@ function layerModel(options, parent) {
       app.saveStateMode = true;
       app.viewModel.error(null);
       //app.viewModel.unloadedDesigns = [];
-
-
 
       //check if mdat/marine-life-library still has activeLayers
       if (layer.isMDAT) {
@@ -2431,6 +2434,14 @@ function viewModel() {
             arcgis_layers: layer.id
         };
 
+        var id_exists = true;
+        for(var i=0; id_exists == true && i < 1000; i++) {
+          mdatObj.id = 'mdat_layer_' + i;
+          if (Object.keys(app.viewModel.layerIndex).indexOf(mdatObj.id) < 0) {
+            id_exists = false;
+          }
+        }
+
         var mdatLayer = app.viewModel.getOrCreateLayer(mdatObj, null, 'return', null),
             avianAbundance = '/MDAT/Avian_Abundance',
             avianOccurrence = '/MDAT/Avian_Occurrence';
@@ -2493,6 +2504,14 @@ function viewModel() {
             arcgis_layers: layer.id
         };
 
+        var id_exists = true;
+        for(var i=0; id_exists == true && i < 1000; i++) {
+          vtrObj.id = 'vtr_layer_' + i;
+          if (Object.keys(app.viewModel.layerIndex).indexOf(vtrObj.id) < 0) {
+            id_exists = false;
+          }
+        }
+
         var vtrLayer = app.viewModel.getOrCreateLayer(vtrObj, null, 'activateLayer', null);
 
     };
@@ -2504,6 +2523,13 @@ function viewModel() {
             var lyrObj = new Object();
             lyrObj.type = 'ArcRest';
             lyrObj.wmsSession = true;
+            var id_exists = true;
+            for(var i=0; id_exists == true && i < 1000; i++) {
+              lyrObj.id = 'user_layer_' + i;
+              if (Object.keys(app.viewModel.layerIndex).indexOf(lyrObj.id) < 0) {
+                id_exists = false;
+              }
+            }
 
             $(this).find(':input').each(function() {
                 var inputField = ($(this).attr("name"));
@@ -2639,7 +2665,7 @@ function viewModel() {
       }
       if (action == 'return'){
         return layer;
-      } else if (layer.fullyLoaded || layer.isMDAT || layer.isVTR ) {
+      } else if (layer.fullyLoaded || layer.isMDAT || layer.isVTR || (layer_obj.hasOwnProperty('wmsSession') && layer_obj.wmsSession) ) {
         layer.performAction(action, event);
       } else {
         layer.getFullLayerRecord(action, event);
@@ -2791,7 +2817,7 @@ function viewModel() {
             }
 
             // multilayer sliders need to be redrawn after dragging to reorder
-            if (layer.is_multilayer_parent()) {
+            if (layer instanceof layerModel && layer.is_multilayer_parent()) {
               multilayer_parents[index.toString()] = layer;
             }
             index--;
@@ -2818,7 +2844,7 @@ function viewModel() {
         app.updateUrl();
 
         $.each(self.activeLayers(), function(i, layer) {
-          if (layer.is_multilayer_parent()) {
+          if (layer instanceof layerModel && layer.is_multilayer_parent()) {
             if ($('#'+ layer.id + '_' + layer.dimensions[0].label + '_multilayerslider').length == 0 || $('#'+ layer.id + '_' + layer.dimensions[0].label + '_multilayerslider').html() == "") {
               try {
                 setTimeout(function() {
@@ -3091,8 +3117,6 @@ function viewModel() {
     };
 
     self.showSliderButtons = ko.observable($.deparam(window.location.hash.slice(1)).tab == "data");
-
-
     /**
       * @function trackMultilayerLoad - keep track of the status of loading multilayer layers (sliders) via ajax
       * @param {string} parentLayer - the multilayer parent layerModel instance
@@ -3131,7 +3155,6 @@ function viewModel() {
         }
       }
     }
-
 
     return self;
 } //end viewModel
