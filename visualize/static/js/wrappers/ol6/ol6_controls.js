@@ -364,15 +364,36 @@ app.wrapper.controls.startSketch = function() {
     drawingForm.draw.on('drawend',function() {
       app.wrapper.controls.completeSketch();
       app.viewModel.scenarios.drawingFormModel.showEdit(true);
-      app.wrapper.controls.consolidatePolygonLayerFeatures();
       app.viewModel.scenarios.drawingFormModel.hasShape(true);
+      setTimeout(function() {
+        app.wrapper.controls.consolidatePolygonLayerFeatures();
+      }, 100);
     });
     drawingForm.draw.on('drawabort', app.wrapper.controls.completeSketch);
     app.wrapper.controls.disableDoubleClickZoom();
 };
 
 app.wrapper.controls.consolidatePolygonLayerFeatures = function(layer){
-  console.log('TODO: Write OL6 app.wrapper.controls.consolidatePolygonLayerFeatures.');
+  var featureList = app.map.drawingLayer.getSource().getFeatures();
+  var multipolygon = new ol.geom.MultiPolygon([]);
+  for (var i = 0; i < featureList.length; i++) {
+    var feat = featureList[i].getGeometry();
+    if (feat instanceof ol.geom.Polygon) {
+      multipolygon.appendPolygon(feat);
+    } else if (feat instanceof ol.geom.MultiPolygon){
+      var polygons = feat.getPolygons();
+      for (var j = 0; j < polygons.length; j++) {
+        multipolygon.appendPolygon(polygons[j])
+      }
+    } else {
+      console.log('feature is not an appropriate geometry');
+    }
+  }
+  app.map.drawingLayer.getSource().clear();
+  multipolygon_feature = new ol.Feature({geometry: multipolygon});
+  setTimeout(function() {
+    app.map.drawingLayer.getSource().addFeature(multipolygon_feature);
+  }, 300);
 };
 
 app.wrapper.controls.setDoublClickZoomInteraction = function() {
