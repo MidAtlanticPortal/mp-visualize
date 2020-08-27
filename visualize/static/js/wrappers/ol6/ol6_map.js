@@ -858,3 +858,7 @@ app.wrapper.map.addDrawingLayerToMap = function() {
 
   return app.map.drawingLayer;
 };
+
+app.wrapper.map.countFeatures = function(layer) {
+  return layer.getSource().getFeatures().length;
+}

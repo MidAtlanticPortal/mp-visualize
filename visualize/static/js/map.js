@@ -496,6 +496,9 @@ app.completeSketch = function() {
 }
 
 app.startEdit = function() {
+  var drawingForm = app.viewModel.scenarios.drawingFormModel;
+  drawingForm.isEditing(true);
+  app.viewModel.disableFeatureAttribution();
   if (app.wrapper.controls.hasOwnProperty('startEdit')) {
     app.wrapper.controls.startEdit();
   } else {
@@ -504,10 +507,25 @@ app.startEdit = function() {
 }
 
 app.completeEdit = function() {
+  var drawingForm = app.viewModel.scenarios.drawingFormModel;
+  drawingForm.isEditing(false);
   if (app.wrapper.controls.hasOwnProperty('completeEdit')) {
     app.wrapper.controls.completeEdit();
   } else {
     console.log('no completeEdit function defined for controls.')
+  }
+  app.viewModel.enableFeatureAttribution();
+  if (app.wrapper.map.hasOwnProperty('countFeatures')){
+    num_features = app.wrapper.map.countFeatures(app.map.drawingLayer);
+    if (num_features == 0) {
+      drawingForm.hasShape(false);
+      window.alert('You have no shapes drawn. Please draw a shape before saving.');
+      app.startSketch();
+    } else if (num_features > 1) {
+      app.consolidatePolygonLayerFeatures();
+    }
+  } else {
+    console.log('no countFeatures function defined for map');
   }
 }
 
@@ -515,6 +533,22 @@ app.cleanupDrawing = function() {
   if (app.wrapper.events.hasOwnProperty('cleanupDrawing')) {
     app.wrapper.events.cleanupDrawing();
   } else {
-    console.log('no cleanupDrawing function defined for events.')
+    console.log('no cleanupDrawing function defined for events.');
+  }
+}
+
+app.consolidatePolygonLayerFeatures = function(){
+  if (app.wrapper.controls.hasOwnProperty('consolidatePolygonLayerFeatures')) {
+    app.wrapper.controls.consolidatePolygonLayerFeatures();
+  } else {
+    console.log('no consolidatePolygonLayerFeatures function defined for controls');
+  }
+}
+
+app.getLayerFeatureAsWKT = function(layer, feature_index) {
+  if (app.wrapper.layer_functions.hasOwnProperty('getLayerFeatureAsWKT')) {
+    return app.wrapper.layer_functions.getLayerFeatureAsWKT(layer, feature_index);
+  } else {
+    console.log('no getLayerFeatureAsWKT function defined for layers');
   }
 }

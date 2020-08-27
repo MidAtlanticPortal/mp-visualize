@@ -62,3 +62,10 @@ app.wrapper.layer_functions.getLayerExtent = function(layer) {
   }
   return null;
 }
+
+app.wrapper.layer_functions.getLayerFeatureAsWKT = function(layer, feat_index) {
+  var wkt = new ol.format.WKT();
+  var geometry = layer.getSource().getFeatures()[feat_index].getGeometry();
+  var wkt_text = wkt.writeGeometry(geometry);
+  return wkt_text;
+}

@@ -419,3 +419,18 @@ app.wrapper.controls.disableDoubleClickZoom = function() {
   }
   app.map.removeInteraction(app.map.controls.dblClickInteraction);
 };
+
+app.wrapper.controls.startEdit = function() {
+  var drawingForm = app.viewModel.scenarios.drawingFormModel;
+  // activate the modify feature control
+  drawingForm.edit = new ol.interaction.Modify({
+    source: app.map.drawingLayer.getSource()
+  });
+  // drawingForm.edit.on('modifyend', app.completeEdit);
+  app.map.addInteraction(drawingForm.edit);
+}
+
+app.wrapper.controls.completeEdit = function() {
+  var drawingForm = app.viewModel.scenarios.drawingFormModel;
+  app.map.removeInteraction(drawingForm.edit);
+};
