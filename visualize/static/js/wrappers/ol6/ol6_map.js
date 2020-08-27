@@ -361,6 +361,19 @@ app.wrapper.map.removeLayerByName = function(layerName) {
 };
 
 /**
+  * removeLayerByUID - given a string, find layers with that UID and remove them from the map
+  * @param {string} uid - string representing the name of layer(s) to be removed
+  */
+app.wrapper.map.removeLayerByUID = function(uid) {
+  var layers = app.map.getLayers().getArray();
+  for (var i=0; i<layers.length; i++) {
+      if (layers[i].get('mpid') === uid || layers[i].get('uid') === uid) {
+          app.map.removeLayer(layers[i]);
+      }
+  }
+};
+
+/**
   * postProcessLayer - perform additional post-processing steps on any layer added
   * @param {object} layer - mp layer instance
   */

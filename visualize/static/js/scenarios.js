@@ -1423,15 +1423,20 @@ function scenariosModel(options) {
     };
 
     self.zoomToScenario = function(scenario) {
+      setTimeout(function() {
         if (scenario.layer()) {
-            var layer = scenario.layer();
-            if (!scenario.active()) {
-                scenario.activateLayer();
-            }
-            app.wrapper.map.zoomToBufferedExtent(app.wrapper.layer_functions.getLayerExtent(layer), 0.2);
+          var layer = scenario.layer();
+          if (!scenario.active()) {
+            scenario.activateLayer();
+          }
+          var extent = app.wrapper.layer_functions.getLayerExtent(layer);
+          if (extent.indexOf(Infinity) == -1 && extent.indexOf(-Infinity) == -1) {
+            app.wrapper.map.zoomToBufferedExtent(extent, 0.2);
+          }
         } else {
-            self.addScenarioToMap(scenario, {zoomTo: true});
+          self.addScenarioToMap(scenario, {zoomTo: true});
         }
+      }, 500);
     };
 
     self.updateSharingScrollBar = function(groupID) {
@@ -1688,9 +1693,13 @@ function scenariosModel(options) {
             type: 'GET',
             dataType: 'json',
             success: function(feature) {
+                var layer_name = scenarioId;
+                if (scenario) {
+                  layer_name = scenario.name;
+                }
                 var layer = new layerModel({
                   'id': scenarioId,
-                  'name': scenario.name,
+                  'name': layer_name,
                   'order': 0,
                   'url': "/features/generic-links/links/geojson/" + scenarioId + "/",
                   'type': 'Vector',
@@ -1807,7 +1816,8 @@ function scenariosModel(options) {
 
                 //app.addVectorAttribution(layer);
                 //in case of edit, removes previously displayed scenario
-                app.wrapper.map.removeLayerByName(scenario.uid);
+                app.wrapper.map.removeLayerByName(scenario.name);
+                app.wrapper.map.removeLayerByUID(scenario.uid);
                 // for (var i=0; i<app.map.layers.length; i++) {
                 //     if (app.map.layers[i].name === scenario.uid) {
                 //         app.map.removeLayer(app.map.layers[i]);
