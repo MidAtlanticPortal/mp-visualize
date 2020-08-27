@@ -335,3 +335,66 @@ app.wrapper.controls.addUTFControl = function(){
   */
 // app.wrapper.controls.addArcIdentifyControl = function(layer, identifyUrl) {
 // };
+
+app.wrapper.controls.completeSketch = function() {
+  app.map.addInteraction(app.map.interactions.selectClick);
+  app.viewModel.enableFeatureAttribution();
+  app.map.removeInteraction(app.viewModel.scenarios.drawingFormModel.draw);
+  app.viewModel.scenarios.drawingFormModel.isDrawing(false);
+  app.wrapper.controls.enableDoubleClickZoom();
+}
+
+app.wrapper.controls.startSketch = function() {
+    var drawingForm = app.viewModel.scenarios.drawingFormModel;
+    var features = app.map.drawingLayer.getSource().getFeatures();
+    if (features.length > 0 && features[0].geometry instanceof ol.geom.Polygon) {
+      app.wrapper.controls.consolidatePolygonLayerFeatures();
+    }
+    drawingForm.isDrawing(true);
+
+    //activate the draw feature control
+    drawingForm.draw = new ol.interaction.Draw({
+      source: app.map.drawingLayer.getSource(),
+      type: 'Polygon'
+    });
+    app.map.addInteraction(drawingForm.draw);
+    //disable feature attribution
+    app.viewModel.disableFeatureAttribution();
+    app.map.removeInteraction(app.map.interactions.selectClick);
+    drawingForm.draw.on('drawend',function() {
+      app.wrapper.controls.completeSketch();
+      app.viewModel.scenarios.drawingFormModel.showEdit(true);
+      app.wrapper.controls.consolidatePolygonLayerFeatures();
+      app.viewModel.scenarios.drawingFormModel.hasShape(true);
+    });
+    drawingForm.draw.on('drawabort', app.wrapper.controls.completeSketch);
+    app.wrapper.controls.disableDoubleClickZoom();
+};
+
+app.wrapper.controls.consolidatePolygonLayerFeatures = function(layer){
+  console.log('TODO: Write OL6 app.wrapper.controls.consolidatePolygonLayerFeatures.');
+};
+
+app.wrapper.controls.setDoublClickZoomInteraction = function() {
+  app.map.getInteractions().getArray().forEach(function(interaction) {
+    if (interaction instanceof ol.interaction.DoubleClickZoom) {
+      app.map.controls.dblClickInteraction = interaction;
+    }
+  });
+};
+
+app.wrapper.controls.enableDoubleClickZoom = function() {
+  if (!app.map.controls.hasOwnProperty('dblClickInteraction')){
+    app.wrapper.controls.setDoublClickZoomInteraction();
+  }
+  setTimeout(function() {
+    app.map.addInteraction(app.map.controls.dblClickInteraction);
+  }, 300);
+};
+
+app.wrapper.controls.disableDoubleClickZoom = function() {
+  if (!app.map.controls.hasOwnProperty('dblClickInteraction')){
+    app.wrapper.controls.setDoublClickZoomInteraction();
+  }
+  app.map.removeInteraction(app.map.controls.dblClickInteraction);
+};

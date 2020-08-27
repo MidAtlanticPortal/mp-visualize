@@ -1847,7 +1847,9 @@ function viewModel() {
     };
     self.disableFeatureAttribution = function() {
         self.featureAttribution(false);
-        app.markers.clearMarkers();
+        if (app.markers.hasOwnProperty('clearMarkers')){
+          app.markers.clearMarkers();
+        }
     };
 
     self.showFeatureAttribution = ko.observable(false);

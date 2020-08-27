@@ -32,9 +32,9 @@ app.wrapper.events.addMoveEnd = function(moveEndFunction) {
   */
 app.wrapper.events.addFeatureClickEvent = function(){
   // TODO: Update this for OL5
-  var selectClick = new ol.interaction.Select();
-  app.map.addInteraction(selectClick);
-  selectClick.on('select', function(e) {
+  app.map.interactions.selectClick = new ol.interaction.Select();
+  app.map.addInteraction(app.map.interactions.selectClick);
+  app.map.interactions.selectClick.on('select', function(e) {
     if (e.selected.length > 0) {
       for (var i = 0; i < e.selected.length; i++) {
         var layer = e.selected[0].getLayer(app.map);
@@ -396,4 +396,17 @@ app.wrapper.events.addLayerLoadError = function(layerModel) {
       app.wrapper.events.layerLoadError(layerModel);
     });
   }
+}
+
+app.wrapper.events.cleanupDrawing = function() {
+  if (app.viewModel.scenarios.drawingFormModel.hasOwnProperty('draw')) {
+    app.map.removeInteraction(app.viewModel.scenarios.drawingFormModel.draw);
+  }
+
+  if (app.viewModel.scenarios.drawingFormModel.hasOwnProperty('edit')) {
+    app.map.removeInteraction(app.viewModel.scenarios.drawingFormModel.edit);
+  }
+
+  app.map.removeLayer(app.map.drawingLayer);
+  app.wrapper.controls.enableDoubleClickZoom();
 }
