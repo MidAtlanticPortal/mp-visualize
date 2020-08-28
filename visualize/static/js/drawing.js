@@ -68,11 +68,9 @@ function drawingModel(options) {
         var drawing = this;
 
         //remove from activeLayers
-        app.viewModel.activeLayers.remove(drawing);
+        app.viewModel.activeLayers.remove(drawing.layer());
         //remove from app.map
-        if (drawing.layer) {
-            app.map.removeLayer(drawing.layer);
-        }
+        app.wrapper.map.removeLayerByUID(drawing.uid)
         //remove from selectionList
         app.viewModel.scenarios.drawingList.remove(drawing);
 
