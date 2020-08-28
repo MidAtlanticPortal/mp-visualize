@@ -1430,7 +1430,7 @@ function scenariosModel(options) {
             scenario.activateLayer();
           }
           var extent = app.wrapper.layer_functions.getLayerExtent(layer);
-          if (extent.indexOf(Infinity) == -1 && extent.indexOf(-Infinity) == -1) {
+          if (extent && extent.indexOf(Infinity) == -1 && extent.indexOf(-Infinity) == -1) {
             app.wrapper.map.zoomToBufferedExtent(extent, 0.2);
           }
         } else {
@@ -1696,6 +1696,8 @@ function scenariosModel(options) {
                 var layer_name = scenarioId;
                 if (scenario) {
                   layer_name = scenario.name;
+                } else if (feature.features.length == 1 && feature.features[0].properties.hasOwnProperty('name')) {
+                  layer_name = feature.features[0].properties.name;
                 }
                 var layer = new layerModel({
                   'id': scenarioId,

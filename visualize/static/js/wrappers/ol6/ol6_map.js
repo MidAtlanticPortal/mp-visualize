@@ -358,6 +358,14 @@ app.wrapper.map.removeLayerByName = function(layerName) {
           app.map.removeLayer(layers[i]);
       }
   }
+  var active_layers = app.viewModel.activeLayers();
+  for (var i=0; i<active_layers.length; i++) {
+    if (active_layers[i].name === layerName) {
+      var obsolete_layer = active_layers[i]
+      app.viewModel.activeLayers.remove(obsolete_layer);
+      break;
+    }
+  }
 };
 
 /**
@@ -370,6 +378,14 @@ app.wrapper.map.removeLayerByUID = function(uid) {
       if (layers[i].get('mpid') === uid || layers[i].get('uid') === uid) {
           app.map.removeLayer(layers[i]);
       }
+  }
+  var active_layers = app.viewModel.activeLayers();
+  for (var i=0; i<active_layers.length; i++) {
+    if (active_layers[i].id === uid) {
+      var obsolete_layer = active_layers[i]
+      app.viewModel.activeLayers.remove(obsolete_layer);
+      break;
+    }
   }
 };
 
