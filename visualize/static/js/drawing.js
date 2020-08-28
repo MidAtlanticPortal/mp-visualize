@@ -32,8 +32,10 @@ function drawingModel(options) {
                 app.viewModel.scenarios.drawingFormModel.polygonLayer = self.drawing.layer;
                 //debugger;
 
-                app.map.zoomToExtent(self.drawing.layer.getDataExtent());
+                app.map.zoomToExtent(self.drawing.layer().getDataExtent());
                 app.map.zoomOut();
+
+                app.map.drawingLayer = self.drawing.layer().layer;
 
                 $('#drawing-form').html(data);
                 ko.applyBindings(app.viewModel.scenarios.drawingFormModel, document.getElementById('drawing-form'));

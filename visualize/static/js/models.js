@@ -1551,7 +1551,7 @@ function layerModel(options, parent) {
 
     self.getDataExtent = function(layer, event) {
       if (app.wrapper.layer_functions.hasOwnProperty('getLayerExtent')) {
-        app.wrapper.layer_functions.getLayerExtent(self);
+        return app.wrapper.layer_functions.getLayerExtent(self);
       } else {
         console.log('function "app.wrapper.layer_functions.getLayerExtent" not defined for layer for ' + app.map_tech);
       }

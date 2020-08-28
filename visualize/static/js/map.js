@@ -316,6 +316,26 @@ app.init = function () {
       app.menus.sharedWindEnergySiting = [];
       app.menus.windEnergySiting = [];
     }
+
+    app.map.zoomToExtent = function(extent){
+      if (extent instanceof drawingModel) {
+        app.viewModel.scenarios.zoomToDrawing()
+      } else {
+        if (app.wrapper.map.hasOwnProperty('zoomToExtent')) {
+            app.wrapper.map.zoomToExtent(extent);
+        } else {
+          console.log('no zoomToExtent function defined for map');
+        }
+      }
+    }
+
+    app.map.zoomOut = function() {
+      if (app.wrapper.map.hasOwnProperty('zoomOut')) {
+        app.wrapper.map.zoomOut();
+      } else {
+        console.log('no zoomOut function defined for map');
+      }
+    }
 };
 
 
