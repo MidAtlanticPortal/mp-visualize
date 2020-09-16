@@ -305,11 +305,12 @@ function layerModel(options, parent) {
           type: 'GET',
           success: function(data) {
               if (data['layers']) {
+                  var requested_layers = self.arcgislayers.replace(/ /g,'').split(',');
+                  self.legend = {'elements': []};
                   $.each(data['layers'], function(i, layerobj) {
-                      if (parseInt(layerobj['layerId'], 10) === parseInt(self.arcgislayers, 10)) {
-                          self.legend = {'elements': []};
+                      if (requested_layers.indexOf(parseInt(layerobj['layerId'], 10).toString()) >= 0) {
                           $.each(layerobj['legend'], function(j, legendobj) {
-                              var swatchURL = self.url.replace('/export', '/'+self.arcgislayers+'/images/'+legendobj['url']),
+                              var swatchURL = self.url.replace('/export', '/'+parseInt(layerobj['layerId'], 10)+'/images/'+legendobj['url']),
                                   label = legendobj['label'];
                               if (j < 1 && label === "") {
                                   label = layerobj['layerName'];
