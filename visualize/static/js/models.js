@@ -291,6 +291,17 @@ function layerModel(options, parent) {
 
 
     getArcGISJSONLegend = function(self, protocol) {
+
+      if (self.url.toLowerCase().indexOf('/export') < 0) {
+          var url_split = self.url.split('?');
+          if (url_split[0][url_split[0].length-1] == '/') {
+            url_split[0] = url_split[0] + "export";
+          } else {
+            url_split[0] = url_split[0] + "/export";
+          }
+          self.url = url_split.join('?');
+      }
+
       if (self.url.indexOf('?') < 0) {
         var url = self.url.replace('/export', '/legend/?f=pjson');
       } else {
