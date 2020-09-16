@@ -204,7 +204,12 @@ app.loadCompressedState = function(state) {
     }
 
     if (state.basemap) {
-        app.setBasemap(app.wrapper.map.getLayersByName(state.basemap)[0]);
+      basemap = app.wrapper.map.getLayersByName(state.basemap)[0];
+      if (!basemap) {
+        // It's okay, app.setBasemap knows how to handle strings now!
+        basemap = state.basemap;
+      }
+      app.setBasemap(basemap);
     }
 
     app.establishLayerLoadState();
@@ -333,25 +338,17 @@ app.loadState = function(state) {
     });
     //var activeLayers = $.extend({}, app.viewModel.activeLayers());
 
-    // turn on the layers that should be active
-    app.viewModel.deactivateAllLayers();
-    if (state.activeLayers) {
-        $.each(state.activeLayers, function(index, layer) {
-            if (app.viewModel.layerIndex[layer.id]) {
-                app.viewModel.layerIndex[layer.id].activateLayer();
-                app.viewModel.layerIndex[layer.id].opacity(layer.opacity);
-                //must not be understanding something about js, but at the least the following seems to work now...
-                if (layer.isVisible || !layer.isVisible) {
-                    if (layer.isVisible !== 'true' && layer.isVisible !== true) {
-                        app.viewModel.layerIndex[layer.id].toggleVisible();
-                    }
-                }
-            }
-       });
-    }
-
     if (state.basemap) {
-        app.wrapper.map.setBasemap(app.wrapper.map.getLayersByName(state.basemap.name)[0]);
+        basemap = app.wrapper.map.getLayersByName(state.basemap)[0];
+        if (!basemap) {
+          // It's okay, app.setBasemap knows how to handle strings now!
+          if (typeof(state.basemap) == 'string') {
+            basemap = state.basemap;
+          } else if (typeof(state.basemap) == 'object') {
+            basemap = state.basemap.name;
+          }
+        }
+        app.wrapper.map.setBasemap(basemap);
     }
     // now that we have our layers
     // to allow for establishing the layer load state
@@ -385,6 +382,30 @@ app.loadState = function(state) {
             }
         }
     }
+
+    // turn on the layers that should be active
+    app.viewModel.deactivateAllLayers();
+    if (app.viewModel.openThemes().length == 0 || Object.keys(app.viewModel.layerIndex).length < 1) {
+      openTimeout = 1000;
+    } else {
+      openTimeout = 100;
+    }
+    setTimeout(function() {
+      if (state.activeLayers) {
+        $.each(state.activeLayers, function(index, layer) {
+          if (app.viewModel.layerIndex[layer.id]) {
+            app.viewModel.layerIndex[layer.id].activateLayer();
+            app.viewModel.layerIndex[layer.id].opacity(layer.opacity);
+            //must not be understanding something about js, but at the least the following seems to work now...
+            if (layer.isVisible || !layer.isVisible) {
+              if (layer.isVisible !== 'true' && layer.isVisible !== true) {
+                app.viewModel.layerIndex[layer.id].toggleVisible();
+              }
+            }
+          }
+        });
+      }
+    }, openTimeout)
 
     if ( state.legends && state.legends.visible === "true" ) {
         app.viewModel.showLegend(true);

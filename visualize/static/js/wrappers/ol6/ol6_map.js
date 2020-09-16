@@ -172,7 +172,7 @@ app.wrapper.map.setBasemap = function(layer) {
   // determine if layer is layer object or name
   if (typeof(layer) == "string") {
     for (var i = 0; i < basemaps.length; i++) {
-      if (basemaps[i].get('name') == layer) {
+      if (basemaps[i].get('name').toLowerCase() == app.getBaseLayerDefinitionByName(layer).name.toLowerCase()) {
         layer = basemaps[i];
         break;
       }
@@ -185,7 +185,7 @@ app.wrapper.map.setBasemap = function(layer) {
   var match_found = false;
   var name_match_found = false;
   for (var i=0; i < basemaps.length; i++) {
-    if (basemaps[i].get('name') == layer.get('name')) {
+    if (basemaps[i].get('name').toLowerCase() == layer.get('name').toLowerCase()) {
       name_match_found = true;
     }
     if (basemaps[i] == layer) {
@@ -334,11 +334,15 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('utfgrid', layer.utfurl || (layer.parent && layer.parent.utfurl));
   layer.layer.set('mp_layer', layer);
   if (typeof(layer.opacity) == 'function') {
-    layer.layer.setOpacity(layer.opacity());
+    layerOpacity = layer.opacity();
   } else {
-    layer.layer.setOpacity(layer.opacity);
+    layerOpacity = layer.opacity;
   }
-  
+  if (typeof(layerOpacity) == 'string') {
+    layerOpacity = parseFloat(layerOpacity);
+  }
+  layer.layer.setOpacity(layerOpacity);
+
   app.map.addLayer(layer.layer);
 }
 

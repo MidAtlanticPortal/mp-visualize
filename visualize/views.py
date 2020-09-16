@@ -47,22 +47,39 @@ def show_planner(request, template='visualize/planner.html'):
         #There should be only one content named 'disclaimer_body' - assume the first
         disclaimer_content['body'] = Content.objects.filter(name='disclaimer_body',live=True)[0]
 
-        # Shamelessly yanked from Eloff and Ooker at http://stackoverflow.com/a/925630
-        from HTMLParser import HTMLParser
+        # Shamelessly yanked from Eloff and Olivier Le Floch at http://stackoverflow.com/a/925630 on 5/12/2020
+        try:
+            from HTMLParser import HTMLParser   # Deprecated in py 3
+            class MLStripper(HTMLParser):
+                def __init__(self):
+                    self.reset()
+                    self.fed = []
+                def handle_data(self, d):
+                    self.fed.append(d)
+                def get_data(self):
+                    return ''.join(self.fed)
+        except (ModuleNotFoundError, ImportError) as e:
+            from io import StringIO
+            from html.parser import HTMLParser
 
-        class MLStripper(HTMLParser):
-            def __init__(self):
-                self.reset()
-                self.fed = []
-            def handle_data(self, d):
-                self.fed.append(d)
-            def get_data(self):
-                return ''.join(self.fed)
+            class MLStripper(HTMLParser):
+                def __init__(self):
+                    super().__init__()
+                    self.reset()
+                    self.strict = False
+                    self.convert_charrefs= True
+                    self.text = StringIO()
+                def handle_data(self, d):
+                    self.text.write(d)
+                def get_data(self):
+                    return self.text.getvalue()
 
         def strip_tags(html):
             s = MLStripper()
             s.feed(html)
             return s.get_data()
+
+        # End code copied from StackOverflow post
 
         if len(Content.objects.filter(name='disclaimer_title',live=True)) > 0:
             disclaimer_content['title'] = strip_tags(Content.objects.filter(name='disclaimer_title',live=True)[0].content)
