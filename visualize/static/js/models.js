@@ -315,6 +315,17 @@ function layerModel(options, parent) {
           url: url,
           type: 'GET',
           success: function(data) {
+              // append '/export' if missing:
+              if (self.url.toLowerCase().indexOf('/export') < 0) {
+                  var url_split = self.url.split('?');
+                  if (url_split[0][url_split[0].length-1] == '/') {
+                    url_split[0] = url_split[0] + "export";
+                  } else {
+                    url_split[0] = url_split[0] + "/export";
+                  }
+                  self.url = url_split.join('?');
+              }
+              
               if (data['layers']) {
                   var requested_layers = self.arcgislayers.replace(/ /g,'').split(',');
                   self.legend = {'elements': []};
