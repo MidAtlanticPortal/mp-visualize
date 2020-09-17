@@ -316,6 +316,8 @@ function layerModel(options, parent) {
           type: 'GET',
           success: function(data) {
               // append '/export' if missing:
+              //    RDH 2020-09-17: I'm not sure why self.url wasn't already modified earlier in this function, but this step is necessary
+              //        as the '/export' seems to get dropped (a timeout may also have fixed the problem, but this is more absolute).
               if (self.url.toLowerCase().indexOf('/export') < 0) {
                   var url_split = self.url.split('?');
                   if (url_split[0][url_split[0].length-1] == '/') {
@@ -325,7 +327,7 @@ function layerModel(options, parent) {
                   }
                   self.url = url_split.join('?');
               }
-              
+
               if (data['layers']) {
                   var requested_layers = self.arcgislayers.replace(/ /g,'').split(',');
                   self.legend = {'elements': []};
