@@ -1989,7 +1989,7 @@ function viewModel() {
 
     // attribute data
     self.aggregatedAttributes = ko.observable(false);
-    self.aggregatedAttributesWidth = ko.observable('280px');
+    self.aggregatedAttributesWidth = ko.observable('30vw');
     self.aggregatedAttributes.subscribe( function() {
         self.updateAggregatedAttributesOverlayWidthAndScrollbar();
         self.showFeatureAttribution( self.featureAttribution() && !($.isEmptyObject(self.aggregatedAttributes())) );
@@ -2009,7 +2009,7 @@ function viewModel() {
             // var overlayWidth = (document.getElementById('aggregated-attribute-overlay-test').clientWidth+50),
             //     width = overlayWidth < 380 ? overlayWidth : 380;
             //console.log('setting overlay width to ' + width);
-            self.aggregatedAttributesWidth(280 + 'px');
+            self.aggregatedAttributesWidth('30vw');
         }, 500);
     };
 
