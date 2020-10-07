@@ -45,6 +45,23 @@ body.template-visualize .btn-link.modal-help-toggle {
   max-height: calc(100vh - 250px);
 }
 
+#sharing-groups,
+#bookmark-sharing-groups {
+  overflow-y: auto;
+}
+
+#share-groups {
+  overflow-y: hidden;
+}
+
+#share-modal div.modal-body {
+  padding-top: 0;
+}
+
+#share-modal div.modal-body h4 {
+  margin-bottom: 0;
+}
+
 .modal-footer {
   bottom: 0;
 }
