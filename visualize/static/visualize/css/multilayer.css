@@ -109,3 +109,7 @@ div.tooltip.fade.right.in {
 div.tooltip.fade.right.in div.tooltip-arrow {
   margin-left: -5px;
 }
+
+div#active td.slider-button {
+  display: none;
+}
