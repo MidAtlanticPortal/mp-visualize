@@ -670,7 +670,7 @@ function layerModel(options, parent) {
             }
 
             // if legend is not provided, try using legend from web services
-            if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
+            if ( self.type == 'ArcRest' && !self.legend && self.url && (self.arcgislayers !== -1) ) {
               try {
                 getArcGISJSONLegend(self, window.location.protocol);
               } catch (err) {
