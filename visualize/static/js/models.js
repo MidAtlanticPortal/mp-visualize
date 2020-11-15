@@ -658,10 +658,6 @@ function layerModel(options, parent) {
     self.activateLayer = function(is_companion) {
         var layer = this;
 
-        if (app.wrapper.events.hasOwnProperty('addLayerLoadStart')) {
-          layer.loadStatus("loading");
-        }
-
         if (layer instanceof layerModel) {
           if (layer.fullyLoaded || layer.isMDAT || layer.isVTR) {
 
