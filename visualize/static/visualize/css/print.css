@@ -166,6 +166,7 @@
 		white-space: normal;
 		text-align: left;
 		bottom: 0;
+		margin-top: 0 !important;
 	}
 
 	.ol-attribution button,
@@ -185,7 +186,7 @@
 /* More OL6 (LandScape overrides) */
 @media print and (orientation: landscape) {
 	.ol-attribution ul {
-		margin-top: 0 !important;
+
 		margin-bottom: 40px !important;
   }
 }
