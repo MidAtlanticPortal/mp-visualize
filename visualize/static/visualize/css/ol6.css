@@ -50,6 +50,9 @@ body.template-visualize .SimpleLayerSwitcher {
   left: unset;
 }
 
+body.template-visualize #map-controls #wms-button,
+body.template-visualize #map-controls #linear-measurement,
+body.template-visualize #map-controls #btn-print,
 body.template-visualize #map-controls #get-link-button {
   border: 2px solid #58585b;
   border-radius: 5px;
@@ -58,11 +61,14 @@ body.template-visualize #map-controls #get-link-button {
   padding: 2px;
 }
 
+body.template-visualize #map-controls #wms-button:hover,
+body.template-visualize #map-controls #linear-measurement:hover,
+body.template-visualize #map-controls #btn-print:hover,
 body.template-visualize #map-controls #get-link-button:hover {
   border: 2px solid #00a564;
 }
 
-body.template-visualize #map-controls #btn-print,
+body.template-visualize #map-controls #linear-measurement,
 body.template-visualize #map-controls #wms-button {
   display: none;
 }

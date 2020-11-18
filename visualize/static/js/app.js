@@ -411,54 +411,7 @@ function returnPxOver(pxOver) {
 };
 
 $('#btn-print').click(function() {
-  var olimgs = document.getElementById('OpenLayers.Map_2_OpenLayers_Container'),
-      $olsvgs = $('#map svg'),
-      leftPanel = document.getElementById('left-panel'),
-      $lpWidth = $('#left-panel:not(.collapsed)').width(),
-      $mapWidth = $('#map-wrapper').width();
-
-  /**
-   * check to see if portrait then overwrite landscape px over
-   */
-  var pxOver = $mapWidth - 1056;
-  if (window.innerHeight > window.innerWidth) {
-    pxOver = $('#map-wrapper').height() - 812;
-  }
-  var printWidthRatio = returnPxOver(pxOver),
-      olTilePrintWidth = 100 - printWidthRatio,
-      printTileWidth = olTilePrintWidth + 'px';
-
-  olimgs.style.width = printTileWidth;
-  olimgs.style.height = printTileWidth;
-
-  if ($lpWidth !== null) {
-    var lpPrintWidth = $lpWidth - ($lpWidth * printWidthRatio / 100);
-    leftPanel.style.width = lpPrintWidth + 'px';
-  }
-
-  $olsvgs.each(function(i,e) {
-    var $svgWidth = $(this).width(),
-      $svgHeight = $(this).height(),
-      svgRatio = $svgHeight / $svgWidth;
-    $(this).width($mapWidth - pxOver);
-    $(this).height(($mapWidth - pxOver) * svgRatio);
-  });
-
-  window.setTimeout(function() {
-    window.print();
-    window.setTimeout(function() {
-      olimgs.style.width = '100px';
-      olimgs.style.height = '100px';
-      if ($lpWidth !== null) {
-        leftPanel.style.width = $lpWidth + 'px';
-      }
-      $olsvgs.each(function(i,e) {
-        $(this).width($('#map').width());
-        $(this).height($('#map').height());
-      });
-      app.map.updateSize();
-    }, 1500);
-  }, 1000);
+  window.print();
 
 });
 
