@@ -26,6 +26,10 @@
 
 @media print {
 
+	body {
+	  -webkit-print-color-adjust: exact !important;
+	}
+
 	/**
 	 * css border hack for printing background color on IE and Edge
 	 */
@@ -148,18 +152,20 @@
 
   /*.panel-open #OpenLayers\2e Map_2_OpenLayers_Container {}*/
 
-
 	/* OL 6 */
 	.ol-attribution {
 		margin-left: 310px;
+		bottom: 0;
+		background-color: white;
 	}
 
 	.ol-attribution ul {
-		width: 370px;
+		width: 410px;
 		word-wrap: break-word;
 		word-break: normal;
 		white-space: normal;
 		text-align: left;
+		bottom: 0;
 	}
 
 	.ol-attribution button,
@@ -167,5 +173,19 @@
 		display: none;
 	}
 
+	div.ol-zoom,
+	div.ol-zoom button.ol-zoom-in,
+	div.ol-zoom button.ol-zoom-out {
+		display: none;
+	}
 
+}
+
+
+/* More OL6 (LandScape overrides) */
+@media print and (orientation: landscape) {
+	.ol-attribution ul {
+		margin-top: 0 !important;
+		margin-bottom: 40px !important;
+  }
 }
