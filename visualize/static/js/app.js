@@ -411,7 +411,12 @@ function returnPxOver(pxOver) {
 };
 
 $('#btn-print').click(function() {
+
+  // Show Attribution if hidden:
+  var attribution_state = app.wrapper.controls.getAttributionState();
+  app.wrapper.controls.setAttributionState('show');
   window.print();
+  app.wrapper.controls.setAttributionState(attribution_state);
 
 });
 

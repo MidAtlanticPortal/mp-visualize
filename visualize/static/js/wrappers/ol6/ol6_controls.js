@@ -434,3 +434,19 @@ app.wrapper.controls.completeEdit = function() {
   var drawingForm = app.viewModel.scenarios.drawingFormModel;
   app.map.removeInteraction(drawingForm.edit);
 };
+
+app.wrapper.controls.getAttributionState = function() {
+  if ($('.ol-attribution').hasClass('ol-collapsed')) {
+    return 'hide';
+  } else {
+    return 'show';
+  }
+}
+
+app.wrapper.controls.setAttributionState = function(state) {
+  if (state == 'hide') {
+    $('.ol-attribution').addClass('ol-collapsed')
+  } else {
+    $('.ol-attribution').removeClass('ol-collapsed')
+  }
+}

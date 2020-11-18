@@ -50,10 +50,12 @@
 		border: none;
 		content: '';
 		overflow: hidden;
-		top: 24px !important;
+		/* top: 24px !important; */
 		height: auto !important;
 		max-height: none !important;
 		z-index: 9999;
+		max-width: 300px;
+		top: 0;
   }
 
   body.template-visualize #left-panel.collapsed {
@@ -145,4 +147,25 @@
 	}
 
   /*.panel-open #OpenLayers\2e Map_2_OpenLayers_Container {}*/
+
+
+	/* OL 6 */
+	.ol-attribution {
+		margin-left: 310px;
+	}
+
+	.ol-attribution ul {
+		width: 370px;
+		word-wrap: break-word;
+		word-break: normal;
+		white-space: normal;
+		text-align: left;
+	}
+
+	.ol-attribution button,
+	.ol-attribution button span {
+		display: none;
+	}
+
+
 }
