@@ -7,7 +7,7 @@
   * @param {float} center_y - Map initial center latitude coordinate
   * @param {int} zoom - Map initial zoom level
   */
-app.init_map = function(base, target, srid, center_x, center_y, zoom){
+app.init_map = function(base, target, srid, center_x, center_y, zoom, maxZoom){
   if (srid == 4326) {
     var center = ol.proj.fromLonLat([center_x, center_y]);
   } else {
@@ -42,7 +42,8 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom){
     target: target,
     view: new ol.View({
       center: center,
-      zoom: zoom
+      zoom: zoom,
+      maxZoom: maxZoom
     })
   });
   app.wrapper.layers[base].setVisible(true);

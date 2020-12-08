@@ -1,6 +1,6 @@
 app.init = function () {
 
-    var map = app.init_map(app.region.map, 'map', app.region.srid, app.region.init_lon, app.region.init_lat, app.region.init_zoom);
+    var map = app.init_map(app.region.map, 'map', app.region.srid, app.region.init_lon, app.region.init_lat, app.region.init_zoom, app.region.max_zoom);
 
     app.map = map;
 
