@@ -456,6 +456,7 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
     },
     projection: 'ESPG:3857',
     url: layer.url,
+    hidpi: false,
     crossOrigin: 'anonymous',
     tilePixelRatio: 1,
     tileGrid: new ol.tilegrid.createXYZ({
@@ -790,6 +791,7 @@ app.wrapper.map.addWMSLayerToMap = function(layer) {
 
   var wmsSource = new ol.source.TileWMS({
     url: wms_url,
+    hidpi: false,
     params: layer_params,
   });
 
