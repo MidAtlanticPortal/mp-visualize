@@ -45,6 +45,7 @@ function layerModel(options, parent) {
     self.data_download = ko.observable(options.data_download || null);
     self.metadata = ko.observable(options.metadata || null);
     self.source = ko.observable(options.source || null);
+    self.hasInfo = ko.observable(false);
 
     self.setOptions = function(options, parent) {
 
@@ -229,6 +230,10 @@ function layerModel(options, parent) {
       self.metadata(options.metadata || null);
       self.source(options.source || null);
       self.tiles = options.tiles || null;
+
+      if (options.description || options.kml || options.data_download || options.metadata || options.source) {
+          self.hasInfo(true);
+      }
 
       if (self.type === 'checkbox') {
         self.isCheckBoxLayer(true);
@@ -1583,7 +1588,10 @@ function themeModel(options) {
           for (var i = 0; i < data.layers.length; i++) {
             new_layer = app.viewModel.getOrCreateLayer(data.layers[i], null, 'return', null);
             new_layer.themes.push(theme);
-            layer_objects.push(new_layer)
+            layer_objects.push(new_layer);
+            if (!new_layer.fullyLoaded) {
+              new_layer.getFullLayerRecord(null, null);
+            }
           }
           theme.layers(layer_objects);
         },
