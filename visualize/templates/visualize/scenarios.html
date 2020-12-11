@@ -158,9 +158,9 @@
                                                         </table>
                                                         <!-- ko if: $data.description -->
                                                         <div class="layer-info" data-bind="visible: infoActive()">
-                                                             <div class="layer-text">
-                                                                 <span data-bind="truncatedText: description, maxTextLength: 200"></span>
-                                                             </div>
+                                                            <div class="layer-text">
+                                                              <span data-bind="text: description" class="layer-description"></span>
+                                                            </div>
                                                         </div>
                                                         <!-- /ko -->
                                                     </li>
@@ -373,7 +373,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="layer-text">
-                                                        <span data-bind="truncatedText: description, maxTextLength: 200"></span>
+                                                        <span data-bind="text: description" class="layer-description"></span>
                                                         <!-- ko if: $data.data_url -->
                                                         <a data-bind="attr: {href: $data.data_url}">read
                                                             more</a>.
@@ -573,7 +573,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="layer-text">
-                                                        <span data-bind="truncatedText: description, maxTextLength: 200"></span>
+                                                        <span data-bind="text: description" class="layer-description"></span>
                                                         <!-- ko if: $data.data_url -->
                                                         <a data-bind="attr: {href: $data.data_url}">read
                                                             more</a>.
@@ -776,7 +776,7 @@
                                                         </span>
                                                     </div>
                                                     <div class="layer-text">
-                                                        <span data-bind="truncatedText: description, maxTextLength: 200"></span>
+                                                        <span data-bind="text: description" class="layer-description"></span>
                                                         <!-- ko if: $data.data_url -->
                                                         <a data-bind="attr: {href: $data.data_url}">read
                                                             more</a>.
