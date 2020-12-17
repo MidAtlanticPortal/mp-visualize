@@ -468,3 +468,94 @@ app.setLayerZIndex = function(layer, index) {
 app.reCenterMap = function () {
     app.setMapPosition(app.state.x, app.state.y, 7);
 };
+
+app.addDrawingLayerToMap = function(name) {
+  if (app.wrapper.map.hasOwnProperty('addDrawingLayerToMap')) {
+    var drawingLayer = app.wrapper.map.addDrawingLayerToMap(name);
+  } else {
+    console.log('no addDrawingLayerToMap function defined.');
+  }
+}
+
+app.startSketch = function(){
+  if (app.wrapper.controls.hasOwnProperty('startSketch')) {
+    app.wrapper.controls.startSketch();
+  } else {
+    console.log('no startSketch function defined for controls.')
+  }
+}
+
+app.completeSketch = function() {
+  if (app.wrapper.controls.hasOwnProperty('completeSketch')) {
+    app.wrapper.controls.completeSketch();
+  } else {
+    console.log('no completeSketch function defined for controls.')
+  }
+}
+
+app.startEdit = function() {
+  var drawingForm = app.viewModel.scenarios.drawingFormModel;
+  drawingForm.isEditing(true);
+  app.viewModel.disableFeatureAttribution();
+  if (app.wrapper.controls.hasOwnProperty('startEdit')) {
+    app.wrapper.controls.startEdit();
+  } else {
+    console.log('no startEdit function defined for controls.')
+  }
+}
+
+app.completeEdit = function() {
+  var drawingForm = app.viewModel.scenarios.drawingFormModel;
+  drawingForm.isEditing(false);
+  if (app.wrapper.controls.hasOwnProperty('completeEdit')) {
+    app.wrapper.controls.completeEdit();
+  } else {
+    console.log('no completeEdit function defined for controls.')
+  }
+  app.viewModel.enableFeatureAttribution();
+  if (app.wrapper.map.hasOwnProperty('countFeatures')){
+    num_features = app.wrapper.map.countFeatures(app.map.drawingLayer);
+    if (num_features == 0) {
+      drawingForm.hasShape(false);
+      window.alert('You have no shapes drawn. Please draw a shape before saving.');
+      app.startSketch();
+    } else if (num_features > 1) {
+      app.consolidatePolygonLayerFeatures();
+    }
+  } else {
+    console.log('no countFeatures function defined for map');
+  }
+}
+
+app.cleanupDrawing = function() {
+  if (app.wrapper.events.hasOwnProperty('cleanupDrawing')) {
+    app.wrapper.events.cleanupDrawing();
+  } else {
+    console.log('no cleanupDrawing function defined for events.');
+  }
+}
+
+app.consolidatePolygonLayerFeatures = function(){
+  if (app.wrapper.controls.hasOwnProperty('consolidatePolygonLayerFeatures')) {
+    app.wrapper.controls.consolidatePolygonLayerFeatures();
+  } else {
+    console.log('no consolidatePolygonLayerFeatures function defined for controls');
+  }
+}
+
+app.getLayerFeatureAsWKT = function(layer, feature_index) {
+  if (app.wrapper.layer_functions.hasOwnProperty('getLayerFeatureAsWKT')) {
+    return app.wrapper.layer_functions.getLayerFeatureAsWKT(layer, feature_index);
+  } else {
+    console.log('no getLayerFeatureAsWKT function defined for layers');
+  }
+}
+
+app.addMeasurementLayerToMap = function(name) {
+  if (app.wrapper.map.hasOwnProperty('addMeasurementLayerToMap')) {
+    app.map.measurementLayer = app.wrapper.map.addMeasurementLayerToMap(name);
+    app.map.addLayer(app.map.measurementLayer);
+  } else {
+    console.log('no addDrawingLayerToMap function defined.');
+  }
+}

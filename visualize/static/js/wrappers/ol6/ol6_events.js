@@ -37,10 +37,10 @@ app.wrapper.events.addFeatureClickEvent = function(){
   selectClick.on('select', function(e) {
     if (e.selected.length > 0) {
       for (var i = 0; i < e.selected.length; i++) {
-        var layer = e.selected[0].getLayer(app.map);
-        if (!layer){
+        var layer = e.selected[i].getLayer(app.map);
+        if (!layer && e.target.getLayer(e.selected[i]) && e.target.getLayer(e.selected[i]).hasOwnProperty('ol_uid')) {
           // This seems to work for VectorTile layers
-          layer = app.viewModel.getLayerByOLId(e.target.getLayer(e.selected[0]).ol_uid).layer;
+          layer = app.viewModel.getLayerByOLId(e.target.getLayer(e.selected[i]).ol_uid).layer;
         }
         if (layer){
           var mp_layer = layer.get('mp_layer');
