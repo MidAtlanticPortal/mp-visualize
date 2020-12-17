@@ -74,8 +74,3 @@ body.template-visualize #map-controls #btn-print:hover,
 body.template-visualize #map-controls #get-link-button:hover {
   border: 2px solid #00a564;
 }
-
-/* body.template-visualize #map-controls #linear-measurement, */
-body.template-visualize #map-controls #wms-button {
-  display: none;
-}
