@@ -450,3 +450,140 @@ app.wrapper.controls.setAttributionState = function(state) {
     $('.ol-attribution').removeClass('ol-collapsed')
   }
 }
+
+/** Measurement contols
+  *   A cross between the old measurement logic and the OL demo here:
+  *   https://openlayers.org/en/latest/examples/measure.html
+*/
+
+app.wrapper.controls.measurementFeature = false;
+
+app.wrapper.controls.getFixedLengthHelper = function(rawNumber) {
+  if (rawNumber < 19) {
+    var to_fixed_digits = 2;
+  } else if (rawNumber > 187 ) {
+    var to_fixed_digits = 0;
+  } else {
+    var to_fixed_digits = 1;
+  }
+  return rawNumber.toFixed(to_fixed_digits);
+}
+
+/**
+ * Format length output.
+ * @param {LineString} line The line.
+ * @return {string} The formatted length.
+ */
+app.wrapper.controls.formatLength = function (line) {
+  var length = ol.sphere.getLength(line);
+  var output = "measure: ";
+  if (length > 750) {
+    numericLength = Math.round((length / 1000) * 100) / 100;
+    output += app.wrapper.controls.getFixedLengthHelper(numericLength) + ' km; ';
+    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1.609344) + " mi; ";
+    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1.852) + " N mi";
+  } else {
+    numericLength = Math.round(length * 100) / 100;
+    output += app.wrapper.controls.getFixedLengthHelper(numericLength) + ' m; ';
+    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1609.344) + " mi; ";
+    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1852) + " N mi";
+  }
+
+  return output;
+};
+
+/**
+ * Format area output.
+ * @param {Polygon} polygon The polygon.
+ * @return {string} Formatted area.
+ */
+app.wrapper.controls.formatArea = function (polygon) {
+  var area = ol.sphere.getArea(polygon);
+  var output;
+  if (area > 10000) {
+    output = Math.round((area / 1000000) * 100) / 100 + ' ' + 'km<sup>2</sup>';
+  } else {
+    output = Math.round(area * 100) / 100 + ' ' + 'm<sup>2</sup>';
+  }
+  return output;
+};
+
+app.wrapper.controls.updateMeasurementText = function(event) {
+  var geom = event.target;
+  if (!(geom instanceof ol.geom.Polygon || geom instanceof ol.geom.LineString)) {
+    // For the event type passed by drawEnd
+    geom = event.feature.getGeometry();
+  }
+  var output;
+  if (geom instanceof ol.geom.Polygon) {
+    output = app.wrapper.controls.formatArea(geom);
+  } else if (geom instanceof ol.geom.LineString) {
+    output = app.wrapper.controls.formatLength(geom);
+  }
+  var element = document.getElementById('measurement-output');
+  if (output) {
+    element.innerHTML = output;
+  } else {
+    element.innerHTML = "";
+  }
+
+}
+
+app.wrapper.controls.startLinearMeasurement = function(event) {
+    app.wrapper.controls.measurementFeature = event.feature;
+    app.wrapper.controls.measurementListener = app.wrapper.controls.measurementFeature.getGeometry().on('change', app.wrapper.controls.updateMeasurementText)
+}
+
+app.wrapper.controls.createLinearControl = function() {
+  app.wrapper.controls.linearMeasurementControl = new ol.interaction.Draw({
+    source: app.map.measurementLayer.getSource(),
+    type: 'LineString',   // NOTE: When creating area, use 'Polygon'. See https://openlayers.org/en/latest/examples/measure.html
+    style: new ol.style.Style({
+      fill: new ol.style.Fill({
+        color: 'rgba(255, 255, 255, 0.2)',
+      }),
+      stroke: new ol.style.Stroke({
+        color: '#ffcc33',
+        width: 2,
+      }),
+      image: new ol.style.Circle({
+        radius: 7,
+        fill: new ol.style.Fill({
+          color: '#ffcc33',
+        }),
+      }),
+    })
+  });
+
+  app.wrapper.controls.linearMeasurementControl.on('drawstart', app.wrapper.controls.startLinearMeasurement);
+  app.wrapper.controls.linearMeasurementControl.on('drawend', function(event) {
+    app.wrapper.controls.updateMeasurementText(event);
+    ol.Observable.unByKey(app.wrapper.controls.measurementListener);
+  });
+}
+
+app.wrapper.controls.startLinearMeasurement = function() {
+  if (!app.wrapper.controls.linearMeasurementControl) {
+    app.wrapper.controls.createLinearControl();
+  }
+
+  // Clear features from Measurement layer!
+  app.map.measurementLayer.getSource().clear();
+
+  // Activate drawing (linestring)
+  app.map.addInteraction(app.wrapper.controls.linearMeasurementControl);
+
+  $('#measurement-display').show();
+  // change $('#linear-measurement-button') to work as cancel/clear
+  $('#linear-measurement i').removeClass('fa-ruler-vertical');
+  $('#linear-measurement i').addClass('fa-times');
+}
+
+app.wrapper.controls.clearLinearMeasurement = function() {
+  $('#measurement-display').hide();
+  app.map.removeInteraction(app.wrapper.controls.linearMeasurementControl);
+  app.wrapper.controls.measurementFeature = false;
+  app.map.measurementLayer.getSource().clear();
+  $('#linear-measurement i').removeClass('fa-times');
+  $('#linear-measurement i').addClass('fa-ruler-vertical');
+}

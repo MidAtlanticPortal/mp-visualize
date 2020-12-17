@@ -572,3 +572,12 @@ app.getLayerFeatureAsWKT = function(layer, feature_index) {
     console.log('no getLayerFeatureAsWKT function defined for layers');
   }
 }
+
+app.addMeasurementLayerToMap = function(name) {
+  if (app.wrapper.map.hasOwnProperty('addMeasurementLayerToMap')) {
+    app.map.measurementLayer = app.wrapper.map.addMeasurementLayerToMap(name);
+    app.map.addLayer(app.map.measurementLayer);
+  } else {
+    console.log('no addDrawingLayerToMap function defined.');
+  }
+}

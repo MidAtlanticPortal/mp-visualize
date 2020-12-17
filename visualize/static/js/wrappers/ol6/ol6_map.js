@@ -893,3 +893,30 @@ app.wrapper.map.addDrawingLayerToMap = function() {
 app.wrapper.map.countFeatures = function(layer) {
   return layer.getSource().getFeatures().length;
 }
+
+/* Creating Feature Layers to support map controls */
+app.wrapper.map.addMeasurementLayerToMap = function() {
+  var source = new ol.source.Vector({wrapX: false});
+
+  measurementLayer = new ol.layer.Vector({
+    source: source,
+    style: new ol.style.Style({
+      fill: new ol.style.Fill({
+        color: 'rgba(255, 255, 255, 0.2)',
+      }),
+      stroke: new ol.style.Stroke({
+        color: '#ffcc33',
+        width: 2,
+      }),
+      image: new ol.style.Circle({
+        radius: 7,
+        fill: new ol.style.Fill({
+          color: '#ffcc33',
+        }),
+      }),
+    })
+  });
+
+  return measurementLayer;
+
+}
