@@ -47,7 +47,6 @@ app.init_map = function(base, target, srid, center_x, center_y, zoom, maxZoom){
       maxZoom: maxZoom
     })
   });
-  app.wrapper.map.baselayersIndex = 1;
 
   var layerClickCallback = function(layer, pixelColor) {
     if (layer.get('utfgrid')) {

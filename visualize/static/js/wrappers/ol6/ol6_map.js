@@ -107,11 +107,28 @@ app.wrapper.map.getOverlays = function() {
 }
 
 /**
+  * setBaseLayersIndex - get the value for the map array index for base layers
+  *   This needs to be done dynamically - the order of layers changes between
+  *   browsers for some reason. It also changes over the course of use.
+  *   This used to be hardcoded to 1 in ol6_wrapper.js
+  *       RDH 1/8/2021
+  */
+app.wrapper.map.getBaseLayersIndex = function() {
+  var lyr_array = app.map.getLayers().getArray();
+  for (var i = 0; i < lyr_array.length; i++) {
+    if (typeof lyr_array[i].getLayers != "undefined"){
+      app.wrapper.map.baselayersIndex = i;
+      return i;
+    }
+  }
+}
+
+/**
   * getLayersByName - get all layers added to map that have the provided name
   * @param {string} layerName - the name of all layers to be returned
   */
 app.wrapper.map.getLayersByName = function(layerName) {
-  var layers = app.map.getLayers().getArray()[app.wrapper.map.baselayersIndex].getLayers().getArray();
+  var layers = app.map.getLayers().getArray()[app.wrapper.map.getBaseLayersIndex()].getLayers().getArray();
   var return_layers = []
   for (var i=0; i < layers.length; i++) {
     if (layers[i].get('name') == layerName) {
@@ -212,7 +229,7 @@ app.wrapper.map.getBasemap = function() {
   * @param {object} layer - the name of the layer to set as the live basemap
   */
 app.wrapper.map.setBasemap = function(layer) {
-  var basemapGroup = app.map.getLayers().getArray()[app.wrapper.map.baselayersIndex];
+  var basemapGroup = app.map.getLayers().getArray()[app.wrapper.map.getBaseLayersIndex()];
   var basemaps = basemapGroup.getLayers().getArray();
   var current_basemap = app.wrapper.map.getBasemap().layer;
   // determine if layer is layer object or name
