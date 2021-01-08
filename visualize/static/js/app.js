@@ -431,11 +431,6 @@ $(document).mousedown(function(e) {
         }
     }
 
-    return;
-
-  //ensure layer switcher is removed
-  $('#SimpleLayerSwitcher').hide();
-
   //removing layer tooltip popover from view
   var layer_pvr_event = $(e.target).closest(".layer-popover").length;
   if (!layer_pvr_event) {
@@ -450,5 +445,6 @@ $(document).mousedown(function(e) {
     app.viewModel.hideOpacity();
   }
 
+  return;
 
 });
