@@ -3,6 +3,7 @@ from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from rpc4django import rpcmethod
 
+
 @rpcmethod(login_required=True)
 def add_bookmark(name, description, url_hash, json, **kwargs):
     from visualize.models import Bookmark
@@ -84,6 +85,7 @@ def get_bookmarks(**kwargs):
 def load_bookmark(bookmark_id, **kwargs):
     """Retrive a bookmark by ID - ownership is irrelevant.
     """
+    from visualize.models import Bookmark
     request = kwargs['request']
 
     bookmark = Bookmark.objects.get(pk=bookmark_id)
