@@ -197,7 +197,6 @@ function bookmarksModel(options) {
     self.useShortBookmarkURL = function() {
         var bitly_access_token = '227d50a9d70140483b003a70b1f449e00514c053';
             long_url = self.sharingBookmark().getBookmarkUrl();
-            long_url = "https://www.foo.com/this/is/a/test";
             params = {
               "group_guid": "Bec5n80dm93",
               "domain": "bit.ly",
