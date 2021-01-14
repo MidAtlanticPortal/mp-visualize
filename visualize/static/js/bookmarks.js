@@ -195,23 +195,32 @@ function bookmarksModel(options) {
     };
 
     self.useShortBookmarkURL = function() {
-        var bitly_login = "p97dev",
-            bitly_api_key = 'R_27f2b2cc886e49fb9f35c37b7b633749',
+        var bitly_access_token = '227d50a9d70140483b003a70b1f449e00514c053';
             long_url = self.sharingBookmark().getBookmarkUrl();
+            long_url = "https://www.foo.com/this/is/a/test";
+            params = {
+              "group_guid": "Bec5n80dm93",
+              "domain": "bit.ly",
+              "long_url": long_url
+            };
 
-        $.getJSON(
-            "http://api.bitly.com/v3/shorten?callback=?",
-            {
-                "format": "json",
-                "apiKey": bitly_api_key,
-                "login": bitly_login,
-                "longUrl": long_url
-            },
-            function(response)
-            {
-                $('.in #short-url')[0].value = response.data.url;
-            }
-        );
+        $.ajax({
+          type: "POST",
+          url: "https://api-ssl.bitly.com/v4/shorten",
+          data: JSON.stringify(params),
+          success: function(response){
+              if (response.link != undefined) {
+                $('.in #short-url')[0].value = response.link;
+              } else {
+                $('.in #short-url')[0].value = long_url;
+              }
+          },
+          dataType: 'json',
+          contentType: "application/json",
+          beforeSend: function(xhr){
+            xhr.setRequestHeader("Authorization", "Bearer " + bitly_access_token);
+          }
+        });
     };
 
     self.setBookmarkIFrameHTML = function() {
