@@ -100,7 +100,7 @@ app.activateHashStateLayers = function() {
     var layerStatus = app.hashStateLayers[i].status
     if (layerStatus instanceof layerModel) {
       if (app.viewModel.activeLayers().indexOf(layerStatus) < 0) {
-        layerStatus.activateLayer("nocompanion");
+        layerStatus.activateLayer("nocompanion", true);
         if (app.hashStateLayers[i].visible == "false" || app.hashStateLayers[i].visible == false) {
           if (layerStatus.visible()){
             layerStatus.toggleVisible();
@@ -152,7 +152,7 @@ app.addKnownLayerFromState = function(id, opacity, isVisible, unloadedDesigns) {
       if (!isNaN(parseInt(id))){
         var layer_obj = {'name': 'loading...', 'id': id, 'opacity': parseFloat(opacity), 'isVisible': isVisible};
         app.updateHashStateLayers(id, null, isVisible);
-        app.viewModel.getOrCreateLayer(layer_obj, null, 'updateHashStateLayers', null);
+        app.viewModel.getOrCreateLayer(layer_obj, null, 'updateHashStateLayers', null, true);
       } else {
         unloadedDesigns.push({id: id, opacity: opacity, isVisible: isVisible});
       }

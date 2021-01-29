@@ -45,6 +45,9 @@ function layerModel(options, parent) {
     self.metadata = ko.observable(options.metadata || null);
     self.source = ko.observable(options.source || null);
 
+    // if layer is loaded from hash, preserve opacity, etc...
+    self.override_defaults = ko.observable(null);
+
     self.setOptions = function(options, parent) {
 
       self.id = options.id || null;
@@ -634,8 +637,13 @@ function layerModel(options, parent) {
         ga('send', 'event', 'Layers Activated', action);
     };
 
-    self.activateLayer = function(is_companion) {
+    // override_defaults set to true if layer loaded from hash/bookmark where
+    //    and opacity can be applied
+    self.activateLayer = function(is_companion, override_defaults) {
         var layer = this;
+        if (override_defaults) {
+          layer.override_defaults(true);
+        }
 
         if (app.wrapper.events.hasOwnProperty('addLayerLoadStart')) {
           layer.loadStatus("loading");
@@ -1294,9 +1302,11 @@ function layerModel(options, parent) {
             if (data.parent){
               parent = app.viewModel.getOrCreateLayer(data.parent, null, 'return', null);
             }
-            // don't override good data with defaults (info from hash such as opacity and visible):
-            if (layer.hasOwnProperty('opacity') && layer.opacity()) {
-              data.opacity = layer.opacity();
+            if (layer.override_defaults()) {
+              // don't wipe out good data with defaults (info from hash such as opacity and visible):
+              if (layer.hasOwnProperty('opacity') && layer.opacity()) {
+                data.opacity = layer.opacity();
+              }
             }
 
             layer.setOptions(data, parent);
@@ -2572,13 +2582,16 @@ function viewModel() {
       * @param {string} action - the name of the action to be taken if the layer needs to be loaded first
       * @param {event} event - an optional event that triggered this request to be passed on when loading the layer
       */
-    self.getOrCreateLayer = function(layer_obj, parent, action, event) {
+    self.getOrCreateLayer = function(layer_obj, parent, action, event, override_defaults) {
       var layer = self.getLayerById(layer_obj.id);
       if (!layer) {
         if (!layer_obj.hasOwnProperty('name')) {
           layer_obj.name = 'Loading...';
         }
         var layer = new layerModel(layer_obj, parent);
+        if (override_defaults) {
+          layer.override_defaults(true);
+        }
         if (layer.id) {
           // dynamic layers do not come with IDs
           app.viewModel.layerIndex[layer.id.toString()] = layer;
