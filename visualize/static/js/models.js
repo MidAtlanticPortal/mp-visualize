@@ -114,7 +114,7 @@ function layerModel(options, parent) {
         }
         self.opacity = ko.observable(self.defaultOpacity);
       } else {
-        if (options.hasOwnProperty('opacity') && options.opacity) {
+        if (options.hasOwnProperty('opacity') && options.opacity != undefined && options.opacity != null) {
           self.opacity(options.opacity);
         }
       }
