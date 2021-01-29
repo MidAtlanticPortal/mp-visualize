@@ -490,17 +490,45 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
 
 };
 
+app.wrapper.map.getRandomColor = function(feature, resolution) {
+  if (feature && feature != undefined) {
+    console.log(feature);
+  }
+  var colors = app.map.styles.colors;
+  var random_color = Math.floor(Math.random() * colors.length);
+  return colors[random_color];
+}
+
+app.wrapper.map.getCustomColor = function(layer, feature) {
+  color_key = layer.color.split(":")[1].trim();
+  if (feature && feature != undefined && feature != null && feature.getKeys().indexOf(color_key) >= 0 ) {
+    return feature.get(color_key);
+  } else {
+    return app.wrapper.map.getRandomColor(feature, null);
+  }
+}
+
 /**
   * createOLStyleMap - interpret style from layer record into an OpenLayers styleMap
   * @param {object} layer - the mp layer definition to derive the style from
   */
-app.wrapper.map.createOLStyleMap = function(layer){
+app.wrapper.map.createOLStyleMap = function(layer, feature){
   var stroke = new ol.style.Stroke({
     color: layer.outline_color,
     width: layer.outline_width
   });
+  // The below will set all shapes to the same random color.
+  // This is an improvement over assuming all vector layers should be orange.
+  if (!layer.color || layer.color == null || layer.color == undefined || layer.color.toLowerCase() == "random") {
+    var fill_color = app.wrapper.map.getRandomColor(feature);
+  } else if (layer.color.toLowerCase().indexOf("custom:") == 0) {
+    var fill_color = app.wrapper.map.getCustomColor(layer, feature);
+  } else {
+    var fill_color = layer.color;
+  }
+
   var fill = new ol.style.Fill({
-    color: layer.color,
+    color: fill_color,
     opacity: layer.fillOpacity,
   });
   if (layer.graphic && layer.graphic.length > 0) {
@@ -589,7 +617,11 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
   var default_stroke_color = layer.outline_color;
 
   var styleFunction = function(feature) {
-    var featureStyle = styles[feature.getGeometry().getType()];
+    if (layer.color.toLowerCase() == "random" || layer.color.toLowerCase().indexOf("custom:") == 0 ) {
+      var featureStyle = app.wrapper.map.createOLStyleMap(layer, feature)[feature.getGeometry().getType()];
+    } else {
+      var featureStyle = styles[feature.getGeometry().getType()];
+    }
 
     var new_style = false;
     var default_fill = featureStyle.getFill();
@@ -827,7 +859,12 @@ app.wrapper.map.addVectorTileLayerToMap = function(layer) {
     var layerUrl = app.wrapper.map.formatOL5URLTemplate(layer.url);
     var styles = app.wrapper.map.createOLStyleMap(layer);
     var styleFunction = function(feature) {
-      return styles[feature.getGeometry().getType()];
+      default_style = styles[feature.getGeometry().getType()];
+      if (layer.color.toLowerCase() == "random" || layer.color.toLowerCase().indexOf("custom:") == 0 ) {
+        var new_style = app.wrapper.map.createOLStyleMap(layer, feature)[feature.getGeometry().getType()];
+        default_style = new_style;
+      }
+      return default_style;
     };
 
     var layerSource = new ol.source.VectorTile({
@@ -843,6 +880,13 @@ app.wrapper.map.addVectorTileLayerToMap = function(layer) {
       source: layerSource,
       style: styleFunction
     });
+
+    if (layer.color.toLowerCase() == "random") {
+      layer.layer.getSource().on('addfeature', function(event) {
+        print(layer);
+      });
+    }
+
     return layer;
 }
 
