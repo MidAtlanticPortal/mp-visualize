@@ -1,0 +1,6 @@
+body.template-visualize .layer-info .layer-text {
+  max-height: 114px;
+  overflow-y: auto;
+  border: 1px solid #CCC;
+  border-radius: 0.3rem;
+}

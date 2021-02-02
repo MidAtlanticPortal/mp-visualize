@@ -2,14 +2,16 @@
     <tr>
         <td class="layer-info-icon">
         <!-- ko ifnot: $data.hasOwnProperty('isMDAT') && $data.isMDAT -->
-            <a class="btn btn-info-sign" data-bind="click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
+          <div style="margin:0;padding:0;width:40.5px;height:33px">
+            <a class="btn btn-info-sign" data-bind="visible: hasInfo(), click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
                 <i class="fa fa-info-circle"></i>
             </a>
+          </div>
         <!-- /ko -->
         <!-- ko if: $data.hasOwnProperty('isMDAT') && $data.isMDAT && $data.parentMDATDirectory -->
-            <a class="btn btn-info-sign" data-bind="attr: {'data-title': parentMDATDirectory.name }" data-toggle="tooltip" data-placement="right">
-                <i class="fa fa-info-circle"></i>
-            </a>
+              <a class="btn btn-info-sign" data-bind="attr: {'data-title': parentMDATDirectory.name }" data-toggle="tooltip" data-placement="right">
+                  <i class="fa fa-info-circle"></i>
+              </a>
         <!-- /ko -->
         </td>
 
@@ -100,8 +102,8 @@
             <!-- /ko -->
         </span>
     </div>
-    <div class="layer-text">
-        <span data-bind="truncatedText: description, maxTextLength: 200"></span>
+    <div class="layer-text" data-bind="visible: description">
+        <span data-bind="text: description" class="layer-description"></span>
         <!-- ko if: $data.hasOwnProperty('data_url') && $data.data_url -->
         <a data-bind="attr: {href: $data.data_url}" target="_blank">read more</a>.
         <!-- /ko -->
