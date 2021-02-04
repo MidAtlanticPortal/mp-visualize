@@ -565,6 +565,8 @@ app.wrapper.controls.createLinearControl = function() {
 app.wrapper.controls.startLinearMeasurement = function() {
   if (!app.wrapper.controls.linearMeasurementControl) {
     app.wrapper.controls.createLinearControl();
+  } else {
+    app.wrapper.controls.linearMeasurementControl.setActive(true);
   }
 
   // Clear features from Measurement layer!
@@ -581,7 +583,7 @@ app.wrapper.controls.startLinearMeasurement = function() {
 
 app.wrapper.controls.clearLinearMeasurement = function() {
   $('#measurement-display').hide();
-  app.map.removeInteraction(app.wrapper.controls.linearMeasurementControl);
+  app.wrapper.controls.linearMeasurementControl.setActive(false);
   app.wrapper.controls.measurementFeature = false;
   app.map.measurementLayer.getSource().clear();
   $('#linear-measurement i').removeClass('fa-times');
