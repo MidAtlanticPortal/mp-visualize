@@ -95,6 +95,7 @@ function layerModel(options, parent) {
         self.show_legend = true;
       }
 
+      self.label_field = options.label_field || false;
       self.attributes = options.attributes ? options.attributes.attributes : [];
       self.compress_attributes = options.attributes ? options.attributes.compress_attributes : false;
       self.attributeEvent = options.attributes ? options.attributes.event : [];
