@@ -32,15 +32,17 @@ app.wrapper.events.addMoveEnd = function(moveEndFunction) {
   */
 app.wrapper.events.addFeatureClickEvent = function(){
   // TODO: Update this for OL5
-  app.map.interactions.selectClick = new ol.interaction.Select();
+  app.map.interactions.selectClick = new ol.interaction.Select({
+    style: app.wrapper.map.getSelectedStyle
+  });
   app.map.addInteraction(app.map.interactions.selectClick);
   app.map.interactions.selectClick.on('select', function(e) {
-    if (e.selected.length > 0) {
-      for (var i = 0; i < e.selected.length; i++) {
-        var layer = e.selected[i].getLayer(app.map);
-        if (!layer && e.target.getLayer(e.selected[i]) && e.target.getLayer(e.selected[i]).hasOwnProperty('ol_uid')) {
-          // This seems to work for VectorTile layers
-          layer = app.viewModel.getLayerByOLId(e.target.getLayer(e.selected[i]).ol_uid).layer;
+    var selected_features = app.map.getFeaturesAtPixel(e.mapBrowserEvent.pixel);
+    if (selected_features.length > 0) {
+      for (var i = 0; i < selected_features.length; i++) {
+        var layer = selected_features[i].getLayer(app.map);
+        if (!layer && e.target.getLayer(selected_features[i]) && e.target.getLayer(selected_features[i]).hasOwnProperty('ol_uid')) {
+          layer = app.viewModel.getLayerByOLId(e.target.getLayer(selected_features[i]).ol_uid).layer;
         }
         if (layer){
           var mp_layer = layer.get('mp_layer');
@@ -105,7 +107,8 @@ app.wrapper.events.addFeatureClickEvent = function(){
 app.wrapper.events.addFeatureOverEvent = function(){
   // TODO: Update this for OL5
   var selectHover = new ol.interaction.Select({
-    condition: ol.events.condition.pointerMove
+    condition: ol.events.condition.pointerMove,
+    style: app.wrapper.map.getFocusedStyle
   });
   app.map.addInteraction(selectHover);
   selectHover.on('select', function(e) {
@@ -199,6 +202,8 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
   }
   if (evt.hasOwnProperty('coordinate')) {
     var selectedFeatures = layer.getSource().getFeaturesAtCoordinate(evt.coordinate);
+  } else if (evt.hasOwnProperty('mapBrowserEvent') && 'coordinate' in evt.mapBrowserEvent) {  // 'coordinate' does not exist in mapBrowserEvent's 'own' scope.
+    var selectedFeatures = layer.getSource().getFeaturesAtCoordinate(evt.mapBrowserEvent.coordinate);
   } else if (evt.hasOwnProperty('selected')) {
     var selectedFeatures = evt.selected;
   } else {

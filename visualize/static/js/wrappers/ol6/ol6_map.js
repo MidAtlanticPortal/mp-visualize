@@ -508,6 +508,37 @@ app.wrapper.map.getCustomColor = function(layer, feature) {
   }
 }
 
+app.wrapper.map.convertColorToRGB = function(colorValue) {
+  if (Object.keys(app.map.styles.colorLookup).indexOf(colorValue) >= 0) {
+    return app.wrapper.map.convertHexToRGB(app.map.styles.colorLookup[colorValue]);
+  } else if (colorValue.indexOf('#') == 0 || colorValue.length == 6 || colorValue.length == 3) {
+    return app.wrapper.map.convertHexToRGB(colorValue);
+  } else {
+    // Value is not a valid hex value
+    console.log("ERROR: value is not a valid hex value");
+    return colorValue;
+  }
+}
+
+app.wrapper.map.convertHexToRGB = function(hex) {
+  if (hex.indexOf('#') == 0) {
+    hex = hex.split('#')[1];
+  }
+  if (hex.length == 3) {
+    var hexRed = hex[0];
+    var hexGreen = hex[1];
+    var hexBlue = hex[2];
+  } else {  // if  (hex.length == 6)
+    var hexRed = hex.substr(0,2);
+    var hexGreen = hex.substr(2,2);
+    var hexBlue = hex.substr(4,2);
+  }
+  var red = parseInt(hexRed, 16);
+  var green = parseInt(hexGreen, 16);
+  var blue = parseInt(hexBlue, 16);
+  return {'red': red, 'green': green, 'blue': blue};
+}
+
 /**
   * createOLStyleMap - interpret style from layer record into an OpenLayers styleMap
   * @param {object} layer - the mp layer definition to derive the style from
@@ -527,9 +558,16 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
     var fill_color = layer.color;
   }
 
+  // OpenLayers' stile.Fill doesn't accept 'opacity' as an argument.
+  //    Instead, you need to convert your color to an RGBA and apply opacity
+  //    as part of that value:
+  if (layer.fillOpacity) {
+    rgbObject = app.wrapper.map.convertColorToRGB(fill_color)
+    fill_color = 'rgba(' + rgbObject.red + ',' + rgbObject.green + ',' + rgbObject.blue +',' + layer.fillOpacity + ')';
+  }
+
   var fill = new ol.style.Fill({
-    color: fill_color,
-    opacity: layer.fillOpacity,
+    color: fill_color
   });
   if (layer.graphic && layer.graphic.length > 0) {
     var image = new ol.style.Icon({
@@ -602,11 +640,22 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
   return style_dict;
 }
 
-/**
-  * addVectorLayerToMap - add vector layer to the (ol5) map
-  * @param {object} layer - the mp layer definition to add to the map
-  */
-app.wrapper.map.addVectorLayerToMap = function(layer) {
+app.wrapper.map.getFocusedStyle = function(feature) {
+  var selectedStyle = app.wrapper.map.getLayerStyle(feature);
+  selectedStyle.getStroke().setWidth(3);
+  selectedStyle.getStroke().setColor("#000000");
+  return selectedStyle;
+}
+
+app.wrapper.map.getSelectedStyle = function(feature) {
+  var selectedStyle = app.wrapper.map.getLayerStyle(feature);
+  selectedStyle.getStroke().setWidth(3);
+  selectedStyle.getStroke().setColor("#FF8800");
+  return selectedStyle;
+}
+
+app.wrapper.map.getLayerStyle = function(feature) {
+  var layer = app.viewModel.getLayerByOLId(feature.getLayer().ol_uid);
   var styles = app.wrapper.map.createOLStyleMap(layer);
   var lookupField = layer.lookupField;
   var lookupDetails = layer.lookupDetails;
@@ -616,158 +665,164 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
   var default_color = layer.color;
   var default_stroke_color = layer.outline_color;
 
-  var styleFunction = function(feature) {
-    if (layer.color.toLowerCase() == "random" || layer.color.toLowerCase().indexOf("custom:") == 0 ) {
-      var featureStyle = app.wrapper.map.createOLStyleMap(layer, feature)[feature.getGeometry().getType()];
-    } else {
-      var featureStyle = styles[feature.getGeometry().getType()];
-    }
+  if (layer.color.toLowerCase() == "random" || layer.color.toLowerCase().indexOf("custom:") == 0 ) {
+    var featureStyle = app.wrapper.map.createOLStyleMap(layer, feature)[feature.getGeometry().getType()];
+  } else {
+    var featureStyle = styles[feature.getGeometry().getType()];
+  }
 
-    var new_style = false;
-    var default_fill = featureStyle.getFill();
-    if (!default_fill) {
-      default_fill = { color: default_color, opacity: default_opacity};
-    }
-    var default_stroke = featureStyle.getStroke();
-    if (!default_stroke) {
-      default_stroke = { color: default_stroke_color, width: default_width};
-    }
-    var default_text = featureStyle.getText();
-    for (var i = 0; i < lookupDetails.length; i++) {
-      var detail = lookupDetails[i];
-      if (detail.value.toString() == feature.getProperties()[lookupField].toString()) {
-        if (detail.fill) {
-          var fill_color = detail.color;
-          var fill_opacity = default_opacity;
-          var new_fill = new ol.style.Fill({
-            color: fill_color,
-            opacity: fill_opacity
-          });
-        } else {
-          var new_fill = null;
-        }
-        if (detail.hasOwnProperty('stroke_color') && detail.stroke_color && detail.stroke_color != '') {
-          var stroke_color = detail.stroke_color;
-        } else {
-          var stroke_color = default_stroke.color;
-        }
-        if (detail.hasOwnProperty('stroke_width') && typeof(detail.stroke_width) == "number" && detail.stroke_width >= 0) {
-          var stroke_width = detail.stroke_width;
-        } else {
-          var stroke_width = default_stroke.width;
-        }
-        switch(detail.dashstyle) {
-          case 'dot':
-            var stroke_dash = [1,6];
-            break;
-          case 'dash':
-            var stroke_dash = [6,6];
-            break;
-          case 'dashdot':
-            var stroke_dash = [6,6,2,6];
-            break;
-          case 'longdash':
-            var stroke_dash = [12,6];
-            break;
-          case 'longdashdot':
-            var stroke_dash = [12,6,2,6];
-            break;
-          case 'solid':
-            var stroke_dash = null;
-            break;
-          default:
-            var stroke_dash = null;
-        }
-
-        var new_stroke = new ol.style.Stroke({
-          color: stroke_color,
-          width: stroke_width,
-          lineDash: stroke_dash
+  var new_style = false;
+  var default_fill = featureStyle.getFill();
+  if (!default_fill) {
+    default_fill = { color: default_color, opacity: default_opacity};
+  }
+  var default_stroke = featureStyle.getStroke();
+  if (!default_stroke) {
+    default_stroke = { color: default_stroke_color, width: default_width};
+  }
+  var default_text = featureStyle.getText();
+  for (var i = 0; i < lookupDetails.length; i++) {
+    var detail = lookupDetails[i];
+    if (detail.value.toString() == feature.getProperties()[lookupField].toString()) {
+      if (detail.fill) {
+        var fill_color = detail.color;
+        var fill_opacity = default_opacity;
+        var new_fill = new ol.style.Fill({
+          color: fill_color,
+          opacity: fill_opacity
         });
-        if (detail.graphic && detail.graphic.length > 0) {
-          var new_image = new ol.style.Icon({
-            src: detail.graphic,
-            anchor: [0.5, 0.5],
-            scale: detail.graphic_scale,
-            anchorXUnits: 'fraction',
-            anchorYUnits: 'fraction',
-          });
-        } else {
-          var new_image = new ol.style.Circle({
-            radius: point_radius,
-            fill: new_fill,
-            stroke: new_stroke,
-          });
-        }
-
-        switch(feature.getGeometry().getType()) {
-          case 'Point':
-            var new_style = new ol.style.Style({
-              image: new_image
-            });
-            break;
-          case 'LineString':
-            var new_style = new ol.style.Style({
-              stroke: new_stroke
-            });
-            break;
-          case 'MultiLineString':
-            var new_style = new ol.style.Style({
-              stroke: new_stroke
-            });
-            break;
-          case 'MultiPoint':
-            var new_style = new ol.style.Style({
-              image: new_image
-            });
-            break;
-          case 'MultiPolygon':
-            var new_style = new ol.style.Style({
-              stroke: new_stroke,
-              fill: new_fill
-            });
-            break;
-          case 'Polygon':
-            var new_style = new ol.style.Style({
-              stroke: new_stroke,
-              fill: new_fill
-            });
-            break;
-          case 'GeometryCollection':
-            var new_style = new ol.style.Style({
-              stroke: new_stroke,
-              fill: new_fill,
-              image: new_image
-            });
-          case 'Circle':
-            var new_style = new ol.style.Style({
-              stroke: new_stroke,
-              fill: new_fill
-            });
-            break;
-          default:
-            var new_style = new ol.style.Style({
-              stroke: new_stroke,
-              fill: new_fill,
-              image: new_image
-            });
-        }
-        break;
+      } else {
+        var new_fill = null;
       }
-    }
+      if (detail.hasOwnProperty('stroke_color') && detail.stroke_color && detail.stroke_color != '') {
+        var stroke_color = detail.stroke_color;
+      } else {
+        var stroke_color = default_stroke.color;
+      }
+      if (detail.hasOwnProperty('stroke_width') && typeof(detail.stroke_width) == "number" && detail.stroke_width >= 0) {
+        var stroke_width = detail.stroke_width;
+      } else {
+        var stroke_width = default_stroke.width;
+      }
+      switch(detail.dashstyle) {
+        case 'dot':
+          var stroke_dash = [1,6];
+          break;
+        case 'dash':
+          var stroke_dash = [6,6];
+          break;
+        case 'dashdot':
+          var stroke_dash = [6,6,2,6];
+          break;
+        case 'longdash':
+          var stroke_dash = [12,6];
+          break;
+        case 'longdashdot':
+          var stroke_dash = [12,6,2,6];
+          break;
+        case 'solid':
+          var stroke_dash = null;
+          break;
+        default:
+          var stroke_dash = null;
+      }
 
-    if (new_style) {
-      return new_style;
-    } else {
-      return featureStyle;
+      var new_stroke = new ol.style.Stroke({
+        color: stroke_color,
+        width: stroke_width,
+        lineDash: stroke_dash
+      });
+      if (detail.graphic && detail.graphic.length > 0) {
+        var new_image = new ol.style.Icon({
+          src: detail.graphic,
+          anchor: [0.5, 0.5],
+          scale: detail.graphic_scale,
+          anchorXUnits: 'fraction',
+          anchorYUnits: 'fraction',
+        });
+      } else {
+        var new_image = new ol.style.Circle({
+          radius: point_radius,
+          fill: new_fill,
+          stroke: new_stroke,
+        });
+      }
+
+      switch(feature.getGeometry().getType()) {
+        case 'Point':
+          var new_style = new ol.style.Style({
+            image: new_image
+          });
+          break;
+        case 'LineString':
+          var new_style = new ol.style.Style({
+            stroke: new_stroke
+          });
+          break;
+        case 'MultiLineString':
+          var new_style = new ol.style.Style({
+            stroke: new_stroke
+          });
+          break;
+        case 'MultiPoint':
+          var new_style = new ol.style.Style({
+            image: new_image
+          });
+          break;
+        case 'MultiPolygon':
+          var new_style = new ol.style.Style({
+            stroke: new_stroke,
+            fill: new_fill
+          });
+          break;
+        case 'Polygon':
+          var new_style = new ol.style.Style({
+            stroke: new_stroke,
+            fill: new_fill
+          });
+          break;
+        case 'GeometryCollection':
+          var new_style = new ol.style.Style({
+            stroke: new_stroke,
+            fill: new_fill,
+            image: new_image
+          });
+        case 'Circle':
+          var new_style = new ol.style.Style({
+            stroke: new_stroke,
+            fill: new_fill
+          });
+          break;
+        default:
+          var new_style = new ol.style.Style({
+            stroke: new_stroke,
+            fill: new_fill,
+            image: new_image
+          });
+      }
+      break;
     }
-  };
+  }
+
+  if (new_style) {
+    return new_style;
+  } else {
+    return featureStyle;
+  }
+
+}
+
+/**
+  * addVectorLayerToMap - add vector layer to the (ol5) map
+  * @param {object} layer - the mp layer definition to add to the map
+  */
+app.wrapper.map.addVectorLayerToMap = function(layer) {
   layer.layer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: layer.url,
           format: new ol.format.GeoJSON()
         }),
-        style: styleFunction,
+        style: app.wrapper.map.getLayerStyle,
         strategy: new ol.loadingstrategy.all(),
       }
   );
