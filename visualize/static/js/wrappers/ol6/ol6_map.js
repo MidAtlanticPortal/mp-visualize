@@ -563,7 +563,7 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
   //    as part of that value:
   if (layer.fillOpacity) {
     rgbObject = app.wrapper.map.convertColorToRGB(fill_color);
-    if (rgbObject.red && rgbObject.gree && rgbObject.blue){
+    if (rgbObject.red && rgbObject.green && rgbObject.blue){
       fill_color = 'rgba(' + rgbObject.red + ',' + rgbObject.green + ',' + rgbObject.blue +',' + layer.fillOpacity + ')';
     }
   }
