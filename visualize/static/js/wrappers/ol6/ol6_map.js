@@ -515,8 +515,8 @@ app.wrapper.map.convertColorToRGB = function(colorValue) {
     return app.wrapper.map.convertHexToRGB(colorValue);
   } else {
     // Value is not a valid hex value
-    console.log("ERROR: value is not a valid hex value");
-    return colorValue;
+    console.log("ERROR: value '" + colorValue + "'is not a valid hex value");
+    return {'red': 180, 'green': 180, 'blue': 0};
   }
 }
 
@@ -563,8 +563,11 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
   //    as part of that value:
   if (layer.fillOpacity) {
     rgbObject = app.wrapper.map.convertColorToRGB(fill_color);
-    if (rgbObject.red && rgbObject.green && rgbObject.blue){
+    if (rgbObject.hasOwnProperty('red') && rgbObject.hasOwnProperty('green') && rgbObject.hasOwnProperty('blue')) {
       fill_color = 'rgba(' + rgbObject.red + ',' + rgbObject.green + ',' + rgbObject.blue +',' + layer.fillOpacity + ')';
+    } else {
+      console.log("Error: unable to interpret fill_color: " + fill_color);
+      fill_color = 'rgba(180,180,0,' + layer.fillOpacity + ')';
     }
   }
 
@@ -881,6 +884,7 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
         }),
         style: app.wrapper.map.getLayerStyle,
         strategy: new ol.loadingstrategy.all(),
+        declutter: true,
       }
   );
   return layer;
