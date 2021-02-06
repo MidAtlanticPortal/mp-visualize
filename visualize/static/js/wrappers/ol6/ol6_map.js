@@ -562,8 +562,10 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
   //    Instead, you need to convert your color to an RGBA and apply opacity
   //    as part of that value:
   if (layer.fillOpacity) {
-    rgbObject = app.wrapper.map.convertColorToRGB(fill_color)
-    fill_color = 'rgba(' + rgbObject.red + ',' + rgbObject.green + ',' + rgbObject.blue +',' + layer.fillOpacity + ')';
+    rgbObject = app.wrapper.map.convertColorToRGB(fill_color);
+    if (rgbObject.red && rgbObject.gree && rgbObject.blue){
+      fill_color = 'rgba(' + rgbObject.red + ',' + rgbObject.green + ',' + rgbObject.blue +',' + layer.fillOpacity + ')';
+    }
   }
 
   var fill = new ol.style.Fill({
@@ -578,11 +580,20 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
       anchorYUnits: 'fraction',
     });
   } else {
-    var image = new ol.style.Circle({
-      radius: layer.point_radius,
-      fill: fill,
-      stroke: stroke,
-    });
+    try {
+      var image = new ol.style.Circle({
+        radius: layer.point_radius,
+        fill: fill,
+        stroke: stroke,
+      });
+    } catch (err) {
+      fill.setColor("orange");
+      var image = new ol.style.Circle({
+        radius: layer.point_radius,
+        fill: fill,
+        stroke: stroke,
+      });
+    }
   }
   if (layer.annotated){
     var textStroke = new ol.style.Stroke({
@@ -634,6 +645,19 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
       stroke: stroke,
       fill: fill,
       text: text
+    }),
+    'Label': new ol.style.Style({
+      text: new ol.style.Text({
+        font: '12px Calibri,sans-serif',
+        overflow: true,
+        fill: new ol.style.Fill({
+          color: '#000',
+        }),
+        stroke: new ol.style.Stroke({
+          color: '#fff',
+          width: 3,
+        }),
+      })
     })
   }
 
@@ -642,21 +666,42 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
 
 app.wrapper.map.getFocusedStyle = function(feature) {
   var selectedStyle = app.wrapper.map.getLayerStyle(feature);
-  selectedStyle.getStroke().setWidth(3);
-  selectedStyle.getStroke().setColor("#000000");
-  return selectedStyle;
+  if (Array.isArray(selectedStyle)) {
+    var featureStyle = selectedStyle[0];
+  } else {
+    var featureStyle = selectedStyle;
+  }
+  featureStyle.getStroke().setWidth(3);
+  featureStyle.getStroke().setColor("#000000");
+  if (Array.isArray(selectedStyle)) {
+    selectedStyle[0] = featureStyle;
+    return selectedStyle;
+  } else {
+    return featureStyle;
+  }
 }
 
 app.wrapper.map.getSelectedStyle = function(feature) {
   var selectedStyle = app.wrapper.map.getLayerStyle(feature);
-  selectedStyle.getStroke().setWidth(3);
-  selectedStyle.getStroke().setColor("#FF8800");
-  return selectedStyle;
+  if (Array.isArray(selectedStyle)) {
+    var featureStyle = selectedStyle[0];
+  } else {
+    var featureStyle = selectedStyle;
+  }
+  featureStyle.getStroke().setWidth(3);
+  featureStyle.getStroke().setColor("#FF8800");
+  if (Array.isArray(selectedStyle)) {
+    selectedStyle[0] = featureStyle;
+    return selectedStyle;
+  } else {
+    return featureStyle;
+  }
 }
 
 app.wrapper.map.getLayerStyle = function(feature) {
   var layer = app.viewModel.getLayerByOLId(feature.getLayer().ol_uid);
   var styles = app.wrapper.map.createOLStyleMap(layer);
+  var labels = layer.label_field;
   var lookupField = layer.lookupField;
   var lookupDetails = layer.lookupDetails;
   var default_opacity = layer.opacity;
@@ -665,7 +710,7 @@ app.wrapper.map.getLayerStyle = function(feature) {
   var default_color = layer.color;
   var default_stroke_color = layer.outline_color;
 
-  if (layer.color.toLowerCase() == "random" || layer.color.toLowerCase().indexOf("custom:") == 0 ) {
+  if (layer.color && (layer.color.toLowerCase() == "random" || layer.color.toLowerCase().indexOf("custom:") == 0 )) {
     var featureStyle = app.wrapper.map.createOLStyleMap(layer, feature)[feature.getGeometry().getType()];
   } else {
     var featureStyle = styles[feature.getGeometry().getType()];
@@ -804,11 +849,23 @@ app.wrapper.map.getLayerStyle = function(feature) {
     }
   }
 
-  if (new_style) {
-    return new_style;
+
+  if (labels) {
+    label_style = styles['Label'];
+    label_style.getText().setText(feature.get(labels));
+    if (new_style) {
+      return [new_style, label_style];
+    } else {
+      return [featureStyle, label_style];
+    }
   } else {
-    return featureStyle;
+    if (new_style) {
+      return new_style;
+    } else {
+      return featureStyle;
+    }
   }
+
 
 }
 
