@@ -334,7 +334,20 @@ function layerModel(options, parent) {
               }
 
               if (data['layers']) {
-                  var requested_layers = self.arcgislayers.replace(/ /g,'').split(',');
+                  if (typeof(self.arcgislayers) == "number") {
+                      var requested_layers = [self.arcgislayers.toString()];
+                  } else if (typeof(self.arcgislayers) == "object") {
+                    var requested_layers = [];
+                    for (var i = 0; i < self.arcgislayers.length; i++) {
+                      requested_layers.push(self.arcgislayers[i].toString());
+                    }
+                  } else if (typeof(self.arcgislayers) == "string"){
+                      var requested_layers = self.arcgislayers.replace(/ /g,'').split(',');
+                  } else {
+                    // punt
+                    var requested_layers = self.arcgislayers;
+                  }
+
                   self.legend = {'elements': []};
                   $.each(data['layers'], function(i, layerobj) {
                       if (requested_layers.indexOf(parseInt(layerobj['layerId'], 10).toString()) >= 0) {
