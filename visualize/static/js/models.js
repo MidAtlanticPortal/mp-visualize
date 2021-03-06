@@ -968,6 +968,8 @@ function layerModel(options, parent) {
           }
         }
         self.toggleMultilayer(sliderValues);
+      } else {
+        self.buildMultilayerValueLookup();
       }
     };
 
