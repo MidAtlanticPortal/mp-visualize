@@ -1014,8 +1014,7 @@ function layerModel(options, parent) {
         var el = $('<label>'+self.multilayerValueLookup[dimension.label][i].label+'</label>');
         if (vals != 0) {
           var label_width = 100/vals;
-          var label_left = label_width*i-(label_width/2);
-          el.css('width', label_width + '%');
+          var label_left = label_width*i;
           el.css('left', label_left + '%');
         }
 
