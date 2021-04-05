@@ -544,6 +544,18 @@ app.wrapper.map.convertHexToRGB = function(hex) {
   * @param {object} layer - the mp layer definition to derive the style from
   */
 app.wrapper.map.createOLStyleMap = function(layer, feature){
+  if (!layer){
+    layer = {
+      outline_color: "#ee9900",
+      outline_width: 1,
+      color: "#ee9900",
+      fillOpacity: 0.5,
+      graphic: false,
+      point_radius: 2,
+      annotated: false
+    };
+  }
+
   var stroke = new ol.style.Stroke({
     color: layer.outline_color,
     width: layer.outline_width
@@ -642,34 +654,50 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
 
 app.wrapper.map.getFocusedStyle = function(feature) {
   var selectedStyle = app.wrapper.map.getLayerStyle(feature);
-  selectedStyle.getStroke().setWidth(3);
-  selectedStyle.getStroke().setColor("#000000");
+  if (selectedStyle.getStroke()) {
+    selectedStyle.getStroke().setWidth(3);
+    selectedStyle.getStroke().setColor("#000000");
+  }
   return selectedStyle;
 }
 
 app.wrapper.map.getSelectedStyle = function(feature) {
   var selectedStyle = app.wrapper.map.getLayerStyle(feature);
-  selectedStyle.getStroke().setWidth(3);
-  selectedStyle.getStroke().setColor("#FF8800");
+  if (selectedStyle.getStroke()) {
+    selectedStyle.getStroke().setWidth(3);
+    selectedStyle.getStroke().setColor("#FF8800");
+  }
   return selectedStyle;
 }
 
 app.wrapper.map.getLayerStyle = function(feature) {
-  var layer = app.viewModel.getLayerByOLId(feature.getLayer().ol_uid);
-  var styles = app.wrapper.map.createOLStyleMap(layer);
-  var lookupField = layer.lookupField;
-  var lookupDetails = layer.lookupDetails;
-  var default_opacity = layer.opacity;
-  var point_radius = layer.point_radius;
-  var default_width = layer.outline_width;
-  var default_color = layer.color;
-  var default_stroke_color = layer.outline_color;
-
-  if (layer.color.toLowerCase() == "random" || layer.color.toLowerCase().indexOf("custom:") == 0 ) {
-    var featureStyle = app.wrapper.map.createOLStyleMap(layer, feature)[feature.getGeometry().getType()];
+  if (feature && feature.getLayer()) {
+    var layer = app.viewModel.getLayerByOLId(feature.getLayer().ol_uid);
+    var styles = app.wrapper.map.createOLStyleMap(layer);
+    var lookupField = layer.lookupField;
+    var lookupDetails = layer.lookupDetails;
+    var default_opacity = layer.opacity;
+    var point_radius = layer.point_radius;
+    var default_width = layer.outline_width;
+    var default_color = layer.color;
+    var default_stroke_color = layer.outline_color;
+    if (layer.color && (layer.color.toLowerCase() == "random" || layer.color.toLowerCase().indexOf("custom:") == 0 )) {
+      var featureStyle = app.wrapper.map.createOLStyleMap(layer, feature)[feature.getGeometry().getType()];
+    } else {
+      var featureStyle = styles[feature.getGeometry().getType()];
+    }
   } else {
+    var styles = app.wrapper.map.createOLStyleMap(false);
+    var lookupField = false;
+    var lookupDetails = [];
+    var default_opacity = 0.5;
+    var point_radius = 2;
+    var default_width = 1;
+    var default_color = "#ee9900";
+    var default_stroke_color = "#ee9900";
     var featureStyle = styles[feature.getGeometry().getType()];
   }
+
 
   var new_style = false;
   var default_fill = featureStyle.getFill();
@@ -681,9 +709,12 @@ app.wrapper.map.getLayerStyle = function(feature) {
     default_stroke = { color: default_stroke_color, width: default_width};
   }
   var default_text = featureStyle.getText();
+  if (!lookupDetails) {
+    lookupDetails = [];
+  }
   for (var i = 0; i < lookupDetails.length; i++) {
     var detail = lookupDetails[i];
-    if (detail.value.toString() == feature.getProperties()[lookupField].toString()) {
+    if (lookupField && detail.value.toString() == feature.getProperties()[lookupField].toString()) {
       if (detail.fill) {
         var fill_color = detail.color;
         var fill_opacity = default_opacity;
