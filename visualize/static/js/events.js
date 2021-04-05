@@ -363,7 +363,11 @@ if (!app.wrapper.events.hasOwnProperty('generateAttributeReport')) {
     if (data.length > 0){
       for (var i = 0; i < data.length; i++) {
         var feature = data[i];
-        var feature_name = 'Feature ' + (i+1);
+        if (mp_layer.label_field) {
+          var feature_name = feature[mp_layer.label_field]
+        } else {
+          var feature_name = 'Feature ' + (i+1);
+        }
         var feature_id = mp_layer.featureAttributionName + '-' + i;
         var report_title = mp_layer.featureAttributionName;
         var report_feature = {

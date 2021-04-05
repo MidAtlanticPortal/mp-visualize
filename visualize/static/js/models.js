@@ -95,6 +95,7 @@ function layerModel(options, parent) {
         self.show_legend = true;
       }
 
+      self.label_field = options.label_field || false;
       self.attributes = options.attributes ? options.attributes.attributes : [];
       self.compress_attributes = options.attributes ? options.attributes.compress_attributes : false;
       self.attributeEvent = options.attributes ? options.attributes.event : [];
@@ -1013,8 +1014,7 @@ function layerModel(options, parent) {
         var el = $('<label>'+self.multilayerValueLookup[dimension.label][i].label+'</label>');
         if (vals != 0) {
           var label_width = 100/vals;
-          var label_left = label_width*i-(label_width/2);
-          el.css('width', label_width + '%');
+          var label_left = label_width*i;
           el.css('left', label_left + '%');
         }
 
