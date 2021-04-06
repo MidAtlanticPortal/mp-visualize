@@ -118,7 +118,7 @@
 {% block "after" %}
 <!-- ko if: $data.hasOwnProperty('is_multilayer_parent') && $data.is_multilayer_parent() -->
 <div data-bind="foreach: dimensions; visible: $data.is_multilayer_parent()">
-  <table class="slider-table" data-bind="visible: nodes.length>1">
+  <table class="slider-table" data-bind="visible: nodes.length, attr: {id: $parent.id + '_' + label + '_slider-table'}">
     <tr class="slider-row">
       <!-- ko if: $data.animated -->
         <td class="animated-slider-cell">

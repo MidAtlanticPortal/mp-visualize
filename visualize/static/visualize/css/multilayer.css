@@ -5,8 +5,6 @@
     width: 20px;
     text-align: center;
     margin-top: 20px;
-    transform: rotate(35deg);
-    margin-left: -0.9rem;
 }
 
 /* below is not necessary, just for style */
@@ -18,7 +16,15 @@
 .slider-row,
 .slider-table {
   min-width: 100%;
+}
+
+.slider-table.angled {
   margin-bottom: 3.0rem;
+}
+
+.slider-table.angled .multilayerslider label {
+  transform: rotate(35deg);
+  margin-left: -0.9rem;
 }
 
 .slider-cell {
