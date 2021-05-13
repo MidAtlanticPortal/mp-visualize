@@ -46,9 +46,9 @@
                     </div>  -->
 
                 </div>
-                <div role="tabpanel" class="tab-pane" id="share-groups">
+                <div role="tabpanel" class="tab-pane" id="share-groups" style="overflow: hidden;">
                     <h4 class="sharing-header">Share my bookmark with the following:</h4>
-                    <ul class="unstyled" id="bookmark-sharing-groups" style="margin-left: 1px; height: 165px; outline: none;">
+                    <ul class="unstyled" id="bookmark-sharing-groups" style="margin-left: 1px; height: 165px; outline: none; overflow: auto;">
                         <span data-bind="foreach: sharingGroups">
                             <li><div style="text-align: left; margin-left: 50px;"><div class="share-checkbox" data-bind="click: $parent.toggleGroup">
                                 <i class="far" data-bind="css: {'fa-check-square': $parent.groupIsSelected(group_name),
