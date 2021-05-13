@@ -640,7 +640,7 @@ function layerModel(options, parent) {
 
     // override_defaults set to true if layer loaded from hash/bookmark where
     //    and opacity can be applied
-    self.activateLayer = function(is_companion, override_defaults) {
+    self.activateLayer = function(is_companion, override_defaults, callbackOverride) {
         var layer = this;
         if (override_defaults) {
           layer.override_defaults(true);
@@ -722,7 +722,11 @@ function layerModel(options, parent) {
               self.trackLayer(layer.name);
             }
           } else {
-            layer.getFullLayerRecord('activateLayer', is_companion);
+            if (callbackOverride){
+              layer.getFullLayerRecord(callbackOverride, is_companion);
+            } else {
+              layer.getFullLayerRecord('activateLayer', is_companion);
+            }
             layer.visible(true);
           }
         } else {
@@ -1274,6 +1278,7 @@ function layerModel(options, parent) {
         layer.toggleDescription(layer);
       } else if (callbackType == 'toggleActive') {
         layer.finishToggleActive(layer, evt);
+        layer.activateLayer();
       } else if (callbackType == 'ajaxVTR') {
         layer.ajaxVTR(layer, evt);
       } else if (callbackType == 'ajaxMDAT') {
@@ -1324,8 +1329,8 @@ function layerModel(options, parent) {
 
             layer.setOptions(data, parent);
             layer.fullyLoaded = true;
-            app.viewModel.layerIndex[layer.id.toString()] = layer;
             layer.performAction(callbackType, evt);
+            app.viewModel.layerIndex[layer.id.toString()] = layer;
 
             if (!data.hasOwnProperty('url') || !data.url || !data.url.length > 0 || data.hasOwnProperty('type') && data.type == 'placeholder') {
               layer.loadStatus(false);
@@ -1370,12 +1375,10 @@ function layerModel(options, parent) {
               layer.scenarioModel.deactivateLayer(self, false);
             }
         } else { // otherwise layer is not currently active
-            layer.activateLayer();
+            layer.activateLayer(false, layer.is_companion, 'toggleActive');
         }
 
-        if (!layer.fullyLoaded) {
-          layer.getFullLayerRecord('toggleActive', event);
-        } else {
+        if (layer.fullyLoaded) {
           self.finishToggleActive(self, event);
         }
 
