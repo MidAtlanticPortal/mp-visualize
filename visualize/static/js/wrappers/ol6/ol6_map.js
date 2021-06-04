@@ -490,6 +490,67 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
 
 };
 
+app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
+
+  var esrijsonFormat = new ol.format.EsriJSON();
+
+  var layerSource = new ol.source.Vector({
+    loader: function(extent, resolution, projection) {
+      var url =
+        layer.url +
+        layer.arcgislayers +
+        '/query/?f=json&' +
+        'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
+        encodeURIComponent(
+          '{"xmin":' +
+            extent[0] +
+            ',"ymin":' +
+            extent[1] +
+            ',"xmax":' +
+            extent[2] +
+            ',"ymax":' +
+            extent[3] +
+            ',"spatialReference":{"wkid":102100}}'
+        ) +
+        '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*' +
+        '&outSR=102100';
+      $.ajax({
+        url: url,
+        dataType: 'jsonp',
+        success: function (response) {
+          if (response.error) {
+            alert(
+              response.error.message + '\n' + response.error.details.join('\n')
+            );
+          } else {
+            // dataProjection will be read from document
+            var features = esrijsonFormat.readFeatures(response, {
+              featureProjection: projection,
+            });
+            if (features.length > 0) {
+              layerSource.addFeatures(features);
+            }
+          }
+        },
+      });
+    },
+    strategy: ol.loadingstrategy.tile(
+      ol.tilegrid.createXYZ({
+        tileSize: 512,
+      })
+    ),
+  });
+
+  layer.layer = new ol.layer.Vector({
+    source: layerSource,
+    style: app.wrapper.map.getLayerStyle,
+    declutter: true
+  });
+
+  return layer;
+
+};
+
 app.wrapper.map.getRandomColor = function(feature, resolution) {
   if (feature && feature != undefined) {
     console.log(feature);

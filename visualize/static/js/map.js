@@ -531,6 +531,8 @@ app.addLayerToMap = function(layer) {
         app.addVectorLayerToMap(layer);
       } else if (layer.type === 'ArcRest') {
         app.addArcRestLayerToMap(layer);
+      } else if (layer.type === 'ArcFeatureServer') {
+        app.addArcFeatureServerLayerToMap(layer);
       } else if (layer.type === 'WMS') {
         app.addWmsLayerToMap(layer);
       } else if (layer.type === 'VectorTile') {
@@ -614,6 +616,14 @@ app.addArcRestLayerToMap = function(layer) {
       console.log('no addArcIdentifyControl function defined.');
     }
 };
+
+app.addArcFeatureServerLayerToMap = function(layer) {
+    if (app.wrapper.map.hasOwnProperty('addArcFeatureServerLayerToMap')) {
+      app.wrapper.map.addArcFeatureServerLayerToMap(layer);
+    } else {
+      console.log('no addArcFeatureServerLayerToMap function defined.');
+    }
+}
 
 app.addVectorLayerToMap = function(layer) {
     if (app.wrapper.controls.hasOwnProperty('addVectorIdentifyControl')) {
