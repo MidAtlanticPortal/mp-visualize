@@ -547,6 +547,20 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
     declutter: true
   });
 
+  var request_url = layer.url + layer.arcgislayers + '?f=json';
+  console.log(request_url);
+
+  $.ajax({
+    dataType: "jsonp",
+    url: request_url,
+    'success': function(response){
+      createStyleFunction(response)
+      .then(styleFunction => {
+        layer.layer.setStyle(styleFunction);
+      });
+    }
+  });
+
   return layer;
 
 };

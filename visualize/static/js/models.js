@@ -304,9 +304,10 @@ function layerModel(options, parent) {
         url = url.replace('http:', 'https:');
       }
       $.ajax({
-          dataType: "json",
+          dataType: "jsonp",
           url: url,
           type: 'GET',
+          crossDomain: true,
           success: function(data) {
               if (data['layers']) {
                   $.each(data['layers'], function(i, layerobj) {
