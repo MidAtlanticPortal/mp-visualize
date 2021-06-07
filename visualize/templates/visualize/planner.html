@@ -7,6 +7,7 @@
         <link href="{% static 'visualize/css/print.css' %}" rel="stylesheet" media="print">
         <link href="{% static 'visualize/css/scalebar-thin.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/multilayer.css' %}" rel="stylesheet">
+        <link href="{% static 'visualize/css/legends.css' %}" rel="stylesheet">
         {% if show_watermark %}
         <link href="{% static 'visualize/css/watermark.css' %}" rel="stylesheet">
         {% endif %}
@@ -338,7 +339,14 @@
                                                                   <div data-bind="if: legend['elements']">
                                                                       <div data-bind="foreach: legend['elements']">
                                                                           <div>
-                                                                              <img data-bind="attr: {src: swatch}" />
+                                                                              <!-- ko if: $data.hasOwnProperty("swatch") -->
+                                                                                <img data-bind="attr: {src: swatch}" />
+                                                                              <!-- /ko -->
+                                                                              <!-- ko ifnot: $data.hasOwnProperty("swatch") -->
+                                                                                <!-- ko if: $data.hasOwnProperty("style") -->
+                                                                                  <div class='legend-swatch' data-bind='attr: {style: style}'></div>
+                                                                                <!-- /ko -->
+                                                                              <!-- /ko -->
                                                                               <span data-bind="text: label" style="font-size: 11px; font-weight: bold;"></span>
                                                                           </div>
                                                                       </div>

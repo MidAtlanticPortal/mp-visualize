@@ -558,6 +558,7 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
       .then(styleFunction => {
         layer.layer.setStyle(styleFunction);
       });
+      interpretArcGISFeatureServerLegend(layer, response);
     }
   });
 

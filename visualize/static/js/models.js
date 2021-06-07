@@ -361,6 +361,43 @@ function layerModel(options, parent) {
       });
     }
 
+    getArcGISFeatureServerLegend = function(self, protocol) {
+      var request_url = self.url + self.arcgislayers + '?f=json';
+      $.ajax({
+        dataType: "jsonp",
+        url: request_url,
+        'success': function(response){
+          interpretArcGISFeatureServerLegend(self, response);
+        }
+      });
+    }
+
+    interpretArcGISFeatureServerLegend = function(self, json) {
+      self.legend = {'elements': []};
+      $.each(json['drawingInfo']['renderer']['uniqueValueInfos'], function(j, legendobj) {
+          var type = 'swatch';
+          var color = 'transparent';
+          var outline_color = 'rgba(0,0,0,255)';
+          // TODO: Support outline_style
+          var outline_style = 'solid';
+          var outline_width = '0.4';
+          var label = legendobj['label'];
+          if (j < 1 && label === "") {
+              label = layerobj['layerName'];
+          }
+          if (legendobj.symbol.type == "esriSFS"){
+            color = 'rgba(' + legendobj.symbol.color.join(',') + ')';
+            outline_color = 'rgba(' + legendobj.symbol.outline.color.join(',') + ')';
+            outline_width = legendobj.symbol.outline.width;
+          }
+          self.legend['elements'].push({
+            'style': `border: ${outline_width}px ${outline_style} ${outline_color}; background-color: ${color}`,
+            'label': label
+          });
+      });
+
+    }
+
     self.toggleLegendVisibility = function() {
         var layer = this;
         layer.legendVisibility(!layer.legendVisibility());
@@ -660,6 +697,17 @@ function layerModel(options, parent) {
             // if legend is not provided, try using legend from web services
             if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
               setTimeout(function() {
+                if (self.url.indexOf('FeatureServer') >= 0) {
+                  try {
+                    getArcGISFeatureServerLegend(self, window.location.profotol);
+                  } catch (err) {
+                    if (window.location.protocol == "http:") {
+                      console.log(err);
+                    } else {
+                      getArcGISFeatureServerLegend(self, "http:");
+                    }
+                  }
+                } else {
                   try {
                     // On Macs the legend seems to get overwritten w/o this timeout.
                     getArcGISJSONLegend(self, window.location.protocol);
@@ -670,7 +718,8 @@ function layerModel(options, parent) {
                       getArcGISJSONLegend(self, "http:");
                     }
                   }
-                }, 1000);
+                }
+              }, 1000);
             }
 
             if (!layer.active() && layer.type !== 'placeholder' && !layer.isDisabled()) {
