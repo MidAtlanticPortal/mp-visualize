@@ -303,6 +303,7 @@ app.wrapper.events.imageSources = [];
 app.wrapper.events.vectorSources = [
   'Vector',
   'VectorTile',
+  'ArcFeatureServer',
 ];
 
 /**
