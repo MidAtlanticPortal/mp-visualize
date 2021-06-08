@@ -395,6 +395,7 @@ function layerModel(options, parent) {
             'label': label
           });
       });
+      app.viewModel.activeLayers.notifySubscribers();
 
     }
 
