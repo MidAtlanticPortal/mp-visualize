@@ -343,8 +343,9 @@
                                                                                 <img data-bind="attr: {src: swatch}" />
                                                                               <!-- /ko -->
                                                                               <!-- ko ifnot: $data.hasOwnProperty("swatch") -->
-                                                                                <!-- ko if: $data.hasOwnProperty("style") -->
-                                                                                  <div class='legend-swatch' data-bind='attr: {style: style}'></div>
+                                                                                <!-- ko if: $data.hasOwnProperty("viz") -->
+                                                                                  <!-- <div class='legend-swatch' data-bind='attr: {style: style}'></div> -->
+                                                                                  <div data-bind="html: viz"></div>
                                                                                 <!-- /ko -->
                                                                               <!-- /ko -->
                                                                               <span data-bind="text: label" style="font-size: 11px; font-weight: bold;"></span>

@@ -1,6 +1,6 @@
 /**
   * Forked from https://github.com/bojko108/ol-esri-style
-  
+
   * This file was created by compiling the Node JS Module code from files
   *   * src/index.js
   *   * src/styles.js
@@ -300,8 +300,10 @@ const readSymbol = (symbol) => {
     case 'esriPMS':
       return {
         icon: {
-          src: `data:image/png;base64,${symbol.imageData}`,
+          src: `data:${symbol.contentType};base64,${symbol.imageData}`,
           rotation: symbol.angle,
+          scale: symbol.width ? symbol.width/64 : 1,
+          size: [64, 64],
         },
       };
     case 'esriTS':

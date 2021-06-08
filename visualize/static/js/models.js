@@ -374,7 +374,15 @@ function layerModel(options, parent) {
 
     interpretArcGISFeatureServerLegend = function(self, json) {
       self.legend = {'elements': []};
-      $.each(json['drawingInfo']['renderer']['uniqueValueInfos'], function(j, legendobj) {
+      if (json['drawingInfo']['renderer'].hasOwnProperty('uniqueValueInfos')){
+        // list of unique values (esriSFS case)
+        legend_items = json['drawingInfo']['renderer']['uniqueValueInfos'];
+      } else if (json['drawingInfo']['renderer'].hasOwnProperty('symbol')) {
+        // only 1 item (esriPMS case)
+        legend_items = [json['drawingInfo']['renderer']];
+      }
+
+      $.each(legend_items, function(j, legendobj) {
           var type = 'swatch';
           var color = 'transparent';
           var outline_color = 'rgba(0,0,0,255)';
@@ -385,13 +393,27 @@ function layerModel(options, parent) {
           if (j < 1 && label === "") {
               label = layerobj['layerName'];
           }
-          if (legendobj.symbol.type == "esriSFS"){
+          if (legendobj.symbol.type == "esriPMS"){
+            img_style = `fill-opacity="0" stroke="none" ` +
+            `stroke-opacity="0" stroke-width="1" stroke-linecap="butt" ` +
+            `stroke-linejoin="miter" stroke-miterlimit="4" x="-10" y="-10" ` +
+            `width="20" height="20" preserveAspectRatio="none" ` +
+            `src="data:${legendobj.symbol.contentType};base64,` +
+            `${legendobj.symbol.imageData}" ` +
+            `transform="matrix(1.00000000,0.00000000,0.00000000,1.00000000,15.00000000,10.00000000)"`;
+            type = 'point_image';
+            viz = `<image ${img_style} class="legend-${type}"></image>`;
+
+          } else if (legendobj.symbol.type == "esriSFS"){
             color = 'rgba(' + legendobj.symbol.color.join(',') + ')';
             outline_color = 'rgba(' + legendobj.symbol.outline.color.join(',') + ')';
             outline_width = legendobj.symbol.outline.width;
+            style = `border: ${outline_width}px ${outline_style} ${outline_color}; background-color: ${color}`;
+            viz = `<div class="legend-${type}" style="${style}"></div>`;
           }
           self.legend['elements'].push({
-            'style': `border: ${outline_width}px ${outline_style} ${outline_color}; background-color: ${color}`,
+            'type': type,
+            'viz': viz,
             'label': label
           });
       });
