@@ -410,6 +410,11 @@ function layerModel(options, parent) {
             outline_width = legendobj.symbol.outline.width;
             style = `border: ${outline_width}px ${outline_style} ${outline_color}; background-color: ${color}`;
             viz = `<div class="legend-${type}" style="${style}"></div>`;
+          } else if (legendobj.symbol.type == "esriSLS"){
+            color = 'rgba(' + legendobj.symbol.color.join(',') + ')';
+            type = 'line';
+            style = `border-top: ${legendobj.symbol.width}px ${outline_style} ${color};`;
+            viz = `<div class="legend-${type}" style="${style}"></div>`;
           }
           self.legend['elements'].push({
             'type': type,
