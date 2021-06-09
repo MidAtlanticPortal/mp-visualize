@@ -121,7 +121,7 @@ function layerModel(options, parent) {
       }
       self.outline_opacity = options.outline_opacity || self.defaultOpacity;
       self.outline_width = options.outline_width || 1;  // This was removed in one branch (RDH: 2020-08-25)
-      self.point_radius = options.point_radius || 2;
+      self.point_radius = options.point_radius || 5;
       self.graphic = options.graphic || null;
       self.graphic_scale = options.graphic_scale || null;  // This was removed in one branch (RDH: 2020-08-25)
       self.annotated = options.annotated || false;

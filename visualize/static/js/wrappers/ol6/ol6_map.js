@@ -627,7 +627,7 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
       color: "#ee9900",
       fillOpacity: 0.5,
       graphic: false,
-      point_radius: 2,
+      point_radius: 5,
       annotated: false
     };
   }
@@ -816,7 +816,7 @@ app.wrapper.map.getLayerStyle = function(feature) {
     var lookupField = false;
     var lookupDetails = [];
     var default_opacity = 0.5;
-    var point_radius = 2;
+    var point_radius = 5;
     var default_width = 1;
     var default_color = "#ee9900";
     var default_stroke_color = "#ee9900";
