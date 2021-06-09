@@ -260,6 +260,40 @@ const readLabels = (labelingInfo) => {
 };
 
 /**
+ * Get Width & Height of image represented as base64 data.
+ * @param {!String} base64 - string of characters representing image data
+ * @return {object}
+ * @see https://stackoverflow.com/a/41152378/706797
+ */
+function getPngDimensions(base64) {
+  const header = atob(base64.slice(0, 50)).slice(16,24)
+  const uint8 = Uint8Array.from(header, c => c.charCodeAt(0))
+  const dataView = new DataView(uint8.buffer)
+
+  return {
+    width: dataView.getInt32(0),
+    height: dataView.getInt32(4)
+  }
+}
+
+function getSVGDimensions(base64) {
+  try {
+    var xml_str = atob(base64);
+    var start_height_index = xml_str.indexOf(' height=\"');
+    var height = parseInt(xml_str.slice(start_height_index, start_height_index+25).split('"')[1]);
+    var start_width_index = xml_str.indexOf(' width=\"');
+    var width = parseInt(xml_str.slice(start_width_index, start_width_index+25).split('"')[1]);
+  } catch (error) {
+    var width = 128;
+    var height = 128;
+  }
+  return {
+    'width': width,
+    'height': height
+  }
+}
+
+/**
  * Convert ESRI style data to a readable style definition
  * @param {!esriPMS|esriSFS|esriSLS|esriSMS|esriTS} symbol - ESRI style definition
  * @param {!String} symbol.type - valid values are: `esriSMS`, `esriSLS`, `esriSFS`, `esriPMS` and `esriTS`
@@ -298,14 +332,32 @@ const readSymbol = (symbol) => {
       style.fill = { color: `rgba(${symbol.color.join(',')})` };
       return style;
     case 'esriPMS':
+      var size = false;
+      const imgWidth = false;
+      const imgHeight = false;
+      try {
+        if (symbol.contentType && symbol.contentType == 'image/png') {
+          var dimensions = getPngDimensions(symbol.imageData);
+        } else if (symbol.contentType && symbol.contentType == 'image/svg+xml'){
+          var dimensions = getSVGDimensions(symbol.imageData);
+        } else {
+          var dimensions = {'width': 64, 'height':64};
+        }
+        var size = [dimensions.width, dimensions.height];
+        var scale_max = (dimensions.width > dimensions.height) ? dimensions.width : dimensions.height;
+      } catch (error) {
+        var size = [symbol.width ? symbol.width : 64, symbol.height ? symbol.height : 64];
+      }
+
       return {
         icon: {
           src: `data:${symbol.contentType};base64,${symbol.imageData}`,
           rotation: symbol.angle,
-          scale: symbol.width ? symbol.width/64 : 1,
-          size: [64, 64],
+          scale: (symbol.width && scale_max != 0) ? symbol.width/scale_max : 1,
+          size: size,
         },
       };
+
     case 'esriTS':
       return {
         text: symbol.text,
