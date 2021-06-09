@@ -190,6 +190,20 @@ app.wrapper.events.registerClickLocationEvent = function() {
   });
 };
 
+/**
+  * generateExtentFromPixel - from a click event, generate a duffered extent to
+  *   select nearby features
+  * @param {array} pixel - the coordinates of the pixel [x, y]
+  * @param {integer} buffer - how many pixels to buffer in all directions
+  * @see https://gis.stackexchange.com/a/217833/53225
+  */
+app.wrapper.events.generateExtentFromPixel = function(pixel, buffer) {
+  var EXTENT_TL = app.map.getCoordinateFromPixel([pixel[0]-buffer, pixel[1]-buffer]);
+  var EXTENT_BR = app.map.getCoordinateFromPixel([pixel[0]+buffer, pixel[1]+buffer]);
+  var extent = ol.extent.boundingExtent([EXTENT_TL, EXTENT_BR]);
+  return extent
+}
+
 
 /**
   * clickOnVectorLayerEvent - logic to handle when vector layer features are selected.
@@ -203,7 +217,17 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
   if (evt.hasOwnProperty('coordinate')) {
     var selectedFeatures = layer.getSource().getFeaturesAtCoordinate(evt.coordinate);
   } else if (evt.hasOwnProperty('mapBrowserEvent') && 'coordinate' in evt.mapBrowserEvent) {  // 'coordinate' does not exist in mapBrowserEvent's 'own' scope.
+    // get all overlapping features at click, not just the selected feature
     var selectedFeatures = layer.getSource().getFeaturesAtCoordinate(evt.mapBrowserEvent.coordinate);
+    if (evt.hasOwnProperty('selected')) {
+      //handle point/line polys in a way that still supports selecting overlapping vector features
+      selectedFeatures = jQuery.unique(selectedFeatures, evt.selected);
+    }
+    if (selectedFeatures.length == 0) {
+      var clickPixelBuffer = 5;
+      var bufferedClickExtent = app.wrapper.events.generateExtentFromPixel(evt.mapBrowserEvent.pixel_, clickPixelBuffer);
+      selectedFeatures = layer.getSource().getFeaturesInExtent(bufferedClickExtent);
+    }
   } else if (evt.hasOwnProperty('selected')) {
     var selectedFeatures = evt.selected;
   } else {
