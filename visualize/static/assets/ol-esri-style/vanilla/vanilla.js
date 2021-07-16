@@ -92,7 +92,9 @@ const createStyleFunction = (esriLayerInfoJson) => {
             const currentValue = feature.get(field);
             switch (operator) {
               case 'in':
-                const valuesIn = value.split(',').map((value) => value.toString());
+                // Values can have commas in them... I'm not sure when we'd need to split...
+                // const valuesIn = value.split(',').map((value) => value.toString());
+                const valuesIn = [value].map((value) => value.toString());
                 return valuesIn.indexOf(currentValue.toString()) > -1;
 
               case 'between':
