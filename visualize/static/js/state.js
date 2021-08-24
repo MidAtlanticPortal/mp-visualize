@@ -324,6 +324,9 @@ app.loadState = function(state) {
     var loadTimer;
 
     if (state.hasOwnProperty('bookmark') && !isNaN(state.bookmark)) {
+      // Quick way to trigger pulling drawings/bookmarks from server. See scenarios.js: $('#designsTab').on('show.bs.tab'.....;
+      // Without this, drawings in shared bookmarks won't load.
+      $('#designsTab').tab('show');
       app.viewModel.bookmarks.loadBookmarkFromHash(state.bookmark);
       return;
     }
