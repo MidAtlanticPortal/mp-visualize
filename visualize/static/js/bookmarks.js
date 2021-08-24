@@ -299,20 +299,33 @@ function bookmarksModel(options) {
         new_layer.opacity = app_state_json.dls[i];
         i++;
         layer_record = app.viewModel.getLayerById(app_state_json.dls[i]);
-        new_layer.type = layer_record.type;
-        new_layer.url = layer_record.url;
-        new_layer.name = layer_record.name;
-        new_layer.id = layer_record.id; //should = app_state_json.dls[i]
-        new_layer.order = order;
-        try {
-          new_layer.dynamic = layer_record.isMDAT || layer_record.isVTR || layer_record.wmsSession();
-          new_layer.isUserLayer = layer_record.wmsSession();
-        } catch (e) {
+        if (layer_record) {
+          new_layer.type = layer_record.type;
+          new_layer.url = layer_record.url;
+          new_layer.name = layer_record.name;
+          new_layer.id = layer_record.id; //should = app_state_json.dls[i]
+          new_layer.order = order;
+          try {
+            new_layer.dynamic = layer_record.isMDAT || layer_record.isVTR || layer_record.wmsSession();
+            new_layer.isUserLayer = layer_record.wmsSession();
+          } catch (e) {
+            new_layer.dynamic = false;
+            new_layer.isUserLayer = false;
+          }
+          new_layer.isMDAT = layer_record.isMDAT;
+          new_layer.isVTR = layer_record.isVTR;
+        } else if (app_state_json.dls[i].indexOf('aoi')>=0) {
+          layer_identifier = app_state_json.dls[i];
+          new_layer.type = "Vector";
+          new_layer.url = null;
+          new_layer.name = app.viewModel.layerIndex[layer_identifier].name;
+          new_layer.id = app.viewModel.layerIndex[layer_identifier].id;
+          new_layer.order = null;
           new_layer.dynamic = false;
           new_layer.isUserLayer = false;
+          new_layer.isMDAT = false;
+          new_layer.isVTR = false;
         }
-        new_layer.isMDAT = layer_record.isMDAT;
-        new_layer.isVTR = layer_record.isVTR;
 
         if (new_layer.type == "ArcRest") {
           new_layer.arcgislayers = layer_record.arcgislayers;
