@@ -141,7 +141,9 @@ app.updateHashStateLayers = function(id, status, visible) {
 app.addKnownLayerFromState = function(id, opacity, isVisible, unloadedDesigns) {
   if (app.viewModel.layerIndex[id]) {
       app.viewModel.layerIndex[id].activateLayer();
-      app.viewModel.layerIndex[id].opacity(opacity);
+      window.setTimeout(function(){
+        app.viewModel.layerIndex[id].opacity(opacity);
+      }, 200);
       //obviously not understanding something here...
       if (isVisible || !isVisible) {
           if (isVisible !== 'true' && isVisible !== true) {

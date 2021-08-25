@@ -2647,6 +2647,9 @@ function viewModel() {
             if (layer_list.length > 0) {
                 return layer_list[0];
             } else {
+                if (typeof(id) == "string" && id.indexOf('aoi') >= 0) {
+                    return app.viewModel.layerIndex[id];
+                }
                 var subLayerArray = [];
                 $.each(self.themes()[x].layers(), function(i, l) {
                     if (l.subLayers.length > 0) {
@@ -2813,7 +2816,9 @@ function viewModel() {
     self.activeLayers.subscribe(function() {
         // initial index
         var index = 300;
-        app.state.activeLayers = [];
+        if (!app.state.activeLayers){
+          app.state.activeLayers = [];
+        }
 
         // Pull multilayer children ids out of parent.associated_multilayers
         var getMultilayerChildren = function(object, child_ids) {

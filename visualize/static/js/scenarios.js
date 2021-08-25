@@ -748,7 +748,7 @@ function selectionModel(options) {
     }
 
     return ret;
-} // end selectionModel
+}; // end selectionModel
 
 function selectionFormModel(options) {
     var self = this;
@@ -1040,12 +1040,20 @@ function scenarioModel(options) {
     self.layer = ko.observable(false);
 
     self.opacity.subscribe( function(newOpacity) {
-        if ( self.layer() ) {
+        if ( self.layer() && self.layer().hasOwnProperty('styleMap')) {
             self.layer().styleMap.styles['default'].defaultStyle.strokeOpacity = newOpacity;
             self.layer().styleMap.styles['default'].defaultStyle.fillOpacity = newOpacity;
             self.layer().redraw();
         } else {
-            //debugger;
+          var live_layers = app.wrapper.map.getLayers();
+
+          for (var y = 0; y < live_layers.length; y++) {
+            var ol_layer = live_layers[y];
+            if (ol_layer.get('mpid') == self.id) {
+              ol_layer.set('opacity', newOpacity);
+              break;
+            }
+          }
         }
     });
 
@@ -1869,17 +1877,19 @@ function scenariosModel(options) {
                         isVisible = designs[x].isVisible;
 
                     if (app.viewModel.layerIndex[id]) {
-                        app.viewModel.layerIndex[id].opacity(opacity);
                         app.viewModel.layerIndex[id].activateLayer();
+                        window.setTimeout(function(){
+                          app.viewModel.layerIndex[id].opacity(opacity);
+                        }, 500)
                         for (var i=0; i < app.viewModel.unloadedDesigns.length; i=i+1) {
-                            if(app.viewModel.unloadedDesigns[i].id === id) {
-                                app.viewModel.unloadedDesigns.splice(i,1);
-                                i = i-1;
-                            }
+                          if(app.viewModel.unloadedDesigns[i].id === id) {
+                            app.viewModel.unloadedDesigns.splice(i,1);
+                            i = i-1;
+                          }
                         }
                     }
                 }
-            }, 400);
+            }, 2750);
         }
     };
 
