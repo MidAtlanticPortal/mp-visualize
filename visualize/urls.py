@@ -5,6 +5,23 @@ except (ModuleNotFoundError, ImportError) as e:
 from .views import (show_embedded_map,
                    show_mafmc_map, show_mobile_map, show_planner, proxy_request)
 from django.views.generic.base import TemplateView
+
+from rest_framework import routers, serializers, viewsets
+from .models import Bookmark
+
+class BookmarkSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Bookmark
+        fields = ['overview',]
+
+class BookmarkViewSet(viewsets.ModelViewSet):
+    queryset = Bookmark.objects.all()
+    serializer_class = BookmarkSerializer
+
+router = routers.DefaultRouter()
+router.register(r'bookmarks', BookmarkViewSet)
+
+
 urlpatterns = [
     #'',
     re_path(r'^experiment$', TemplateView.as_view(template_name='visualize/experiment.html')),
@@ -12,5 +29,6 @@ urlpatterns = [
     re_path(r'^mafmc', show_mafmc_map, name="mafmc_map"),
     re_path(r'^mobile', show_mobile_map, name="mobile_map"),
     re_path(r'^proxy', proxy_request, name='proxy_request'),
+    re_path('^rest/', include(router.urls)),
     re_path(r'^$', show_planner, name="planner"),
 ]
