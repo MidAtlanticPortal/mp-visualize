@@ -469,7 +469,8 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
   var layerSource = new ol.source.TileArcGISRest({
     attributions: '',
     params: {
-      layers: 'show:' + layer.arcgislayers
+      layers: 'show:' + layer.arcgislayers,
+      DPI: 96,
     },
     projection: 'ESPG:3857',
     url: layer.url,
