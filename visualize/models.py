@@ -63,7 +63,7 @@ class Bookmark(Feature):
                     layer_dict['description'] = ''
                     layer_dict['owner'] = {'name': '', 'url': False}
 
-                    layers.append(layer_dict)
+                layers.append(layer_dict)
         except TypeError as e:
             pass
 
