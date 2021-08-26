@@ -6,7 +6,7 @@ from .views import (show_embedded_map,
                    show_mafmc_map, show_mobile_map, show_planner, proxy_request)
 from django.views.generic.base import TemplateView
 
-from rest_framework import routers, serializers, viewsets
+from rest_framework import routers, serializers, viewsets, permissions
 from .models import Bookmark
 
 class BookmarkSerializer(serializers.HyperlinkedModelSerializer):
@@ -17,6 +17,7 @@ class BookmarkSerializer(serializers.HyperlinkedModelSerializer):
 class BookmarkViewSet(viewsets.ModelViewSet):
     queryset = Bookmark.objects.all()
     serializer_class = BookmarkSerializer
+    permission_classes = (permissions.IsAdminUser,)
 
 router = routers.DefaultRouter()
 router.register(r'bookmarks', BookmarkViewSet)
