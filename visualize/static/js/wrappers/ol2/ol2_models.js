@@ -34,6 +34,7 @@ function layerModel(options, parent) {
     self.color = options.color || "#ee9900";
     self.outline_color = options.outline_color || self.color;
     self.fillOpacity = options.fill_opacity || 0.0;
+    self.query_by_point = options.query_by_point || false;
     self.disable_click = options.disable_arcgis_attributes || false;
     self.description = ko.observable();
 

@@ -414,6 +414,7 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('name', layer.name);
   layer.layer.set('type', 'overlay');
   layer.layer.set('mpid', layer.id);
+  layer.layer.set('query_by_point', layer.query_by_point);
   if (layer.hasOwnProperty('type')) {
     layer.layer.set('tech', layer.type);
   } else if (layer.hasOwnProperty('layer_type')) {

@@ -14,14 +14,23 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
 
     var qs = []
 
-    // buffer click by two pixels each direction and use that for selection envelope
-    var geometry_raw = {
-      UL: app.map.getCoordinateFromPixel([evt.pixel[0]-2, evt.pixel[1]-2]),
-      LR: app.map.getCoordinateFromPixel([evt.pixel[0]+2, evt.pixel[1]+2])
+    var mp_layer = app.wrapper.map.getLayerParameter(layer, 'mp_layer');
+    // If layer is 'select by point' geom should be a point, not envelope.
+    if (mp_layer.query_by_point || layer.get('query_by_point')) {
+      var geometry = app.map.getCoordinateFromPixel([evt.pixel[0], evt.pixel[1]]);
+      var geometryType = 'esriGeometryPoint';
+    } else {
+      // buffer click by two pixels each direction and use that for selection envelope
+      var geometry_raw = {
+        UL: app.map.getCoordinateFromPixel([evt.pixel[0]-2, evt.pixel[1]-2]),
+        LR: app.map.getCoordinateFromPixel([evt.pixel[0]+2, evt.pixel[1]+2])
+      }
+      var geometry = [geometry_raw.UL, geometry_raw.LR].join(',');
+      var geometryType = 'esriGeometryEnvelope';
+
     }
-    var geometry = [geometry_raw.UL, geometry_raw.LR].join(',');
+
     qs.push('geometry=' + geometry);
-    var geometryType = 'esriGeometryEnvelope';
     qs.push('geometryType=' + geometryType);
     var inSR = 3857;
     qs.push('inSR=' + inSR);
@@ -33,7 +42,7 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
     qs.push('f=' + format);
     var returnGeometry = true;
     qs.push('returnGeometry=' + returnGeometry);
-    var mp_layer = app.wrapper.map.getLayerParameter(layer, 'mp_layer');
+
     if (mp_layer.attributes.length > 0) {
       var outFieldList = [];
       for (var i = 0; i < mp_layer.attributes.length; i++) {
