@@ -75,6 +75,10 @@
                               <i class="fas fa-ruler-vertical outline"></i>
                           </a>
                           {% if user.is_authenticated %}
+                          <!-- Draw Button-->
+                          <a id="draw-button" class="btn" data-toggle="tooltip" data-placement="left" title="New Drawing" data-bind="click: startNewDrawing">
+                              <i class="fa fa-draw-polygon"></i>
+                          </a>
                           <!-- Session Layer Button-->
                           <a id="wms-button" class="btn" data-toggle="tooltip" data-placement="left" title="Add an ArcRest Layer ">
                               <i class="fa fa-location-arrow"></i>

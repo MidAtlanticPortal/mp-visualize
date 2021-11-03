@@ -2427,6 +2427,13 @@ function viewModel() {
         $('#map-links-modal').modal()
     };
 
+    self.startNewDrawing = function() {
+      $('#designsTab').click();
+      if ($('#drawings-header').is(":visible") && $('#drawings-header').find('a.create-new-button').is(":visible")) {
+        app.viewModel.scenarios.createPolygonDesign();
+      }
+    }
+
     self.toggleLinearMeasurement = function() {
       if (!app.map.measurementLayer) {
         app.addMeasurementLayerToMap();

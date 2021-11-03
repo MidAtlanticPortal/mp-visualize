@@ -57,6 +57,7 @@ body.template-visualize .SimpleLayerSwitcher {
   color: #000;
 }
 
+body.template-visualize #map-controls #draw-button,
 body.template-visualize #map-controls #wms-button,
 body.template-visualize #map-controls #linear-measurement,
 body.template-visualize #map-controls #btn-print,
@@ -68,6 +69,7 @@ body.template-visualize #map-controls #get-link-button {
   padding: 2px;
 }
 
+body.template-visualize #map-controls #draw-button:hover,
 body.template-visualize #map-controls #wms-button:hover,
 body.template-visualize #map-controls #linear-measurement:hover,
 body.template-visualize #map-controls #btn-print:hover,
