@@ -351,12 +351,10 @@ app.wrapper.controls.startSketch = function() {
       app.wrapper.controls.consolidatePolygonLayerFeatures();
     }
     drawingForm.isDrawing(true);
+    return drawingForm;
+};
 
-    //activate the draw feature control
-    drawingForm.draw = new ol.interaction.Draw({
-      source: app.map.drawingLayer.getSource(),
-      type: 'Polygon'
-    });
+app.wrapper.controls.addSketchInteraction = function(drawingForm) {
     app.map.addInteraction(drawingForm.draw);
     //disable feature attribution
     app.viewModel.disableFeatureAttribution();
@@ -373,26 +371,64 @@ app.wrapper.controls.startSketch = function() {
     app.wrapper.controls.disableDoubleClickZoom();
 };
 
+app.wrapper.controls.startPolygonSketch = function() {
+    drawingForm=app.wrapper.controls.startSketch();
+    //activate the draw feature control
+    drawingForm.draw = new ol.interaction.Draw({
+      source: app.map.drawingLayer.getSource(),
+      type: 'Polygon'
+    });
+    app.wrapper.controls.addSketchInteraction(drawingForm);
+};
+
+app.wrapper.controls.startLineSketch = function() {
+  drawingForm=app.wrapper.controls.startSketch();
+  //activate the draw feature control
+  drawingForm.draw = new ol.interaction.Draw({
+    source: app.map.drawingLayer.getSource(),
+    type: 'LineString'
+  });
+  app.wrapper.controls.addSketchInteraction(drawingForm);
+}
+
+app.wrapper.controls.startPointSketch = function() {
+  drawingForm=app.wrapper.controls.startSketch();
+  //activate the draw feature control
+  drawingForm.draw = new ol.interaction.Draw({
+    source: app.map.drawingLayer.getSource(),
+    type: 'Point'
+  });
+  app.wrapper.controls.addSketchInteraction(drawingForm);
+};
+
 app.wrapper.controls.consolidatePolygonLayerFeatures = function(layer){
   var featureList = app.map.drawingLayer.getSource().getFeatures();
-  var multipolygon = new ol.geom.MultiPolygon([]);
+  var multigeometry = new ol.geom.GeometryCollection([]);
+  var in_geometries = [];
   for (var i = 0; i < featureList.length; i++) {
     var feat = featureList[i].getGeometry();
-    if (feat instanceof ol.geom.Polygon) {
-      multipolygon.appendPolygon(feat);
+    if (feat instanceof ol.geom.Polygon || feat instanceof ol.geom.LineString || feat instanceof ol.geom.Point) {
+      in_geometries.push(feat);
     } else if (feat instanceof ol.geom.MultiPolygon){
       var polygons = feat.getPolygons();
       for (var j = 0; j < polygons.length; j++) {
-        multipolygon.appendPolygon(polygons[j])
+        in_geometries.push(polygons[j]);
+      }
+    } else if (feat instanceof ol.geom.GeometryCollection){
+      var geometries = feat.getGeometries();
+      for (var j = 0; j < geometries.length; j++) {
+        in_geometries.push(geometries[j]);
       }
     } else {
-      console.log('feature is not an appropriate geometry');
+      console.log('feature type is not yet supported');
+      alert('Unable to add feature to the drawings.');
     }
   }
+  multigeometry.setGeometries(in_geometries);
   app.map.drawingLayer.getSource().clear();
-  multipolygon_feature = new ol.Feature({geometry: multipolygon});
+  multigeometry_feature = new ol.Feature({geometry: multigeometry});
   setTimeout(function() {
-    app.map.drawingLayer.getSource().addFeature(multipolygon_feature);
+    app.map.drawingLayer.getSource().addFeature(multigeometry_feature);
   }, 300);
 };
 

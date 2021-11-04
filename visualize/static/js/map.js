@@ -698,6 +698,30 @@ app.startSketch = function(){
   }
 }
 
+app.startPolygonSketch = function(){
+  if (app.wrapper.controls.hasOwnProperty('startPolygonSketch')) {
+    app.wrapper.controls.startPolygonSketch();
+  } else {
+    console.log('no startPolygonSketch function defined for controls.')
+  }
+}
+
+app.startLineSketch = function(){
+  if (app.wrapper.controls.hasOwnProperty('startLineSketch')) {
+    app.wrapper.controls.startLineSketch();
+  } else {
+    console.log('no startLineSketch function defined for controls.')
+  }
+}
+
+app.startPointSketch = function(){
+  if (app.wrapper.controls.hasOwnProperty('startPointSketch')) {
+    app.wrapper.controls.startPointSketch();
+  } else {
+    console.log('no startPointSketch function defined for controls.')
+  }
+}
+
 app.completeSketch = function() {
   if (app.wrapper.controls.hasOwnProperty('completeSketch')) {
     app.wrapper.controls.completeSketch();
@@ -731,7 +755,7 @@ app.completeEdit = function() {
     if (num_features == 0) {
       drawingForm.hasShape(false);
       window.alert('You have no shapes drawn. Please draw a shape before saving.');
-      app.startSketch();
+      // app.startSketch();
     } else if (num_features > 1) {
       app.consolidatePolygonLayerFeatures();
     }
