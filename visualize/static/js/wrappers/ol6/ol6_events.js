@@ -441,6 +441,23 @@ app.wrapper.events.cleanupDrawing = function() {
   app.wrapper.controls.enableDoubleClickZoom();
 }
 
+app.wrapper.events.formatAttributeReportValue = function(value) {
+  // TODO: implement comma-formatted large numbers when appropriate
+  // report_attr.data = app.utils.numberWithCommas(report_attr.data);
+  if (value.precision != null) {
+    return report_attr.data.toFixed(value.precision);
+  } else {
+    // format common data types:
+    if (typeof(value) == "string") {
+      // URLs:
+      if (value.indexOf('http') == 0) {
+        return '<a href="' + value + '" target="_blank">' + value + "</a>";
+      }
+    }
+  }
+  return value;
+}
+
 /**
   * formatAttributeReportEntry - given id response data and a layer, format it for display in attributes window
   * returns a list of formatted Attribute Objects.
@@ -482,27 +499,14 @@ app.wrapper.events.formatAttributeReportEntry = function(feature, mp_layer) {
     if (report_keys.length == 0){
       attributeObjs.push({
         'display': key,
-        'data': feature[key]
+        'data': app.wrapper.events.formatAttributeReportValue(feature[key])
       });
     } else if(report_keys.indexOf(key) >= 0) {
       var report_attr = {
         'display': report_attributes[key].display,
-        'data': feature[key],
+        'data': app.wrapper.events.formatAttributeReportValue(feature[key]),
         'order': report_attributes[key].order
       };
-      if (report_attributes[key].precision != null) {
-        report_attr.data = report_attr.data.toFixed(report_attributes[key].precision);
-      } else {
-        // format common data types:
-        if (typeof(report_attr.data) == "string") {
-          // URLs:
-          if (report_attr.data.indexOf('http') == 0) {
-            report_attr.data = '<a href="' + report_attr.data + '" target="_blank">' + report_attr.data + "</a>";
-          }
-        }
-      }
-      // TODO: implement comma-formatted large numbers when appropriate
-      // report_attr.data = app.utils.numberWithCommas(report_attr.data);
       attributeObjs.push(report_attr);
       attributeObjs.sort(function(a,b){ return a.order - b.order;});
     }
