@@ -239,11 +239,10 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
     for (var i = 0; i < selectedFeatures.length; i++) {
       var feature = selectedFeatures[i];
       if (mp_layer.isDrawingModel) {
-        area_m2 = app.wrapper.map_library.getArea(feature.getGeometry());
-        area_mi2 = app.wrapper.map_library.m2ToMi2(area_m2);
-        feature_values = {
-          'area': area_mi2,
-          'description': feature.values_.description
+        feature_values = {}
+        for (var j = 0; j < mp_layer.scenarioModel.scenarioAttributes.length; j++) {
+            var report_value = mp_layer.scenarioModel.scenarioAttributes[j];
+            feature_values[report_value.title] = report_value.data;
         }
         featureData.push(feature_values);
       } else {
