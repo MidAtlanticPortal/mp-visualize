@@ -106,6 +106,7 @@ function polygonFormModel(options) {
     var self = this;
 
     self.isDrawing = ko.observable(false);
+    self.sketchMode = ko.observable(null);
     self.showEdit = ko.observable(false);
     self.isEditing = ko.observable(false);
     self.hasShape = ko.observable(false);

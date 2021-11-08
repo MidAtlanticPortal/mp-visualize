@@ -373,6 +373,7 @@ app.wrapper.controls.addSketchInteraction = function(drawingForm) {
 
 app.wrapper.controls.startPolygonSketch = function() {
     drawingForm=app.wrapper.controls.startSketch();
+    drawingForm.sketchMode('polygon');
     //activate the draw feature control
     drawingForm.draw = new ol.interaction.Draw({
       source: app.map.drawingLayer.getSource(),
@@ -383,6 +384,7 @@ app.wrapper.controls.startPolygonSketch = function() {
 
 app.wrapper.controls.startLineSketch = function() {
   drawingForm=app.wrapper.controls.startSketch();
+  drawingForm.sketchMode('line');
   //activate the draw feature control
   drawingForm.draw = new ol.interaction.Draw({
     source: app.map.drawingLayer.getSource(),
@@ -393,6 +395,7 @@ app.wrapper.controls.startLineSketch = function() {
 
 app.wrapper.controls.startPointSketch = function() {
   drawingForm=app.wrapper.controls.startSketch();
+  drawingForm.sketchMode('point');
   //activate the draw feature control
   drawingForm.draw = new ol.interaction.Draw({
     source: app.map.drawingLayer.getSource(),
