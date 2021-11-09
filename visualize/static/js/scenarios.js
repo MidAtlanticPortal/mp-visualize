@@ -1651,6 +1651,7 @@ function scenariosModel(options) {
                 app.viewModel.scenarios.drawingForm(true);
                 $('#drawing-form').html(data);
                 app.viewModel.scenarios.drawingFormModel = new polygonFormModel();
+                ko.cleanNode(document.getElementById('drawing-form'));
                 ko.applyBindings(app.viewModel.scenarios.drawingFormModel, document.getElementById('drawing-form'));
             },
             error: function (result) {
