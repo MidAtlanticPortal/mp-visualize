@@ -1277,6 +1277,7 @@ function scenariosModel(options) {
 
     self.drawingList = ko.observableArray();
     self.drawingForm = ko.observable(false);
+    self.loadingDrawingForm = ko.observable(false);
 
     /** return true if normal MyPlanner content should be shown, false
         otherwise (when a form is active and assuming control of MyPlanner's
@@ -1645,17 +1646,22 @@ function scenariosModel(options) {
     };
 
     self.createPolygonDesign = function() {
+        app.viewModel.scenarios.loadingDrawingForm(true);
         return $.ajax({
             url: '/features/aoi/form/',
             success: function(data) {
                 app.viewModel.scenarios.drawingForm(true);
                 $('#drawing-form').html(data);
                 app.viewModel.scenarios.drawingFormModel = new polygonFormModel();
-                ko.cleanNode(document.getElementById('drawing-form'));
-                ko.applyBindings(app.viewModel.scenarios.drawingFormModel, document.getElementById('drawing-form'));
+                try {
+                  ko.applyBindings(app.viewModel.scenarios.drawingFormModel, document.getElementById('drawing-form'));
+                }
+                catch(e) {}
+                app.viewModel.scenarios.loadingDrawingForm(false);
             },
             error: function (result) {
                 //debugger;
+                app.viewModel.scenarios.loadingDrawingForm(false);
             }
         });
     };

@@ -2429,7 +2429,7 @@ function viewModel() {
 
     self.startNewDrawing = function() {
       $('#designsTab').click();
-      if ($('#drawings-header').is(":visible") && $('#drawings-header').find('a.create-new-button').is(":visible")) {
+      if ($('#drawings-header').is(":visible") && $('#drawings-header').find('a.create-new-button').is(":visible") && !app.viewModel.scenarios.loadingDrawingForm()) {
         app.viewModel.scenarios.createPolygonDesign();
       }
     }
