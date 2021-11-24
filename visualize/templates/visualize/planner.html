@@ -285,11 +285,13 @@
                                                                   <!-- /ko -->
                                                                   <!-- ko ifnot: isMarineLife() -->
                                                                   <!-- ko ifnot: isVTR() -->
+                                                                  {% block catalog_layer_row %}
                                                                   <ul  class="unstyled" data-bind="foreach: layers ">
                                                                       <li class="layer dropdown" data-bind="css: {'open': showSublayers() }, attr: {name: name}">
                                                                           {% include "visualize/includes/catalog-layer-row.html" %}
                                                                       </li>
                                                                   </ul>
+                                                                  {% endblock %}
                                                                   <!-- /ko -->
                                                                   <!-- /ko -->
                                                               </div>
