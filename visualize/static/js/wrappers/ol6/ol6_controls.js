@@ -568,9 +568,31 @@ app.wrapper.controls.updateMeasurementText = function(event) {
 
 }
 
-app.wrapper.controls.startLinearMeasurement = function(event) {
-    app.wrapper.controls.measurementFeature = event.feature;
-    app.wrapper.controls.measurementListener = app.wrapper.controls.measurementFeature.getGeometry().on('change', app.wrapper.controls.updateMeasurementText)
+// app.wrapper.controls.startLinearMeasurement = function(event) {
+//     app.wrapper.controls.measurementFeature = event.feature;
+//     app.wrapper.controls.measurementListener = app.wrapper.controls.measurementFeature.getGeometry().on('change', app.wrapper.controls.updateMeasurementText)
+// }
+
+// Not sure why this function was written twice - overloading did not seem to work
+// However, later let's get that update logic from the other function (above) working
+// in this function. RDH 2/2/2021
+app.wrapper.controls.startLinearMeasurement = function() {
+  if (!app.wrapper.controls.linearMeasurementControl) {
+    app.wrapper.controls.createLinearControl();
+  } else {
+    app.wrapper.controls.linearMeasurementControl.setActive(true);
+  }
+
+  // Clear features from Measurement layer!
+  app.map.measurementLayer.getSource().clear();
+
+  // Activate drawing (linestring)
+  app.map.addInteraction(app.wrapper.controls.linearMeasurementControl);
+
+  $('#measurement-display').show();
+  // change $('#linear-measurement-button') to work as cancel/clear
+  $('#linear-measurement i').removeClass('fa-ruler-vertical');
+  $('#linear-measurement i').addClass('fa-times');
 }
 
 app.wrapper.controls.createLinearControl = function() {
@@ -601,24 +623,6 @@ app.wrapper.controls.createLinearControl = function() {
   });
 }
 
-app.wrapper.controls.startLinearMeasurement = function() {
-  if (!app.wrapper.controls.linearMeasurementControl) {
-    app.wrapper.controls.createLinearControl();
-  } else {
-    app.wrapper.controls.linearMeasurementControl.setActive(true);
-  }
-
-  // Clear features from Measurement layer!
-  app.map.measurementLayer.getSource().clear();
-
-  // Activate drawing (linestring)
-  app.map.addInteraction(app.wrapper.controls.linearMeasurementControl);
-
-  $('#measurement-display').show();
-  // change $('#linear-measurement-button') to work as cancel/clear
-  $('#linear-measurement i').removeClass('fa-ruler-vertical');
-  $('#linear-measurement i').addClass('fa-times');
-}
 
 app.wrapper.controls.clearLinearMeasurement = function() {
   $('#measurement-display').hide();

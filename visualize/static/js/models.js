@@ -44,6 +44,7 @@ function layerModel(options, parent) {
     self.data_download = ko.observable(options.data_download || null);
     self.metadata = ko.observable(options.metadata || null);
     self.source = ko.observable(options.source || null);
+    self.hasInfo = ko.observable(false);
 
     // if layer is loaded from hash, preserve opacity, etc...
     self.override_defaults = ko.observable(null);
@@ -236,6 +237,10 @@ function layerModel(options, parent) {
       self.source(options.source || null);
       self.tiles = options.tiles || null;
 
+      if (options.description || options.kml || options.data_download || options.metadata || options.source) {
+          self.hasInfo(true);
+      }
+
       if (self.type === 'checkbox') {
         self.isCheckBoxLayer(true);
       }
@@ -296,6 +301,17 @@ function layerModel(options, parent) {
 
 
     getArcGISJSONLegend = function(self, protocol) {
+
+      if (self.url.toLowerCase().indexOf('/export') < 0) {
+          var url_split = self.url.split('?');
+          if (url_split[0][url_split[0].length-1] == '/') {
+            url_split[0] = url_split[0] + "export";
+          } else {
+            url_split[0] = url_split[0] + "/export";
+          }
+          self.url = url_split.join('?');
+      }
+
       if (self.url.indexOf('?') < 0) {
         var url = self.url.replace('/export', '/legend/?f=pjson');
       } else {
@@ -305,17 +321,44 @@ function layerModel(options, parent) {
         url = url.replace('http:', 'https:');
       }
       $.ajax({
-          dataType: "jsonp",
+          dataType: "json",
           url: url,
           type: 'GET',
           crossDomain: true,
           success: function(data) {
+              // append '/export' if missing:
+              //    RDH 2020-09-17: I'm not sure why self.url wasn't already modified earlier in this function, but this step is necessary
+              //        as the '/export' seems to get dropped (a timeout may also have fixed the problem, but this is more absolute).
+              if (self.url.toLowerCase().indexOf('/export') < 0) {
+                  var url_split = self.url.split('?');
+                  if (url_split[0][url_split[0].length-1] == '/') {
+                    url_split[0] = url_split[0] + "export";
+                  } else {
+                    url_split[0] = url_split[0] + "/export";
+                  }
+                  self.url = url_split.join('?');
+              }
+
               if (data['layers']) {
+                  if (typeof(self.arcgislayers) == "number") {
+                      var requested_layers = [self.arcgislayers.toString()];
+                  } else if (typeof(self.arcgislayers) == "object") {
+                    var requested_layers = [];
+                    for (var i = 0; i < self.arcgislayers.length; i++) {
+                      requested_layers.push(self.arcgislayers[i].toString());
+                    }
+                  } else if (typeof(self.arcgislayers) == "string"){
+                      var requested_layers = self.arcgislayers.replace(/ /g,'').split(',');
+                  } else {
+                    // punt
+                    var requested_layers = self.arcgislayers;
+                  }
+
+                  self.legend = {'elements': []};
                   $.each(data['layers'], function(i, layerobj) {
-                      if (parseInt(layerobj['layerId'], 10) === parseInt(self.arcgislayers, 10)) {
-                          self.legend = {'elements': []};
+                      if (requested_layers.indexOf(parseInt(layerobj['layerId'], 10).toString()) >= 0) {
                           $.each(layerobj['legend'], function(j, legendobj) {
-                              var swatchURL = self.url.replace('/export', '/'+self.arcgislayers+'/images/'+legendobj['url']),
+                              var swatchURL = self.url.replace('/export', '/'+parseInt(layerobj['layerId'], 10)+'/images/'+legendobj['url']),
                                   label = legendobj['label'];
                               if (j < 1 && label === "") {
                                   label = layerobj['layerName'];
@@ -713,10 +756,6 @@ function layerModel(options, parent) {
           layer.override_defaults(true);
         }
 
-        if (app.wrapper.events.hasOwnProperty('addLayerLoadStart')) {
-          layer.loadStatus("loading");
-        }
-
         if (layer instanceof layerModel) {
           if (layer.fullyLoaded || layer.isMDAT || layer.isVTR || layer.wmsSession()) {
             if (!layer.hasOwnProperty('url') || !layer.url || layer.url.length < 1 || layer.hasOwnProperty('type') && layer.type == 'placeholder') {
@@ -726,7 +765,7 @@ function layerModel(options, parent) {
             // if legend is not provided, try using legend from web services
             if ( !self.legend && self.url && (self.arcgislayers !== -1) ) {
               setTimeout(function() {
-                if (self.url.indexOf('FeatureServer') >= 0) {
+                if ( self.url.indexOf('FeatureServer') >= 0) {
                   try {
                     getArcGISFeatureServerLegend(self, window.location.profotol);
                   } catch (err) {
@@ -1690,7 +1729,10 @@ function themeModel(options) {
           for (var i = 0; i < data.layers.length; i++) {
             new_layer = app.viewModel.getOrCreateLayer(data.layers[i], null, 'return', null);
             new_layer.themes.push(theme);
-            layer_objects.push(new_layer)
+            layer_objects.push(new_layer);
+            if (!new_layer.fullyLoaded) {
+              new_layer.getFullLayerRecord(null, null);
+            }
           }
           theme.layers(layer_objects);
         },
@@ -2094,7 +2136,7 @@ function viewModel() {
 
     // attribute data
     self.aggregatedAttributes = ko.observable(false);
-    self.aggregatedAttributesWidth = ko.observable('280px');
+    self.aggregatedAttributesWidth = ko.observable('30vw');
     self.aggregatedAttributes.subscribe( function() {
         self.updateAggregatedAttributesOverlayWidthAndScrollbar();
         self.showFeatureAttribution( self.featureAttribution() && !($.isEmptyObject(self.aggregatedAttributes())) );
@@ -2114,7 +2156,7 @@ function viewModel() {
             // var overlayWidth = (document.getElementById('aggregated-attribute-overlay-test').clientWidth+50),
             //     width = overlayWidth < 380 ? overlayWidth : 380;
             //console.log('setting overlay width to ' + width);
-            self.aggregatedAttributesWidth(280 + 'px');
+            self.aggregatedAttributesWidth('30vw');
         }, 500);
     };
 
@@ -2438,6 +2480,7 @@ function viewModel() {
       if (!app.map.measurementLayer) {
         app.addMeasurementLayerToMap();
       }
+
       if (app.wrapper.controls.hasOwnProperty('startLinearMeasurement')) {
         if ($('#linear-measurement i').hasClass('fa-ruler-vertical')) {
           app.wrapper.controls.startLinearMeasurement();
