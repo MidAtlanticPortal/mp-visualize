@@ -19,12 +19,14 @@ html, body {
   margin-bottom: 1.5rem;
 }
 
+#area-measurement-box-header i,
 #linear-measurement-box-header i {
   float: right;
   margin-top: 1.5rem;
   cursor: pointer;
 }
 
+#area-measurement-box-header i:hover,
 #linear-measurement-box-header i:hover {
   color: #00a564;
 }

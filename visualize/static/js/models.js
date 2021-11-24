@@ -2492,6 +2492,28 @@ function viewModel() {
       }
     }
 
+    self.toggleAreaMeasurement = function() {
+      if (!app.map.measurementLayer) {
+        app.addMeasurementLayerToMap();
+      }
+
+      if (app.wrapper.controls.hasOwnProperty('startAreaMeasurement')) {
+        if ($('#area-measurement i').hasClass('fa-ruler-combined')) {
+          app.wrapper.controls.startAreaMeasurement();
+        } else {
+          app.wrapper.controls.clearAreaMeasurement();
+        }
+      } else {
+        window.alert('No area measurement controls defined for current mapping framework.');
+      }
+    }
+
+    self.clearMeasurementTool = function() {
+      if(app.wrapper.controls.clearMeasurementTool) {
+        app.wrapper.controls.clearMeasurementTool();
+      }
+    }
+
     /* marine-life-library, not databased MDAT layers */
     self.activateMDATLayer = function(layer) {
         var activeMDATQueryLayers = $.grep(app.viewModel.activeLayers(), function(mdatLyr) {

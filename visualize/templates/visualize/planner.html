@@ -64,24 +64,27 @@
                 <div id="map-controls"> <!-- Basemaps, Legends, Layers, Bookmarks, and FullScreen buttons -->
                     <div class="btn-group btn-group-vertical">
                           <!-- Print Button -->
-                          <a class="btn" id="btn-print" data-toggle="tooltip" data-placement="left" title="Print/Export">
+                          <a class="btn quick-button" id="btn-print" data-toggle="tooltip" data-placement="left" title="Print/Export">
                             <i class="fa fa-print" id="print-icon"> </i>
                           </a>
                           <!--Map Links Button-->
-                          <a id="get-link-button" class="btn" data-toggle="tooltip" data-placement="left" title="Share this Map" data-bind="click: showMapLinks">
+                          <a id="get-link-button" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="Share this Map" data-bind="click: showMapLinks">
                               <i class="fa fa-link"></i>
                           </a>
                           <!--Linear Measurement Button-->
-                          <a id="linear-measurement" class="btn" data-toggle="tooltip" data-placement="left" title="Linear Measurement Tool" data-bind="click: toggleLinearMeasurement">
+                          <a id="linear-measurement" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="Linear Measurement Tool" data-bind="click: toggleLinearMeasurement">
                               <i class="fas fa-ruler-vertical outline"></i>
+                          </a>
+                          <a id="area-measurement" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="Area Measurement Tool" data-bind="click: toggleAreaMeasurement">
+                              <i class="fas fa-ruler-combined outline"></i>
                           </a>
                           {% if user.is_authenticated %}
                           <!-- Draw Button-->
-                          <a id="draw-button" class="btn" data-toggle="tooltip" data-placement="left" title="New Drawing" data-bind="click: startNewDrawing">
+                          <a id="draw-button" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="New Drawing" data-bind="click: startNewDrawing">
                               <i class="fa fa-draw-polygon"></i>
                           </a>
                           <!-- Session Layer Button-->
-                          <a id="wms-button" class="btn" data-toggle="tooltip" data-placement="left" title="Add an ArcRest Layer ">
+                          <a id="wms-button" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="Add an ArcRest Layer ">
                               <i class="fa fa-location-arrow"></i>
                           </a>
                           {% endif %}
@@ -157,8 +160,8 @@
                 </div>
 
                 <div id='measurement-display' style="display:none">
-                  <div><span id="linear-measurement-box-header" data-bind="click: toggleLinearMeasurement"><i class="fa fa-times"></i></span></div>
-                  <h3>Linear Measurement</h3>
+                  <div><span id="linear-measurement-box-header" data-bind="click: clearMeasurementTool"><i class="fa fa-times"></i></span></div>
+                  <h3>Measurement</h3>
                   <div id='measurement-output'></div>
                   <p>
                     Click on the map to begin measuring<br />

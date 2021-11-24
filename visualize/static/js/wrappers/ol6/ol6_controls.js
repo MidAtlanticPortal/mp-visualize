@@ -577,6 +577,7 @@ app.wrapper.controls.updateMeasurementText = function(event) {
 // However, later let's get that update logic from the other function (above) working
 // in this function. RDH 2/2/2021
 app.wrapper.controls.startLinearMeasurement = function() {
+  app.wrapper.controls.clearAreaMeasurement();
   if (!app.wrapper.controls.linearMeasurementControl) {
     app.wrapper.controls.createLinearControl();
   } else {
@@ -589,6 +590,7 @@ app.wrapper.controls.startLinearMeasurement = function() {
   // Activate drawing (linestring)
   app.map.addInteraction(app.wrapper.controls.linearMeasurementControl);
 
+  $('#measurement-display h3').html('Linear Measurement');
   $('#measurement-display').show();
   // change $('#linear-measurement-button') to work as cancel/clear
   $('#linear-measurement i').removeClass('fa-ruler-vertical');
@@ -598,7 +600,7 @@ app.wrapper.controls.startLinearMeasurement = function() {
 app.wrapper.controls.createLinearControl = function() {
   app.wrapper.controls.linearMeasurementControl = new ol.interaction.Draw({
     source: app.map.measurementLayer.getSource(),
-    type: 'LineString',   // NOTE: When creating area, use 'Polygon'. See https://openlayers.org/en/latest/examples/measure.html
+    type: 'LineString',
     style: new ol.style.Style({
       fill: new ol.style.Fill({
         color: 'rgba(255, 255, 255, 0.2)',
@@ -623,12 +625,80 @@ app.wrapper.controls.createLinearControl = function() {
   });
 }
 
-
 app.wrapper.controls.clearLinearMeasurement = function() {
   $('#measurement-display').hide();
-  app.wrapper.controls.linearMeasurementControl.setActive(false);
+  $('#measurement-output').html('');
+  if(app.wrapper.controls.linearMeasurementControl){
+    app.wrapper.controls.linearMeasurementControl.setActive(false);
+  }
   app.wrapper.controls.measurementFeature = false;
   app.map.measurementLayer.getSource().clear();
   $('#linear-measurement i').removeClass('fa-times');
   $('#linear-measurement i').addClass('fa-ruler-vertical');
+}
+
+app.wrapper.controls.startAreaMeasurement = function() {
+  app.wrapper.controls.clearLinearMeasurement();
+  if (!app.wrapper.controls.areaMeasurementControl) {
+    app.wrapper.controls.createAreaMeasurementControl();
+  } else {
+    app.wrapper.controls.areaMeasurementControl.setActive(true);
+  }
+
+  // Clear features from Measurement layer!
+  app.map.measurementLayer.getSource().clear();
+
+  // Activate drawing (Polygon)
+  app.map.addInteraction(app.wrapper.controls.areaMeasurementControl);
+  $('#measurement-display h3').html('Area Measurement');
+  $('#measurement-display').show();
+  // change $('#area-measurement') to work as cancel/clear button
+  $('#area-measurement i').removeClass('fa-ruler-combined');
+  $('#area-measurement i').addClass('fa-times');
+}
+
+app.wrapper.controls.createAreaMeasurementControl = function() {
+  app.wrapper.controls.areaMeasurementControl = new ol.interaction.Draw({
+    source: app.map.measurementLayer.getSource(),
+    type: 'Polygon',
+    style: new ol.style.Style({
+      fill: new ol.style.Fill({
+        color: 'rgba(255, 255, 255, 0.2)',
+      }),
+      stroke: new ol.style.Stroke({
+        color: '#ffcc33',
+        width: 2,
+      }),
+      image: new ol.style.Circle({
+        radius: 7,
+        fill: new ol.style.Fill({
+          color: '#ffcc33',
+        }),
+      }),
+    })
+  });
+
+  app.wrapper.controls.areaMeasurementControl.on('drawstart', app.wrapper.controls.startAreaMeasurement);
+  app.wrapper.controls.areaMeasurementControl.on('drawend', function(event) {
+    app.wrapper.controls.updateMeasurementText(event);
+    ol.Observable.unByKey(app.wrapper.controls.areaMeasurementListener);
+  });
+}
+
+
+app.wrapper.controls.clearAreaMeasurement = function() {
+  $('#measurement-display').hide();
+  $('#measurement-output').html('');
+  if(app.wrapper.controls.areaMeasurementControl) {
+    app.wrapper.controls.areaMeasurementControl.setActive(false);
+  }
+  app.wrapper.controls.measurementFeature = false;
+  app.map.measurementLayer.getSource().clear();
+  $('#area-measurement i').removeClass('fa-times');
+  $('#area-measurement i').addClass('fa-ruler-combined');
+}
+
+app.wrapper.controls.clearMeasurementTool = function() {
+  app.wrapper.controls.clearLinearMeasurement();
+  app.wrapper.controls.clearAreaMeasurement();
 }
