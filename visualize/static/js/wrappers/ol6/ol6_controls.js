@@ -508,26 +508,47 @@ app.wrapper.controls.getFixedLengthHelper = function(rawNumber) {
   return rawNumber.toFixed(to_fixed_digits);
 }
 
+app.wrapper.controls.humanizeNumber = function(rawNumber) {
+  var num = app.wrapper.controls.getFixedLengthHelper(rawNumber);
+  if (num >= 1000) {
+    var numString = num.toString();
+    var humanNumStringList = [];
+    var comma_index = (numString.length-1) % 3;
+    for (var i = 0; i < numString.length; i++){
+      humanNumStringList.push(numString[i]);
+      if (i == comma_index && i < (numString.length-1) ) {
+        humanNumStringList.push(',');
+        comma_index += 3;
+      }
+    }
+    return humanNumStringList.join('');
+  } else {
+    return num;
+  }
+
+}
+
 /**
  * Format length output.
  * @param {LineString} line The line.
  * @return {string} The formatted length.
  */
 app.wrapper.controls.formatLength = function (line) {
-  var length = ol.sphere.getLength(line);
-  var output = "measure: ";
-  if (length > 750) {
-    numericLength = Math.round((length / 1000) * 100) / 100;
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength) + ' km; ';
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1.609344) + " mi; ";
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1.852) + " N mi";
+  var meters = ol.sphere.getLength(line);
+  var naut_miles = meters/1852;
+  var measures = [];
+  if (meters > 750) {
+    var kilometers = meters / 1000;
+    var miles = kilometers/1.609344;
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(miles) + '</td><td>mi</td>');
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(kilometers) + '</td><td>km</td>');
   } else {
-    numericLength = Math.round(length * 100) / 100;
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength) + ' m; ';
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1609.344) + " mi; ";
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1852) + " N mi";
+    var feet = meters*3.28084;
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(feet) + '</td><td>ft</td>');
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(meters) + '</td><td>m</td>');
   }
-
+  measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(naut_miles) + '</td><td>Naut. mi</td>');
+  var output = "<table><tr><th>Measure:&nbsp;</th>" + measures.join('</tr><tr><td></td>') + '</tr></table>';
   return output;
 };
 
@@ -537,13 +558,21 @@ app.wrapper.controls.formatLength = function (line) {
  * @return {string} Formatted area.
  */
 app.wrapper.controls.formatArea = function (polygon) {
-  var area = ol.sphere.getArea(polygon);
-  var output;
-  if (area > 10000) {
-    output = Math.round((area / 1000000) * 100) / 100 + ' ' + 'km<sup>2</sup>';
+  var sq_meters = ol.sphere.getArea(polygon);
+  var acres = sq_meters * 0.000247105;
+  var measures = [];
+  if (sq_meters > 10000) {
+    var sq_km = sq_meters / 1000000;
+    var sq_mi = sq_meters * 0.0000003861;
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(sq_mi) + '</td><td>mi<sup>2</sup></td>');
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(sq_km) + '</td><td>km<sup>2</sup></td>');
   } else {
-    output = Math.round(area * 100) / 100 + ' ' + 'm<sup>2</sup>';
+    var sq_feet = sq_meters*10.7639;
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(sq_feet) + '</td><td>ft<sup>2</sup></td>');
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(sq_meters) + '</td><td>m<sup>2</sup></td>');
   }
+  measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(acres) + '</td><td>acres</td>');
+  var output = "<table><tr><th>Measure:&nbsp;</th>" + measures.join('</tr><tr><td></td>') + '</tr></table>';
   return output;
 };
 
