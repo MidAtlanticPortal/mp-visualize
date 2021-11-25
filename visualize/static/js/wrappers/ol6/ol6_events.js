@@ -38,6 +38,7 @@ app.wrapper.events.addFeatureClickEvent = function(){
   app.map.addInteraction(app.map.interactions.selectClick);
   app.map.interactions.selectClick.on('select', function(e) {
     var selected_features = app.map.getFeaturesAtPixel(e.mapBrowserEvent.pixel);
+    // var selected_features = e.selected;
     if (selected_features.length > 0) {
       for (var i = 0; i < selected_features.length; i++) {
         var layer = selected_features[i].getLayer(app.map);
@@ -345,7 +346,7 @@ app.wrapper.events.layerLoadStart = function(layerModel) {
   * @param {object} layerModel - the layerModel to add layer loading logic to
   */
 app.wrapper.events.addLayerLoadStart = function(layerModel) {
-  if (layerModel.layer.hasOwnProperty('url') && layerModel.layer.url && layerModel.layer.url.length > 0 && layerModel.type.toLowerCase() != 'placeholder') {
+  if (layerModel.hasOwnProperty('url') && layerModel.url && layerModel.url.length > 0 && layerModel.type.toLowerCase() != 'placeholder') {
     if (app.wrapper.events.tileSources.indexOf(layerModel.type) >= 0) {
       layerModel.layer.getSource().on('tileloadstart', function() {
         app.wrapper.events.layerLoadStart(layerModel);

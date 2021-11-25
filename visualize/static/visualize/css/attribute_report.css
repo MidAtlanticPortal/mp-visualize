@@ -1,5 +1,6 @@
 #aggregated-attribute-overlay {
   z-index: 1020 !important;
+  min-width: 280px;
 }
 
 .feature-attributes {

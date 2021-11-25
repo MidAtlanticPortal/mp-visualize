@@ -508,26 +508,47 @@ app.wrapper.controls.getFixedLengthHelper = function(rawNumber) {
   return rawNumber.toFixed(to_fixed_digits);
 }
 
+app.wrapper.controls.humanizeNumber = function(rawNumber) {
+  var num = app.wrapper.controls.getFixedLengthHelper(rawNumber);
+  if (num >= 1000) {
+    var numString = num.toString();
+    var humanNumStringList = [];
+    var comma_index = (numString.length-1) % 3;
+    for (var i = 0; i < numString.length; i++){
+      humanNumStringList.push(numString[i]);
+      if (i == comma_index && i < (numString.length-1) ) {
+        humanNumStringList.push(',');
+        comma_index += 3;
+      }
+    }
+    return humanNumStringList.join('');
+  } else {
+    return num;
+  }
+
+}
+
 /**
  * Format length output.
  * @param {LineString} line The line.
  * @return {string} The formatted length.
  */
 app.wrapper.controls.formatLength = function (line) {
-  var length = ol.sphere.getLength(line);
-  var output = "measure: ";
-  if (length > 750) {
-    numericLength = Math.round((length / 1000) * 100) / 100;
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength) + ' km; ';
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1.609344) + " mi; ";
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1.852) + " N mi";
+  var meters = ol.sphere.getLength(line);
+  var naut_miles = meters/1852;
+  var measures = [];
+  if (meters > 750) {
+    var kilometers = meters / 1000;
+    var miles = kilometers/1.609344;
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(miles) + '</td><td>mi</td>');
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(kilometers) + '</td><td>km</td>');
   } else {
-    numericLength = Math.round(length * 100) / 100;
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength) + ' m; ';
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1609.344) + " mi; ";
-    output += app.wrapper.controls.getFixedLengthHelper(numericLength/1852) + " N mi";
+    var feet = meters*3.28084;
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(feet) + '</td><td>ft</td>');
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(meters) + '</td><td>m</td>');
   }
-
+  measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(naut_miles) + '</td><td>Naut. mi</td>');
+  var output = "<table><tr><th>Measure:&nbsp;</th>" + measures.join('</tr><tr><td></td>') + '</tr></table>';
   return output;
 };
 
@@ -537,13 +558,21 @@ app.wrapper.controls.formatLength = function (line) {
  * @return {string} Formatted area.
  */
 app.wrapper.controls.formatArea = function (polygon) {
-  var area = ol.sphere.getArea(polygon);
-  var output;
-  if (area > 10000) {
-    output = Math.round((area / 1000000) * 100) / 100 + ' ' + 'km<sup>2</sup>';
+  var sq_meters = ol.sphere.getArea(polygon);
+  var acres = sq_meters * 0.000247105;
+  var measures = [];
+  if (sq_meters > 10000) {
+    var sq_km = sq_meters / 1000000;
+    var sq_mi = sq_meters * 0.0000003861;
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(sq_mi) + '</td><td>mi<sup>2</sup></td>');
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(sq_km) + '</td><td>km<sup>2</sup></td>');
   } else {
-    output = Math.round(area * 100) / 100 + ' ' + 'm<sup>2</sup>';
+    var sq_feet = sq_meters*10.7639;
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(sq_feet) + '</td><td>ft<sup>2</sup></td>');
+    measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(sq_meters) + '</td><td>m<sup>2</sup></td>');
   }
+  measures.push('<td class="val">' + app.wrapper.controls.humanizeNumber(acres) + '</td><td>acres</td>');
+  var output = "<table><tr><th>Measure:&nbsp;</th>" + measures.join('</tr><tr><td></td>') + '</tr></table>';
   return output;
 };
 
@@ -568,15 +597,39 @@ app.wrapper.controls.updateMeasurementText = function(event) {
 
 }
 
-app.wrapper.controls.startLinearMeasurement = function(event) {
-    app.wrapper.controls.measurementFeature = event.feature;
-    app.wrapper.controls.measurementListener = app.wrapper.controls.measurementFeature.getGeometry().on('change', app.wrapper.controls.updateMeasurementText)
+// app.wrapper.controls.startLinearMeasurement = function(event) {
+//     app.wrapper.controls.measurementFeature = event.feature;
+//     app.wrapper.controls.measurementListener = app.wrapper.controls.measurementFeature.getGeometry().on('change', app.wrapper.controls.updateMeasurementText)
+// }
+
+// Not sure why this function was written twice - overloading did not seem to work
+// However, later let's get that update logic from the other function (above) working
+// in this function. RDH 2/2/2021
+app.wrapper.controls.startLinearMeasurement = function() {
+  app.wrapper.controls.clearAreaMeasurement();
+  if (!app.wrapper.controls.linearMeasurementControl) {
+    app.wrapper.controls.createLinearControl();
+  } else {
+    app.wrapper.controls.linearMeasurementControl.setActive(true);
+  }
+
+  // Clear features from Measurement layer!
+  app.map.measurementLayer.getSource().clear();
+
+  // Activate drawing (linestring)
+  app.map.addInteraction(app.wrapper.controls.linearMeasurementControl);
+
+  $('#measurement-display h3').html('Linear Measurement');
+  $('#measurement-display').show();
+  // change $('#linear-measurement-button') to work as cancel/clear
+  $('#linear-measurement i').removeClass('fa-ruler-vertical');
+  $('#linear-measurement i').addClass('fa-times');
 }
 
 app.wrapper.controls.createLinearControl = function() {
   app.wrapper.controls.linearMeasurementControl = new ol.interaction.Draw({
     source: app.map.measurementLayer.getSource(),
-    type: 'LineString',   // NOTE: When creating area, use 'Polygon'. See https://openlayers.org/en/latest/examples/measure.html
+    type: 'LineString',
     style: new ol.style.Style({
       fill: new ol.style.Fill({
         color: 'rgba(255, 255, 255, 0.2)',
@@ -601,30 +654,80 @@ app.wrapper.controls.createLinearControl = function() {
   });
 }
 
-app.wrapper.controls.startLinearMeasurement = function() {
-  if (!app.wrapper.controls.linearMeasurementControl) {
-    app.wrapper.controls.createLinearControl();
+app.wrapper.controls.clearLinearMeasurement = function() {
+  $('#measurement-display').hide();
+  $('#measurement-output').html('');
+  if(app.wrapper.controls.linearMeasurementControl){
+    app.wrapper.controls.linearMeasurementControl.setActive(false);
+  }
+  app.wrapper.controls.measurementFeature = false;
+  app.map.measurementLayer.getSource().clear();
+  $('#linear-measurement i').removeClass('fa-times');
+  $('#linear-measurement i').addClass('fa-ruler-vertical');
+}
+
+app.wrapper.controls.startAreaMeasurement = function() {
+  app.wrapper.controls.clearLinearMeasurement();
+  if (!app.wrapper.controls.areaMeasurementControl) {
+    app.wrapper.controls.createAreaMeasurementControl();
   } else {
-    app.wrapper.controls.linearMeasurementControl.setActive(true);
+    app.wrapper.controls.areaMeasurementControl.setActive(true);
   }
 
   // Clear features from Measurement layer!
   app.map.measurementLayer.getSource().clear();
 
-  // Activate drawing (linestring)
-  app.map.addInteraction(app.wrapper.controls.linearMeasurementControl);
-
+  // Activate drawing (Polygon)
+  app.map.addInteraction(app.wrapper.controls.areaMeasurementControl);
+  $('#measurement-display h3').html('Area Measurement');
   $('#measurement-display').show();
-  // change $('#linear-measurement-button') to work as cancel/clear
-  $('#linear-measurement i').removeClass('fa-ruler-vertical');
-  $('#linear-measurement i').addClass('fa-times');
+  // change $('#area-measurement') to work as cancel/clear button
+  $('#area-measurement i').removeClass('fa-ruler-combined');
+  $('#area-measurement i').addClass('fa-times');
 }
 
-app.wrapper.controls.clearLinearMeasurement = function() {
+app.wrapper.controls.createAreaMeasurementControl = function() {
+  app.wrapper.controls.areaMeasurementControl = new ol.interaction.Draw({
+    source: app.map.measurementLayer.getSource(),
+    type: 'Polygon',
+    style: new ol.style.Style({
+      fill: new ol.style.Fill({
+        color: 'rgba(255, 255, 255, 0.2)',
+      }),
+      stroke: new ol.style.Stroke({
+        color: '#ffcc33',
+        width: 2,
+      }),
+      image: new ol.style.Circle({
+        radius: 7,
+        fill: new ol.style.Fill({
+          color: '#ffcc33',
+        }),
+      }),
+    })
+  });
+
+  app.wrapper.controls.areaMeasurementControl.on('drawstart', app.wrapper.controls.startAreaMeasurement);
+  app.wrapper.controls.areaMeasurementControl.on('drawend', function(event) {
+    app.wrapper.controls.updateMeasurementText(event);
+    ol.Observable.unByKey(app.wrapper.controls.areaMeasurementListener);
+  });
+}
+
+
+app.wrapper.controls.clearAreaMeasurement = function() {
   $('#measurement-display').hide();
-  app.wrapper.controls.linearMeasurementControl.setActive(false);
+  $('#measurement-output').html('');
+  if(app.wrapper.controls.areaMeasurementControl) {
+    app.wrapper.controls.areaMeasurementControl.setActive(false);
+  }
   app.wrapper.controls.measurementFeature = false;
   app.map.measurementLayer.getSource().clear();
-  $('#linear-measurement i').removeClass('fa-times');
-  $('#linear-measurement i').addClass('fa-ruler-vertical');
+  $('#area-measurement i').removeClass('fa-times');
+  $('#area-measurement i').addClass('fa-ruler-combined');
+}
+
+app.wrapper.controls.clearMeasurementTool = function() {
+  app.wrapper.controls.clearLinearMeasurement();
+  app.wrapper.controls.clearAreaMeasurement();
 }

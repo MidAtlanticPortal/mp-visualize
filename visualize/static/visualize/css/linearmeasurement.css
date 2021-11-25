@@ -14,17 +14,31 @@ html, body {
   min-width: 360px;
 }
 
-#measurement-output {
-  min-height: 1.5rem;
-  margin-bottom: 1.5rem;
+#measurement-display h3 {
+  margin-top: 5px;
+  margin-bottom: 0;
 }
 
+#measurement-output {
+  border: 1px solid #888;
+}
+#measurement-output table {
+  margin: 5px;
+}
+
+#measurement-output td.val {
+  text-align: right;
+  padding-right: 10px;
+}
+
+#area-measurement-box-header i,
 #linear-measurement-box-header i {
   float: right;
   margin-top: 1.5rem;
   cursor: pointer;
 }
 
+#area-measurement-box-header i:hover,
 #linear-measurement-box-header i:hover {
   color: #00a564;
 }
