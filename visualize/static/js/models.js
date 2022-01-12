@@ -354,18 +354,23 @@ function layerModel(options, parent) {
                     var requested_layers = self.arcgislayers;
                   }
 
-                  self.legend = {'elements': []};
+                  var arc_layers = self.arcgislayers.split(',');
                   $.each(data['layers'], function(i, layerobj) {
-                      if (requested_layers.indexOf(parseInt(layerobj['layerId'], 10).toString()) >= 0) {
-                          $.each(layerobj['legend'], function(j, legendobj) {
-                              var swatchURL = self.url.replace('/export', '/'+parseInt(layerobj['layerId'], 10)+'/images/'+legendobj['url']),
-                                  label = legendobj['label'];
-                              if (j < 1 && label === "") {
-                                  label = layerobj['layerName'];
-                              }
-                              self.legend['elements'].push({'swatch': swatchURL, 'label': label});
-                              //console.log(self.legend);
-                          });
+                      for (var i=0; i< arc_layers.length; i++) {
+                        var arc_layer = arc_layers[i];
+                        if (parseInt(layerobj['layerId'], 10) === parseInt(arc_layer, 10)) {
+                            if (!self.legend || !self.legend.hasOwnProperty('elements')) {
+                              self.legend = {'elements': []};
+                            }
+                            $.each(layerobj['legend'], function(j, legendobj) {
+                                var swatchURL = self.url.replace('/export', '/'+arc_layer+'/images/'+legendobj['url']),
+                                    label = legendobj['label'];
+                                if (j < 1 && label === "") {
+                                    label = layerobj['layerName'];
+                                }
+                                self.legend['elements'].push({'swatch': swatchURL, 'label': label});
+                            });
+                        }
                       }
                   });
                   //reset visibility (to reset activeLegendLayers)
