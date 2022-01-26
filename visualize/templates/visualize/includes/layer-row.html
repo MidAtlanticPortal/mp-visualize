@@ -109,7 +109,7 @@
         </span>
     </div>
     <div class="layer-text" data-bind="visible: description">
-        <span data-bind="text: description" class="layer-description"></span>
+        <span data-bind="html: description" class="layer-description"></span>
         <!-- ko if: $data.hasOwnProperty('data_url') && $data.data_url -->
         <a data-bind="attr: {href: $data.data_url}" target="_blank">read more</a>.
         <!-- /ko -->
