@@ -68,3 +68,19 @@ body.template-visualize #map-controls .quick-button{
 body.template-visualize #map-controls .quick-button:hover{
   border: 2px solid #00a564;
 }
+
+body.template-visualize #map-controls a.img-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+body.template-visualize #map-controls a.img-icon img.quick-launch-icon{
+  filter: invert(36%) sepia(10%) saturate(141%) hue-rotate(202deg) brightness(88%) contrast(87%);
+  height: 65%;
+}
+
+body.template-visualize #map-controls a.img-icon:hover img.quick-launch-icon,
+body.template-visualize #map-controls a.img-icon img.quick-launch-icon:hover {
+  filter: invert(56%) sepia(59%) saturate(6532%) hue-rotate(134deg) brightness(94%) contrast(101%);
+}
