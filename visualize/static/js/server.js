@@ -158,9 +158,15 @@ app.viewModel.loadThemes = function(data) {
         } else {
             self.hiddenThemes.push(theme);
         }
-        if (theme.name.toLowerCase() == 'companion') {
-            theme.getLayers();
-        }
+				/***
+					RDH 2022-02-03: I believe the below carve-out for companions was
+					intended to improve performance of sliders. It doesn't, but for
+					portals with lots of sliders, this creates a mini DOS attack
+					against the server every time the map loads.
+				***/
+        // if (theme.name.toLowerCase() == 'companion') {
+        //     theme.getLayers();
+        // }
       }
     });
 };
