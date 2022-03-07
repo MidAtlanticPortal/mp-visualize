@@ -302,6 +302,7 @@ function layerModel(options, parent) {
 
     getArcGISJSONLegend = function(self, protocol) {
 
+      // Append /export if it doesn't exist
       if (self.url.toLowerCase().indexOf('/export') < 0) {
           var url_split = self.url.split('?');
           if (url_split[0][url_split[0].length-1] == '/') {
@@ -310,6 +311,11 @@ function layerModel(options, parent) {
             url_split[0] = url_split[0] + "/export";
           }
           self.url = url_split.join('?');
+      }
+
+      // Remove tile templating if using ArcGIS TileServer
+      if (self.url.toLowerCase().indexOf('/tile/{z}/{y}/{x}') >= 0) {
+        self.url = self.url.split('/tile/{z}/{y}/{x}').join('');
       }
 
       if (self.url.indexOf('?') < 0) {
@@ -362,12 +368,18 @@ function layerModel(options, parent) {
                               self.legend = {'elements': []};
                             }
                             $.each(layerobj['legend'], function(j, legendobj) {
-                                var swatchURL = self.url.replace('/export', '/'+arc_layer+'/images/'+legendobj['url']),
-                                    label = legendobj['label'];
-                                if (j < 1 && label === "") {
-                                    label = layerobj['layerName'];
-                                }
-                                self.legend['elements'].push({'swatch': swatchURL, 'label': label});
+                              var swatchId = '';
+                              if (legendobj.hasOwnProperty('url')) {
+                                swatchId = legendobj['url'];
+                              } else if (legendobj.hasOwnProperty('imageData')) {
+                                swatchId = legendobj['imageData'];
+                              }
+                              var swatchURL = self.url.replace('/export', '/'+arc_layer+'/images/'+swatchId),
+                                label = legendobj['label'];
+                              if (j < 1 && label === "") {
+                                  label = layerobj['layerName'];
+                              }
+                              self.legend['elements'].push({'swatch': swatchURL, 'label': label});
                             });
                         }
                       }
