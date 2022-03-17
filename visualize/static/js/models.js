@@ -440,6 +440,8 @@ function layerModel(options, parent) {
       } else if (json['drawingInfo']['renderer'].hasOwnProperty('symbol')) {
         // only 1 item (esriPMS case)
         legend_items = [json['drawingInfo']['renderer']];
+      } else {
+        legend_items = [];
       }
 
       $.each(legend_items, function(j, legendobj) {
