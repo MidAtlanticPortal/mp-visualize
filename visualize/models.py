@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.conf import settings
 from features.registry import register
 from features.models import Feature
 from data_manager.models import Layer
@@ -88,3 +89,16 @@ class Content(models.Model):
     description = models.TextField()
     content = HTMLField()
     live = models.BooleanField(default=False)
+
+class UserLayer(Feature):
+    name = models.CharField(max_length=255)
+    layer_type = models.CharField(max_length=50, choices=settings.LAYER_TYPE_CHOICES, help_text='use placeholder to temporarily remove layer from TOC')
+    url = models.TextField(blank=True, null=True)
+    arcgis_layers = models.CharField(max_length=255, blank=True, null=True, help_text='comma separated list of arcgis layer IDs')
+    description = models.TextField(blank=True, null=True)
+
+    def __unicode__(self):
+        return self.name
+
+    def __str__(self):
+        return self.__unicode__()

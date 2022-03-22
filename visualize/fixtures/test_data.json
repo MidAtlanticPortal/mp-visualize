@@ -1,0 +1,150 @@
+[
+    {
+        "model": "sites.site",
+        "pk": 1,
+        "fields": {
+          "domain": "portal.midatlanticocean.org",
+          "name": "Portal"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 448,
+        "fields": {
+          "name": "Can Share Features",
+          "content_type": 12,
+          "codename": "can_share_features"
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 29,
+        "fields": {
+            "name": "grep-largelwllHms7",
+            "permissions": [
+            448
+            ]
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 30,
+        "fields": {
+            "name": "grep-smallmZzBOiBE",
+            "permissions": [
+            448
+            ]
+        }
+    },
+      
+    {
+        "model": "auth.user",
+        "pk": 11,
+        "fields": {
+            "password": "pbkdf2_sha256$260000$FcDIfyMssas8IGRL4iRGbA$VICMfEmnv/KRYeEl0jdNrvKV5hEznUeYtryjBlw74zA=",
+            "last_login": "2022-03-04T23:33:28.816Z",
+            "is_superuser": true,
+            "username": "rhodges",
+            "first_name": "Ryan",
+            "last_name": "Hodges",
+            "email": "rhodges@ecotrust.org",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2019-11-06T00:15:50Z",
+            "groups": [
+            29,
+            30
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "data_manager.Layer",
+        "pk": 1,
+        "fields": {
+            "name": "Sound sensitivity Low frequency: Abundance", 
+            "url": "https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Mammal_SummaryProducts/MapServer/export",
+            "arcgis_layers": "41",
+            "layer_type": "ArcRest",
+            "date_modified": "2014-12-19T19:03:39.609Z",
+            "metadata": "http://seamap.env.duke.edu/models/mdat/Mammal/MDAT_Mammal_Summary_Products_v1_1_2016_08_29_Metadata.pdf",
+            "source": "http://seamap.env.duke.edu/models/mdat/",
+            "data_download": "http://seamap.env.duke.edu/models/mdat/",
+            "site": [1]
+        }
+    },
+    {
+        "model": "data_manager.Layer",
+        "pk": 2,
+        "fields": {
+            "name": "Sound sensitivity Low frequency: Species Richness", 
+            "url": "https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Mammal_SummaryProducts/MapServer/export",
+            "arcgis_layers": "42",
+            "layer_type": "ArcRest",
+            "date_modified": "2014-12-19T19:03:39.609Z",
+            "metadata": "http://seamap.env.duke.edu/models/mdat/Mammal/MDAT_Mammal_Summary_Products_v1_1_2016_08_29_Metadata.pdf",
+            "source": "http://seamap.env.duke.edu/models/mdat/",
+            "data_download": "http://seamap.env.duke.edu/models/mdat/",
+            "site": [1]
+        }
+    },
+    {
+        "model": "data_manager.Layer",
+        "pk": 3,
+        "fields": {
+            "name": "Sound sensitivity Low frequency: Core Abundance Area - Mid-Atlantic scale", 
+            "url": "https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Mammal_SummaryProducts/MapServer/export",
+            "arcgis_layers": "46",
+            "layer_type": "ArcRest",
+            "date_modified": "2014-12-19T19:03:39.609Z",
+            "metadata": "http://seamap.env.duke.edu/models/mdat/Mammal/MDAT_Mammal_Summary_Products_v1_1_2016_08_29_Metadata.pdf",
+            "source": "http://seamap.env.duke.edu/models/mdat/",
+            "data_download": "",
+            "site": [1]
+        }
+    },
+    {
+        "model": "data_manager.Layer",
+        "pk": 4,
+        "fields": {
+            "name": "Sound sensitivity Medium frequency: Abundance", 
+            "url": "https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Mammal_SummaryProducts/MapServer/export",
+            "arcgis_layers": "49",
+            "layer_type": "ArcRest",
+            "date_modified": "2014-12-19T19:03:39.609Z",
+            "metadata": "http://seamap.env.duke.edu/models/mdat/Mammal/MDAT_Mammal_Summary_Products_v1_1_2016_08_29_Metadata.pdf",
+            "source": "http://seamap.env.duke.edu/models/mdat/",
+            "data_download": "",
+            "site": [1]
+        }
+    },
+    {
+        "model": "data_manager.Layer",
+        "pk": 5,
+        "fields": {
+            "name": "Sound sensitivity Medium frequency: Species Richness", 
+            "url": "https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Mammal_SummaryProducts/MapServer/export",
+            "arcgis_layers": "50",
+            "layer_type": "ArcRest",
+            "date_modified": "2014-12-19T19:03:39.609Z",
+            "metadata": "http://seamap.env.duke.edu/models/mdat/Mammal/MDAT_Mammal_Summary_Products_v1_1_2016_08_29_Metadata.pdf",
+            "source": "http://seamap.env.duke.edu/models/mdat/",
+            "site": [1]
+        }
+    },
+    {
+        "model": "data_manager.Layer",
+        "pk": 6,
+        "fields": {
+            "name": "Sound sensitivity Medium frequency: Core Abundance Area - Mid-Atlantic scale", 
+            "url": "https://mgelmaps.env.duke.edu/mdat/rest/services/MDAT/Mammal_SummaryProducts/MapServer/export",
+            "arcgis_layers": "54",
+            "layer_type": "ArcRest",
+            "date_modified": "2014-12-19T19:03:39.609Z",
+            "metadata": "http://seamap.env.duke.edu/models/mdat/Mammal/MDAT_Mammal_Summary_Products_v1_1_2016_08_29_Metadata.pdf",
+            "source": "http://seamap.env.duke.edu/models/mdat/",
+            "site": [1]
+        }
+    }
+]
+
