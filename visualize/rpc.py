@@ -182,8 +182,6 @@ def get_user_layers(**kwargs):
             'sharing_groups': sharing_groups,
         })
 
-    import ipdb; ipdb.set_trace()
-
     shared_user_layers = UserLayer.objects.shared_with_user(request.user)
     for userLayer in shared_user_layers:
         if userLayer not in user_layer_list:

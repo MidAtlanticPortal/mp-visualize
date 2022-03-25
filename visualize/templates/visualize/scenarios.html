@@ -413,7 +413,7 @@
                                     <div class="accordion-body collapse"
                                          data-bind="css: {'in': app.viewModel.isUserLayersOpen()}">
                                         <div class="accordion-inner"
-                                             data-bind="with: app.viewModel.userlayers">
+                                             data-bind="with: app.viewModel.userLayers">
                                             <div data-bind="visible: !userLayersList().length"
                                                  style="font-weight: normal">
                                                 <div style="padding: 10px;">
@@ -985,6 +985,56 @@
                                 </div>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height: 100%"
+                 data-bind="visible: app.viewModel.addUserLayersDialogVisible">
+                <div class="design">
+                    <div class="featurepanel">
+                        <h4>Create User-Imported Layer</h4>
+
+                        <form id="addUserLayerForm" class=""
+                              data-bind="submit: app.viewModel.addUserLayer">
+                            <div class="form-group">
+                                <div class="step">
+                                    <label>Layer Name:<br>
+                                        <input id="new_user_layer_name"
+                                               data-bind="value: app.viewModel.userLayers.newUserLayerName"
+                                               type="text"
+                                               class="input form-control"
+                                               placeholder="User Layer Name"
+                                               required>
+                                    </label>
+                                    <div class="dupe-user-layer" data-bind="visible: app.viewModel.userLayers.duplicateUserLayer">That user layer name already exists, please enter another name</div>
+                                    <label>Description:<br>
+                                        <input id="new_user_layer_description"
+                                              data-bind="value: app.viewModel.userLayers.newUserLayerDescription"
+                                              type="text"
+                                              class="input form-control"
+                                              placeholder="Description"
+                                        >
+                                      </label>
+                                  </div>
+                              </div>
+  
+                              <div class="wizard_nav" style="width:100%">
+                                  <div class="btn-group pull-right">
+                                      <button type="submit"
+                                              class="btn btn-primary">Add User Layer
+                                      </button>
+                                  </div>
+                              </div>
+  
+                              <div>
+                                  <div class="btn-group pull-left">
+                                      <a href="#"
+                                         data-bind="click: app.viewModel.hideUserLayers"
+                                         class="cancel_button btn btn-default"><span>Cancel</span></a>
+                                  </div>
+                              </div>
+                          </form>
                     </div>
                 </div>
             </div>

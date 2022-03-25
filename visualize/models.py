@@ -90,6 +90,7 @@ class Content(models.Model):
     content = HTMLField()
     live = models.BooleanField(default=False)
 
+@register
 class UserLayer(Feature):
     name = models.CharField(max_length=255)
     layer_type = models.CharField(max_length=50, choices=settings.LAYER_TYPE_CHOICES, help_text='use placeholder to temporarily remove layer from TOC')

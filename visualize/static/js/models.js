@@ -2537,7 +2537,7 @@ function viewModel() {
             return false;
         }
 
-        self.userLayers.addUserLayer(name, description);
+        self.userLayers.addUserLayer(name, description, layer_type, url, arcgis_layers);
         self.hideUserLayers();
         self.userLayers.newUserLayerName(null);
         self.userLayers.newUserLayerDescription(null);
