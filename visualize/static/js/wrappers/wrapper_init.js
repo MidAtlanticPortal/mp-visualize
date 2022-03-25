@@ -84,20 +84,35 @@ app.wrapper = {
       'technology': 'XYZ',
       'textColor': 'white'
     },
+    // Disappearance of this service was detected the week of March 25th, 2022. It was replaced with tileservice.charts.noaa.gov below.
+    // {
+    //   'name': 'nautical',
+    //   'altName': 'nautical',
+    //   'verboseName': 'Nautical Charts',
+    //   'url': 'https://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage',
+    //   'attribution': 'NOAA',
+    //   'minZoom': null,
+    //   'maxZoom': null,
+    //   'bounds': [],
+    //   'projection': 'EPSG:3857',
+    //   'technology': 'ArcGIS',
+    //   'params': {'layers': null },
+    //   'textColor': 'black'
+    // },
     {
       'name': 'nautical',
       'altName': 'nautical',
       'verboseName': 'Nautical Charts',
-      'url': 'https://seamlessrnc.nauticalcharts.noaa.gov/arcgis/rest/services/RNC/NOAA_RNC/ImageServer/exportImage',
+      'url': 'https://tileservice.charts.noaa.gov/tiles/50000_1/{z}/{x}/{y}.png',
       'attribution': 'NOAA',
       'minZoom': null,
       'maxZoom': null,
       'bounds': [],
-      'projection': 'EPSG:3857',
-      'technology': 'ArcGIS',
-      'params': {'layers': null },
+      'projection': '',
+      'technology': 'XYZ',
       'textColor': 'black'
     },
+    
   ]
 }
 
