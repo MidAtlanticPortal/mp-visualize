@@ -160,8 +160,6 @@ def get_user_layers(**kwargs):
     """Return a list of user layer objects for the current user.
     """
 
-    import ipdb; ipdb.set_trace()
-
     from mapgroups.models import MapGroup, MapGroupMember
     from visualize.models import UserLayer
 
@@ -183,6 +181,8 @@ def get_user_layers(**kwargs):
             'arcgis_layers': userLayer.arcgis_layers,
             'sharing_groups': sharing_groups,
         })
+
+    import ipdb; ipdb.set_trace()
 
     shared_user_layers = UserLayer.objects.shared_with_user(request.user)
     for userLayer in shared_user_layers:
