@@ -2127,6 +2127,31 @@ function viewModel() {
     }
 
     try {
+      self.userLayers = new userLayersModel();
+      self.isUserLayersOpen = ko.observable(false);
+      // self.userLayerEmail = ko.observable();
+      self.toggleUserLayersOpen = function(force) {
+        $('#designsTab').tab('show');
+
+        if (force == 'open') {
+          self.isUserLayersOpen(true);
+        }
+        else if (force == 'close') {
+          self.isUserLayersOpen(false);
+        }
+        else {
+          self.isUserLayersOpen(!self.isUserLayersOpen());
+        }
+
+        if (self.isUserLayersOpen()) {
+          app.viewModel.userLayers.getUserLayers();
+        }
+      }
+    } catch(err) {
+      console.log(err);
+    }
+
+    try {
       self.scenarios = new scenariosModel();
       self.scenarios.reports = new reportsModel();
     } catch(err) {
@@ -2479,6 +2504,45 @@ function viewModel() {
         self.bookmarks.newBookmarkDescription(null);
     }
 
+    // show user-imported layers stuff
+    self.addUserLayersDialogVisible = ko.observable(false);
+    self.showUserLayers = function(self, event) {
+        self.userLayers.duplicateUserLayer(false);
+        self.userLayers.newUserLayerName(null);
+        self.userLayers.newUserLayerDescription(null);
+        self.addUserLayersDialogVisible(true);
+        // scenario forms will hide anything with the "step" class, so show
+        // it explicitly here.
+        $('#addUserLayerForm .step').show();
+    };
+    self.hideUserLayers = function() {
+        self.addUserLayersDialogVisible(false);
+    }
+
+    /** Create a new userlayer from the userlayer form */
+    self.addUserLayer = function(form) {
+        var name = $(form).find('#new_user_layer_name').val();
+        var description = $(form).find('#new_user_layer_description').val();
+        if (name.length == 0) {
+            return false;
+        }
+        //if a user layer name exists, break out
+        var match = $.grep(self.userLayers.userLayersList(), function(bkm) {
+            return bkm.name.indexOf(name) > -1
+        });
+        if (match.length > 0) {
+            //display duplication text
+            self.userLayers.duplicateUserLayer(true);
+            $('.dupe-userlayer').effect("highlight", {}, 1000);
+            return false;
+        }
+
+        self.userLayers.addUserLayer(name, description);
+        self.hideUserLayers();
+        self.userLayers.newUserLayerName(null);
+        self.userLayers.newUserLayerDescription(null);
+    }
+
     self.showMapLinks = function() {
         app.updateUrl();
         self.mapLinks.shrinkURL(true);
@@ -2666,6 +2730,26 @@ function viewModel() {
         });
         $('#map-wms-modal').modal('hide');
     };
+
+    self.displayUserLayer = function(userLayer) {
+      var lyrObj = new Object();
+      lyrObj.name = userLayer.name;
+      lyrObj.url = userLayer.url;
+      lyrObj.arcgis_layers = userLayer.arcgis_layers;
+
+      lyrObj.type = userLayer.layer_type;
+      lyrObj.wmsSession = true;
+      var id_exists = true;
+      for(var i=0; id_exists == true && i < 1000; i++) {
+        lyrObj.id = 'user_layer_' + i;
+        if (Object.keys(app.viewModel.layerIndex).indexOf(lyrObj.id) < 0) {
+          id_exists = false;
+        }
+      }
+
+      var wmsLayer = app.viewModel.getOrCreateLayer(lyrObj, null, 'activateLayer', null);
+      
+    }
 
     self.selectedLayer = ko.observable();
 

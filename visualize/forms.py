@@ -6,3 +6,8 @@ class BookmarkForm(FeatureForm):
     
     class Meta(FeatureForm.Meta):
         model = Bookmark
+
+class UserLayerForm(FeatureForm):
+
+    class Meta(FeatureForm.Meta):
+        model = UserLayer

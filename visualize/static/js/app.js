@@ -281,6 +281,19 @@ $('#bookmark-form').on('submit', function(event) {
   });
 });
 
+$('#user-layer-form').on('submit', function(event) {
+  var inputs = {},
+    $form = $(this);
+  event.preventDefault();
+  $(this).find('input, textarea').each(function(i, input) {
+    var $input = $(input);
+    inputs[$input.attr('name')] = $input.val();
+  });
+  $.post('/feedback/userLayer', inputs, function() {
+    $form.closest('.modal').modal('hide');
+  });
+});
+
 $('#feedback-form').on('submit', function (event) {
    var feedback = {}, $form = $(this);
    event.preventDefault();

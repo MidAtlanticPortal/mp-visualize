@@ -22,7 +22,6 @@ def add_bookmark(name, description, url_hash, json, **kwargs):
     }]
     return content
 
-
 @rpcmethod(login_required=True)
 def get_bookmarks(**kwargs):
     """Return a list of bookmark object for the current user.
@@ -130,3 +129,141 @@ def share_bookmark(bookmark_uid, group_names, **kwargs):
         groups.append(g)
 
     bookmark.share_with(groups, append=False)
+
+
+######################################################
+#   User Layers                                      #
+######################################################
+
+
+@rpcmethod(login_required=True)
+def add_user_layer(name, description, url, layer_type, arcgis_layers, **kwargs):
+    from visualize.models import UserLayer
+    request = kwargs['request']
+
+    userLayer = UserLayer(user=request.user, name=name, description=description, url=url, layer_type=layer_type, arcgis_layers=arcgis_layers)
+    userLayer.save()
+    sharing_groups = [group.name for group in userLayer.sharing_groups.all()]
+    content = [{
+        'uid': userLayer.uid,
+        'name': userLayer.name,
+        'description': userLayer.description,
+        'url': userLayer.url,
+        'layer_type': userLayer.layer_type,
+        'arcgis_layers': userLayer.arcgis_layers,
+        'sharing_groups': sharing_groups,
+    }]
+    return content
+
+@rpcmethod(login_required=True)
+def get_user_layers(**kwargs):
+    """Return a list of user layer objects for the current user.
+    """
+
+    import ipdb; ipdb.set_trace()
+
+    from mapgroups.models import MapGroup, MapGroupMember
+    from visualize.models import UserLayer
+
+    request = kwargs['request']
+
+    #grab all user layers belonging to this user
+    #serialize user layers into 'name', 'hash' objects and return json dump
+    content = []
+    user_layer_list = UserLayer.objects.filter(user=request.user)
+    for userLayer in user_layer_list:
+        sharing_groups = [group.mapgroup_set.get().name
+                          for group in userLayer.sharing_groups.all()]
+        content.append({
+            'uid': userLayer.uid,
+            'name': userLayer.name,
+            'description': userLayer.description,
+            'url': userLayer.url,
+            'layer_type': userLayer.layer_type,
+            'arcgis_layers': userLayer.arcgis_layers,
+            'sharing_groups': sharing_groups,
+        })
+
+    shared_user_layers = UserLayer.objects.shared_with_user(request.user)
+    for userLayer in shared_user_layers:
+        if userLayer not in user_layer_list:
+            username = userLayer.user.username
+            groups = userLayer.sharing_groups.filter(user__in=[request.user])
+            # Fetch the userLayer owner's preference on whether to share their
+            # real name with the group. Since it is possible that the userLayer
+            # sharer, and the userLayer sharee might be common members of
+            # multiple groups, if the sharer has a "Show Real Name" preference
+            # set on _any_ of the groups, then display their real name.
+            # Otherwise show their preferred name.
+
+            show_real_name = MapGroupMember.objects.filter(
+                user=userLayer.user,
+                map_group__permission_group__in=groups
+            ).values_list('show_real_name')
+
+            shared_groups = [g.mapgroup_set.get().name for g in groups]
+
+            actual_name = userLayer.user.first_name + ' ' + userLayer.user.last_name
+            content.append({
+                'uid': userLayer.uid,
+                'name': userLayer.name,
+                'description': userLayer.description,
+                'url': userLayer.url,
+                'layer_type': userLayer.layer_type,
+                'arcgis_layers': userLayer.arcgis_layers,
+                'shared': True,
+                'shared_by_user': userLayer.user.id,
+                'shared_to_groups': shared_groups,
+                'shared_by_name': userLayer.user.get_short_name(),
+            })
+    return content
+
+@rpcmethod(login_required=False)
+def load_user_layer(user_layer_id, **kwargs):
+    """Retrive a userLayer by ID - ownership is irrelevant.
+    """
+    from visualize.models import UserLayer
+    request = kwargs['request']
+
+    userLayer = UserLayer.objects.get(pk=user_layer_id)
+    content = [{
+        'uid': userLayer.uid,
+        'name': userLayer.name,
+        'description': userLayer.description,
+        'url': userLayer.url,
+        'layer_type': userLayer.layer_type,
+        'arcgis_layers': userLayer.arcgis_layers,
+        # 'sharing_groups': sharing_groups,
+    }]
+    return content
+
+@rpcmethod(login_required=True)
+def remove_user_layer(key, **kwargs):
+    from visualize.models import UserLayer
+    request = kwargs['request']
+    # uid = appname_modelname_pk
+    key = int(key.split('_')[-1])
+    userLayer = get_object_or_404(UserLayer, id=key, user=request.user)
+    userLayer.delete()
+
+@rpcmethod(login_required=True)
+def share_user_layer(user_layer_uid, group_names, **kwargs):
+    from django.contrib.auth.models import Group
+    from features.registry import get_feature_by_uid
+    request = kwargs['request']
+    # group_names = request.POST.getlist('groups[]')
+    userLayer = get_feature_by_uid(user_layer_uid)
+
+    viewable, response = userLayer.is_viewable(request.user)
+    if not viewable:
+        return response
+
+    #remove previously shared with groups, before sharing with new list
+    userLayer.share_with(None)
+
+    groups = []
+    for group_name in group_names:
+        g = Group.objects.get(mapgroup__name=group_name)
+        groups.append(g)
+
+    userLayer.share_with(groups, append=False)

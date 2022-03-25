@@ -391,6 +391,143 @@
                         </div>
                         <!-- end drawings -->
 
+                        <!-- USER LAYERS -->
+                        <div class="accordion">
+                            <!-- User Layers -->
+                            <div>
+                                <div class="accordion-group">
+                                    <div id="user-layers-header"
+                                         class="accordion-heading"
+                                         data-bind="css: {'active': app.viewModel.isUserLayersOpen()}">
+                                        <div>
+                                            <a class="accordion-toggle"
+                                               data-bind="click: app.viewModel.toggleUserLayersOpen">
+                                                <span>User-Imported Layers</span>
+                                            </a>
+                                            <a class="create-new-button"
+                                               data-bind="click: app.viewModel.showUserLayers,clickBubble: false">
+                                                <i class="fa fa-plus"></i>NEW
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="accordion-body collapse"
+                                         data-bind="css: {'in': app.viewModel.isUserLayersOpen()}">
+                                        <div class="accordion-inner"
+                                             data-bind="with: app.viewModel.userlayers">
+                                            <div data-bind="visible: !userLayersList().length"
+                                                 style="font-weight: normal">
+                                                <div style="padding: 10px;">
+                                                    <p>
+                                                        You currently have no
+                                                        user-imported layers.
+                                                    </p>
+
+                                                    <p>
+                                                        To create a new
+                                                        user-imported layer,
+                                                        click on the <span
+                                                            class="create-new-button"><i
+                                                            class="fa fa-plus"></i>NEW</span>
+                                                        button above.
+                                                    </p>
+
+                                                    <p>
+                                                        Note: you may, at any
+                                                        time,
+                                                        edit, share, or remove
+                                                        any
+                                                        of the user-importated layers 
+                                                        that you have created.
+                                                        Any user-imported layers 
+                                                        shared with
+                                                        you can also be copied
+                                                        so that they too can be
+                                                        edited,
+                                                        shared, or removed.
+                                                    </p>
+
+                                                </div>
+                                            </div>
+                                            <div data-bind="visible: userLayersList().length > 0">
+                                                <ul class="unstyled list"
+                                                    data-bind="foreach: userLayersList ">
+                                                    <li class="layer">
+                                                        <table class="layer-row">
+                                                            <tr>
+                                                              <td>
+                                                                <!-- ko if: $data.description -->
+                                                                  <a class="btn btn-info-sign"
+                                                                     data-bind="click: toggleDescription, css: { 'active': infoActive()}"
+                                                                     data-toggle="tooltip"
+                                                                     data-placement="right"
+                                                                     data-title="More Info">
+                                                                      <i class="fa fa-info-circle"></i>
+                                                                  </a>
+                                                                <!-- /ko -->
+                                                                <!-- ko ifnot: $data.description -->
+                                                                <a class="btn btn-info-sign"
+                                                                   style="cursor: default;"
+                                                                   data-toggle="tooltip"
+                                                                   data-placement="right"
+                                                                   data-title="More Info">
+                                                                   &nbsp;&nbsp;&nbsp;
+                                                                    <!-- <i class="fa fa-info-circle"></i> -->
+                                                                </a>
+                                                                <!-- /ko -->
+                                                              </td>
+                                                                <td class="layer-name">
+                                                                    <a class="btn btn-layer">
+                                                                        <table>
+                                                                            <tr>
+                                                                                <td class="text">
+                                                                                    <a data-bind="attr: {title: sharedBy}, visible: shared()"
+                                                                                       style="text-decoration: none; cursor: default;"
+                                                                                       data-toggle="tooltip"
+                                                                                       data-placement="right">
+                                                                                        <i class="fa fa-user"></i>
+                                                                                    </a>
+                                                                                    <a data-bind="attr: {title: 'Shared with ' + selectedGroups().join(', ')}, visible: selectedGroups().length > 0"
+                                                                                       style="text-decoration: none; cursor: default;"
+                                                                                       data-toggle="tooltip"
+                                                                                       data-placement="right">
+                                                                                        <i class="fa fa-group"></i>
+                                                                                    </a>
+
+                                                                                <span data-bind="click: loadUserLayer">
+                                                                                    <span data-bind="text: name"></span>
+                                                                                </span>
+
+                                                                                </td>
+                                                                                <td class="add-on"></td>
+
+                                                                            </tr>
+                                                                        </table>
+                                                                    </a>
+                                                                </td>
+                                                                <td>
+                                                                    <a class="btn"
+                                                                       data-bind="visible: !shared(), click: app.menuModel.menu('userLayer')"><i
+                                                                            class="fa fa-cog"></i></a>
+                                                                </td>
+                                                            </tr>
+                                                        </table>
+                                                        <!-- ko if: $data.description -->
+                                                        <div class="layer-info" data-bind="visible: infoActive()">
+                                                            <div class="layer-text">
+                                                              <span data-bind="text: description" class="layer-description"></span>
+                                                            </div>
+                                                        </div>
+                                                        <!-- /ko -->
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end user layers-->
+
                         <!-- LEASE BLOCK COLLECTIONS - removed 5/17 by RDH under KV's request -->
                         {% if False %}
                         <div data-bind="with: app.viewModel.scenarios">

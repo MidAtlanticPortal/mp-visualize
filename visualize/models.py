@@ -17,7 +17,7 @@ class Bookmark(Feature):
     json = models.TextField(null=True, blank=True, default=None)
 
     class Options:
-        verbose_name = 'MARCO Bookmark'
+        verbose_name = 'Map View Bookmark'
         form = 'visualize.forms.BookmarkForm'
 
     @property
@@ -96,6 +96,10 @@ class UserLayer(Feature):
     url = models.TextField(blank=True, null=True)
     arcgis_layers = models.CharField(max_length=255, blank=True, null=True, help_text='comma separated list of arcgis layer IDs')
     description = models.TextField(blank=True, null=True)
+
+    class Options:
+        verbose_name = 'User-Imported Layer'
+        form = 'visualize.forms.UserLayerForm'
 
     def __unicode__(self):
         return self.name

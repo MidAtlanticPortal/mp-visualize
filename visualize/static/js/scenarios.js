@@ -1289,9 +1289,10 @@ function scenariosModel(options) {
         return !(self.scenarioForm() ||
                  self.reportsVisible() ||
                  self.drawingForm() ||
-                 // This is awkward, but bookmarks aren't really scenarios,
+                 // This is awkward, but bookmarks and user layers aren't really scenarios,
                  // and they live in their own place.
                  app.viewModel.addBookmarksDialogVisible() ||
+                 app.viewModel.addUserLayersDialogVisible() ||
                  self.selectionForm());
     }
 
