@@ -43,6 +43,11 @@ def show_planner(request, template='visualize/planner.html'):
         'decline_url': False
     }
 
+    if len(Content.objects.filter(name='disclaimer_continue_button',live=True)) > 0:
+        disclaimer_content['continueButtonText'] = Content.objects.filter(name='disclaimer_continue_button',live=True)[0].content
+    elif settings.DISCLAIMER_BUTTON_DEFAULT:
+        disclaimer_content['continueButtonText'] = settings.DISCLAIMER_BUTTON_DEFAULT
+
     if len(Content.objects.filter(name='disclaimer_body',live=True)) > 0:
         #There should be only one content named 'disclaimer_body' - assume the first
         disclaimer_content['body'] = Content.objects.filter(name='disclaimer_body',live=True)[0]
