@@ -998,7 +998,37 @@
                         <form id="addUserLayerForm" class=""
                               data-bind="submit: app.viewModel.addUserLayer">
                             <div class="form-group">
+                                <div id="step1" class="step">
+                                    <p class="step-text"><i>Step 1 of 2 </i></p>
+                                    <label>Layer Source URL:<br>
+                                        <input id="new_user_layer_url"
+                                               data-bind="value: app.viewModel.userLayers.newUserLayerUrl"
+                                               type="text"
+                                               class="input form-control"
+                                               placeholder="https://path.to.layer/export"
+                                               required>
+                                    </label>
+                                    <label>Layer Source Type:<br>
+                                    </label>
+                                    <select id="new_user_layer_type" name="layer_type"
+                                            data-bind="value: app.viewModel.userLayers.newUserLayerLayerType, options: app.viewModel.userLayers.layerTypes"
+                                            class="form-control"
+                                            placeholder="ArcRest"
+                                            required>
+                                    </select>
+                    
+                                    <label>ArcGIS Layer IDs:<br>
+                                        <input id="new_user_layer_arcgis_layers"
+                                              data-bind="value: app.viewModel.userLayers.newUserLayerArcGISLayers"
+                                              type="text"
+                                              class="input form-control"
+                                              placeholder="Description"
+                                        >
+                                      </label>
+
+                                </div>
                                 <div class="step">
+                                    <p class="step-text"><i>Step 2 of 2 </i>
                                     <label>Layer Name:<br>
                                         <input id="new_user_layer_name"
                                                data-bind="value: app.viewModel.userLayers.newUserLayerName"

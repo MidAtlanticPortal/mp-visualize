@@ -96,6 +96,11 @@ function userLayersModel(options) {
     // description of newly created user layer
     self.newUserLayerDescription = ko.observable();
 
+    self.newUserLayerUrl = ko.observable();
+    self.newUserLayerLayerType = ko.observable();
+    self.newUserLayerArcGISLayers = ko.observable();
+    self.layerTypes = ko.observableArray(['ArcRest', 'ArcFeatureServer']);
+
     // check for duplicate naming
     self.duplicateUserLayer = ko.observable(false);
 
