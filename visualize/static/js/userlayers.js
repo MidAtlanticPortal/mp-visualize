@@ -86,6 +86,11 @@ function userLayersModel(options) {
 
     self.activeUserLayer = ko.observable();
 
+    self.layer = ko.observable();
+
+    self.userLayerForm = ko.observable(false);
+    self.loadingUserLayerForm = ko.observable(false);
+
     self.sharingUserLayer = ko.observable();
 
     self.sharingGroups = ko.observableArray();
@@ -103,6 +108,77 @@ function userLayersModel(options) {
 
     // check for duplicate naming
     self.duplicateUserLayer = ko.observable(false);
+
+    self.createUserLayer = function() {
+        self.loadingUserLayerForm(true);
+        return $.ajax({
+            url: '/features/userlayer/form/',
+            success: function(data) {
+                self.userLayerForm(true);
+                app.viewModel.scenarios.userLayerForm(true);
+                $('#user-layer-form').html(data);
+                self.userLayerFormModel = new userLayerFormModelConstructor();
+                try {
+                  ko.applyBindings(self.userLayerFormModel, document.getElementById('user-layer-form'));
+                }
+                catch(e) {}
+                self.loadingUserLayerForm(false);
+            },
+            error: function (result) {
+                self.loadingUserLayerForm(false);
+            }
+        });
+    };
+
+    self.removeUserLayerForm = function(obj) {
+        app.viewModel.hideUserLayersForm();
+        self.userLayerForm(false);
+        app.viewModel.scenarios.userLayerForm(false);
+        var userLayerForm = document.getElementById('user-layer-form');
+        $(userLayerForm).empty();
+        ko.cleanNode(userLayerForm);
+        delete self.userLayerFormModel;
+    };
+
+    self.createDisplayLayer = function(userLayer) {
+        var lyrObj = new Object();
+        lyrObj.name = userLayer.name;
+        lyrObj.url = userLayer.url;
+        lyrObj.arcgis_layers = userLayer.arcgis_layers;
+  
+        lyrObj.type = userLayer.layer_type;
+        lyrObj.wmsSession = true;
+        lyrObj.id = userLayer.id;
+
+        app.viewModel.getOrCreateLayer(lyrObj, null, 'activateLayer', null);
+    };
+
+    self.toggleUserLayer = function(self, event) {
+        var userLayer = this;
+
+        // start saving restore state again and remove restore state message from map view
+        app.saveStateMode = true;
+        app.viewModel.error(null);
+        //app.viewModel.unloadedDesigns = [];
+
+        //app.viewModel.activeLayer(layer);
+
+        if (!userLayer.layer()) {
+            if (Object.keys(app.viewModel.layerIndex).indexOf(userLayer.id) >= 0) {
+                userLayer.layer(app.viewModel.layerIndex[userLayer.id]);
+            }
+        }
+        
+        if (userLayer.layer() && userLayer.layer().active()) { // if layer is active, then deactivate
+            userLayer.layer().deactivateLayer();
+        } else { // otherwise layer is not currently active, so activate
+            if (!userLayer.layer()) {
+                app.viewModel.userLayers.createDisplayLayer(userLayer);
+            } else {
+                userLayer.layer().activateLayer();
+            }
+        }
+    };
 
     self.toggleGroup = function(obj) {
         var groupName = obj.group_name,
@@ -137,7 +213,7 @@ function userLayersModel(options) {
         return memberList;
     };
 
-    self.shareBookmark = function(){
+    self.shareUserLayer = function(){
         self.sharingUserLayer(app.viewModel.userLayers.activeUserLayer);
         $('#user-layer-share-modal').modal('show');
 
@@ -257,4 +333,17 @@ function userLayersModel(options) {
 userLayersModel.prototype.showSharingModal = function(userLayer) {
     app.viewModel.userLayers.activeUserLayer(userLayer);
     userLayer.showSharingModal();
+}
+
+function userLayerFormModelConstructor(options) {
+    var self = this;
+
+    self.newUserLayerUrl  = ko.observable();
+    self.newUserLayerLayerType =  ko.observable('ArcRest');
+    self.newUserLayerArcGISLayers = ko.observable();
+    self.newUserLayerName = ko.observable();
+    self.duplicateUserLayer = ko.observable(false);
+    self.newUserLayerDescription = ko.observable();
+
+    return self;
 }

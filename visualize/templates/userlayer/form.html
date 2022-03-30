@@ -1,0 +1,169 @@
+<div class="featurepanel">
+    <script type="text/javascript" charset="utf-8">
+        madrona.onShow(function(){
+            madrona.setupForm($('#addUserLayerForm'));
+            var max_step = 2;
+
+            var step = 1;
+
+            function validate(step) {
+                return_value = true;
+                if (step == 1) {
+                    // if ( app.viewModel.scenarios.drawingFormModel.isDrawing()) {
+                    //     $('#double-click-instructions').effect("highlight", {}, 1000);
+                    //     return_value = false;
+                    // } else if ( ! app.viewModel.scenarios.drawingFormModel.hasShape() ) {
+                    //     $('#click-to-begin-drawing').effect("highlight", {}, 1000);
+                    //     return_value = false;
+                    // }
+                } else if (step == max_step) {
+
+                }
+                return return_value;
+            };
+
+            function wizard(action) {
+                if (step == 1 && action == 'next') {
+                    if (validate(step)) {
+                        step += 1;
+                        // app.viewModel.userLayers.userLayerFormModel.completeEdit();
+                        // $('#id_geometry_orig')[0].value = 'SRID=3857;' + app.getLayerFeatureAsWKT(app.map.drawingLayer, 0);
+                    }
+                } else if (step > 1 && action == 'prev') {
+                    step -= 1;
+                }
+                $('div.step').each(function(index) {
+                    $(this).hide();
+                });
+                $('div#step' + step).show();
+
+                if (step == 1) {
+                    $('#button_prev').hide();
+                    $('#button_submit').hide();
+                } else {
+                    $('#button_prev').show();
+                }
+
+                if (step == max_step) {
+                    $('#button_next').hide();
+                    $('.submit_button').show();
+                } else {
+                    $('#button_next').show();
+                    $('.submit_button').hide();
+                }
+            };
+
+            $('#button_prev').click( function() { wizard('prev'); });
+            $('#button_next').click( function() { wizard('next'); });
+            step = 1;
+            {% if form.errors %}
+                step = 2; // form errors exist
+            {% endif %}
+            wizard();
+
+
+            $('#id_name').keypress(function (e) {
+                if (e.which === 13) {
+                    $('#user-layer-form .submit_button').click();
+                    return false;
+                } else {
+                    $('#invalid-name-message').hide();
+                }
+            });
+        });
+    </script>
+
+    <h4>Import Layer</h4>
+
+    <form id="addUserLayerForm" action="{{action}}" method="post">
+        {% for hidden in form.hidden_fields %}
+            <div style="display:none;">
+                {{ hidden.errors }}
+            </div>
+            {{ hidden }}
+        {% endfor %}
+        <div id="error_bar"></div>
+
+        <div id="step1" class="step">
+            <p class="step-text"><i>Step 1 of 2 </i>
+            <!-- <label>Layer Source URL:<br>
+                <input id="new_user_layer_url"
+                        data-bind="value: app.viewModel.userLayers.newUserLayerUrl"
+                        type="text"
+                        class="input form-control"
+                        placeholder="https://path.to.layer/export"
+                        required>
+            </label> -->
+            <p class="instructions">Provide the URL and layer type for your source:</p>
+            <div class="step1-inputs">
+                <div class="step1-param">
+                    {{ form.url.errors }}
+                    {{ form.url }}
+                </div>
+            </div>
+            <div class="step1-inputs">
+                <div class="step1-param">
+                    {{ form.layer_type.errors }}
+                    {{ form.layer_type }}
+                </div>
+            </div>
+            <!-- <label>Layer Source Type:<br>
+            </label>
+            <select id="new_user_layer_type" name="layer_type"
+                    data-bind="value: app.viewModel.userLayers.newUserLayerLayerType, options: app.viewModel.userLayers.layerTypes"
+                    class="form-control"
+                    placeholder="ArcRest"
+                    required>
+            </select> -->
+            <p class="instructions">Provide the layer IDs (separate with commas, if more than 1) for your ArcServer layers:</p>
+            <div class="step1-inputs">
+                <div class="step1-param">
+                    {{ form.arcgis_layers.errors }}
+                    {{ form.arcgis_layers }}
+                </div>
+            </div>
+            <!-- <label>ArcGIS Layer IDs:<br>
+                <input id="new_user_layer_arcgis_layers"
+                        data-bind="value: app.viewModel.userLayers.newUserLayerArcGISLayers"
+                        type="text"
+                        class="input form-control"
+                        placeholder="Description"
+                >
+            </label> -->
+        </div>
+
+        <div class="step" id="step2">
+            <p class="step-text"><i>Step 2 of 2 </i></p>
+            <p class="instructions">Provide a <b>Name</b> to identify your Layer </p>
+            <div class="step3-inputs">
+                <div class="step3-param">
+                    {{ form.name.errors }}
+                    {{ form.name }}
+                    <div id="invalid-name-message" class="control-group error" style="display: none;">
+                        <span class="help-inline">The <b>Name</b> field is required.</span>
+                    </div>
+                </div>
+                <p class="instructions">Optionally, you may add a <b>Description</b> </p>
+                <div class="step3-param">
+                    {{ form.description.errors }}
+                    {{ form.description }}
+                </div>
+            </div>
+        </div>
+
+        <div class="wizard_nav">
+            <div class="btn-group pull-right">
+                <a href="#" class="btn btn-default" onclick="this.blur(); return false;" id="button_prev"><span>&lt; Previous</span></a>
+                <a href="#" class="btn btn-primary"  onclick="this.blur(); return false;" id="button_next"><span>Next &gt;</span></a>
+                <a href="#" class="submit_button btn btn-primary" onclick="this.blur(); return false;"><span>Save</span></a>
+            </div>
+        </div>
+
+        <div>
+            <div class="btn-group pull-left">
+                <a href="#" class="cancel_button btn btn-default"><span>Cancel</span></a>
+            </div>
+        </div>
+    </form>
+
+</div>

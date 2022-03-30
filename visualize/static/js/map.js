@@ -454,7 +454,7 @@ app.init = function () {
         new ContextualMenu.Divider(),
         new ContextualMenu.Item("Share...", app.viewModel.userLayers.shareUserLayer, 'fa fa-share-alt'),
         new ContextualMenu.Divider(),
-        new ContextualMenu.Item("Delete Layer", app.viewModel.userLayers.deleteUserLayer, 'fa fa-times-circle red')
+        new ContextualMenu.Item("Delete Layer", app.viewModel.userLayers.removeUserLayer, 'fa fa-times-circle red')
       ];
 
       app.menus.sharedLeaseBlockCollection = [

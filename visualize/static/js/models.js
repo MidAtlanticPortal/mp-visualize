@@ -2504,19 +2504,11 @@ function viewModel() {
         self.bookmarks.newBookmarkDescription(null);
     }
 
-    // show user-imported layers stuff
-    self.addUserLayersDialogVisible = ko.observable(false);
-    self.showUserLayers = function(self, event) {
-        self.userLayers.duplicateUserLayer(false);
-        self.userLayers.newUserLayerName(null);
-        self.userLayers.newUserLayerDescription(null);
-        self.addUserLayersDialogVisible(true);
-        // scenario forms will hide anything with the "step" class, so show
-        // it explicitly here.
-        $('#addUserLayerForm .step').show();
-    };
-    self.hideUserLayers = function() {
-        self.addUserLayersDialogVisible(false);
+
+    self.hideUserLayersForm = function() {
+        app.viewModel.userLayers.getUserLayers()
+        self.userLayers.userLayerForm(false);
+        self.scenarios.userLayerForm(false);
     }
 
     /** Create a new userlayer from the userlayer form */
@@ -2537,8 +2529,12 @@ function viewModel() {
             return false;
         }
 
-        self.userLayers.addUserLayer(name, description, layer_type, url, arcgis_layers);
-        self.hideUserLayers();
+        var layer_type = $(form).find('#new_user_layer_type').val();
+        var url = $(form).find('#new_user_layer_url').val();
+        var arcgis_layers = $(form).find('#new_user_layer_arcgis_layers').val();
+
+        self.userLayers.addUserLayer(name, description, url, layer_type, arcgis_layers);
+        self.hideUserLayersForm();
         self.userLayers.newUserLayerName(null);
         self.userLayers.newUserLayerDescription(null);
     }
@@ -2730,26 +2726,6 @@ function viewModel() {
         });
         $('#map-wms-modal').modal('hide');
     };
-
-    self.displayUserLayer = function(userLayer) {
-      var lyrObj = new Object();
-      lyrObj.name = userLayer.name;
-      lyrObj.url = userLayer.url;
-      lyrObj.arcgis_layers = userLayer.arcgis_layers;
-
-      lyrObj.type = userLayer.layer_type;
-      lyrObj.wmsSession = true;
-      var id_exists = true;
-      for(var i=0; id_exists == true && i < 1000; i++) {
-        lyrObj.id = 'user_layer_' + i;
-        if (Object.keys(app.viewModel.layerIndex).indexOf(lyrObj.id) < 0) {
-          id_exists = false;
-        }
-      }
-
-      var wmsLayer = app.viewModel.getOrCreateLayer(lyrObj, null, 'activateLayer', null);
-      
-    }
 
     self.selectedLayer = ko.observable();
 

@@ -1279,6 +1279,8 @@ function scenariosModel(options) {
     self.drawingForm = ko.observable(false);
     self.loadingDrawingForm = ko.observable(false);
 
+    self.userLayerForm = ko.observable(false);
+
     /** return true if normal MyPlanner content should be shown, false
         otherwise (when a form is active and assuming control of MyPlanner's
         space).
@@ -1292,7 +1294,7 @@ function scenariosModel(options) {
                  // This is awkward, but bookmarks and user layers aren't really scenarios,
                  // and they live in their own place.
                  app.viewModel.addBookmarksDialogVisible() ||
-                 app.viewModel.addUserLayersDialogVisible() ||
+                 self.userLayerForm() ||
                  self.selectionForm());
     }
 
@@ -1547,10 +1549,17 @@ function scenariosModel(options) {
             self.removeDrawingForm(obj);
         }
 
+        //clean up drawing form
+        if (self.userLayerForm() || app.viewModel.userLayers.userLayerForm()) {
+            app.viewModel.userLayers.removeUserLayerForm(obj);
+        }
+
         //remove the key/value pair from aggregatedAttributes
         app.viewModel.removeFromAggregatedAttributes(self.leaseblockLayer().name);
         app.viewModel.updateAttributeLayers();
     };
+
+    
 
     self.removeDrawingForm = function(obj) {
         self.drawingFormModel.cleanUp();

@@ -101,6 +101,7 @@ class UserLayer(Feature):
     class Options:
         verbose_name = 'User-Imported Layer'
         form = 'visualize.forms.UserLayerForm'
+        form_template = 'userlayer/form.html'
 
     def __unicode__(self):
         return self.name

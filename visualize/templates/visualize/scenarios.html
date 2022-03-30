@@ -405,7 +405,7 @@
                                                 <span>User-Imported Layers</span>
                                             </a>
                                             <a class="create-new-button"
-                                               data-bind="click: app.viewModel.showUserLayers,clickBubble: false">
+                                               data-bind="click: app.viewModel.userLayers.createUserLayer,clickBubble: false">
                                                 <i class="fa fa-plus"></i>NEW
                                             </a>
                                         </div>
@@ -476,7 +476,7 @@
                                                                 <!-- /ko -->
                                                               </td>
                                                                 <td class="layer-name">
-                                                                    <a class="btn btn-layer">
+                                                                    <a class="btn btn-layer" data-bind='click: app.viewModel.userLayers.toggleUserLayer'>
                                                                         <table>
                                                                             <tr>
                                                                                 <td class="text">
@@ -493,9 +493,7 @@
                                                                                         <i class="fa fa-group"></i>
                                                                                     </a>
 
-                                                                                <span data-bind="click: loadUserLayer">
-                                                                                    <span data-bind="text: name"></span>
-                                                                                </span>
+                                                                                <span data-bind="text: name"></span>
 
                                                                                 </td>
                                                                                 <td class="add-on"></td>
@@ -989,84 +987,8 @@
                 </div>
             </div>
 
-            <div style="height: 100%"
-                 data-bind="visible: app.viewModel.addUserLayersDialogVisible">
-                <div class="design">
-                    <div class="featurepanel">
-                        <h4>Create User-Imported Layer</h4>
-
-                        <form id="addUserLayerForm" class=""
-                              data-bind="submit: app.viewModel.addUserLayer">
-                            <div class="form-group">
-                                <div id="step1" class="step">
-                                    <p class="step-text"><i>Step 1 of 2 </i></p>
-                                    <label>Layer Source URL:<br>
-                                        <input id="new_user_layer_url"
-                                               data-bind="value: app.viewModel.userLayers.newUserLayerUrl"
-                                               type="text"
-                                               class="input form-control"
-                                               placeholder="https://path.to.layer/export"
-                                               required>
-                                    </label>
-                                    <label>Layer Source Type:<br>
-                                    </label>
-                                    <select id="new_user_layer_type" name="layer_type"
-                                            data-bind="value: app.viewModel.userLayers.newUserLayerLayerType, options: app.viewModel.userLayers.layerTypes"
-                                            class="form-control"
-                                            placeholder="ArcRest"
-                                            required>
-                                    </select>
-                    
-                                    <label>ArcGIS Layer IDs:<br>
-                                        <input id="new_user_layer_arcgis_layers"
-                                              data-bind="value: app.viewModel.userLayers.newUserLayerArcGISLayers"
-                                              type="text"
-                                              class="input form-control"
-                                              placeholder="Description"
-                                        >
-                                      </label>
-
-                                </div>
-                                <div class="step">
-                                    <p class="step-text"><i>Step 2 of 2 </i>
-                                    <label>Layer Name:<br>
-                                        <input id="new_user_layer_name"
-                                               data-bind="value: app.viewModel.userLayers.newUserLayerName"
-                                               type="text"
-                                               class="input form-control"
-                                               placeholder="User Layer Name"
-                                               required>
-                                    </label>
-                                    <div class="dupe-user-layer" data-bind="visible: app.viewModel.userLayers.duplicateUserLayer">That user layer name already exists, please enter another name</div>
-                                    <label>Description:<br>
-                                        <input id="new_user_layer_description"
-                                              data-bind="value: app.viewModel.userLayers.newUserLayerDescription"
-                                              type="text"
-                                              class="input form-control"
-                                              placeholder="Description"
-                                        >
-                                      </label>
-                                  </div>
-                              </div>
-  
-                              <div class="wizard_nav" style="width:100%">
-                                  <div class="btn-group pull-right">
-                                      <button type="submit"
-                                              class="btn btn-primary">Add User Layer
-                                      </button>
-                                  </div>
-                              </div>
-  
-                              <div>
-                                  <div class="btn-group pull-left">
-                                      <a href="#"
-                                         data-bind="click: app.viewModel.hideUserLayers"
-                                         class="cancel_button btn btn-default"><span>Cancel</span></a>
-                                  </div>
-                              </div>
-                          </form>
-                    </div>
-                </div>
+            <div style="height: 100%" data-bind="visible: app.viewModel.userLayers.userLayerForm">
+                <div id="user-layer-form" class="design"></div>
             </div>
 
             {% if user|in_group:"Designers" %}
