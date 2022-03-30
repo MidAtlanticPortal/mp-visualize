@@ -415,9 +415,43 @@ $('#btn-print').click(function() {
   // Show Attribution if hidden:
   var attribution_state = app.wrapper.controls.getAttributionState();
   app.wrapper.controls.setAttributionState('show');
-  window.print();
-  app.wrapper.controls.setAttributionState(attribution_state);
+  // window.print();
+  
+  $(this).attr('disabled', 'disabled');
+  document.body.style.cursor = 'progress';
 
+  // const format = document.getElementById('format').value;
+  const format = 'US Letter';
+  // const resolution = document.getElementById('resolution').value;
+  // const resolution = '300';
+  // const scale = document.getElementById('scale').value;
+  // const scale = '1:100000';
+  // const dim = dims[format];
+  const viewResolution = app.map.getView().getResolution();
+  const width = Math.round(8.5 * viewResolution);
+  const height = Math.round(11 * viewResolution);
+
+  // const scaleResolution =
+  //   scale /
+  //     getPointResolution(
+  //       map.getView().getProjection(),
+  //       resolution / 25.4,
+  //       map.getView().getCenter()
+  //     );
+
+  html2canvas(document.body, {
+    // allowTaint: true,
+    width: width,
+    height: height
+  }).then(function (canvas) {
+    const exportImage = canvas.toDataURL('image/png');
+    exportImage.save('map.png');
+    document.body.appendChild(canvas);
+    $(this).attr('disabled', '');
+    app.wrapper.controls.setAttributionState(attribution_state);
+    document.body.style.cursor = 'auto';
+  });
+  
 });
 
 $(document).mousedown(function(e) {
