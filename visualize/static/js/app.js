@@ -428,8 +428,8 @@ $('#btn-print').click(function() {
   // const scale = '1:100000';
   // const dim = dims[format];
   const viewResolution = app.map.getView().getResolution();
-  const width = Math.round(8.5 * viewResolution);
-  const height = Math.round(11 * viewResolution);
+  const paperWidth = Math.round(8.5 * viewResolution);
+  const paperHeight = Math.round(11 * viewResolution);
 
   // const scaleResolution =
   //   scale /
@@ -439,19 +439,20 @@ $('#btn-print').click(function() {
   //       map.getView().getCenter()
   //     );
 
-  html2canvas(document.body, {
-    // allowTaint: true,
-    width: width,
-    height: height
-  }).then(function (canvas) {
-    const exportImage = canvas.toDataURL('image/png');
-    exportImage.save('map.png');
-    document.body.appendChild(canvas);
-    $(this).attr('disabled', '');
-    app.wrapper.controls.setAttributionState(attribution_state);
-    document.body.style.cursor = 'auto';
-  });
-  
+  app.map.once('rendercomplete', function() {
+    html2canvas(document.body, {
+      allowTaint: true,
+      width: paperWidth,
+      height: paperHeight
+    }).then(function (canvas) {
+      document.body.appendChild(canvas);
+      $(this).attr('disabled', '');
+      app.wrapper.controls.setAttributionState(attribution_state);
+      document.body.style.cursor = 'auto';
+      const exportImage = canvas.toDataURL('image/png');
+      exportImage.save('map.png');
+    });
+  });  
 });
 
 $(document).mousedown(function(e) {
