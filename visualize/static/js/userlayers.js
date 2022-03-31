@@ -154,7 +154,15 @@ function userLayersModel(options) {
     };
 
     self.toggleUserLayer = function(self, event) {
-        var userLayer = this;
+        if (event) {
+            var userLayer = this;
+        } else {
+            var userLayer = self;
+        }
+
+        if (!userLayer.hasOwnProperty('layer') || userLayer.layer() == null) {
+            userLayer.layer(false);
+        }
 
         // start saving restore state again and remove restore state message from map view
         app.saveStateMode = true;
@@ -313,6 +321,33 @@ function userLayersModel(options) {
         });
 
         self.getSharingGroups();
+    };
+
+    self.initializeNewUserLayer = function(user_layer_id) {
+        app.viewModel.userLayers.search_layer_id = user_layer_id;
+        user_layer = app.viewModel.userLayers.getUserLayerById(user_layer_id);
+        if (user_layer == null) {
+            window.setTimeout(function() {
+                app.viewModel.userLayers.initializeNewUserLayer(app.viewModel.userLayers.search_layer_id);
+            }, 100);
+        } else {
+            self.toggleUserLayer(user_layer);
+        }
+    };
+
+    self.finishAddingUserLayer = function(result) {
+        app.viewModel.userLayers.removeUserLayerForm();
+        user_layer = self.initializeNewUserLayer(result["X-Madrona-Show"]); 
+    }
+
+    self.getUserLayerById = function(userlayer_id) {
+        var layers = self.userLayersList();
+        for (var i = 0; i < layers.length; i++) {
+            if (layers[i].id == userlayer_id) {
+                return layers[i];
+            }
+        }
+        return null;
     };
 
     self.submitShare = function() {

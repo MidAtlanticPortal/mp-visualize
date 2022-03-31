@@ -74,8 +74,6 @@ var madrona = {
                 }
             });
 
-
-
             app.viewModel.scenarios.scenarioForm(false);
             app.viewModel.scenarios.loadingMessage("Creating Design");
 
@@ -88,6 +86,9 @@ var madrona = {
                     app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
                     app.viewModel.scenarios.loadingMessage(false);
                     clearInterval(barTimer);
+                    if (result.Location.indexOf('visualize_userlayer_') >= 0) {
+                        app.viewModel.userLayers.finishAddingUserLayer(result);
+                    }
                 },
                 error: function(result) {
                     app.viewModel.scenarios.loadingMessage(null);

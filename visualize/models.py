@@ -108,3 +108,19 @@ class UserLayer(Feature):
 
     def __str__(self):
         return self.__unicode__()
+
+    def serialize_attributes(self):
+        attributes = False
+        return {
+            'compress_attributes': False, # self.compress_display,
+            'event': 'click', # self.attribute_event,
+            'attributes': attributes,
+            # 'attributes': [
+            #     {
+            #         'display': "<b><i>User-Added</i></b>: {}".format(self.name), #attr.display_name, 
+            #         'field': None, #attr.field_name, 
+            #         'precision': None, #attr.precision
+            #     } for attr in [1,] # self.attribute_fields.all().order_by('order')
+            # ],
+            'mouseover_attribute': None #self.mouseover_field 
+        }
