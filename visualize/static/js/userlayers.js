@@ -221,10 +221,8 @@ function userLayersModel(options) {
         return memberList;
     };
 
-    self.shareUserLayer = function(){
-        self.sharingUserLayer(app.viewModel.userLayers.activeUserLayer);
-        $('#user-layer-share-modal').modal('show');
-
+    self.shareUserLayer = function(userLayer){
+        app.viewModel.scenarios.showSharingModal(userLayer);
     }
 
     self.removeUserLayer = function(userLayer, event) {
@@ -369,23 +367,32 @@ function userLayersModel(options) {
             //the following delay might help solve what appears to be a race condition
             //that prevents the design in the layer list from displaying the checked box icon after loadin
             setTimeout( function() {
-                var userLayerIds = []
-                for (var i=0; i < app.viewModel.userLayers.userLayersList().length; i++) {
-                    userLayerIds.push(app.viewModel.userLayers.userLayersList()[i].id);
-                }
+                
                 for (var x=0; x < designs.length; x=x+1) {
                     var id = designs[x].id,
                         opacity = designs[x].opacity,
                         isVisible = designs[x].isVisible;
 
                     var user_layer = self.getUserLayerById(id);
-                    self.toggleUserLayer(user_layer);
-
-                    if ( user_layer) {
-                        window.setTimeout(function(){
-                            app.viewModel.layerIndex[id].opacity(opacity);
-                        }, 500);
+                    if (user_layer == null) {
+                        for (var y=0; y < self.userLayersList().length; y++) {
+                            if (id == self.userLayersList()[y].id) {
+                                user_layer = self.userLayersList()[y];
+                                // stop loop
+                                y = self.userLayersList().length;
+                            }
+                        }
                     }
+                    self.toggleUserLayer(user_layer);
+                }
+                
+                if ( user_layer) {
+                    window.setTimeout(function(){
+                        app.viewModel.layerIndex[id].opacity(opacity);
+                        if (!isVisible || isVisible == "false") {
+                            app.viewModel.getLayerById(id).toggleVisible();
+                        }
+                    }, 500);
                 }
             }, 2750);
         }

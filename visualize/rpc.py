@@ -2,6 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import get_object_or_404
 from rpc4django import rpcmethod
+from django.conf import settings
 
 
 @rpcmethod(login_required=True)
@@ -155,11 +156,12 @@ def add_user_layer(name, description, url, layer_type, arcgis_layers, **kwargs):
     }]
     return content
 
-@rpcmethod(login_required=True)
+@rpcmethod(login_required=False)
 def get_user_layers(**kwargs):
     """Return a list of user layer objects for the current user.
     """
 
+    from django.contrib.auth.models import Group
     from mapgroups.models import MapGroup, MapGroupMember
     from visualize.models import UserLayer
 
@@ -168,10 +170,24 @@ def get_user_layers(**kwargs):
     #grab all user layers belonging to this user
     #serialize user layers into 'name', 'hash' objects and return json dump
     content = []
-    user_layer_list = UserLayer.objects.filter(user=request.user)
+    try:
+        user_layer_list = UserLayer.objects.filter(user=request.user)
+    except TypeError as e:
+        user_layer_list = []
+
     for userLayer in user_layer_list:
-        sharing_groups = [group.mapgroup_set.get().name
-                          for group in userLayer.sharing_groups.all()]
+        sharing_groups = [
+            group.mapgroup_set.get().name
+            for group in userLayer.sharing_groups.all()
+            if group.mapgroup_set.exists()    
+        ]
+        public_groups = [
+            group.name
+            for group in Group.objects.filter(name__in=settings.SHARING_TO_PUBLIC_GROUPS)
+            if group in userLayer.sharing_groups.all()
+        ]
+        sharing_groups = sharing_groups + public_groups
+
         content.append({
             'uid': userLayer.uid,
             'name': userLayer.name,
@@ -182,24 +198,19 @@ def get_user_layers(**kwargs):
             'sharing_groups': sharing_groups,
         })
 
-    shared_user_layers = UserLayer.objects.shared_with_user(request.user)
+    try:
+        shared_user_layers = UserLayer.objects.shared_with_user(request.user)
+    except TypeError as e:
+        print('TODO: get user layers shared with public')
     for userLayer in shared_user_layers:
         if userLayer not in user_layer_list:
             username = userLayer.user.username
-            groups = userLayer.sharing_groups.filter(user__in=[request.user])
-            # Fetch the userLayer owner's preference on whether to share their
-            # real name with the group. Since it is possible that the userLayer
-            # sharer, and the userLayer sharee might be common members of
-            # multiple groups, if the sharer has a "Show Real Name" preference
-            # set on _any_ of the groups, then display their real name.
-            # Otherwise show their preferred name.
+            try:
+                groups = userLayer.sharing_groups.filter(user__in=[request.user])
 
-            show_real_name = MapGroupMember.objects.filter(
-                user=userLayer.user,
-                map_group__permission_group__in=groups
-            ).values_list('show_real_name')
-
-            shared_groups = [g.mapgroup_set.get().name for g in groups]
+                shared_groups = [g.mapgroup_set.get().name for g in groups]
+            except TypeError as e:
+                shared_groups = []
 
             actual_name = userLayer.user.first_name + ' ' + userLayer.user.last_name
             content.append({
