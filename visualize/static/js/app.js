@@ -431,29 +431,37 @@ $('#btn-print').click(function() {
   const paperWidth = Math.round(8.5 * viewResolution);
   const paperHeight = Math.round(11 * viewResolution);
 
-  // const scaleResolution =
-  //   scale /
-  //     getPointResolution(
-  //       map.getView().getProjection(),
-  //       resolution / 25.4,
-  //       map.getView().getCenter()
-  //     );
-
-  app.map.once('rendercomplete', function() {
-    html2canvas(document.body, {
-      allowTaint: true,
-      width: paperWidth,
-      height: paperHeight
-    }).then(function (canvas) {
+  html2canvas(document.body, {
+    allowTaint: true,
+    windowWidth: paperWidth,
+    windowHeight: paperHeight
+  }).then(function (canvas) {
+    function appendCanvas() {
+      const pageContent = document.getElementById('primary-content');
+      const pageHeader = document.querySelector('header');
+      pageContent.style.display = 'none';
+      pageHeader.style.display = 'none';
       document.body.appendChild(canvas);
-      $(this).attr('disabled', '');
-      app.wrapper.controls.setAttributionState(attribution_state);
-      document.body.style.cursor = 'auto';
-      const exportImage = canvas.toDataURL('image/png');
-      exportImage.save('map.png');
-    });
-  });  
+      return true;
+    }
+    if (appendCanvas()) {
+      printPage();
+    } else {
+      alert('ERROR: Could not print page.');
+    }
+    // pageContent.style.display = 'block';
+    // pageHeader.style.display = 'block';
+    $(this).attr('disabled', '');
+    app.wrapper.controls.setAttributionState(attribution_state);
+    document.body.style.cursor = 'auto';
+    // const exportImage = canvas.toDataURL('image/png');
+    // imgTag.save('map.png');
+  });
 });
+
+function printPage() {
+  window.print();
+}
 
 $(document).mousedown(function(e) {
 
