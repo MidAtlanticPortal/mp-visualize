@@ -282,6 +282,7 @@ function userLayersModel(options) {
 
         $.jsonrpc('get_user_layers', [], {
             success: function(result) {
+                self.userLayersList.removeAll();
                 var user_layers = result || [];
                 var ullist = [];
                 for (var i=0; i < user_layers.length; i++) {
@@ -291,6 +292,7 @@ function userLayersModel(options) {
                         url: user_layers[i].url,
                         layer_type: user_layers[i].layer_type,
                         arcgis_layers: user_layers[i].arcgis_layers,
+                        wmsSession: true,
                         uid: user_layers[i].uid,
                         shared: user_layers[i].shared,
                         sharedByUser: user_layers[i].shared_by_user,
@@ -298,22 +300,11 @@ function userLayersModel(options) {
                         sharingGroups: user_layers[i].sharing_groups,
                         sharedToGroups: user_layers[i].shared_to_groups
                     });
-                    ullist.push(user_layer);
+                    self.userLayersList.push(user_layer);
                 }
 
-                if (ullist.length > 0) {
-                    ullist.sort(function (a, b) {
-                      // for all false values null, false, '', 0
-                      if (!a.name) return 1;
-                      if (!b.name) return 0;
-
-                      a = (a.name || '').toLowerCase();
-                      b = (b.name || '').toLowerCase();
-
-                      return (a > b) ? 1 : ((a < b) ? -1 : 0);
-                    });
-                }
-                self.userLayersList(ullist);
+                self.userLayersList.sort(self.alphabetizeByName);
+                self.showUnloadedUserLayers();
             },
             error: function(result) {
 
@@ -360,6 +351,61 @@ function userLayersModel(options) {
                   [self.sharingUserLayer().uid,
                    self.sharingUserLayer().selectedGroups()],
                   {complete: self.getUserLayers});
+    };
+
+    self.populateLayerIndexCallback = function() {
+        for (var idx = 0; idx < self.userLayersList().length; idx++) {
+            user_layer = self.userLayersList()[idx];
+            app.viewModel.layerIndex[user_layer.id] = user_layer;
+        }
+        self.userLayersLoaded = true;
+        self.showUnloadedUserLayers();
+    };
+
+    self.showUnloadedUserLayers = function() {
+        var designs = app.viewModel.unloadedDesigns;
+
+        if (designs && designs.length) {
+            //the following delay might help solve what appears to be a race condition
+            //that prevents the design in the layer list from displaying the checked box icon after loadin
+            setTimeout( function() {
+                var userLayerIds = []
+                for (var i=0; i < app.viewModel.userLayers.userLayersList().length; i++) {
+                    userLayerIds.push(app.viewModel.userLayers.userLayersList()[i].id);
+                }
+                for (var x=0; x < designs.length; x=x+1) {
+                    var id = designs[x].id,
+                        opacity = designs[x].opacity,
+                        isVisible = designs[x].isVisible;
+
+                    var user_layer = self.getUserLayerById(id);
+                    self.toggleUserLayer(user_layer);
+
+                    if ( layer_index >= 0) {
+                        window.setTimeout(function(){
+                            app.viewModel.userLayers.userLayersList()[id].opacity(opacity);
+                        }, 500)
+                        for (var i=0; i < app.viewModel.unloadedDesigns.length; i=i+1) {
+                          if(app.viewModel.unloadedDesigns[i].id === id) {
+                            app.viewModel.unloadedDesigns.splice(i,1);
+                            i = i-1;
+                          }
+                        }
+                    }
+                }
+            }, 2750);
+        }
+    }
+
+    self.alphabetizeByName = function(a, b) {
+        var name1 = a.name.toLowerCase(),
+            name2 = b.name.toLowerCase();
+        if (name1 < name2) {
+            return -1;
+        } else if (name1 > name2) {
+            return 1;
+        }
+        return 0;
     };
 
     return self;

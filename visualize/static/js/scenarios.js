@@ -2149,6 +2149,9 @@ $('#designsTab').on('show.bs.tab', function (e) {
         // load the drawing
         app.viewModel.scenarios.loadDrawingsFromServer();
 
+        // load the user-imported layers
+        app.viewModel.userLayers.getUserLayers();
+
         // load the leaseblocks
         $.ajax({
             url: '/scenario/get_leaseblocks',

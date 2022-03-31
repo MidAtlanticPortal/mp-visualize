@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 from querystring_parser import parser
 import json
+from json import dumps
 from features.registry import user_sharing_groups
 from functools import cmp_to_key
 import locale
@@ -133,3 +134,52 @@ def show_mafmc_map(request, template='mafmc.html'):
 def show_mobile_map(request, template='mobile-map.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
     return render(request, template, context)
+
+def get_user_layers(request):
+    json = []
+
+    layers = UserLayer.objects.filter(user=request.user.id).order_by('date_created')
+    for layer in layers:
+        # Allow for "sharing groups" without an associated MapGroup, for "special" cases
+        sharing_groups = [
+            group.mapgroup_set.get().name
+            for group in layer.sharing_groups.all()
+            if group.mapgroup_set.exists()
+        ]
+        public_groups = [
+            group.name
+            for group in Group.objects.filter(name__in=settings.SHARING_TO_PUBLIC_GROUPS)
+            if group in layer.sharing_groups.all()
+        ]
+        sharing_groups = sharing_groups + public_groups
+
+        json.append({
+            'id': layer.id,
+            'uid': layer.uid,
+            'name': layer.name,
+            'description': layer.description,
+            # 'attributes': layer.serialize_attributes(),
+            'sharing_groups': sharing_groups
+        })
+
+    try:
+        shared_layers = UserLayer.objects.shared_with_user(request.user)
+    except Exception as e:
+        shared_layers = UserLayer.objects.filter(pk=-1)
+        pass
+    for layer in shared_layers:
+        if layer not in layers:
+            username = layer.user.username
+            actual_name = layer.user.first_name + ' ' + layer.user.last_name
+            json.append({
+                'id': layer.id,
+                'uid': layer.uid,
+                'name': layer.name,
+                'description': layer.description,
+                # 'attributes': layer.serialize_attributes(),
+                'shared': True,
+                'shared_by_username': username,
+                'shared_by_name': actual_name
+            })
+
+    return HttpResponse(dumps(json))
