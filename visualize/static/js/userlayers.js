@@ -381,16 +381,10 @@ function userLayersModel(options) {
                     var user_layer = self.getUserLayerById(id);
                     self.toggleUserLayer(user_layer);
 
-                    if ( layer_index >= 0) {
+                    if ( user_layer) {
                         window.setTimeout(function(){
-                            app.viewModel.userLayers.userLayersList()[id].opacity(opacity);
-                        }, 500)
-                        for (var i=0; i < app.viewModel.unloadedDesigns.length; i=i+1) {
-                          if(app.viewModel.unloadedDesigns[i].id === id) {
-                            app.viewModel.unloadedDesigns.splice(i,1);
-                            i = i-1;
-                          }
-                        }
+                            app.viewModel.layerIndex[id].opacity(opacity);
+                        }, 500);
                     }
                 }
             }, 2750);
