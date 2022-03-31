@@ -412,29 +412,103 @@ function returnPxOver(pxOver) {
 
 $('#btn-print').click(function() {
 
+  const dims = {
+    a0: [1189, 841],
+    a1: [841, 594],
+    a2: [594, 420],
+    a3: [420, 297],
+    a4: [297, 210],
+    a5: [210, 148],
+    letter: [216, 279],
+    legal: [216, 356]
+  };
+
+
+  // export options for html2canvase.
+  // See: https://html2canvas.hertzen.com/configuration
+  const exportOptions = {
+    useCORS: true,
+    ignoreElements: function (element) {
+      const className = element.className || '';
+      return !(
+        className.indexOf('ol-control') === -1 ||
+        className.indexOf('ol-scale') > -1 ||
+        (className.indexOf('ol-attribution') > -1 &&
+          className.indexOf('ol-uncollapsible'))
+      );
+    },
+  };
+
   // Show Attribution if hidden:
   var attribution_state = app.wrapper.controls.getAttributionState();
   app.wrapper.controls.setAttributionState('show');
-  // window.print();
   
+  // disable print button and show loading spinner
   $(this).attr('disabled', 'disabled');
   document.body.style.cursor = 'progress';
 
-  // const format = document.getElementById('format').value;
-  const format = 'US Letter';
-  // const resolution = document.getElementById('resolution').value;
-  // const resolution = '300';
-  // const scale = document.getElementById('scale').value;
-  // const scale = '1:100000';
-  // const dim = dims[format];
-  const viewResolution = app.map.getView().getResolution();
-  const paperWidth = Math.round(8.5 * viewResolution);
-  const paperHeight = Math.round(11 * viewResolution);
+  const format = document.getElementById('format').value;
+  const resolution = document.getElementById('resolution').value;
+  const scale = document.getElementById('scale').value;
+  const dim = dims[format];
+  const width = Math.round((dim[0] * resolution) / 25.4);
+  const height = Math.round((dim[1] * resolution) / 25.4);
+  const viewResolution = map.getView().getResolution();
+  const scaleResolution =
+    scale /
+    getPointResolution(
+      map.getView().getProjection(),
+      resolution / 25.4,
+      map.getView().getCenter()
+  );
 
+  map.once('rendercomplete', function () {
+    exportOptions.width = width;
+    exportOptions.height = height;
+    html2canvas(map.getViewport(), exportOptions).then(function (canvas) {
+      const pdf = new jspdf.jsPDF('landscape', undefined, format);
+      pdf.addImage(
+        canvas.toDataURL('image/jpeg'),
+        'JPEG',
+        0,
+        0,
+        dim[0],
+        dim[1]
+      );
+      pdf.save('map.pdf');
+      // Reset original map size
+      scaleLine.setDpi();
+      map.getTargetElement().style.width = '';
+      map.getTargetElement().style.height = '';
+      map.updateSize();
+      map.getView().setResolution(viewResolution);
+      $(this).attr('disabled', 'false');
+      document.body.style.cursor = 'auto';
+    });
+  });
+
+  // Set print size
+  scaleLine.setDpi(resolution);
+  map.getTargetElement().style.width = width + 'px';
+  map.getTargetElement().style.height = height + 'px';
+  map.updateSize();
+  map.getView().setResolution(scaleResolution);
+    
+  // ---- Old CODE
   html2canvas(document.body, {
-    allowTaint: true,
-    windowWidth: paperWidth,
-    windowHeight: paperHeight
+    // allowTaint: true,
+    useCORS: true,
+    ignoreElements: function (element) {
+      const className = element.className || '';
+      return !(
+        className.indexOf('ol-control') === -1 ||
+        className.indexOf('ol-scale') > -1 ||
+        (className.indexOf('ol-attribution') > -1 &&
+          className.indexOf('ol-uncollapsible'))
+      );
+    },
+    // windowWidth: paperWidth,
+    // windowHeight: paperHeight
   }).then(function (canvas) {
     function appendCanvas() {
       const pageContent = document.getElementById('primary-content');
