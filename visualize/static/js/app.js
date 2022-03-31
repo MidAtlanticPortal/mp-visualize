@@ -412,104 +412,91 @@ function returnPxOver(pxOver) {
 
 $('#btn-print').click(function() {
   $('#print-modal').modal('show');
-});
+  var exportButton = document.getElementById('export-pdf');
 
-$('#export-pdf').click(function() {
+  exportButton.addEventListener('click', function() {
 
-  const dims = {
-    a0: [1189, 841],
-    a1: [841, 594],
-    a2: [594, 420],
-    a3: [420, 297],
-    a4: [297, 210],
-    a5: [210, 148],
-    letter: [216, 279],
-    legal: [216, 356]
-  };
+    const dims = {
+      a0: [1189, 841],
+      a1: [841, 594],
+      a2: [594, 420],
+      a3: [420, 297],
+      a4: [297, 210],
+      a5: [210, 148],
+      letter: [216, 279],
+      legal: [216, 356]
+    };
+
+    // Show Attribution if hidden:
+    var attribution_state = app.wrapper.controls.getAttributionState();
+    app.wrapper.controls.setAttributionState('show');
+    
+    // disable print button and show loading spinner
+    exportButton.disabled = true;
+    document.body.style.cursor = 'progress';
 
 
-  // export options for html2canvase.
-  // See: https://html2canvas.hertzen.com/configuration
-  const exportOptions = {
-    useCORS: true,
-    ignoreElements: function (element) {
-      const className = element.className || '';
-      return !(
-        className.indexOf('ol-control') === -1 ||
-        className.indexOf('ol-scale') > -1 ||
-        (className.indexOf('ol-attribution') > -1 &&
-          className.indexOf('ol-uncollapsible'))
+    const format = document.getElementById('format').value;
+    const resolution = document.getElementById('resolution').value;
+    const dim = dims[format];
+    const width = Math.round((dim[0] * resolution) / 25.4);
+    const height = Math.round((dim[1] * resolution) / 25.4);
+    const size = app.map.getSize();
+    const viewResolution = app.map.getView().getResolution();
+
+    app.map.once('rendercomplete', function () {
+      const mapCanvas = document.createElement('canvas');
+      mapCanvas.width = width;
+      mapCanvas.height = height;
+      const mapContext = mapCanvas.getContext('2d');
+      Array.prototype.forEach.call(
+        document.querySelectorAll('.ol-layer canvas'),
+        function (canvas) {
+          if (canvas.width > 0) {
+            const opacity = canvas.parentNode.style.opacity;
+            mapContext.globalAlpha = opacity === '' ? 1 : Number(opacity);
+            const transform = canvas.style.transform;
+            // Get the transform parameters from the style's transform matrix
+            const matrix = transform
+              .match(/^matrix\(([^\(]*)\)$/)[1]
+              .split(',')
+              .map(Number);
+            // Apply the transform to the export map context
+            CanvasRenderingContext2D.prototype.setTransform.apply(
+              mapContext,
+              matrix
+            );
+            mapContext.drawImage(canvas, 0, 0);
+          }
+        }
       );
-    },
-  };
-
-  // Show Attribution if hidden:
-  var attribution_state = app.wrapper.controls.getAttributionState();
-  app.wrapper.controls.setAttributionState('show');
-  
-  // disable print button and show loading spinner
-  $(this).attr('disabled', 'disabled');
-  document.body.style.cursor = 'progress';
-
-  const format = document.getElementById('format').value;
-  const resolution = document.getElementById('resolution').value;
-  const scale = document.getElementById('scale').value;
-  const dim = dims[format];
-  const width = Math.round((dim[0] * resolution) / 25.4);
-  const height = Math.round((dim[1] * resolution) / 25.4);
-  const viewResolution = app.map.getView().getResolution();
-  const scaleResolution = scale / ol.proj.getPointResolution(
-      app.map.getView().getProjection(),
-      resolution / 25.4,
-      app.map.getView().getCenter()
-  );
-
-  app.map.once('rendercomplete', function () {
-    exportOptions.width = width;
-    exportOptions.height = height;
-    html2canvas(app.map.getViewport(), exportOptions).then(function (canvas) {
-      // var mapImage = canvas.toDataURL('image/jpeg');
-      var dataURL = canvas.toDataURL("image/jpeg", 1.0);
-
-      downloadImage(dataURL, 'my-canvas.jpeg');
-      
-      // const pdf = new jspdf.jsPDF('landscape', undefined, format);
-      // pdf.addImage(
-      //   canvas.toDataURL('image/jpeg'),
-      //   'JPEG',
-      //   0,
-      //   0,
-      //   dim[0],
-      //   dim[1]
-      // );
-      // pdf.save('map.pdf');
+      mapContext.globalAlpha = 1;
+      const pdf = new jspdf.jsPDF('landscape', undefined, format);
+      pdf.addImage(
+        mapCanvas.toDataURL('image/jpeg'),
+        'JPEG',
+        0,
+        0,
+        dim[0],
+        dim[1]
+      );
+      pdf.save('map.pdf');
       // Reset original map size
-      app.map.getTargetElement().style.width = '';
-      app.map.getTargetElement().style.height = '';
-      app.map.updateSize();
+      app.map.setSize(size);
       app.map.getView().setResolution(viewResolution);
-      $(this).attr('disabled', 'false');
+      
+      exportButton.disabled = false;
       document.body.style.cursor = 'auto';
       app.wrapper.controls.setAttributionState(attribution_state);
     });
-  });
 
-  // Set print size
-  app.map.getTargetElement().style.width = width + 'px';
-  app.map.getTargetElement().style.height = height + 'px';
-  app.map.updateSize();
-  app.map.getView().setResolution(scaleResolution);
-    
-  // ---- Old CODE
-  
-    // function appendCanvas() {
-    //   const pageContent = document.getElementById('primary-content');
-    //   const pageHeader = document.querySelector('header');
-    //   pageContent.style.display = 'none';
-    //   pageHeader.style.display = 'none';
-    //   document.body.appendChild(canvas);
-    //   return true;
-    // }
+    // Set print size
+    const printSize = [width, height];
+    app.map.setSize(printSize);
+    const scaling = Math.min(width / size[0], height / size[1]);
+    app.map.getView().setResolution(viewResolution / scaling);
+
+  }, false);
 });
 
 function downloadImage(data, filename = 'untitled.jpeg') {
