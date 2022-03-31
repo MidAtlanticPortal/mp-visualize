@@ -411,6 +411,10 @@ function returnPxOver(pxOver) {
 };
 
 $('#btn-print').click(function() {
+  $('#print-modal').modal('show');
+});
+
+$('#export-pdf').click(function() {
 
   const dims = {
     a0: [1189, 841],
@@ -453,85 +457,68 @@ $('#btn-print').click(function() {
   const dim = dims[format];
   const width = Math.round((dim[0] * resolution) / 25.4);
   const height = Math.round((dim[1] * resolution) / 25.4);
-  const viewResolution = map.getView().getResolution();
-  const scaleResolution =
-    scale /
-    getPointResolution(
-      map.getView().getProjection(),
+  const viewResolution = app.map.getView().getResolution();
+  const scaleResolution = scale / ol.proj.getPointResolution(
+      app.map.getView().getProjection(),
       resolution / 25.4,
-      map.getView().getCenter()
+      app.map.getView().getCenter()
   );
 
-  map.once('rendercomplete', function () {
+  app.map.once('rendercomplete', function () {
     exportOptions.width = width;
     exportOptions.height = height;
-    html2canvas(map.getViewport(), exportOptions).then(function (canvas) {
-      const pdf = new jspdf.jsPDF('landscape', undefined, format);
-      pdf.addImage(
-        canvas.toDataURL('image/jpeg'),
-        'JPEG',
-        0,
-        0,
-        dim[0],
-        dim[1]
-      );
-      pdf.save('map.pdf');
+    html2canvas(app.map.getViewport(), exportOptions).then(function (canvas) {
+      // var mapImage = canvas.toDataURL('image/jpeg');
+      var dataURL = canvas.toDataURL("image/jpeg", 1.0);
+
+      downloadImage(dataURL, 'my-canvas.jpeg');
+      
+      // const pdf = new jspdf.jsPDF('landscape', undefined, format);
+      // pdf.addImage(
+      //   canvas.toDataURL('image/jpeg'),
+      //   'JPEG',
+      //   0,
+      //   0,
+      //   dim[0],
+      //   dim[1]
+      // );
+      // pdf.save('map.pdf');
       // Reset original map size
-      scaleLine.setDpi();
-      map.getTargetElement().style.width = '';
-      map.getTargetElement().style.height = '';
-      map.updateSize();
-      map.getView().setResolution(viewResolution);
+      app.map.getTargetElement().style.width = '';
+      app.map.getTargetElement().style.height = '';
+      app.map.updateSize();
+      app.map.getView().setResolution(viewResolution);
       $(this).attr('disabled', 'false');
       document.body.style.cursor = 'auto';
+      app.wrapper.controls.setAttributionState(attribution_state);
     });
   });
 
   // Set print size
-  scaleLine.setDpi(resolution);
-  map.getTargetElement().style.width = width + 'px';
-  map.getTargetElement().style.height = height + 'px';
-  map.updateSize();
-  map.getView().setResolution(scaleResolution);
+  app.map.getTargetElement().style.width = width + 'px';
+  app.map.getTargetElement().style.height = height + 'px';
+  app.map.updateSize();
+  app.map.getView().setResolution(scaleResolution);
     
   // ---- Old CODE
-  html2canvas(document.body, {
-    // allowTaint: true,
-    useCORS: true,
-    ignoreElements: function (element) {
-      const className = element.className || '';
-      return !(
-        className.indexOf('ol-control') === -1 ||
-        className.indexOf('ol-scale') > -1 ||
-        (className.indexOf('ol-attribution') > -1 &&
-          className.indexOf('ol-uncollapsible'))
-      );
-    },
-    // windowWidth: paperWidth,
-    // windowHeight: paperHeight
-  }).then(function (canvas) {
-    function appendCanvas() {
-      const pageContent = document.getElementById('primary-content');
-      const pageHeader = document.querySelector('header');
-      pageContent.style.display = 'none';
-      pageHeader.style.display = 'none';
-      document.body.appendChild(canvas);
-      return true;
-    }
-    if (appendCanvas()) {
-      printPage();
-    } else {
-      alert('ERROR: Could not print page.');
-    }
-    // pageContent.style.display = 'block';
-    // pageHeader.style.display = 'block';
-    $(this).attr('disabled', '');
-    app.wrapper.controls.setAttributionState(attribution_state);
-    document.body.style.cursor = 'auto';
-    // const exportImage = canvas.toDataURL('image/png');
-    // imgTag.save('map.png');
-  });
+  
+    // function appendCanvas() {
+    //   const pageContent = document.getElementById('primary-content');
+    //   const pageHeader = document.querySelector('header');
+    //   pageContent.style.display = 'none';
+    //   pageHeader.style.display = 'none';
+    //   document.body.appendChild(canvas);
+    //   return true;
+    // }
 });
+
+function downloadImage(data, filename = 'untitled.jpeg') {
+  var a = document.createElement('a');
+  a.href = data;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+}
 
 function printPage() {
   window.print();
