@@ -53,6 +53,18 @@
                 }
             };
 
+            function hideOptions() {
+                var hidden_options = [
+                    "radio",
+                    "checkbox",
+                    "placeholder",
+                    "WMS",  // Too hard for now...
+                ];
+                for (var i = 0; i < hidden_options.length; i++) {
+                    $('option[value="' + hidden_options[i] + '"]').css({'display':'none',});
+                }
+            }
+
             $('#button_prev').click( function() { wizard('prev'); });
             $('#button_next').click( function() { wizard('next'); });
             step = 1;
@@ -60,6 +72,7 @@
                 step = 2; // form errors exist
             {% endif %}
             wizard();
+            hideOptions();
 
 
             $('#id_name').keypress(function (e) {
