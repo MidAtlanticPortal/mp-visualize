@@ -63,7 +63,20 @@
                 for (var i = 0; i < hidden_options.length; i++) {
                     $('option[value="' + hidden_options[i] + '"]').css({'display':'none',});
                 }
+                $('#id_layer_type').change();
+
             }
+
+            $('#id_layer_type').change(function() {
+                var layer_type_selected = $('#id_layer_type').val();
+                var arclayer_types = ['ArcRest', 'ArcFeatureServer'];
+
+                if (arclayer_types.indexOf(layer_type_selected) >= 0) {
+                    $('#arcgis-layer-field').css({'display':'inherit',});
+                } else {
+                    $('#arcgis-layer-field').css({'display':'none',});
+                }
+            })
 
             $('#button_prev').click( function() { wizard('prev'); });
             $('#button_next').click( function() { wizard('next'); });
@@ -98,15 +111,8 @@
         <div id="error_bar"></div>
 
         <div id="step1" class="step">
-            <p class="step-text"><i>Step 1 of 2 </i>
-            <!-- <label>Layer Source URL:<br>
-                <input id="new_user_layer_url"
-                        data-bind="value: app.viewModel.userLayers.newUserLayerUrl"
-                        type="text"
-                        class="input form-control"
-                        placeholder="https://path.to.layer/export"
-                        required>
-            </label> -->
+            <p class="step-text"><i>Step 1 of 2 </i></p>
+            <label>Source URL Endpoint:</label>
             <p class="instructions">Provide the URL and layer type for your source:</p>
             <div class="step1-inputs">
                 <div class="step1-param">
@@ -114,35 +120,23 @@
                     {{ form.url }}
                 </div>
             </div>
+            <label>Layer Source Type:</label>
             <div class="step1-inputs">
                 <div class="step1-param">
                     {{ form.layer_type.errors }}
                     {{ form.layer_type }}
                 </div>
             </div>
-            <!-- <label>Layer Source Type:<br>
-            </label>
-            <select id="new_user_layer_type" name="layer_type"
-                    data-bind="value: app.viewModel.userLayers.newUserLayerLayerType, options: app.viewModel.userLayers.layerTypes"
-                    class="form-control"
-                    placeholder="ArcRest"
-                    required>
-            </select> -->
-            <p class="instructions">Provide the layer IDs (separate with commas, if more than 1) for your ArcServer layers:</p>
-            <div class="step1-inputs">
-                <div class="step1-param">
-                    {{ form.arcgis_layers.errors }}
-                    {{ form.arcgis_layers }}
+
+            <div id="arcgis-layer-field">
+                <p class="instructions">Provide the layer IDs (separate with commas, if more than 1) for your ArcServer layers:</p>
+                <div class="step1-inputs">
+                    <div class="step1-param">
+                        {{ form.arcgis_layers.errors }}
+                        {{ form.arcgis_layers }}
+                    </div>
                 </div>
             </div>
-            <!-- <label>ArcGIS Layer IDs:<br>
-                <input id="new_user_layer_arcgis_layers"
-                        data-bind="value: app.viewModel.userLayers.newUserLayerArcGISLayers"
-                        type="text"
-                        class="input form-control"
-                        placeholder="Description"
-                >
-            </label> -->
         </div>
 
         <div class="step" id="step2">
