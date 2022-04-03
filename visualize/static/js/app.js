@@ -415,7 +415,7 @@ $('#btn-print').click(function() {
   var exportButton = document.getElementById('export-pdf');
 
   exportButton.addEventListener('click', function() {
-
+  
     const dims = {
       a0: [1189, 841],
       a1: [841, 594],
@@ -423,8 +423,8 @@ $('#btn-print').click(function() {
       a3: [420, 297],
       a4: [297, 210],
       a5: [210, 148],
-      letter: [216, 279],
-      legal: [216, 356]
+      letter: [279, 216 ],
+      legal: [356, 216]
     };
 
     // Show Attribution if hidden:
@@ -443,7 +443,7 @@ $('#btn-print').click(function() {
     const height = Math.round((dim[1] * resolution) / 25.4);
     const size = app.map.getSize();
     const viewResolution = app.map.getView().getResolution();
-
+    
     app.map.once('rendercomplete', function () {
       const mapCanvas = document.createElement('canvas');
       mapCanvas.width = width;
@@ -471,16 +471,43 @@ $('#btn-print').click(function() {
         }
       );
       mapContext.globalAlpha = 1;
-      const pdf = new jspdf.jsPDF('landscape', undefined, format);
-      pdf.addImage(
-        mapCanvas.toDataURL('image/jpeg'),
-        'JPEG',
-        0,
-        0,
-        dim[0],
-        dim[1]
-      );
-      pdf.save('map.pdf');
+
+      // Create legend canvas
+      html2canvas(document.getElementById('map-wrapper'), {
+        useCORS: true,
+        ignoreElements: function(element) {
+          var className = element.className || "";
+          return !(
+            className.indexOf("embedded-legend-wrapper") > -1 ||
+            className.indexOf("ol-attribution") > -1
+          )
+        }
+      }).then(function(legendCanvas) {
+        // Create PDF
+        const pdf = new jspdf.jsPDF('landscape', undefined, format);
+        // Add the map canvas to the PDF
+        pdf.addImage(
+          mapCanvas.toDataURL('image/png'), // canvas to image
+          'PNG', // image type
+          0, // x position
+          0, // y position
+          dim[0], // width
+          dim[1] // height
+        );
+        // Add page for legend image
+        pdf.addPage();
+        pdf.addImage(
+          legendCanvas.toDataURL('image/png'),
+          'PNG',
+          5,
+          5
+        )
+        // Auto print
+        pdf.autoPrint({variant: 'non-conform'});
+        pdf.save('map.pdf');
+
+      });
+
       // Reset original map size
       app.map.setSize(size);
       app.map.getView().setResolution(viewResolution);
