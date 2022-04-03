@@ -475,13 +475,10 @@ $('#btn-print').click(function() {
       // Create legend canvas
       html2canvas(document.getElementById('map-wrapper'), {
         useCORS: true,
-        ignoreElements: function(element) {
-          var className = element.className || "";
-          return !(
-            className.indexOf("embedded-legend-wrapper") > -1 ||
-            className.indexOf("ol-attribution") > -1
-          )
-        }
+        // ignoreElements: (element) => {
+        //   var classy = element.className || '';
+        //   return !classy.includes('printable')
+        // }
       }).then(function(legendCanvas) {
         // Create PDF
         const pdf = new jspdf.jsPDF('landscape', undefined, format);

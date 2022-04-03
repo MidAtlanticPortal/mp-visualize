@@ -99,7 +99,7 @@
                 </div>
 
                 <!-- Aggregated Attribution Overlay -->
-                <div id="aggregated-attribute-overlay" data-bind="visible: aggregatedAttributes && showFeatureAttribution, style: {width: aggregatedAttributesWidth}" style="display: none">
+                <div id="aggregated-attribute-overlay" class="printable" data-bind="visible: aggregatedAttributes && showFeatureAttribution, style: {width: aggregatedAttributesWidth}" style="display: none">
                     <div id="aggregated-attribute-heading">
                         <h4>Available Information</h4>
                     </div>
@@ -333,7 +333,7 @@
                                       <!-- END DESIGNS TAB -->
                                       <!-- LEGEND TAB -->
                                       <div class="tab-pane" id="legend">
-                                          <div id="embedded-legend-wrapper">
+                                          <div id="embedded-legend-wrapper" class="printable">
                                               <div id="embedded-legend-content">
                                                   <div style="padding: 10px">
                                                       <div data-bind="visible: activeLegendLayers().length == 0">
