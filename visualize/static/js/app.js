@@ -522,10 +522,10 @@ $('#btn-print').click(function () {
         pdf.addImage(
           anImage,
           'PNG',
-          5,
-          5,
-          0,
-          0
+          10,
+          10,
+          dim[0] - 20,
+          dim[1] - 20
         );
       });
 
