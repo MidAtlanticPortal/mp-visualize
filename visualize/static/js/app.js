@@ -413,6 +413,36 @@ function returnPxOver(pxOver) {
 $('#btn-print').click(function() {
   $('#print-modal').modal('show');
   var exportButton = document.getElementById('export-pdf');
+  // Show Attribution if hidden:
+  var attribution_state = app.wrapper.controls.getAttributionState();
+  app.wrapper.controls.setAttributionState('show');
+  document.querySelector('.ol-attribution').classList.add('printable');
+  
+  // Show legend panel
+  document.getElementById('legendTab').click();
+  /*-------------------------------
+    Start creating printable images
+    -------------------------------*/
+  canvasImages = [];
+
+  function createCanvas(el) {
+    html2canvas(el, {
+      useCORS: true,
+    }).then(function(elCanvas) {
+      var elImg = elCanvas.toDataURL("image/png");
+      canvasImages.push(elImg);
+    });
+  }
+
+  // Create legend canvas
+  printables = document.querySelectorAll('.printable');
+  
+  for (let i; i < printables.length; i++) {
+    createCanvas(printables[i]);
+  };
+  /*------------------------------
+    End creating printable images
+    -----------------------------*/
 
   exportButton.addEventListener('click', function() {
   
@@ -427,10 +457,6 @@ $('#btn-print').click(function() {
       legal: [356, 216]
     };
 
-    // Show Attribution if hidden:
-    var attribution_state = app.wrapper.controls.getAttributionState();
-    app.wrapper.controls.setAttributionState('show');
-    
     // disable print button and show loading spinner
     exportButton.disabled = true;
     document.body.style.cursor = 'progress';
@@ -443,7 +469,7 @@ $('#btn-print').click(function() {
     const height = Math.round((dim[1] * resolution) / 25.4);
     const size = app.map.getSize();
     const viewResolution = app.map.getView().getResolution();
-    
+
     app.map.once('rendercomplete', function () {
       const mapCanvas = document.createElement('canvas');
       mapCanvas.width = width;
@@ -471,39 +497,42 @@ $('#btn-print').click(function() {
         }
       );
       mapContext.globalAlpha = 1;
+      
+      console.log(canvasImages);
 
-      // Create legend canvas
-      html2canvas(document.getElementById('map-wrapper'), {
-        useCORS: true,
-        // ignoreElements: (element) => {
-        //   var classy = element.className || '';
-        //   return !classy.includes('printable')
-        // }
-      }).then(function(legendCanvas) {
-        // Create PDF
-        const pdf = new jspdf.jsPDF('landscape', undefined, format);
-        // Add the map canvas to the PDF
-        pdf.addImage(
-          mapCanvas.toDataURL('image/png'), // canvas to image
-          'PNG', // image type
-          0, // x position
-          0, // y position
-          dim[0], // width
-          dim[1] // height
-        );
-        // Add page for legend image
+      // html2canvas( {
+      //   useCORS: true
+      // }).then(function(legendCanvas) {
+      //   // Create PDF
+      const pdf = new jspdf.jsPDF('landscape', undefined, format);
+      //  Add map
+      pdf.addImage(
+        mapCanvas.toDataURL('image/png'), // canvas to image
+        'PNG', // image type
+        0, // x position
+        0, // y position
+        dim[0], // width
+        dim[1] // height
+      );
+
+      // Add the map canvas to the PDF
+      canvasImages.forEach(function(anImage) {
+        // Add page for each printable image
+        console.log(anImage);
         pdf.addPage();
         pdf.addImage(
-          legendCanvas.toDataURL('image/png'),
+          anImage,
           'PNG',
           5,
           5
         )
+      });
+
         // Auto print
         pdf.autoPrint({variant: 'non-conform'});
         pdf.save('map.pdf');
 
-      });
+      // });
 
       // Reset original map size
       app.map.setSize(size);
