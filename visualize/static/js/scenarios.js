@@ -83,12 +83,13 @@ var madrona = {
                 type: 'POST',
                 dataType: 'json',
                 success: function(result) {
-                    app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
+                    if (result['X-Madrona-Show'].indexOf('visualize_userlayer_') >= 0) {
+                        app.viewModel.userLayers.finishAddingUserLayer(result);
+                    } else {
+                        app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
+                    }
                     app.viewModel.scenarios.loadingMessage(false);
                     clearInterval(barTimer);
-                    if (result.Location.indexOf('visualize_userlayer_') >= 0) {
-                        app.viewModel.userLayers.finishAddingUserLayer(result);
-                    }
                 },
                 error: function(result) {
                     app.viewModel.scenarios.loadingMessage(null);

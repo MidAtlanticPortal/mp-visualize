@@ -75,6 +75,14 @@ function userLayerModel(options) {
         return host + "#userlayer=" + self.id.replace(/\D/g,''); //We just want the integer ID, this strips away all non-numeric text
     };
 
+    self.active = function() {
+        if (app.viewModel.getLayerById(self.id)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     return self;
 
 }   // end of userLayerModel
@@ -128,6 +136,29 @@ function userLayersModel(options) {
             }
         });
     };
+
+    self.editUserLayer = function(userLayer){
+        if ( !userLayer.active() ) {
+            self.toggleUserLayer(userLayer);
+        }
+
+        return $.ajax({
+            url: '/features/userlayer/' + userLayer.uid + '/form/',
+            success: function(data) {
+                self.userLayerForm(true);
+                app.viewModel.scenarios.userLayerForm(true);
+                self.userLayerFormModel = new userLayerFormModelConstructor();
+
+                $('#user-layer-form').html(data);
+                ko.applyBindings(self.userLayerFormModel, document.getElementById('user-layer-form'));
+
+                app.viewModel.userLayers.userLayerFormModel.showEdit(true);
+            },
+            error: function (result) {
+                //debugger;
+            }
+        });
+    }
 
     self.removeUserLayerForm = function(obj) {
         app.viewModel.hideUserLayersForm();
@@ -319,13 +350,27 @@ function userLayersModel(options) {
                 app.viewModel.userLayers.initializeNewUserLayer(app.viewModel.userLayers.search_layer_id);
             }, 100);
         } else {
-            self.toggleUserLayer(user_layer);
+            if (!user_layer.active()) {
+                self.toggleUserLayer(user_layer);
+            }
         }
     };
 
     self.finishAddingUserLayer = function(result) {
+        var layer_id = result["X-Madrona-Show"];
+        existing_userlayer = self.getUserLayerById(layer_id);
+        if (existing_userlayer) {
+            if (existing_userlayer.hasOwnProperty('layer') && existing_userlayer.layer()) {
+                existing_userlayer.layer().deactivateLayer();
+                existing_userlayer.layer(false);
+            }
+            if (Object.keys(app.viewModel.layerIndex).indexOf(layer_id) >= 0) {
+                delete app.viewModel.layerIndex[layer_id];
+            }
+        }
         app.viewModel.userLayers.removeUserLayerForm();
-        user_layer = self.initializeNewUserLayer(result["X-Madrona-Show"]); 
+        self.purgeUserLayerById(layer_id);
+        user_layer = self.initializeNewUserLayer(layer_id); 
     }
 
     self.getUserLayerById = function(userlayer_id) {
@@ -337,6 +382,23 @@ function userLayersModel(options) {
         }
         return null;
     };
+
+    self.purgeUserLayerById = function(userlayer_id) {
+        var layers = self.userLayersList();
+        for (var i= 0; i < layers.length; i++) {
+            if (layers[i].id == userlayer_id) {
+                self.userLayersList().splice(i, 1);
+                break;
+            }
+        }
+        var layers = app.viewModel.activeLayers();
+        for (var i = 0; i < layers.length; i++) {
+            if (layers[i].id == userlayer_id) {
+                layers[i].deactivateLayer();
+                break;
+            }
+        }
+    }
 
     self.submitShare = function() {
         self.sharingUserLayer().selectedGroups(self.sharingUserLayer().temporarilySelectedGroups());
@@ -382,7 +444,9 @@ function userLayersModel(options) {
                             }
                         }
                     }
-                    self.toggleUserLayer(user_layer);
+                    if (!user_layer.active()) {
+                        self.toggleUserLayer(user_layer);
+                    }
                 }
                 
                 if ( user_layer) {
@@ -425,6 +489,7 @@ function userLayerFormModelConstructor(options) {
     self.newUserLayerName = ko.observable();
     self.duplicateUserLayer = ko.observable(false);
     self.newUserLayerDescription = ko.observable();
+    self.showEdit = ko.observable(false);
 
     return self;
 }
