@@ -519,6 +519,7 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
       $.ajax({
         url: url,
         dataType: 'jsonp',
+        crossDomain: true,
         success: function (response) {
           if (response.error) {
             alert(
@@ -541,6 +542,7 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
         tileSize: 512,
       })
     ),
+    crossOrigin: 'anonymous'
   });
 
   layer.layer = new ol.layer.Vector({
@@ -554,6 +556,7 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
 
   $.ajax({
     dataType: "jsonp",
+    crossDomain: true,
     url: request_url,
     'success': function(response){
       createStyleFunction(response)
@@ -989,7 +992,8 @@ app.wrapper.map.addVectorLayerToMap = function(layer) {
   layer.layer = new ol.layer.Vector({
         source: new ol.source.Vector({
           url: layer.url,
-          format: new ol.format.GeoJSON()
+          format: new ol.format.GeoJSON(),
+          crossOrigin: 'anonymous'
         }),
         style: app.wrapper.map.getLayerStyle,
         strategy: new ol.loadingstrategy.all(),
@@ -1067,6 +1071,7 @@ app.wrapper.map.addWMSLayerToMap = function(layer) {
     url: wms_url,
     hidpi: false,
     params: layer_params,
+    crossOrigin: 'anonymous'
   });
 
   layer.layer = new ol.layer.Tile({
@@ -1097,6 +1102,7 @@ app.wrapper.map.addVectorTileLayerToMap = function(layer) {
       format: new ol.format.MVT({
         featureClass: ol.Feature
       }),
+      crossOrigin: 'anonymous',
       url: layerUrl
     });
 
@@ -1125,6 +1131,7 @@ app.wrapper.map.addXYZLayerToMap = function(layer){
 
   var layerSource = new ol.source.XYZ({
     url: layerUrl,
+    crossOrigin: 'anonymous'
   });
   layer.layer = new ol.layer.Tile({
     source: layerSource,

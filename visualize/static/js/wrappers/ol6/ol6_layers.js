@@ -2,21 +2,21 @@ for (var i = 0; i < app.wrapper.baseLayers.length; i++) {
   var baseLayer = app.wrapper.baseLayers[i];
   if (baseLayer.technology == 'OSM') {
     var source = new ol.source.OSM({
-      crossOrigin: 'Anonymous'
+      crossOrigin: 'anonymous'
     });
   } else if (baseLayer.technology == 'ArcGIS') {
     var source = new ol.source.TileArcGISRest({
       url: baseLayer.url,
       projection: baseLayer.projection,
       params: baseLayer.params,
-      crossOrigin: 'Anonymous'
+      crossOrigin: 'anonymous'
     })
   } else {
     // assume 'XYZ' by default
     var source = new ol.source.XYZ({
       attributions: baseLayer.attribution,
       url: baseLayer.url,
-      crossOrigin: 'Anonymous'
+      crossOrigin: 'anonymous'
     });
   }
   app.wrapper.layers[baseLayer.name] = new ol.layer.Tile({
@@ -49,7 +49,7 @@ app.wrapper.map.defaultBaseLayer = new ol.layer.Tile({
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/' +
               'World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
     maxZoom: 19,
-    crossOrigin: 'Anonymous'
+    crossOrigin: 'anonymous'
   }),
   useInterimTilesOnError: false,
   zIndex: 0

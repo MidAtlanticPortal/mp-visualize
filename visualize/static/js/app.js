@@ -417,6 +417,8 @@ $('#btn-print').click(function () {
   var attribution_state = app.wrapper.controls.getAttributionState();
   app.wrapper.controls.setAttributionState('show');
   document.querySelector('.ol-attribution').classList.add('printable');
+  
+  document.body.style.cursor = 'progress';
 
   // Show legend panel
   document.getElementById('legendTab').click();
@@ -430,9 +432,10 @@ $('#btn-print').click(function () {
     html2canvas(el, {
       useCORS: true,
     }).then(function (elCanvas) {
-      var elImg = elCanvas.toDataURL("image/png");
-      canvasImages.push(elImg);
-      exportButton.disabled = false;
+      if (elCanvas) {
+        var elImg = elCanvas.toDataURL("image/png");
+        canvasImages.push(elImg);
+      }
     });
   };
   // Create legend canvas
@@ -443,13 +446,14 @@ $('#btn-print').click(function () {
   /*------------------------------
     End creating printable images
   -----------------------------*/
-  
+  exportButton.disabled = false;
+  document.body.style.cursor = 'auto';
+
   // Create pdf on button click
   exportButton.addEventListener('click', function () {
 
     // disable export pdf button and show loading spinner
     exportButton.disabled = true;
-    document.body.style.cursor = 'progress';
 
     // paper sizes available in millimeters (mm)
     const dims = {

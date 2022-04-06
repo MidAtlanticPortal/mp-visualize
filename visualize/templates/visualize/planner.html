@@ -333,7 +333,7 @@
                                       <!-- END DESIGNS TAB -->
                                       <!-- LEGEND TAB -->
                                       <div class="tab-pane" id="legend">
-                                          <div id="embedded-legend-wrapper" class="printable">
+                                          <div id="embedded-legend-wrapper">
                                               <div id="embedded-legend-content">
                                                   <div style="padding: 10px">
                                                       <div data-bind="visible: activeLegendLayers().length == 0">
@@ -342,7 +342,7 @@
 
                                                       <div data-bind="foreach: activeLegendLayers">
                                                       <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
-                                                          <div style="padding-bottom: 18px;">
+                                                          <div class="printable" style="padding-bottom: 18px;">
                                                               <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
                                                               <p class="legend-subtitle" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
                                                               <span data-bind="if: legend">
