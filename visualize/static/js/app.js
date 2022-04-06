@@ -420,32 +420,38 @@ $('#btn-print').click(function () {
 
   // Show legend panel
   document.getElementById('legendTab').click();
+
   /*-------------------------------
     Start creating printable images
-    -------------------------------*/
+  -------------------------------*/
   canvasImages = [];
-
+  exportButton.disabled = true;
   function createCanvas(el) {
     html2canvas(el, {
       useCORS: true,
     }).then(function (elCanvas) {
       var elImg = elCanvas.toDataURL("image/png");
       canvasImages.push(elImg);
+      exportButton.disabled = false;
     });
-  }
-
+  };
   // Create legend canvas
   printables = document.querySelectorAll('.printable');
-
   for (var i = 0; i < printables.length; i++) {
     createCanvas(printables[i]);
   };
   /*------------------------------
     End creating printable images
-    -----------------------------*/
-
+  -----------------------------*/
+  
+  // Create pdf on button click
   exportButton.addEventListener('click', function () {
 
+    // disable export pdf button and show loading spinner
+    exportButton.disabled = true;
+    document.body.style.cursor = 'progress';
+
+    // paper sizes available in millimeters (mm)
     const dims = {
       a0: [1189, 841],
       a1: [841, 594],
@@ -457,16 +463,13 @@ $('#btn-print').click(function () {
       legal: [356, 216]
     };
 
-    // disable print button and show loading spinner
-    exportButton.disabled = true;
-    document.body.style.cursor = 'progress';
-
-
     const format = document.getElementById('format').value;
     const resolution = document.getElementById('resolution').value;
     const dim = dims[format];
     const width = Math.round((dim[0] * resolution) / 25.4);
     const height = Math.round((dim[1] * resolution) / 25.4);
+    // make legend half the page width
+    const legendWidth = dim[0] / 2;
     const size = app.map.getSize();
     const viewResolution = app.map.getView().getResolution();
 
@@ -499,16 +502,12 @@ $('#btn-print').click(function () {
       mapContext.globalAlpha = 1;
 
       // Create PDF
-      const pdf = new jspdf.jsPDF({
-        orientation: "landscape",
-        unit: "mm",
-        format: format
-      });
+      const pdf = new jspdf.jsPDF("landscape", undefined, format);
       
       //  Add map
       pdf.addImage(
-        mapCanvas.toDataURL('image/png'),
-        'PNG',
+        mapCanvas.toDataURL('image/jpeg'),
+        'JPEG',
         0,
         0,
         dim[0],
@@ -522,15 +521,17 @@ $('#btn-print').click(function () {
         pdf.addImage(
           anImage,
           'PNG',
-          10,
-          10,
-          dim[0] - 20,
-          dim[1] - 20
+          0,
+          0,
+          legendWidth,
+          0,
+          '',
+          'MEDIUM'
         );
       });
 
       // Auto print
-      // pdf.autoPrint();
+      pdf.autoPrint();
       pdf.save('map.pdf');
 
       // });
