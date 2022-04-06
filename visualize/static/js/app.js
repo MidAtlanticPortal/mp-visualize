@@ -473,7 +473,7 @@ $('#btn-print').click(function () {
     const width = Math.round((dim[0] * resolution) / 25.4);
     const height = Math.round((dim[1] * resolution) / 25.4);
     // make legend half the page width
-    const legendWidth = dim[0] / 2;
+    const legendWidth = dim[0] / 2.5;
     const size = app.map.getSize();
     const viewResolution = app.map.getView().getResolution();
 
