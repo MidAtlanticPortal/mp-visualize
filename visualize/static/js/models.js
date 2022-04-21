@@ -1994,7 +1994,12 @@ function viewModel() {
       var visible_layers = self.visibleLayers();
       var user_content_found = false;
       for (var i = 0; i < visible_layers.length; i++) {
-        if (typeof visible_layers[i].id == "string" && visible_layers[i].id.indexOf('visualize_userlayer_') >= 0) {
+        if (typeof visible_layers[i].id == "string" && 
+          (
+            visible_layers[i].id.indexOf('visualize_userlayer_') >= 0 ||
+            visible_layers[i].id.indexOf('drawing_aoi_') >= 0
+          )
+        ) {
           user_content_found = true;
           break;
         }
