@@ -1988,9 +1988,26 @@ function viewModel() {
         });
     });
 
+    self.userContentVisible = ko.observable(false);
+
+    self.updateUserContentWarning = function() {
+      var visible_layers = self.visibleLayers();
+      var user_content_found = false;
+      for (var i = 0; i < visible_layers.length; i++) {
+        if (typeof visible_layers[i].id == "string" && visible_layers[i].id.indexOf('visualize_userlayer_') >= 0) {
+          user_content_found = true;
+          break;
+        }
+      }
+      self.userContentVisible(user_content_found);
+    }
+
     self.visibleLayers.subscribe( function() {
         self.updateAttributeLayers();
+        self.updateUserContentWarning();
     });
+
+
 
     // Legends relied on 'visibleLayers' to determine what to show.
     // Multilayers are left out of 'visibleLayers' so that they don't appear

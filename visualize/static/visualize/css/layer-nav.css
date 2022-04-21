@@ -4,3 +4,17 @@ body.template-visualize .layer-info .layer-text {
   border: 1px solid #CCC;
   border-radius: 0.3rem;
 }
+
+#user-content-notice {
+  position: absolute;
+  color: white;
+  top: 1rem;
+  /* left: 25vw; */
+  left: 430px;
+  background-color: rgba(40,40, 150, 0.75);
+  border: 1px solid white;
+  border-radius: 0.4rem;
+  width: calc(100vw - 500px);
+  padding: 1rem;
+  font-size: 1.5rem;
+}
