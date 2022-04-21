@@ -2003,7 +2003,9 @@ function scenariosModel(options) {
                 sharedByName: drawing.shared_by_name,
                 sharingGroups: drawing.sharing_groups
             });
-            self.drawingList.push(drawingViewModel);
+            if (drawing.owned_by_user) {
+                self.drawingList.push(drawingViewModel);
+            }
             app.viewModel.layerIndex[drawing.uid] = drawingViewModel;
         });
         self.drawingList.sort(self.alphabetizeByName);
