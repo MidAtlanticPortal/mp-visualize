@@ -135,6 +135,7 @@ def show_mobile_map(request, template='mobile-map.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
     return render(request, template, context)
 
+# RDH 2022-04-21: The below view is nice, but isn't used currently. Use get_user_layers in rpc.py instead!
 def get_user_layers(request):
     json = []
 
@@ -151,7 +152,7 @@ def get_user_layers(request):
             for group in Group.objects.filter(name__in=settings.SHARING_TO_PUBLIC_GROUPS)
             if group in layer.sharing_groups.all()
         ]
-        sharing_groups = sharing_groups + public_groups
+        all_shared_groups = sharing_groups + public_groups
 
         json.append({
             'id': layer.id,
@@ -159,7 +160,9 @@ def get_user_layers(request):
             'name': layer.name,
             'description': layer.description,
             # 'attributes': layer.serialize_attributes(),
-            'sharing_groups': sharing_groups
+            'sharing_groups': all_shared_groups,
+            'shared_to_groups': sharing_groups,
+            'owned_by_user': True
         })
 
     try:
@@ -171,6 +174,26 @@ def get_user_layers(request):
         if layer not in layers:
             username = layer.user.username
             actual_name = layer.user.first_name + ' ' + layer.user.last_name
+
+            try:
+                permission_groups = [x.map_group.permission_group for x in request.user.mapgroupmember_set.all()]
+            except AttributeError as e:
+                # likely anonymous user, who will not have 'mapgroupmember_set'
+                permission_groups = []
+                pass
+            sharing_groups = [
+                group.mapgroup_set.get().name
+                for group in layer.sharing_groups.all()
+                if group.mapgroup_set.exists() and group in permission_groups
+            ]
+            owned_by_user = True if len(sharing_groups) > 0 else False
+            public_groups = [
+                group.name
+                for group in Group.objects.filter(name__in=settings.SHARING_TO_PUBLIC_GROUPS)
+                if group in layer.sharing_groups.all()
+            ]
+            all_shared_groups = sharing_groups + public_groups
+
             json.append({
                 'id': layer.id,
                 'uid': layer.uid,
@@ -179,7 +202,10 @@ def get_user_layers(request):
                 # 'attributes': layer.serialize_attributes(),
                 'shared': True,
                 'shared_by_username': username,
-                'shared_by_name': actual_name
+                'shared_by_name': actual_name,
+                'sharing_groups': all_shared_groups,
+                'shared_to_groups': sharing_groups,
+                'owned_by_user': owned_by_user
             })
 
     return HttpResponse(dumps(json))

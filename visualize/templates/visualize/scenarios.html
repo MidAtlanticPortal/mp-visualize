@@ -414,7 +414,7 @@
                                          data-bind="css: {'in': app.viewModel.isUserLayersOpen()}">
                                         <div class="accordion-inner"
                                              data-bind="with: app.viewModel.userLayers">
-                                            <div data-bind="visible: !userLayersList().length"
+                                            <div data-bind="visible: !visibleLayers().length"
                                                  style="font-weight: normal">
                                                 <div style="padding: 10px;">
                                                     <p>
@@ -448,9 +448,9 @@
 
                                                 </div>
                                             </div>
-                                            <div data-bind="visible: userLayersList().length > 0">
+                                            <div data-bind="visible: visibleLayers().length > 0">
                                                 <ul class="unstyled list"
-                                                    data-bind="foreach: userLayersList ">
+                                                    data-bind="foreach: visibleLayers ">
                                                     <li class="layer">
                                                         <table class="layer-row">
                                                             <tr>

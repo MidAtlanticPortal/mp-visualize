@@ -30,6 +30,8 @@ function userLayerModel(options) {
     // The groups that this object is shared with that we are a member of
     self.sharedToGroups = ko.observableArray(options.sharedToGroups);
 
+    self.ownedByUser = options.ownedByUser;
+
     if (options.shared) {
         self.shared(true);
         var s = ['Shared By',
@@ -115,6 +117,17 @@ function userLayersModel(options) {
 
     // check for duplicate naming
     self.duplicateUserLayer = ko.observable(false);
+
+    self.visibleLayers = ko.computed(function() {
+        var visible_layers = [];
+        for (var i = 0; i < self.userLayersList().length; i++) {
+            var layer = self.userLayersList()[i];
+            if (layer.ownedByUser || layer.sharedToGroups().length > 0) {
+                visible_layers.push(layer);
+            }
+        }
+        return visible_layers;
+      });
 
     self.createUserLayer = function() {
         self.loadingUserLayerForm(true);
@@ -326,7 +339,8 @@ function userLayersModel(options) {
                         sharedByUser: user_layers[i].shared_by_user,
                         sharedByName: user_layers[i].shared_by_name,
                         sharingGroups: user_layers[i].sharing_groups,
-                        sharedToGroups: user_layers[i].shared_to_groups
+                        sharedToGroups: user_layers[i].shared_to_groups,
+                        ownedByUser: user_layers[i].owned_by_user
                     });
                     self.userLayersList.push(user_layer);
                 }

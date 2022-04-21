@@ -186,22 +186,26 @@ def get_user_layers(**kwargs):
             for group in Group.objects.filter(name__in=settings.SHARING_TO_PUBLIC_GROUPS)
             if group in userLayer.sharing_groups.all()
         ]
-        sharing_groups = sharing_groups + public_groups
+        all_sharing_groups = sharing_groups + public_groups
 
         content.append({
+            'id': userLayer.id,
             'uid': userLayer.uid,
             'name': userLayer.name,
             'description': userLayer.description,
             'url': userLayer.url,
             'layer_type': userLayer.layer_type,
             'arcgis_layers': userLayer.arcgis_layers,
-            'sharing_groups': sharing_groups,
+            'sharing_groups': all_sharing_groups,
+            'shared_to_groups': sharing_groups,
+            'owned_by_user': True
         })
 
     try:
         shared_user_layers = UserLayer.objects.shared_with_user(request.user)
     except TypeError as e:
-        print('TODO: get user layers shared with public')
+        shared_user_layers = UserLayer.objects.filter(pk=-1)
+        pass
     for userLayer in shared_user_layers:
         if userLayer not in user_layer_list:
             username = userLayer.user.username
@@ -209,11 +213,26 @@ def get_user_layers(**kwargs):
                 groups = userLayer.sharing_groups.filter(user__in=[request.user])
 
                 shared_groups = [g.mapgroup_set.get().name for g in groups]
+                permission_groups = [x.map_group.permission_group for x in request.user.mapgroupmember_set.all()]
             except TypeError as e:
                 shared_groups = []
+                permission_groups = []
+            sharing_groups = [
+                group.mapgroup_set.get().name
+                for group in userLayer.sharing_groups.all()
+                if group.mapgroup_set.exists() and group in permission_groups
+            ]
+            owned_by_user = True if len(sharing_groups) > 0 else False
+            public_groups = [
+                group.name
+                for group in Group.objects.filter(name__in=settings.SHARING_TO_PUBLIC_GROUPS)
+                if group in userLayer.sharing_groups.all()
+            ]
+            all_shared_groups = sharing_groups + public_groups
 
             actual_name = userLayer.user.first_name + ' ' + userLayer.user.last_name
             content.append({
+                'id': userLayer.id,
                 'uid': userLayer.uid,
                 'name': userLayer.name,
                 'description': userLayer.description,
@@ -222,8 +241,10 @@ def get_user_layers(**kwargs):
                 'arcgis_layers': userLayer.arcgis_layers,
                 'shared': True,
                 'shared_by_user': userLayer.user.id,
-                'shared_to_groups': shared_groups,
+                'sharing_groups': all_shared_groups,
+                'shared_to_groups': sharing_groups,
                 'shared_by_name': userLayer.user.get_short_name(),
+                'owned_by_user': owned_by_user
             })
     return content
 
