@@ -4,6 +4,12 @@
 {% block title %}{{ REGION.name }} Data Portal - Marine Planner{% endblock %}
 
 {% block extra_css %}
+        <style>
+            :root {
+                --marco_green: #00a564;
+                --bright_icon: var(--marco_green);
+            }
+        </style>
         <link href="{% static 'visualize/css/print.css' %}" rel="stylesheet" media="print">
         <link href="{% static 'visualize/css/scalebar-thin.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/multilayer.css' %}" rel="stylesheet">
@@ -343,6 +349,9 @@
                                                       <div data-bind="foreach: activeLegendLayers">
                                                       <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
                                                           <div style="padding-bottom: 18px;">
+                                                              <!-- ko if: isUserGenerated -->
+                                                                <span class="pagination-centered legend-title"><b><u>{{ USER_GEN_PREFIX }}</u></b></span>
+                                                              <!-- /ko -->
                                                               <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
                                                               <p class="legend-subtitle" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
                                                               <span data-bind="if: legend">

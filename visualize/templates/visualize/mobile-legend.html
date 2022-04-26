@@ -10,6 +10,9 @@
             <div id="legend-content" style="height: 100%; width: 100%">
                 <div data-bind="foreach: activeLegendLayers">
                     <div style="padding-bottom: 10px;">
+                        <!-- ko if: isUserGenerated -->
+                            <span class="pagination-centered legend-title"><b><u>{{ USER_GEN_PREFIX }}</u></b></span>
+                        <!-- /ko -->
                         <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
                         <p style="margin: 0px -5px 3px; text-align: left;font-size: 12px;" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
                         <span data-bind="if: legend">

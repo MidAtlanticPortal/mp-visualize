@@ -10,11 +10,17 @@ body.template-visualize .layer-info .layer-text {
   color: white;
   top: 1rem;
   /* left: 25vw; */
-  left: 430px;
+  /* room for 420px wide left-nav + 1rem buffer on each side */
+  left: calc(2rem + 420px);
+  /* 100vw - left - 1rem margin (left, right) - controls width (38px) - controls-right (30px) */
+  width: calc(100vw - 1rem - 420px - 2rem - 38px - 30px);
   background-color: rgba(40,40, 150, 0.75);
   border: 1px solid white;
   border-radius: 0.4rem;
-  width: calc(100vw - 500px);
   padding: 1rem;
   font-size: 1.5rem;
+}
+
+i.btn-user-gen {
+  color: var(--bright_icon);
 }

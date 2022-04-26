@@ -115,6 +115,8 @@ def show_planner(request, template='visualize/planner.html'):
         'proxy_time_layer': settings.WMS_PROXY_TIME_LAYER,
         'show_watermark': viz_settings.SHOW_WATERMARK,
         'MAP_LIBRARY': settings.MAP_LIBRARY,
+        'USER_GEN_PREFIX': settings.USER_GEN_PREFIX,
+        'USER_GEN_NOTICE': settings.USER_GEN_NOTICE,
     }
 
     if request.user.is_authenticated:

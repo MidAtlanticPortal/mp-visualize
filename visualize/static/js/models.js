@@ -298,6 +298,13 @@ function layerModel(options, parent) {
 
     self.setOptions(options, parent);
 
+    self.isUserGenerated = ko.computed(function() {
+      if (self.id && typeof(self.id) == "string") {
+        return (self.id.indexOf('visualize_userlayer_') == 0 || self.id.indexOf('drawing_aoi_') == 0);
+      }
+      return false;
+    });
+
 
 
     getArcGISJSONLegend = function(self, protocol) {
@@ -3065,6 +3072,10 @@ function viewModel() {
             }
           }
         });
+
+        setTimeout(function() {
+          $('[data-toggle="tooltip"]').tooltip();
+        }, 300);
 
     });
 
