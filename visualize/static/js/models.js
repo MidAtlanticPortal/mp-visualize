@@ -298,6 +298,13 @@ function layerModel(options, parent) {
 
     self.setOptions(options, parent);
 
+    self.isUserGenerated = ko.computed(function() {
+      if (self.id && typeof(self.id) == "string") {
+        return (self.id.indexOf('visualize_userlayer_') == 0 || self.id.indexOf('drawing_aoi_') == 0);
+      }
+      return false;
+    });
+
 
 
     getArcGISJSONLegend = function(self, protocol) {
@@ -1988,9 +1995,31 @@ function viewModel() {
         });
     });
 
+    self.userContentVisible = ko.observable(false);
+
+    self.updateUserContentWarning = function() {
+      var visible_layers = self.visibleLayers();
+      var user_content_found = false;
+      for (var i = 0; i < visible_layers.length; i++) {
+        if (typeof visible_layers[i].id == "string" && 
+          (
+            visible_layers[i].id.indexOf('visualize_userlayer_') >= 0 ||
+            visible_layers[i].id.indexOf('drawing_aoi_') >= 0
+          )
+        ) {
+          user_content_found = true;
+          break;
+        }
+      }
+      self.userContentVisible(user_content_found);
+    }
+
     self.visibleLayers.subscribe( function() {
         self.updateAttributeLayers();
+        self.updateUserContentWarning();
     });
+
+
 
     // Legends relied on 'visibleLayers' to determine what to show.
     // Multilayers are left out of 'visibleLayers' so that they don't appear
@@ -2120,6 +2149,31 @@ function viewModel() {
 
         if (self.isBookmarksOpen()) {
           app.viewModel.bookmarks.getBookmarks();
+        }
+      }
+    } catch(err) {
+      console.log(err);
+    }
+
+    try {
+      self.userLayers = new userLayersModel();
+      self.isUserLayersOpen = ko.observable(false);
+      // self.userLayerEmail = ko.observable();
+      self.toggleUserLayersOpen = function(force) {
+        $('#designsTab').tab('show');
+
+        if (force == 'open') {
+          self.isUserLayersOpen(true);
+        }
+        else if (force == 'close') {
+          self.isUserLayersOpen(false);
+        }
+        else {
+          self.isUserLayersOpen(!self.isUserLayersOpen());
+        }
+
+        if (self.isUserLayersOpen()) {
+          app.viewModel.userLayers.getUserLayers();
         }
       }
     } catch(err) {
@@ -2477,6 +2531,41 @@ function viewModel() {
         self.hideBookmarks();
         self.bookmarks.newBookmarkName(null);
         self.bookmarks.newBookmarkDescription(null);
+    }
+
+
+    self.hideUserLayersForm = function() {
+        app.viewModel.userLayers.getUserLayers()
+        self.userLayers.userLayerForm(false);
+        self.scenarios.userLayerForm(false);
+    }
+
+    /** Create a new userlayer from the userlayer form */
+    self.addUserLayer = function(form) {
+        var name = $(form).find('#new_user_layer_name').val();
+        var description = $(form).find('#new_user_layer_description').val();
+        if (name.length == 0) {
+            return false;
+        }
+        //if a user layer name exists, break out
+        var match = $.grep(self.userLayers.userLayersList(), function(bkm) {
+            return bkm.name.indexOf(name) > -1
+        });
+        if (match.length > 0) {
+            //display duplication text
+            self.userLayers.duplicateUserLayer(true);
+            $('.dupe-userlayer').effect("highlight", {}, 1000);
+            return false;
+        }
+
+        var layer_type = $(form).find('#new_user_layer_type').val();
+        var url = $(form).find('#new_user_layer_url').val();
+        var arcgis_layers = $(form).find('#new_user_layer_arcgis_layers').val();
+
+        self.userLayers.addUserLayer(name, description, url, layer_type, arcgis_layers);
+        self.hideUserLayersForm();
+        self.userLayers.newUserLayerName(null);
+        self.userLayers.newUserLayerDescription(null);
     }
 
     self.showMapLinks = function() {
@@ -2983,6 +3072,10 @@ function viewModel() {
             }
           }
         });
+
+        setTimeout(function() {
+          $('[data-toggle="tooltip"]').tooltip();
+        }, 300);
 
     });
 

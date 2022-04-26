@@ -445,6 +445,18 @@ app.init = function () {
           new ContextualMenu.Item("Delete Drawing", app.viewModel.scenarios.deleteDrawing, 'fa fa-times-circle red')
       ];
 
+      app.menus.sharedUserLayer = [
+        new ContextualMenu.Item("Create Copy", app.viewModel.userLayers.createCopyOfLayer, 'fa fa-copy')
+      ];
+
+      app.menus.userLayer = [
+        new ContextualMenu.Item("Edit", app.viewModel.userLayers.editUserLayer, 'fa fa-edit'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Share...", app.viewModel.userLayers.shareUserLayer, 'fa fa-share-alt'),
+        new ContextualMenu.Divider(),
+        new ContextualMenu.Item("Delete Layer", app.viewModel.userLayers.removeUserLayer, 'fa fa-times-circle red')
+      ];
+
       app.menus.sharedLeaseBlockCollection = [
           new ContextualMenu.Item("Zoom To", app.viewModel.scenarios.zoomToLeaseBlockCollection, 'fa fa-search-plus'),
           new ContextualMenu.Divider(),
@@ -492,6 +504,8 @@ app.init = function () {
       app.menus.bookmark = [];
       app.menus.sharedDrawing = [];
       app.menus.drawing = [];
+      app.menus.sharedUserLayer = [];
+      app.menus.userLayer = [];
       app.menus.sharedLeaseBlockCollection = [];
       app.menus.leaseBlockCollection = [];
       app.menus.sharedWindEnergySiting = [];

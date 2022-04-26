@@ -74,8 +74,6 @@ var madrona = {
                 }
             });
 
-
-
             app.viewModel.scenarios.scenarioForm(false);
             app.viewModel.scenarios.loadingMessage("Creating Design");
 
@@ -85,7 +83,11 @@ var madrona = {
                 type: 'POST',
                 dataType: 'json',
                 success: function(result) {
-                    app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
+                    if (result['X-Madrona-Show'].indexOf('visualize_userlayer_') >= 0) {
+                        app.viewModel.userLayers.finishAddingUserLayer(result);
+                    } else {
+                        app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
+                    }
                     app.viewModel.scenarios.loadingMessage(false);
                     clearInterval(barTimer);
                 },
@@ -1279,6 +1281,8 @@ function scenariosModel(options) {
     self.drawingForm = ko.observable(false);
     self.loadingDrawingForm = ko.observable(false);
 
+    self.userLayerForm = ko.observable(false);
+
     /** return true if normal MyPlanner content should be shown, false
         otherwise (when a form is active and assuming control of MyPlanner's
         space).
@@ -1289,9 +1293,10 @@ function scenariosModel(options) {
         return !(self.scenarioForm() ||
                  self.reportsVisible() ||
                  self.drawingForm() ||
-                 // This is awkward, but bookmarks aren't really scenarios,
+                 // This is awkward, but bookmarks and user layers aren't really scenarios,
                  // and they live in their own place.
                  app.viewModel.addBookmarksDialogVisible() ||
+                 self.userLayerForm() ||
                  self.selectionForm());
     }
 
@@ -1546,10 +1551,17 @@ function scenariosModel(options) {
             self.removeDrawingForm(obj);
         }
 
+        //clean up drawing form
+        if (self.userLayerForm() || app.viewModel.userLayers.userLayerForm()) {
+            app.viewModel.userLayers.removeUserLayerForm(obj);
+        }
+
         //remove the key/value pair from aggregatedAttributes
         app.viewModel.removeFromAggregatedAttributes(self.leaseblockLayer().name);
         app.viewModel.updateAttributeLayers();
     };
+
+    
 
     self.removeDrawingForm = function(obj) {
         self.drawingFormModel.cleanUp();
@@ -2139,6 +2151,9 @@ $('#designsTab').on('show.bs.tab', function (e) {
 
         // load the drawing
         app.viewModel.scenarios.loadDrawingsFromServer();
+
+        // load the user-imported layers
+        app.viewModel.userLayers.getUserLayers();
 
         // load the leaseblocks
         $.ajax({
