@@ -1884,16 +1884,24 @@ function scenariosModel(options) {
 
     // activate any lingering designs not shown during loadCompressedState
     self.showUnloadedDesigns = function() {
-        var designs = app.viewModel.unloadedDesigns;
+        var designs = {};
+        var design_ids = [];
+        if (app.viewModel.unloadedDesigns) {
+            for (var design_index = 0; design_index < app.viewModel.unloadedDesigns.length; design_index++) {
+                var id = app.viewModel.unloadedDesigns[design_index].id;
+                design_ids.push(id);
+                designs[id] = app.viewModel.unloadedDesigns[design_index];
+            }
+        }
 
-        if (designs && designs.length) {
+        if (design_ids.length > 0) {
             //the following delay might help solve what appears to be a race condition
             //that prevents the design in the layer list from displaying the checked box icon after loadin
             setTimeout( function() {
-                for (var x=0; x < designs.length; x=x+1) {
-                    var id = designs[x].id,
-                        opacity = designs[x].opacity,
-                        isVisible = designs[x].isVisible;
+                for (var x=0; x < design_ids.length; x=x+1) {
+                    var id = design_ids[x],
+                        opacity = designs[id].opacity,
+                        isVisible = designs[id].isVisible;
 
                     if (app.viewModel.layerIndex[id]) {
                         app.viewModel.layerIndex[id].activateLayer();
