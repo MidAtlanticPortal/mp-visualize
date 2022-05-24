@@ -556,9 +556,12 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
     dataType: "jsonp",
     url: request_url,
     'success': function(response){
+      // TODO: Override Arc FeatureServer styles from 'createStyleFunction' with:
+      //  * Style defaults from Django Layer Form [ DONE ]
+      //  * Custom 'Lookup Styles' from Django Layer Form
       createStyleFunction(response)
       .then(styleFunction => {
-        layer.layer.setStyle(styleFunction);
+        layer.defaultStyleFunction = styleFunction;
       });
       interpretArcGISFeatureServerLegend(layer, response);
     }
@@ -617,27 +620,7 @@ app.wrapper.map.convertHexToRGB = function(hex) {
   return {'red': red, 'green': green, 'blue': blue};
 }
 
-/**
-  * createOLStyleMap - interpret style from layer record into an OpenLayers styleMap
-  * @param {object} layer - the mp layer definition to derive the style from
-  */
-app.wrapper.map.createOLStyleMap = function(layer, feature){
-  if (!layer){
-    layer = {
-      outline_color: "#ee9900",
-      outline_width: 1,
-      color: "#ee9900",
-      fillOpacity: 0.5,
-      graphic: false,
-      point_radius: 5,
-      annotated: false
-    };
-  }
-
-  var stroke = new ol.style.Stroke({
-    color: layer.outline_color,
-    width: layer.outline_width
-  });
+app.wrapper.map.cartoGetLayerFill = function(layer) {
   // The below will set all shapes to the same random color.
   // This is an improvement over assuming all vector layers should be orange.
   if (!layer.color || layer.color == null || layer.color == undefined || layer.color.toLowerCase() == "random") {
@@ -664,6 +647,33 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
   var fill = new ol.style.Fill({
     color: fill_color
   });
+  return fill;
+}
+
+/**
+  * createOLStyleMap - interpret style from layer record into an OpenLayers styleMap
+  * @param {object} layer - the mp layer definition to derive the style from
+  */
+app.wrapper.map.createOLStyleMap = function(layer, feature){
+  if (!layer){
+    layer = {
+      outline_color: "#ee9900",
+      outline_width: 1,
+      color: "#ee9900",
+      fillOpacity: 0.5,
+      graphic: false,
+      point_radius: 5,
+      annotated: false
+    };
+  }
+
+  var stroke = new ol.style.Stroke({
+    color: layer.outline_color,
+    width: layer.outline_width
+  });
+
+  var fill = app.wrapper.map.cartoGetLayerFill(layer)
+
   if (layer.graphic && layer.graphic.length > 0) {
     var image = new ol.style.Icon({
       src: layer.graphic,
@@ -799,6 +809,31 @@ app.wrapper.map.getLayerStyle = function(feature) {
   if (feature && feature.getLayer()) {
     var layer = app.viewModel.getLayerByOLId(feature.getLayer().ol_uid);
     var styles = app.wrapper.map.createOLStyleMap(layer);
+    if (layer.type == 'ArcFeatureServer' && layer.hasOwnProperty('defaultStyleFunction')) {
+      var styles = {};
+      styles[feature.getGeometry().getType()] = layer.defaultStyleFunction(feature)[0];
+      console.log('styles from ArcRest');
+      if (layer.hasOwnProperty('color') && layer.color){
+        var fill_color = app.wrapper.map.cartoGetLayerFill(layer);
+        if (fill_color) {
+          styles[feature.getGeometry().getType()].setFill(fill_color);
+        }
+      }
+
+      if (layer.hasOwnProperty('outline_color') && layer.outline_color) {
+        if (layer.hasOwnProperty('outline_width') && layer.outline_width) {
+          var outline_width = layer.outline_width;
+        } else {
+          var outline_width = 1;
+        }
+        var stroke_style = new ol.style.Stroke({
+          color: layer.outline_color,
+          width: outline_width
+        });
+        styles[feature.getGeometry().getType()].setStroke(stroke_style);
+      }
+
+    }
     var labels = layer.label_field;
     var lookupField = layer.lookupField;
     var lookupDetails = layer.lookupDetails;
