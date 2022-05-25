@@ -812,7 +812,6 @@ app.wrapper.map.getLayerStyle = function(feature) {
     if (layer.type == 'ArcFeatureServer' && layer.hasOwnProperty('defaultStyleFunction')) {
       var styles = {};
       styles[feature.getGeometry().getType()] = layer.defaultStyleFunction(feature)[0];
-      console.log('styles from ArcRest');
       if (layer.hasOwnProperty('color') && layer.color){
         var fill_color = app.wrapper.map.cartoGetLayerFill(layer);
         if (layer.override_color && fill_color) {
