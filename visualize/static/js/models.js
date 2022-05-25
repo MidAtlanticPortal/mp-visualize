@@ -104,7 +104,9 @@ function layerModel(options, parent) {
       self.lookupField = options.lookups ? options.lookups.field : null;
       self.lookupDetails = options.lookups ? options.lookups.details : [];
       self.color = options.color || "#ee9900";
+      self.override_color = options.color || false;
       self.outline_color = options.outline_color || self.color;
+      self.override_outline = options.outline_color || false;
       self.fillOpacity = options.fill_opacity || 0.0;
       self.query_by_point = options.query_by_point || false;
       self.disable_click = options.disable_arcgis_attributes || false;
@@ -123,6 +125,7 @@ function layerModel(options, parent) {
       }
       self.outline_opacity = options.outline_opacity || self.defaultOpacity;
       self.outline_width = options.outline_width || 1;  // This was removed in one branch (RDH: 2020-08-25)
+      self.override_outline_width = options.outline_width || false;
       self.point_radius = options.point_radius || 5;
       self.graphic = options.graphic || null;
       self.graphic_scale = options.graphic_scale || null;  // This was removed in one branch (RDH: 2020-08-25)

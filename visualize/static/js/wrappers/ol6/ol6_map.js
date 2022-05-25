@@ -620,12 +620,12 @@ app.wrapper.map.convertHexToRGB = function(hex) {
   return {'red': red, 'green': green, 'blue': blue};
 }
 
-app.wrapper.map.cartoGetLayerFill = function(layer) {
+app.wrapper.map.cartoGetLayerFill = function(layer, feature) {
   // The below will set all shapes to the same random color.
   // This is an improvement over assuming all vector layers should be orange.
-  if (!layer.color || layer.color == null || layer.color == undefined || layer.color.toLowerCase() == "random") {
+  if (feature && (!layer.color || layer.color == null || layer.color == undefined || layer.color.toLowerCase() == "random")) {
     var fill_color = app.wrapper.map.getRandomColor(feature);
-  } else if (layer.color.toLowerCase().indexOf("custom:") == 0) {
+  } else if (feature && layer.color.toLowerCase().indexOf("custom:") == 0) {
     var fill_color = app.wrapper.map.getCustomColor(layer, feature);
   } else {
     var fill_color = layer.color;
@@ -672,7 +672,7 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
     width: layer.outline_width
   });
 
-  var fill = app.wrapper.map.cartoGetLayerFill(layer)
+  var fill = app.wrapper.map.cartoGetLayerFill(layer, feature)
 
   if (layer.graphic && layer.graphic.length > 0) {
     var image = new ol.style.Icon({
@@ -815,23 +815,29 @@ app.wrapper.map.getLayerStyle = function(feature) {
       console.log('styles from ArcRest');
       if (layer.hasOwnProperty('color') && layer.color){
         var fill_color = app.wrapper.map.cartoGetLayerFill(layer);
-        if (fill_color) {
+        if (layer.override_color && fill_color) {
           styles[feature.getGeometry().getType()].setFill(fill_color);
         }
       }
 
-      if (layer.hasOwnProperty('outline_color') && layer.outline_color) {
-        if (layer.hasOwnProperty('outline_width') && layer.outline_width) {
-          var outline_width = layer.outline_width;
-        } else {
-          var outline_width = 1;
-        }
-        var stroke_style = new ol.style.Stroke({
-          color: layer.outline_color,
-          width: outline_width
-        });
-        styles[feature.getGeometry().getType()].setStroke(stroke_style);
+      if (layer.override_outline && layer.hasOwnProperty('outline_color') && layer.outline_color) {
+        var outline_color = layer.outline_color;
+      } else {
+        var outline_color = styles[feature.getGeometry().getType()]['stroke_']['color_'];
       }
+      if (layer.override_outline_width && layer.hasOwnProperty('outline_width') && layer.outline_width) {
+        var outline_width = layer.outline_width;
+      } else {
+        // RDH 2022-05-25: maintaining current width as 'default' will prevent a return to a normal width after selection.
+        //    TODO: This is a bug that will need to be fixed to support any vector layer whose default stroke width is not 1.
+        // var outline_width = styles[feature.getGeometry().getType()]['stroke_']['width_'];
+        var outline_width = 1;
+      }
+      var stroke_style = new ol.style.Stroke({
+        color: outline_color,
+        width: outline_width
+      });
+      styles[feature.getGeometry().getType()].setStroke(stroke_style);
 
     }
     var labels = layer.label_field;
