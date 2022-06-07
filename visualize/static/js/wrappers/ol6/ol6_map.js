@@ -414,6 +414,7 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('name', layer.name);
   layer.layer.set('type', 'overlay');
   layer.layer.set('mpid', layer.id);
+  layer.layer.set('proxy_url', layer.proxy_url);
   layer.layer.set('query_by_point', layer.query_by_point);
   if (layer.hasOwnProperty('type')) {
     layer.layer.set('tech', layer.type);
@@ -422,7 +423,11 @@ app.wrapper.map.postProcessLayer = function(layer){
   } else {
     layer.layer.set('tech', null);
   }
-  layer.layer.set('url', layer.url);
+  if (layer.layer.proxy_url){
+    layer.layer.set('url', '/visualize/proxy?url=' + encodeURIComponent(layer.url) + "/export?&proxy_params=true");
+  } else {
+    layer.layer.set('url', layer.url);
+  }
   layer.layer.set('arcgislayers', layer.arcgislayers);
   layer.layer.set('utfgrid', layer.utfurl || (layer.parent && layer.parent.utfurl));
   layer.layer.set('mp_layer', layer);

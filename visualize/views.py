@@ -23,6 +23,15 @@ import urllib
 def proxy_request(request):
     url = request.GET['url']
     try:
+        proxy = request.GET['proxy_params']
+        if proxy:
+            params = request.build_absolute_uri().split('?&proxy_params=true')[1]
+            url = "{}{}".format(url, params)
+    except Exception as e:
+        print(e)
+        pass
+    print("==============================================================")
+    try:
         proxied_request = urllib.request.urlopen(url)
         status_code = proxied_request.code
         mimetype = proxied_request.info().get_content_type()

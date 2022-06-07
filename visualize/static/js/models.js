@@ -108,6 +108,10 @@ function layerModel(options, parent) {
       self.outline_color = options.outline_color || self.color;
       self.override_outline = options.outline_color || false;
       self.fillOpacity = options.fill_opacity || 0.0;
+      self.proxy_url = options.proxy_url || false;
+      if (self.proxy_url) {
+        self.url = "/visualize/proxy?url=" + encodeURIComponent(self.url) + "/export?&proxy_params=true";
+      }
       self.query_by_point = options.query_by_point || false;
       self.disable_click = options.disable_arcgis_attributes || false;
 
