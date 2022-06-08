@@ -24,13 +24,22 @@ def proxy_request(request):
     url = request.GET['url']
     try:
         proxy = request.GET['proxy_params']
-        if proxy:
-            params = request.build_absolute_uri().split('?&proxy_params=true')[1]
-            url = "{}{}".format(url, params)
+        layer_id = request.GET['layer_id']
+        layer = Layer.objects.get(pk=layer_id)
+        if proxy and layer_id and layer:
+            params = request.build_absolute_uri().split('&proxy_params=true')[1]
+            url_domain = urllib.parse.urlparse(url).netloc
+            layer_domain = urllib.parse.urlparse(layer.url).netloc
+            if len(params) > 0:
+                if url_domain == layer_domain:
+                    url = "{}?{}".format(url, params)
+                else:
+                    url = "{}?{}".format(layer.url, params)
+            while '??' in url:
+                url = '?'.join(url.split('??'))
     except Exception as e:
         print(e)
         pass
-    print("==============================================================")
     try:
         proxied_request = urllib.request.urlopen(url)
         status_code = proxied_request.code

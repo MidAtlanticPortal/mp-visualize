@@ -284,7 +284,7 @@ app.wrapper.events.clickOnWMSLayerEvent = function(layer, evt){
     var view = app.map.getView();
     var viewResolution = view.getResolution();
     var viewProjection = view.projection_.code_;
-    var getFeatureInfoUrl = wmsSource.getFeatureInfoUrl( evt.coordinate,
+    let getFeatureInfoUrl = wmsSource.getFeatureInfoUrl( evt.coordinate,
       viewResolution, viewProjection,
       {
         'INFO_FORMAT': mp_layer.wms_info_format,
@@ -292,6 +292,14 @@ app.wrapper.events.clickOnWMSLayerEvent = function(layer, evt){
         'LAYERS': mp_layer.wms_slug
       }
     );
+    if (layer.proxy_url) {
+      // RDH 2022-06-07: This would be bad: proxying a proxy (queryWMSFeatureInfo will likely proxy this)
+      // So, let's be sure to enforce only a single layer of proxy and make it easy to parse:
+      let url_split = layer.url.split(encodeURLComponent('?'));
+      let report_querystring = getFeatureInfoUrl.split('&proxy_params=true')[1];
+      url_split[0] = url_split[0] + encodeURLComponent('?') + encodeURIComponent(report_querystring);
+      getFeatureInfoUrl = url_split.join('');
+    }
     app.wrapper.events.queryWMSFeatureInfo(mp_layer, getFeatureInfoUrl);
   }
 };

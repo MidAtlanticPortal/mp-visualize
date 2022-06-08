@@ -424,7 +424,23 @@ app.wrapper.map.postProcessLayer = function(layer){
     layer.layer.set('tech', null);
   }
   if (layer.layer.proxy_url){
-    layer.layer.set('url', '/visualize/proxy?url=' + encodeURIComponent(layer.url) + "/export?&proxy_params=true");
+    // RDH 2022-06-07: Proxies are hard.
+    //  * we include the layer_id to provide security -- does the requested URL domain match the layer's domain in the DB?
+    //  * We encode the URL -- this means we also need to re-write all logic that parses the URL (like legend, export, and query)
+    //  * finally, we add proxy_params=true -- this gives us a nice pattern to break on (anything appended is assumed to be meant for 'url')
+    layer.url.set('url', "/visualize/proxy?layer_id=" + layer.id + "&url=" + encodeURIComponent(layer.url) + "%3F&proxy_params=true");
+    if (layer.type == "XYZ") {
+      // RDH 2022-06-07: Proxies get harder
+      //  XYZ templates are interpreted client-side by OpenLayers, so they CAN'T be encoded, or OL will never recognize them.
+      //  This block restores them back to an un-encoded format.
+      let templates = ["{x}", "{X}","{y}","{Y}","{z}","{Z}"];
+      for (var i = 0; i < templates.length; i++) {
+        let encoded_template = encodeURIComponent(templates[i]);
+        if (layer.url.indexOf(encoded_template) >= 0) {
+          layer.url = layer.url.split(encoded_template).join(templates[i]);
+        }
+      }
+    }
   } else {
     layer.layer.set('url', layer.url);
   }
@@ -503,24 +519,39 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
 
   var layerSource = new ol.source.Vector({
     loader: function(extent, resolution, projection) {
-      var url =
-        layer.url +
-        layer.arcgislayers +
-        '/query/?f=json&' +
-        'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
-        encodeURIComponent(
-          '{"xmin":' +
-            extent[0] +
-            ',"ymin":' +
-            extent[1] +
-            ',"xmax":' +
-            extent[2] +
-            ',"ymax":' +
-            extent[3] +
-            ',"spatialReference":{"wkid":102100}}'
-        ) +
-        '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*' +
-        '&outSR=102100';
+      let path_suffix = layer.arcgislayers + '/query/';
+      let geom_string = 'f=json&returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=';
+      let extent_string = encodeURIComponent(
+        '{"xmin":' +
+          extent[0] +
+          ',"ymin":' +
+          extent[1] +
+          ',"xmax":' +
+          extent[2] +
+          ',"ymax":' +
+          extent[3] +
+          ',"spatialReference":{"wkid":102100}}'
+      );
+      let envelope_string = '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*&outSR=102100';
+      let query_suffix = geom_string +
+        extent_string +
+        envelope_string;
+      let url = layer.url + path_suffix + '?' + query_suffix;
+      if (layer.proxy_url) {
+        path_suffix = encodeURIComponent(path_suffix);
+        // query_suffix = encodeURIComponent(query_suffix);
+        let split_url = layer.url.split(encodeURIComponent('?'));
+        split_url[0] = split_url[0] + path_suffix;
+        url = split_url.join(encodeURIComponent('?'))
+        if (url.indexOf(encodeURIComponent('?')) >= 0) {
+          url = url + query_suffix;
+        } else {
+          url = url + encodeURIComponent('?') + query_suffix;
+        }
+      }
+      
+
+        
       $.ajax({
         url: url,
         dataType: 'jsonp',
@@ -554,8 +585,17 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
     declutter: true
   });
 
-  var request_url = layer.url + layer.arcgislayers + '?f=json';
-  console.log(request_url);
+  let request_url = layer.url + layer.arcgislayers;
+  if (layer.proxy_url) {
+    let url_split = layer.url.split(encodeURIComponent('?'));
+    url_split[0] = url_split[0] + layer.arcgislayers;
+    request_url = url_split.join(encodeURIComponent('?'));
+  }
+  if (request_url.indexOf('?') == -1) {
+    request_url = request_url + '?f=json';
+  } else {
+    request_url = request_url + '&f=json';
+  }
 
   $.ajax({
     dataType: "jsonp",
