@@ -867,7 +867,12 @@ app.wrapper.map.getLayerStyle = function(feature) {
       if (layer.override_outline && layer.hasOwnProperty('outline_color') && layer.outline_color) {
         var outline_color = layer.outline_color;
       } else {
-        var outline_color = styles[feature.getGeometry().getType()]['stroke_']['color_'];
+        try {
+          var outline_color = styles[feature.getGeometry().getType()]['stroke_']['color_'];
+        } catch (error) {
+          // RDH 2022-06-16: If no stroke color, set to invisible.
+          var outline_color = "rgba(0,0,0,0)";
+        }
       }
       if (layer.override_outline_width && layer.hasOwnProperty('outline_width') && layer.outline_width) {
         var outline_width = layer.outline_width;
@@ -875,7 +880,12 @@ app.wrapper.map.getLayerStyle = function(feature) {
         // RDH 2022-05-25: maintaining current width as 'default' will prevent a return to a normal width after selection.
         //    TODO: This is a bug that will need to be fixed to support any vector layer whose default stroke width is not 1.
         // var outline_width = styles[feature.getGeometry().getType()]['stroke_']['width_'];
-        var outline_width = 1;
+        try {
+          var outline_width = styles[feature.getGeometry().getType()]['stroke_']['width_'];
+        } catch (error) {
+          // RDH 2022-06-16: If no stroke width, set to 0.
+          var outline_width = 0;
+        }  
       }
       var stroke_style = new ol.style.Stroke({
         color: outline_color,
