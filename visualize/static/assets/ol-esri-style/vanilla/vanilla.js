@@ -111,7 +111,9 @@ const createStyleFunction = (esriLayerInfoJson) => {
       });
 
       if (featureStyle) {
-        styles.push(featureStyle.style);
+        var style_copy = new ol.style.Style();
+        style_copy = jQuery.extend(true, style_copy, featureStyle.style)
+        styles.push(style_copy);
       }
 
       const labelStyle = labelStyles.find((label) => {
@@ -121,7 +123,9 @@ const createStyleFunction = (esriLayerInfoJson) => {
       if (labelStyle && labelStyle.style) {
         const text = getFormattedLabel(feature, labelStyle.label);
         labelStyle.style.getText().setText(text);
-        styles.push(labelStyle.style);
+        var label_style_copy = new ol.style.Style();
+        label_style_copy = jQuery.extend(true, label_style_copy, labelStyle.style);
+        styles.push(label_style_copy);
       }
 
       // push labels!
