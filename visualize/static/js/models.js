@@ -112,7 +112,12 @@ function layerModel(options, parent) {
       self.mouseoverAttribute = options.attributes ? options.attributes.mouseover_attribute : false;
       self.lookupField = options.lookups ? options.lookups.field : null;
       self.lookupDetails = options.lookups ? options.lookups.details : [];
-      self.color = options.color || "#ee9900";
+      self.custom_style = options.custom_style || null;
+      if (self.custom_style == null || self.custom_style.length == 0) {
+        self.color = options.color || "#ee9900";
+      } else {
+        self.color = 'custom:' + self.custom_style;
+      }
       self.override_color = options.color || false;
       self.outline_color = options.outline_color || self.color;
       self.override_outline = options.outline_color || false;
