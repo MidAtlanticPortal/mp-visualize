@@ -458,7 +458,7 @@ function userLayersModel(options) {
                             }
                         }
                     }
-                    if (!user_layer.active()) {
+                    if (user_layer && !user_layer.active()) {
                         self.toggleUserLayer(user_layer);
                     }
                 }
