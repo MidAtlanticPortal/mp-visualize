@@ -2666,6 +2666,13 @@ function viewModel() {
       }
     }
 
+    self.startNewLayerImport = function() {
+      $('#designsTab').click();
+      if ($('#user-layers-header').is(":visible") && $('#user-layers-header').find('a.create-new-button').is(":visible") && !app.viewModel.userLayers.loadingUserLayerForm()) {
+        app.viewModel.userLayers.createUserLayer();
+      }
+    }
+
     self.toggleLinearMeasurement = function() {
       if (!app.map.measurementLayer) {
         app.addMeasurementLayerToMap();
