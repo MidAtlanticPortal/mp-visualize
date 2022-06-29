@@ -240,7 +240,7 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
     for (var i = 0; i < selectedFeatures.length; i++) {
       var feature = selectedFeatures[i];
       var geom = feature.getGeometry();
-      if (geom.intersectsExtent(bufferedClickExtent)){
+      if (!bufferedClickExtent || bufferedClickExtent.length == 0 ||geom.intersectsExtent(bufferedClickExtent)){
         if (mp_layer.isDrawingModel) {
           feature_values = {}
           for (var j = 0; j < mp_layer.scenarioModel.scenarioAttributes.length; j++) {
@@ -455,7 +455,7 @@ app.wrapper.events.cleanupDrawing = function() {
 app.wrapper.events.formatAttributeReportValue = function(value) {
   // TODO: implement comma-formatted large numbers when appropriate
   // report_attr.data = app.utils.numberWithCommas(report_attr.data);
-  if (value.precision != null) {
+  if (value && value.hasOwnProperty('precision') && value.precision != null) {
     return report_attr.data.toFixed(value.precision);
   } else {
     // format common data types:
