@@ -641,7 +641,7 @@ app.wrapper.map.convertColorToRGB = function(colorValue) {
     return app.wrapper.map.convertHexToRGB(colorValue);
   } else {
     // Value is not a valid hex value
-    console.log("ERROR: value '" + colorValue + "'is not a valid hex value");
+    // console.log("ERROR: value '" + colorValue + "'is not a valid hex value");
     return {'red': 180, 'green': 180, 'blue': 0};
   }
 }
