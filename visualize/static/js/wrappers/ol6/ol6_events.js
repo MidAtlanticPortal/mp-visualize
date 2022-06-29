@@ -239,15 +239,18 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
     var featureData = [];
     for (var i = 0; i < selectedFeatures.length; i++) {
       var feature = selectedFeatures[i];
-      if (mp_layer.isDrawingModel) {
-        feature_values = {}
-        for (var j = 0; j < mp_layer.scenarioModel.scenarioAttributes.length; j++) {
-            var report_value = mp_layer.scenarioModel.scenarioAttributes[j];
-            feature_values[report_value.title] = report_value.data;
+      var geom = feature.getGeometry();
+      if (geom.intersectsExtent(bufferedClickExtent)){
+        if (mp_layer.isDrawingModel) {
+          feature_values = {}
+          for (var j = 0; j < mp_layer.scenarioModel.scenarioAttributes.length; j++) {
+              var report_value = mp_layer.scenarioModel.scenarioAttributes[j];
+              feature_values[report_value.title] = report_value.data;
+          }
+          featureData.push(feature_values);
+        } else {
+          featureData.push(feature.values_);
         }
-        featureData.push(feature_values);
-      } else {
-        featureData.push(feature.values_);
       }
     }
     app.wrapper.events.generateAttributeReport(mp_layer, featureData);
