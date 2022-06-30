@@ -319,13 +319,21 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
       report_id = app.wrapper.events.fakeSluggify(report_id);
       data = $('#' + report_id).html('<iframe class="attr_report_img" src="' + getFeatureInfoUrl +'" />');
     } else {
+      let url = '/visualize/proxy/';
+      let data = {
+        url: getFeatureInfoUrl,
+      };
+      if (mp_layer.proxy_url) {
+        // RDH 2022-06-07: This would be bad: proxying a proxy
+        //  Work has been done to craft the URL for you in the OL6+ event wrappers
+        url = getFeatureInfoUrl;
+        data = {};
+      }
       $.ajax({
         headers: { "Accept": mp_layer.wms_info_format},
         type: 'GET',
-        url: '/visualize/proxy/',
-        data: {
-          url: getFeatureInfoUrl,
-        },
+        url: url,
+        data: data,
         success: function(data, textStatus, request){
           if (mp_layer.wms_info_format.indexOf('gml') >= 0) {
             return app.wrapper.events.parseGMLFeatureInfoResponse(mp_layer, data);

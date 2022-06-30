@@ -1786,6 +1786,8 @@ function scenariosModel(options) {
                     scenario.active(true);
                     scenario.visible(true);
 
+                    app.viewModel.layerIndex[scenario.id] = scenario;
+
                     //get attributes
                     $.ajax( {
                         url: '/scenario/get_attributes/' + scenarioId + '/',

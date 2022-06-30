@@ -414,6 +414,7 @@ app.wrapper.map.postProcessLayer = function(layer){
   layer.layer.set('name', layer.name);
   layer.layer.set('type', 'overlay');
   layer.layer.set('mpid', layer.id);
+  layer.layer.set('proxy_url', layer.proxy_url);
   layer.layer.set('query_by_point', layer.query_by_point);
   if (layer.hasOwnProperty('type')) {
     layer.layer.set('tech', layer.type);
@@ -422,7 +423,27 @@ app.wrapper.map.postProcessLayer = function(layer){
   } else {
     layer.layer.set('tech', null);
   }
-  layer.layer.set('url', layer.url);
+  if (layer.layer.proxy_url){
+    // RDH 2022-06-07: Proxies are hard.
+    //  * we include the layer_id to provide security -- does the requested URL domain match the layer's domain in the DB?
+    //  * We encode the URL -- this means we also need to re-write all logic that parses the URL (like legend, export, and query)
+    //  * finally, we add proxy_params=true -- this gives us a nice pattern to break on (anything appended is assumed to be meant for 'url')
+    layer.url.set('url', "/visualize/proxy?layer_id=" + layer.id + "&url=" + encodeURIComponent(layer.url) + "%3F&proxy_params=true");
+    if (layer.type == "XYZ") {
+      // RDH 2022-06-07: Proxies get harder
+      //  XYZ templates are interpreted client-side by OpenLayers, so they CAN'T be encoded, or OL will never recognize them.
+      //  This block restores them back to an un-encoded format.
+      let templates = ["{x}", "{X}","{y}","{Y}","{z}","{Z}"];
+      for (var i = 0; i < templates.length; i++) {
+        let encoded_template = encodeURIComponent(templates[i]);
+        if (layer.url.indexOf(encoded_template) >= 0) {
+          layer.url = layer.url.split(encoded_template).join(templates[i]);
+        }
+      }
+    }
+  } else {
+    layer.layer.set('url', layer.url);
+  }
   layer.layer.set('arcgislayers', layer.arcgislayers);
   layer.layer.set('utfgrid', layer.utfurl || (layer.parent && layer.parent.utfurl));
   layer.layer.set('mp_layer', layer);
@@ -498,24 +519,39 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
 
   var layerSource = new ol.source.Vector({
     loader: function(extent, resolution, projection) {
-      var url =
-        layer.url +
-        layer.arcgislayers +
-        '/query/?f=json&' +
-        'returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=' +
-        encodeURIComponent(
-          '{"xmin":' +
-            extent[0] +
-            ',"ymin":' +
-            extent[1] +
-            ',"xmax":' +
-            extent[2] +
-            ',"ymax":' +
-            extent[3] +
-            ',"spatialReference":{"wkid":102100}}'
-        ) +
-        '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*' +
-        '&outSR=102100';
+      let path_suffix = layer.arcgislayers + '/query/';
+      let geom_string = 'f=json&returnGeometry=true&spatialRel=esriSpatialRelIntersects&geometry=';
+      let extent_string = encodeURIComponent(
+        '{"xmin":' +
+          extent[0] +
+          ',"ymin":' +
+          extent[1] +
+          ',"xmax":' +
+          extent[2] +
+          ',"ymax":' +
+          extent[3] +
+          ',"spatialReference":{"wkid":102100}}'
+      );
+      let envelope_string = '&geometryType=esriGeometryEnvelope&inSR=102100&outFields=*&outSR=102100';
+      let query_suffix = geom_string +
+        extent_string +
+        envelope_string;
+      let url = layer.url + path_suffix + '?' + query_suffix;
+      if (layer.proxy_url) {
+        path_suffix = encodeURIComponent(path_suffix);
+        // query_suffix = encodeURIComponent(query_suffix);
+        let split_url = layer.url.split(encodeURIComponent('?'));
+        split_url[0] = split_url[0] + path_suffix;
+        url = split_url.join(encodeURIComponent('?'))
+        if (url.indexOf(encodeURIComponent('?')) >= 0) {
+          url = url + query_suffix;
+        } else {
+          url = url + encodeURIComponent('?') + query_suffix;
+        }
+      }
+      
+
+        
       $.ajax({
         url: url,
         dataType: 'jsonp',
@@ -549,16 +585,28 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
     declutter: true
   });
 
-  var request_url = layer.url + layer.arcgislayers + '?f=json';
-  console.log(request_url);
+  let request_url = layer.url + layer.arcgislayers;
+  if (layer.proxy_url) {
+    let url_split = layer.url.split(encodeURIComponent('?'));
+    url_split[0] = url_split[0] + layer.arcgislayers;
+    request_url = url_split.join(encodeURIComponent('?'));
+  }
+  if (request_url.indexOf('?') == -1) {
+    request_url = request_url + '?f=json';
+  } else {
+    request_url = request_url + '&f=json';
+  }
 
   $.ajax({
     dataType: "jsonp",
     url: request_url,
     'success': function(response){
+      // TODO: Override Arc FeatureServer styles from 'createStyleFunction' with:
+      //  * Style defaults from Django Layer Form [ DONE ]
+      //  * Custom 'Lookup Styles' from Django Layer Form
       createStyleFunction(response)
       .then(styleFunction => {
-        layer.layer.setStyle(styleFunction);
+        layer.defaultStyleFunction = styleFunction;
       });
       interpretArcGISFeatureServerLegend(layer, response);
     }
@@ -593,7 +641,7 @@ app.wrapper.map.convertColorToRGB = function(colorValue) {
     return app.wrapper.map.convertHexToRGB(colorValue);
   } else {
     // Value is not a valid hex value
-    console.log("ERROR: value '" + colorValue + "'is not a valid hex value");
+    // console.log("ERROR: value '" + colorValue + "'is not a valid hex value");
     return {'red': 180, 'green': 180, 'blue': 0};
   }
 }
@@ -617,32 +665,12 @@ app.wrapper.map.convertHexToRGB = function(hex) {
   return {'red': red, 'green': green, 'blue': blue};
 }
 
-/**
-  * createOLStyleMap - interpret style from layer record into an OpenLayers styleMap
-  * @param {object} layer - the mp layer definition to derive the style from
-  */
-app.wrapper.map.createOLStyleMap = function(layer, feature){
-  if (!layer){
-    layer = {
-      outline_color: "#ee9900",
-      outline_width: 1,
-      color: "#ee9900",
-      fillOpacity: 0.5,
-      graphic: false,
-      point_radius: 5,
-      annotated: false
-    };
-  }
-
-  var stroke = new ol.style.Stroke({
-    color: layer.outline_color,
-    width: layer.outline_width
-  });
+app.wrapper.map.cartoGetLayerFill = function(layer, feature) {
   // The below will set all shapes to the same random color.
   // This is an improvement over assuming all vector layers should be orange.
-  if (!layer.color || layer.color == null || layer.color == undefined || layer.color.toLowerCase() == "random") {
+  if (feature && (!layer.color || layer.color == null || layer.color == undefined || layer.color.toLowerCase() == "random")) {
     var fill_color = app.wrapper.map.getRandomColor(feature);
-  } else if (layer.color.toLowerCase().indexOf("custom:") == 0) {
+  } else if (feature && layer.color.toLowerCase().indexOf("custom:") == 0) {
     var fill_color = app.wrapper.map.getCustomColor(layer, feature);
   } else {
     var fill_color = layer.color;
@@ -664,6 +692,33 @@ app.wrapper.map.createOLStyleMap = function(layer, feature){
   var fill = new ol.style.Fill({
     color: fill_color
   });
+  return fill;
+}
+
+/**
+  * createOLStyleMap - interpret style from layer record into an OpenLayers styleMap
+  * @param {object} layer - the mp layer definition to derive the style from
+  */
+app.wrapper.map.createOLStyleMap = function(layer, feature){
+  if (!layer){
+    layer = {
+      outline_color: "#ee9900",
+      outline_width: 1,
+      color: "#ee9900",
+      fillOpacity: 0.5,
+      graphic: false,
+      point_radius: 5,
+      annotated: false
+    };
+  }
+
+  var stroke = new ol.style.Stroke({
+    color: layer.outline_color,
+    width: layer.outline_width
+  });
+
+  var fill = app.wrapper.map.cartoGetLayerFill(layer, feature)
+
   if (layer.graphic && layer.graphic.length > 0) {
     var image = new ol.style.Icon({
       src: layer.graphic,
@@ -799,6 +854,46 @@ app.wrapper.map.getLayerStyle = function(feature) {
   if (feature && feature.getLayer()) {
     var layer = app.viewModel.getLayerByOLId(feature.getLayer().ol_uid);
     var styles = app.wrapper.map.createOLStyleMap(layer);
+    if (layer.type == 'ArcFeatureServer' && layer.hasOwnProperty('defaultStyleFunction')) {
+      var styles = {};
+      styles[feature.getGeometry().getType()] = layer.defaultStyleFunction(feature)[0];
+      if (layer.hasOwnProperty('color') && layer.color){
+        var fill_color = app.wrapper.map.cartoGetLayerFill(layer);
+        if (layer.override_color && fill_color) {
+          styles[feature.getGeometry().getType()].setFill(fill_color);
+        }
+      }
+
+      if (layer.override_outline && layer.hasOwnProperty('outline_color') && layer.outline_color) {
+        var outline_color = layer.outline_color;
+      } else {
+        try {
+          var outline_color = styles[feature.getGeometry().getType()]['stroke_']['color_'];
+        } catch (error) {
+          // RDH 2022-06-16: If no stroke color, set to invisible.
+          var outline_color = "rgba(0,0,0,0)";
+        }
+      }
+      if (layer.override_outline_width && layer.hasOwnProperty('outline_width') && layer.outline_width) {
+        var outline_width = layer.outline_width;
+      } else {
+        // RDH 2022-05-25: maintaining current width as 'default' will prevent a return to a normal width after selection.
+        //    TODO: This is a bug that will need to be fixed to support any vector layer whose default stroke width is not 1.
+        // var outline_width = styles[feature.getGeometry().getType()]['stroke_']['width_'];
+        try {
+          var outline_width = styles[feature.getGeometry().getType()]['stroke_']['width_'];
+        } catch (error) {
+          // RDH 2022-06-16: If no stroke width, set to 0.
+          var outline_width = 0;
+        }  
+      }
+      var stroke_style = new ol.style.Stroke({
+        color: outline_color,
+        width: outline_width
+      });
+      styles[feature.getGeometry().getType()].setStroke(stroke_style);
+
+    }
     var labels = layer.label_field;
     var lookupField = layer.lookupField;
     var lookupDetails = layer.lookupDetails;

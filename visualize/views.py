@@ -21,7 +21,32 @@ from visualize import settings as viz_settings
 import urllib
 
 def proxy_request(request):
-    url = request.GET['url']
+    content = ''
+    mimetype = 'text/plain'
+    status_code = 400
+    try:
+        url = request.GET['url']
+        proxy = request.GET['proxy_params']
+        layer_id = request.GET['layer_id']
+        layer = Layer.objects.get(pk=layer_id)
+        if proxy and layer_id and layer:
+            params = request.build_absolute_uri().split('&proxy_params=true')[1]
+            url_domain = urllib.parse.urlparse(url).netloc
+            layer_domain = urllib.parse.urlparse(layer.url).netloc
+            if len(params) > 0:
+                if url_domain == layer_domain:
+                    url = "{}?{}".format(url, params)
+                else:
+                    url = "{}?{}".format(layer.url, params)
+            while '??' in url:
+                url = '?'.join(url.split('??'))
+    except Exception as e:
+        # This handles proxy layers, not ogc wms proxied requets, so we'll pass and see if it can't sort itself out
+        if len(content) > 0:
+            content = '; '.join([content, str(e)])
+        else:
+            content = str(e)
+        pass
     try:
         proxied_request = urllib.request.urlopen(url)
         status_code = proxied_request.code
@@ -29,6 +54,12 @@ def proxy_request(request):
         content = proxied_request.read()
     except urllib.error.HTTPError as e:
         return HttpResponse(e.msg, status=e.code, content_type='text/plain')
+    except UnboundLocalError as e:
+        if len(content) > 0:
+            content = '; '.join([content, str(e)])
+        else:
+            content = str(e)
+        return HttpResponse(content, status=status_code, content_type=mimetype)
     else:
         return HttpResponse(content, status=status_code, content_type=mimetype)
 
