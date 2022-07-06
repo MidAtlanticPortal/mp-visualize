@@ -19,6 +19,7 @@ body.template-visualize .layer-info .layer-text {
   border-radius: 0.4rem;
   padding: 1rem;
   font-size: 1.5rem;
+  visibility: hidden; /* disclaimer relies on KOBinding, so we need to hide it by default until binding is completed. */
 }
 
 i.btn-user-gen {

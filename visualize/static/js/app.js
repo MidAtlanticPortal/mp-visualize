@@ -34,6 +34,15 @@ app.state = {
 app.restoreState = {};
 
 ko.applyBindings(app.viewModel);
+
+// RDH: WAY more verbose than we need, but if more styles need 'initial' styles or settings to hold while we wait for
+// KOBindings to apply preferred styles, this seems to be an elegant place for them.
+let postKOBindingCleanup = function() {
+  $('#user-content-notice').css('visibility','unset');
+}
+
+postKOBindingCleanup();
+
 // app.viewModel.loadLayersFromServer().done(function() {
 app.viewModel.initLeftNav().done(function() {
   // app.onResize(); // RDH 20191119 - this was commented out for 2019 upgrades, but may be needed for cacheless.
