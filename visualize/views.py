@@ -54,12 +54,19 @@ def proxy_request(request):
         content = proxied_request.read()
     except urllib.error.HTTPError as e:
         return HttpResponse(e.msg, status=e.code, content_type='text/plain')
+    except TimeoutError as e:
+        return HttpResponse(e, status=408, content_type='text/plain')
+    except urllib.error.URLError as e:
+        # This is most likely a timeout error. Not sure why the above doesn't apply.
+        return HttpResponse(e, status=500, content_type='text/plain')
     except UnboundLocalError as e:
         if len(content) > 0:
             content = '; '.join([content, str(e)])
         else:
             content = str(e)
         return HttpResponse(content, status=status_code, content_type=mimetype)
+    except Exception as e:
+        return HttpResponse(e, status=500, content_type='text/plain')
     else:
         return HttpResponse(content, status=status_code, content_type=mimetype)
 
