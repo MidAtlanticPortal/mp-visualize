@@ -58,6 +58,8 @@ def proxy_request(request):
         return HttpResponse(e, status=408, content_type='text/plain')
     except urllib.error.URLError as e:
         # This is most likely a timeout error. Not sure why the above doesn't apply.
+        if hasattr(e, 'reason') and 'Connection timed out' in str(e.reason):
+            return HttpResponse(e.reason, status=408, content_type='text/plain')
         return HttpResponse(e, status=500, content_type='text/plain')
     except UnboundLocalError as e:
         if len(content) > 0:
