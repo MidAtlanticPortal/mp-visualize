@@ -130,36 +130,47 @@
                     data-userlayer_help_topic="Source URL Endpoints";
                     data-userlayer_help_content="
                         <div>
-                            <p>Map layers are displayed on this tool by importing them from outside sources. To import a layer yourself you will need the following:</p>
+                            <p>
+                                Map layers from outside sources can be displayed on the Portal and saved in your MyPlanner tab using this tool. 
+                                To import a layer you will need the following:
+                            </p>
                             <ul>
-                                <li>Knowledge of an external layer you wish to see here</li>
-                                <li>The URL where that layer's data is served from</li>
+                                <li>The URL where the layer's data is served from</li>
                                 <li>The type of web service it is</li>
                             </ul>
-                            <p>This field starts with the URL or 'end point'. Based on your service type, the URL may look quite different:</p>
+                            <p>
+                                As a first step, you’ll need to enter the map layer’s URL or “end point” into this form. 
+                                Below is a brief overview of the layer source types that can be imported.
+                            </p>
+                            <p>
+                                Based on your service type, the URL may look quite different:
+                            </p>
                             <ul>
                                 <li>
                                     <b>'ArcRest'</b> MapServer (ESRI):
                                     <ul>
                                         <li> One of the most common sources of map layers</li>
                                         <li> You will need to provide the IDs of the layers you wish to include in a special 'ArcGIS Layers' field in a later step.</li>
-                                        <li>Urls look like: https://{domain}/{path}/rest/services/{service}/{layer_name}/MapServer/export</li>
-                                        <li><i>Example:</i> https://coast.noaa.gov/arcgis/rest/services/MarineCadastre/2015VesselTransitCounts_AllVessels/MapServer/export</li>
+                                        <li>Urls look like: https://{domain}/{path}/rest/services/{service}/{layer_name}/MapServer/</li>
+                                        <li><i>Example:</i> https://coast.noaa.gov/arcgis/rest/services/MarineCadastre/2015VesselTransitCounts_AllVessels/MapServer/</li>
                                     </ul> 
                                 </li>
                                 <li>
-                                    <b>ArcFeatureServer</b>: 
+                                    <b>ArcFeatureServer</b> (ESRI): 
                                     <ul>
                                         <li>A very popular and modern source for map layers</li>
                                         <li> You will need to provide the IDs of the layers you wish to include in a special 'ArcGIS Layers' field in a later step.</li>
                                         <li>Urls look like: https://{domain}/{path}/rest/services/{service}/FeatureServer/</li>
-                                        <li><i>Example:</i> https://biamaps.doi.gov/server/rest/services/Hosted/Tribal_Leaders_Directory_Source_File_DO_NOT_DELETE/FeatureServer/</li>
+                                        <!--
+                                            <li><i>Example:</i> https://biamaps.doi.gov/server/rest/services/Hosted/Tribal_Leaders_Directory_Source_File_DO_NOT_DELETE/FeatureServer/</li>
+                                        -->
+                                        <li><i>Example:</i> https://coast.noaa.gov/arcgismc/rest/services/Hosted/AtoNs/FeatureServer/</li>
                                     </ul>
                                 </li>
                                 <li>
                                     <b>XYZ</b> also known as 'tiles': 
                                     <ul>
-                                        <li>Also extremely common, this service serves raster maps cut into image tiles which are refrenced by an X, Y, and Z value.</li>
+                                        <li>Also very common, this service serves raster maps cut into image tiles which are referenced by an X, Y, and Z value.</li>
                                         <li>These layers require a bit more knowledge about your source. Not only do you need to know the URL, but also which order the X, Y, and Z values are put into your URL 'template'</li>
                                         <li>Urls look like: https://{domain}/{path}/{XYZ_template}</li>
                                         <li><i>Examples:</i></li>
@@ -181,7 +192,7 @@
                                     <b>Vector</b> layers: 
                                     <ul>
                                         <li>Very powerful and relatively light-weight these can be defined by a single file (often .json)</li>
-                                        <li>Note: At this time there is no way to apply styles, or import styles, so all features come in as orange shapes.
+                                        <li>Note: At this time there is no way to apply styles or import styles, so all features come in as orange shapes.
                                         <li>Urls look like: https://{domain}/{path}/{file}</li>
                                         <li><i>Example:</i> https://portal.midatlanticocean.org/nativeland/wp-content/themes/Native-Land-Theme/files/indigenousTerritories.json</li>
                                     </ul>
@@ -189,7 +200,7 @@
                                 <li>
                                     <b>VectorTile</b>: 
                                     <ul>
-                                        <li>Very powerful and extremely light-weight these mix the power of vector layers with the bite-size demands of tiles</li>
+                                        <li>Very powerful and extremely light-weight, these mix the power of vector layers with the bite-size demands of tiles</li>
                                         <li>These layers require a bit more knowledge about your source. Not only do you need to know the URL, but also which order the X, Y, and Z values are put into your URL 'template'</li>
                                         <li>Note: At this time there is no way to apply styles, or import styles, so all features come in as orange shapes.
                                         <li>Urls look like: https://{domain}/{path}/{XYZ_template}.{format}</li>
