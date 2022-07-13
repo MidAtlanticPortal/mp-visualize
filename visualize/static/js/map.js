@@ -704,6 +704,14 @@ app.addDrawingLayerToMap = function(name) {
   }
 }
 
+app.addFeaturesToDrawingLayer = function(geojson) {
+  if (app.wrapper.maps.hasOwnProperty('addFeaturesToDrawingLayer')) {
+    app.wrapper.maps.addFeaturesToDrawingLayer(geojson);
+  } else {
+    console.log('no addFeaturesToDrawingLayer function defined.')
+  }
+}
+
 app.startSketch = function(){
   if (app.wrapper.controls.hasOwnProperty('startSketch')) {
     app.wrapper.controls.startSketch();

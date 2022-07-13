@@ -1271,6 +1271,21 @@ app.wrapper.map.addDrawingLayerToMap = function() {
   return app.map.drawingLayer;
 };
 
+app.wrapper.map.addFeaturesToDrawingLayer = function(geojson) {
+  let drawing_source = app.map.drawingLayer.getSource();
+  drawing_source.clear();
+  let geojson_object = JSON.parse(geojson);
+  let json_features = new ol.format.GeoJSON({
+    defaultDataProjection: 'EPSG:4326',
+    featureProjection: 'EPSG:3857'
+  }).readFeatures(geojson_object);
+  drawing_source.addFeatures(json_features);
+  app.wrapper.map.zoomToExtent(drawing_source.getExtent());
+  if (drawing_source.getFeatures().length > 0) {
+    app.viewModel.scenarios.drawingFormModel.hasShape(true);
+  }
+}
+
 app.wrapper.map.countFeatures = function(layer) {
   return layer.getSource().getFeatures().length;
 }

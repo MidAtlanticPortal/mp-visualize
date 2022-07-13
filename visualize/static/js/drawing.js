@@ -123,3 +123,68 @@ function polygonFormModel(options) {
 
     return self;
 } // end polygonFormModel
+
+// GIS File Import Logic
+
+const validate_input_file = function() {
+    let is_valid = false;
+    let input_file_name = $('#gisfile').val();
+    let name_length = input_file_name.length;
+    let type_valid = false;
+    if (
+        name_length > 0 &&
+        (
+            input_file_name.toLowerCase().indexOf('.shp') > 0 ||
+            input_file_name.toLowerCase().indexOf('.zip') > 0 ||
+            input_file_name.toLowerCase().indexOf('.csv') > 0 ||
+            input_file_name.toLowerCase().indexOf('.json') > 0 ||
+            input_file_name.toLowerCase().indexOf('.geojson') > 0
+        )
+    ) {
+        is_valid = true;
+        type_valid = true;
+    }
+    return {
+        'is_valid': is_valid,
+        'length': name_length,
+        'type_valid': type_valid
+    }
+}
+
+const add_geojson_to_map = function(geojson) {
+    app.wrapper.map.addFeaturesToDrawingLayer(geojson);
+}
+
+const interpret_json = function(field) {
+    let file = field.prop('files')[0];
+    let file_url = URL.createObjectURL(file);
+    $.get(file_url, (data) => {
+            add_geojson_to_map(data);
+        }, "text");
+}
+
+const interpret_file = function() {
+    let field = $('#gisfile');
+    let filename = field.val();
+    let filename_parts = filename.split('.');
+    let filename_type = filename_parts[filename_parts.length-1].toLowerCase();
+    switch (filename_type) {
+        case 'json':
+            interpret_json(field);
+            break;
+        case 'geojson':
+            interpret_json(field);
+            break;
+        case 'zip':
+            interpret_zip(field);
+            break;
+        case 'shp':
+            interpret_shp(field);
+            break;
+        case 'csv':
+            interpret_csv(field);
+            break;
+        default:
+            window.alert('Unsupported file type "' + filename_type + '"');
+    }
+}
