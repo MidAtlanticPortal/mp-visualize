@@ -2048,11 +2048,27 @@ ExportGeometry.prototype.closeDialog = function() {
     this.dialog.modal('hide');
 }
 
+function AlertModal() {
+  this.dialog = $('#alert-modal');
+}
+AlertModal.prototype.showDialog = function(title, content){
+  app.viewModel.alert.title(title);
+  app.viewModel.alert.content(content);
+  this.dialog.modal('show');
+}
+AlertModal.prototype.closeDialog = function() {
+  app.viewModel.alert.title(null);
+  app.viewModel.alert.content(null);
+  this.dialog.modal('hide');
+}
 
 function viewModel() {
     var self = this;
 
     this.exportGeometry = new ExportGeometry();
+    this.alert = new AlertModal();
+    this.alert.title = ko.observable('');
+    this.alert.content = ko.observable('');
 
     // list of (func, unlessTarget) for $(doc).mouseDown
     self._outsideClicks = [];
