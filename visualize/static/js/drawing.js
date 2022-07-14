@@ -159,8 +159,14 @@ const interpret_json = function(field) {
     let file = field.prop('files')[0];
     let file_url = URL.createObjectURL(file);
     $.get(file_url, (data) => {
-            add_geojson_to_map(data);
+            let geojson_object = JSON.parse(data);
+            add_geojson_to_map(geojson_object);
         }, "text");
+}
+
+const interpret_zip = function(field) {
+    let file = field.prop('files')[0];
+    loadshp({url: file, encoding: 'utf-8'}, function(geojson) { add_geojson_to_map(geojson)});
 }
 
 const interpret_file = function() {

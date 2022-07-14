@@ -1271,17 +1271,14 @@ app.wrapper.map.addDrawingLayerToMap = function() {
   return app.map.drawingLayer;
 };
 
-app.wrapper.map.addFeaturesToDrawingLayer = function(geojson) {
+app.wrapper.map.addFeaturesToDrawingLayer = function(geojson_object) {
   let drawing_source = app.map.drawingLayer.getSource();
+  let json_features = new ol.format.GeoJSON({featureProjection: app.map.getView().getProjection()}).readFeatures(geojson_object);
   drawing_source.clear();
-  let geojson_object = JSON.parse(geojson);
-  let json_features = new ol.format.GeoJSON({
-    defaultDataProjection: 'EPSG:4326',
-    featureProjection: 'EPSG:3857'
-  }).readFeatures(geojson_object);
   drawing_source.addFeatures(json_features);
   app.wrapper.map.zoomToExtent(drawing_source.getExtent());
   if (drawing_source.getFeatures().length > 0) {
+    app.consolidatePolygonLayerFeatures();
     app.viewModel.scenarios.drawingFormModel.hasShape(true);
   }
 }
