@@ -103,6 +103,7 @@ function drawingModel(options) {
 function polygonFormModel(options) {
     var self = this;
 
+    self.isImporting = ko.observable(false);
     self.isDrawing = ko.observable(false);
     self.sketchMode = ko.observable(null);
     self.showEdit = ko.observable(false);
@@ -177,11 +178,13 @@ const interpret_json = function(field) {
             let geojson_object = JSON.parse(data);
             add_geojson_to_map(geojson_object);
         }, "text");
+    finishGISFileImport();
 }
 
 const interpret_zip = function(field) {
     let file = field.prop('files')[0];
     loadshp({url: file, encoding: 'utf-8'}, function(geojson) { add_geojson_to_map(geojson)});
+    finishGISFileImport();
 }
 
 const interpret_alt_zip = function() {
@@ -268,6 +271,11 @@ const interpret_csv = function(field, delimiter) {
                 add_geojson_to_map(data);
             });
         }, "text");
+    finishGISFileImport();
+}
+
+const finishGISFileImport = function() {
+    app.viewModel.scenarios.drawingFormModel.isImporting(true);
 }
 
 const interpret_file = function() {
