@@ -34,8 +34,9 @@ function drawingModel(options) {
                 // RDH 20220804: If users try to edit a shape before adding it to the map, the extent
                 //  comes back as [Infinity, Infinity, -Infinity, -Infinity], and breaks stuff and 
                 //  no edit form shows, forcing the user to refresh the page. This code tries to wait for it.
+                var lyr_extent = false;
                 try {
-                    let lyr_extent = self.drawing.layer().getDataExtent();
+                    lyr_extent = self.drawing.layer().getDataExtent();
                 } catch (error) {
                     lyr_extent = false;
                 }
@@ -44,6 +45,7 @@ function drawingModel(options) {
                     app.map.zoomOut();
                 } else {
                     window.setTimeout(function() {
+                        var lyr_extent = false;
                         try {
                             lyr_extent = self.drawing.layer().getDataExtent();
                         } catch (error) {
