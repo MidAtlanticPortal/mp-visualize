@@ -30,10 +30,33 @@ function drawingModel(options) {
                 var oldLayer = app.viewModel.scenarios.drawingFormModel.polygonLayer;
                 app.viewModel.scenarios.drawingFormModel.originalDrawing = self.drawing;
                 app.viewModel.scenarios.drawingFormModel.polygonLayer = self.drawing.layer;
-                //debugger;
+                
+                // RDH 20220804: If users try to edit a shape before adding it to the map, the extent
+                //  comes back as [Infinity, Infinity, -Infinity, -Infinity], and breaks stuff and 
+                //  no edit form shows, forcing the user to refresh the page. This code tries to wait for it.
+                let lyr_extent = self.drawing.layer().getDataExtent();
+                if (lyr_extent && lyr_extent[0] != Infinity) {
+                    app.map.zoomToExtent(lyr_extent);
+                    app.map.zoomOut();
+                } else {
+                    window.setTimeout(function() {
+                        lyr_extent = self.drawing.layer().getDataExtent();
+                        if (lyr_extent && lyr_extent[0] != Infinity) {
+                            app.map.zoomToExtent(lyr_extent);
+                            app.map.zoomOut();
+                            app.map.drawingLayer = self.drawing.layer().layer;
 
-                app.map.zoomToExtent(self.drawing.layer().getDataExtent());
-                app.map.zoomOut();
+                            $('#drawing-form').html(data);
+                            ko.applyBindings(app.viewModel.scenarios.drawingFormModel, document.getElementById('drawing-form'));
+
+                            app.viewModel.scenarios.drawingFormModel.showEdit(true);
+                            app.viewModel.scenarios.drawingFormModel.hasShape(true);
+                        } else {
+                            window.alert("Couldn't load editing form. Try adding your shape to the map before editing");
+                        }
+                    }, 500);
+                    return;
+                }
 
                 app.map.drawingLayer = self.drawing.layer().layer;
 
