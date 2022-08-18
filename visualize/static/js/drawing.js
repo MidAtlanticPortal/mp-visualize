@@ -158,22 +158,6 @@ function polygonFormModel(options) {
 
 // GIS File Import Logic
 
-csv_tsv_help_html = '<p>' +
-    '<b>CSV/TSV</b> files are used to represent point data.<br/>' +
-    'They should be formatted as follows:<br/>' +
-    '<ul>' +
-        '<li>2 or more columns</li>' +
-        '<li>2 or more rows</li>' +
-        '<li>ROW 1: headers (not data)</li>' +
-        '<li>Column 1: Latitude value</li>' +
-        '<li>Column 2: Longitude value</li>' +
-        '<li>Coordinates should be in Decimal Degree format</li>' +
-        '<li>Coordinates should be in EPSG:4326 WGS 84</li>' +
-        '<li>Example: Four Corners\' coordinates would look like: 36.9927152491, -109.040436537</li>' +
-    '</ul>' +
-    'Extra columns will not be considered: no attributes will be imported.'
-    '</p>';
-
 const validate_input_file = function() {
     let is_valid = false;
     let input_file_name = $('#gisfile').val();
@@ -287,13 +271,6 @@ const interpret_shp = function(field, filename) {
     // }, 100);   
 }
 
-const show_csv_help = function () {
-    app.viewModel.alert.showDialog(
-        'Importing CSV/TSV Files',
-        csv_tsv_help_html
-    );
-}
-
 const interpret_csv = function(field, delimiter) {
     let file = field.prop('files')[0];
     let file_url = URL.createObjectURL(file);
@@ -304,7 +281,6 @@ const interpret_csv = function(field, delimiter) {
                 lonfield: parsed_csv[0][1],
                 delimiter: delimiter
             }, function(err, data) {
-                show_csv_help();
                 add_geojson_to_map(data);
             });
         }, "text");
