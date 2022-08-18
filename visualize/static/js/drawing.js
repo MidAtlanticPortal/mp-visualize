@@ -287,6 +287,13 @@ const interpret_shp = function(field, filename) {
     // }, 100);   
 }
 
+const show_csv_help = function () {
+    app.viewModel.alert.showDialog(
+        'Importing CSV/TSV Files',
+        csv_tsv_help_html
+    );
+}
+
 const interpret_csv = function(field, delimiter) {
     let file = field.prop('files')[0];
     let file_url = URL.createObjectURL(file);
@@ -297,10 +304,7 @@ const interpret_csv = function(field, delimiter) {
                 lonfield: parsed_csv[0][1],
                 delimiter: delimiter
             }, function(err, data) {
-                app.viewModel.alert.showDialog(
-                    'Importing CSV/TSV Files',
-                    csv_tsv_help_html
-                )
+                show_csv_help();
                 add_geojson_to_map(data);
             });
         }, "text");
