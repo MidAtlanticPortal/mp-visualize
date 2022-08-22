@@ -92,26 +92,28 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
             $.each(returnJSON['fields'], function(fieldNdx, field) {
               if (field.name.indexOf('OBJECTID') === -1 && field.name.indexOf('CFR_id') === -1) {
                 var data = attributeList[field.name]
-                if (field.type === 'esriFieldTypeDate') {
-                  data = new Date(data).toDateString();
-                } else if (app.utils.isNumber(data)) {
-                  data = app.utils.formatNumber(data);
-                } else if (typeof(data) == 'string' && (data.indexOf('http') >= 0 || field.name.toLowerCase() == 'link' )) {
-                  // Make link attributes live!
-                  str_list = data.split('; ');
-                  if (str_list.length == 1) {
-                    str_list = data.split(' ');
-                  }
-                  for (var i=0; i < str_list.length; i++) {
-                    if (str_list[i].indexOf('http') < 0) {
-                      var list_addr = 'http://' + str_list[i];
-                    } else {
-                      var list_addr = str_list[i];
+                if (mp_layer.preserved_format_attributes.indexOf(field.name) < 0) {
+                  if (field.type === 'esriFieldTypeDate') {
+                    data = new Date(data).toDateString();
+                  } else if (app.utils.isNumber(data)) {
+                    data = app.utils.formatNumber(data);
+                  } else if (typeof(data) == 'string' && (data.indexOf('http') >= 0 || field.name.toLowerCase() == 'link' )) {
+                    // Make link attributes live!
+                    str_list = data.split('; ');
+                    if (str_list.length == 1) {
+                      str_list = data.split(' ');
                     }
-                    link_string = '<a href="' + list_addr + '" target="_blank">' + str_list[i] + '</a>';
-                    str_list[i] = link_string;
+                    for (var i=0; i < str_list.length; i++) {
+                      if (str_list[i].indexOf('http') < 0) {
+                        var list_addr = 'http://' + str_list[i];
+                      } else {
+                        var list_addr = str_list[i];
+                      }
+                      link_string = '<a href="' + list_addr + '" target="_blank">' + str_list[i] + '</a>';
+                      str_list[i] = link_string;
+                    }
+                    data = str_list.join(' ');
                   }
-                  data = str_list.join(' ');
                 }
                 if (data && app.utils.trim(data) !== "") {
                   attributeObjs.push({
