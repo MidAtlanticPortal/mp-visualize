@@ -108,6 +108,7 @@ function layerModel(options, parent) {
       self.label_field = options.label_field || false;
       self.attributes = options.attributes ? options.attributes.attributes : [];
       self.compress_attributes = options.attributes ? options.attributes.compress_attributes : false;
+      self.preserved_format_attributes = options.attributes ? options.attributes.preserved_format_attributes : [];
       self.attributeEvent = options.attributes ? options.attributes.event : [];
       self.mouseoverAttribute = options.attributes ? options.attributes.mouseover_attribute : false;
       self.lookupField = options.lookups ? options.lookups.field : null;
