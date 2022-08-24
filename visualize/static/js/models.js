@@ -426,13 +426,13 @@ function layerModel(options, parent) {
                     var requested_layers = self.arcgislayers;
                   }
 
+                  // Prime layer with empty legend
+                  self.legend = {'elements': []};
+
                   $.each(data['layers'], function(i, layerobj) {
                       for (var i=0; i< requested_layers.length; i++) {
                         var arc_layer = requested_layers[i];
                         if (parseInt(layerobj['layerId'], 10) === parseInt(arc_layer, 10)) {
-                            if (!self.legend || !self.legend.hasOwnProperty('elements')) {
-                              self.legend = {'elements': []};
-                            }
                             $.each(layerobj['legend'], function(j, legendobj) {
                               var swatchId = '';
                               if (legendobj.hasOwnProperty('url')) {
