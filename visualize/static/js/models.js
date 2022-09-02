@@ -113,6 +113,8 @@ function layerModel(options, parent) {
       self.mouseoverAttribute = options.attributes ? options.attributes.mouseover_attribute : false;
       self.lookupField = options.lookups ? options.lookups.field : null;
       self.lookupDetails = options.lookups ? options.lookups.details : [];
+      self.minZoom = options.minZoom || null;
+      self.maxZoom = options.maxZoom || null;
       self.custom_style = options.custom_style || null;
       if (self.custom_style == null || self.custom_style.length == 0) {
         self.color = options.color || "#ee9900";
