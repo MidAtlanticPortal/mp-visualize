@@ -27,7 +27,7 @@
         </td>
         <!-- /ko -->
 
-        <td class="layer-name">
+        <td class="layer-name" data-bind="css: {zoomInvisible: !isVisibleAtZoom()}">
             <a class="btn btn-layer" data-bind='click: {% block "nameAction" %}toggleActive{% endblock %}'>
               <table>
                 <tr>
