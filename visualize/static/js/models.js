@@ -1547,6 +1547,7 @@ function layerModel(options, parent) {
       var layer = this;
       if (layer.isMDAT || layer.isVTR || layer.isDrawingModel || layer.isSelectionModel || layer.hasOwnProperty('wmsSession') && layer.wmsSession()) {
         layer.fullyLoaded = true;
+        app.map.zoom.valueHasMutated();
         layer.performAction(callbackType, evt);
       } else {
 
@@ -1570,6 +1571,7 @@ function layerModel(options, parent) {
 
             layer.setOptions(data, parent);
             layer.fullyLoaded = true;
+            app.map.zoom.valueHasMutated();
             layer.performAction(callbackType, evt);
             app.viewModel.layerIndex[layer.id.toString()] = layer;
 
