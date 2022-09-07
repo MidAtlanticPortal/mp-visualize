@@ -25,3 +25,11 @@ body.template-visualize .layer-info .layer-text {
 i.btn-user-gen {
   color: var(--bright_icon);
 }
+
+td.layer-name.zoomInvisible, 
+td.layer-name.zoomInvisible td.text, 
+td.layer-name.zoomInvisible td.add-on, 
+td.layer-name.zoomInvisible td.text span.deep-blue {
+  color: #888;
+  background-color: #DDD;
+}

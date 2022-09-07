@@ -506,8 +506,15 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
   })
   layer.layer = new ol.layer.Tile({
     source: layerSource,
-    useInterimTilesOnError: false
+    useInterimTilesOnError: false,
   });
+
+  if (layer.minZoom != null && layer.minZoom != undefined) {
+    layer.layer.setMinZoom(layer.minZoom);
+  }
+  if (layer.maxZoom != null && layer.maxZoom != undefined) {
+    layer.layer.setMaxZoom(layer.maxZoom);
+  }
 
   return layer;
 
@@ -582,8 +589,14 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
   layer.layer = new ol.layer.Vector({
     source: layerSource,
     style: app.wrapper.map.getLayerStyle,
-    declutter: true
+    declutter: true,
   });
+  if (layer.minZoom != null && layer.minZoom != undefined) {
+    layer.layer.setMinZoom(layer.minZoom);
+  }
+  if (layer.maxZoom != null && layer.maxZoom != undefined) {
+    layer.layer.setMaxZoom(layer.maxZoom);
+  }
 
   let request_url = layer.url + layer.arcgislayers;
   if (layer.proxy_url) {
