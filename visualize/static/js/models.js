@@ -3098,7 +3098,7 @@ function viewModel() {
     self.activeLayers.subscribe(function() {
         // initial index
         var index = 300;
-        if (!app.state.activeLayers){
+        if (app.state && !app.state.activeLayers){
           app.state.activeLayers = [];
         }
 
