@@ -11,3 +11,25 @@
     margin: 1rem 1rem 0 0.5rem;
     float: left;
 }
+
+#embedded-legend-content div.zoomInvisible {
+  color: #888;
+  background-color: #DDD;
+}
+
+#embedded-legend-content div.zoomInvisible span.invisible-status {
+    text-align: right;
+}
+#embedded-legend-content div.zoomInvisible span.invisible-status i {
+    position: absolute;
+    right: 2rem;
+    padding-top: 0.5rem;
+}
+
+#embedded-legend-content div.zoomInvisible span.invisible-status span.zoom-range-message {
+    color: red;
+    font-size: smaller;
+    display: block ruby;
+    float: right;
+    margin-top: 2rem;
+  }
