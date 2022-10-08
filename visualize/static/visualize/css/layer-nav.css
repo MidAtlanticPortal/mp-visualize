@@ -25,3 +25,27 @@ body.template-visualize .layer-info .layer-text {
 i.btn-user-gen {
   color: var(--bright_icon);
 }
+
+td.layer-name.zoomInvisible, 
+td.layer-name.zoomInvisible td.text, 
+td.layer-name.zoomInvisible td.add-on, 
+td.layer-name.zoomInvisible td.text span.deep-blue {
+  color: #888;
+  background-color: #DDD;
+}
+
+td.layer-name.zoomInvisible {
+  padding-bottom: 10px;
+}
+
+td.layer-name.zoomInvisible td.add-on {
+  text-align: right;
+}
+
+td.add-on span.zoom-range-message {
+  color: red;
+  font-size: smaller;
+  display: block ruby;
+  margin-bottom: -20px;
+  margin-top: -5px;
+}

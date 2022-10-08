@@ -79,6 +79,12 @@ $(document).ready(function() {
   // app.onResize();
   // $(window).resize(app.onResize);
 
+  app.map.zoom = ko.observable(app.map.getView().getZoom());
+
+  app.map.getView().on('change:resolution', (event) => {
+    app.map.zoom(app.map.getView().getZoom());
+  });
+
   //Do not display any warning for missing tiles
   // Be sure to set your map tech accordingly.
 

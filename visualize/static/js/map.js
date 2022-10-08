@@ -442,7 +442,7 @@ app.init = function () {
           new ContextualMenu.Item("Share…", app.viewModel.scenarios.shareDrawing, 'fa fa-share-alt'),
           new ContextualMenu.Item("Export…", app.viewModel.exportGeometry.showDialog.bind(app.viewModel.exportGeometry), 'far fa-file'),
           new ContextualMenu.Divider(),
-          new ContextualMenu.Item("Delete Drawing", app.viewModel.scenarios.deleteDrawing, 'fa fa-times-circle red')
+          new ContextualMenu.Item("Delete Shape", app.viewModel.scenarios.deleteDrawing, 'fa fa-times-circle red')
       ];
 
       app.menus.sharedUserLayer = [
@@ -701,6 +701,14 @@ app.addDrawingLayerToMap = function(name) {
     var drawingLayer = app.wrapper.map.addDrawingLayerToMap(name);
   } else {
     console.log('no addDrawingLayerToMap function defined.');
+  }
+}
+
+app.addFeaturesToDrawingLayer = function(geojson) {
+  if (app.wrapper.maps.hasOwnProperty('addFeaturesToDrawingLayer')) {
+    app.wrapper.maps.addFeaturesToDrawingLayer(geojson);
+  } else {
+    console.log('no addFeaturesToDrawingLayer function defined.')
   }
 }
 

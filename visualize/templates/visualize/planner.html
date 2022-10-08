@@ -26,6 +26,7 @@
         <link href="{% static 'visualize/css/modals.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/layer-nav.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/basemap.css' %}" rel="stylesheet">
+        <link href="{% static 'visualize/css/my-planner.css' %}" rel="stylesheet">
         {% if MAP_LIBRARY == 'ol5' %}
           <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
           <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
@@ -86,7 +87,7 @@
                           </a>
                           {% if user.is_authenticated %}
                           <!-- Draw Button-->
-                          <a id="draw-button" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="New Drawing" data-bind="click: startNewDrawing">
+                          <a id="draw-button" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="New Shape" data-bind="click: startNewDrawing">
                               <i class="fa fa-draw-polygon"></i>
                           </a>
                           <!-- Session Layer Button-->
@@ -348,11 +349,19 @@
 
                                                       <div data-bind="foreach: activeLegendLayers">
                                                       <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
-                                                          <div style="padding-bottom: 18px;">
+                                                          <div style="padding-bottom: 18px;" data-bind="css: {zoomInvisible: !isVisibleAtZoom()}">
                                                               <!-- ko if: isUserGenerated -->
                                                                 <span class="pagination-centered legend-title"><b><u>{{ USER_GEN_PREFIX }}</u></b></span>
                                                               <!-- /ko -->
                                                               <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
+
+                                                              <!-- ko ifnot: isVisibleAtZoom -->
+                                                                <span class="invisible-status">
+                                                                    <i title="Out of zoom range." class="fa fa-eye-slash"></i>
+                                                                    <span class="zoom-range-message">Out of Range</span>
+                                                                </span>
+                                                              <!-- /ko -->
+
                                                               <p class="legend-subtitle" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
                                                               <span data-bind="if: legend">
                                                                   <div data-bind="if: legend['elements']">

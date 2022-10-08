@@ -506,8 +506,15 @@ app.wrapper.map.addArcRestLayerToMap = function(layer) {
   })
   layer.layer = new ol.layer.Tile({
     source: layerSource,
-    useInterimTilesOnError: false
+    useInterimTilesOnError: false,
   });
+
+  if (layer.minZoom != null && layer.minZoom != undefined) {
+    layer.layer.setMinZoom(layer.minZoom);
+  }
+  if (layer.maxZoom != null && layer.maxZoom != undefined) {
+    layer.layer.setMaxZoom(layer.maxZoom);
+  }
 
   return layer;
 
@@ -582,8 +589,14 @@ app.wrapper.map.addArcFeatureServerLayerToMap = function(layer) {
   layer.layer = new ol.layer.Vector({
     source: layerSource,
     style: app.wrapper.map.getLayerStyle,
-    declutter: true
+    declutter: true,
   });
+  if (layer.minZoom != null && layer.minZoom != undefined) {
+    layer.layer.setMinZoom(layer.minZoom);
+  }
+  if (layer.maxZoom != null && layer.maxZoom != undefined) {
+    layer.layer.setMaxZoom(layer.maxZoom);
+  }
 
   let request_url = layer.url + layer.arcgislayers;
   if (layer.proxy_url) {
@@ -1270,6 +1283,18 @@ app.wrapper.map.addDrawingLayerToMap = function() {
 
   return app.map.drawingLayer;
 };
+
+app.wrapper.map.addFeaturesToDrawingLayer = function(geojson_object) {
+  let drawing_source = app.map.drawingLayer.getSource();
+  let json_features = new ol.format.GeoJSON({featureProjection: app.map.getView().getProjection()}).readFeatures(geojson_object);
+  drawing_source.clear();
+  drawing_source.addFeatures(json_features);
+  app.wrapper.map.zoomToExtent(drawing_source.getExtent());
+  if (drawing_source.getFeatures().length > 0) {
+    app.consolidatePolygonLayerFeatures();
+    app.viewModel.scenarios.drawingFormModel.hasShape(true);
+  }
+}
 
 app.wrapper.map.countFeatures = function(layer) {
   return layer.getSource().getFeatures().length;

@@ -46,6 +46,9 @@ function layerModel(options, parent) {
     self.source = ko.observable(options.source || null);
     self.hasInfo = ko.observable(false);
 
+    self.minZoom = 0;
+    self.maxZoom = 24;
+
     // if layer is loaded from hash, preserve opacity, etc...
     self.override_defaults = ko.observable(null);
 
@@ -113,6 +116,8 @@ function layerModel(options, parent) {
       self.mouseoverAttribute = options.attributes ? options.attributes.mouseover_attribute : false;
       self.lookupField = options.lookups ? options.lookups.field : null;
       self.lookupDetails = options.lookups ? options.lookups.details : [];
+      self.minZoom = options.minZoom || 0;
+      self.maxZoom = options.maxZoom || 24;
       self.custom_style = options.custom_style || null;
       if (self.custom_style == null || self.custom_style.length == 0) {
         self.color = options.color || "#ee9900";
@@ -343,6 +348,16 @@ function layerModel(options, parent) {
       return false;
     });
 
+    self.isVisibleAtZoom = ko.pureComputed(function() {
+      if (self.hasOwnProperty('minZoom') && self.hasOwnProperty('maxZoom')){
+        if (self.minZoom || self.maxZoom) {
+          if (self.minZoom > app.map.zoom() || self.maxZoom < app.map.zoom()) {
+            return false;
+          }
+        }
+      }
+      return true;
+    })
 
 
     getArcGISJSONLegend = function(self, protocol) {
@@ -1532,6 +1547,9 @@ function layerModel(options, parent) {
       var layer = this;
       if (layer.isMDAT || layer.isVTR || layer.isDrawingModel || layer.isSelectionModel || layer.hasOwnProperty('wmsSession') && layer.wmsSession()) {
         layer.fullyLoaded = true;
+        if (app.map.hasOwnProperty('zoom')){
+          app.map.zoom.valueHasMutated();
+        }
         layer.performAction(callbackType, evt);
       } else {
 
@@ -1555,6 +1573,9 @@ function layerModel(options, parent) {
 
             layer.setOptions(data, parent);
             layer.fullyLoaded = true;
+            if (app.map.hasOwnProperty('zoom')){
+              app.map.zoom.valueHasMutated();
+            }
             layer.performAction(callbackType, evt);
             app.viewModel.layerIndex[layer.id.toString()] = layer;
 
@@ -2049,11 +2070,27 @@ ExportGeometry.prototype.closeDialog = function() {
     this.dialog.modal('hide');
 }
 
+function AlertModal() {
+  this.dialog = $('#alert-modal');
+}
+AlertModal.prototype.showDialog = function(title, content){
+  app.viewModel.alert.title(title);
+  app.viewModel.alert.content(content);
+  this.dialog.modal('show');
+}
+AlertModal.prototype.closeDialog = function() {
+  app.viewModel.alert.title(null);
+  app.viewModel.alert.content(null);
+  this.dialog.modal('hide');
+}
 
 function viewModel() {
     var self = this;
 
     this.exportGeometry = new ExportGeometry();
+    this.alert = new AlertModal();
+    this.alert.title = ko.observable('');
+    this.alert.content = ko.observable('');
 
     // list of (func, unlessTarget) for $(doc).mouseDown
     self._outsideClicks = [];
