@@ -14,17 +14,17 @@
                         <option value="a1">A1</option>
                         <option value="a2">A2</option>
                         <option value="a3">A3</option>
-                        <option value="a4" selected>A4</option>
+                        <option value="a4">A4</option>
                         <option value="a5">A5</option>
-                        <option value="letter">US Letter</option>
+                        <option value="letter" selected>US Letter</option>
                         <option value="legal">US Legal</option>
                     </select>
                     <br /><br />
                     <label for="resolution">Resolution </label>
                     <select id="resolution">
-                        <option value="72">72 dpi (fast)</option>
-                        <option value="150">150 dpi</option>
-                        <option value="200" selected>200 dpi</option>
+                        {% comment %} <option value="72">72 dpi (fast)</option> {% endcomment %}
+                        <option value="150" selected>150 dpi</option>
+                        <option value="200">200 dpi</option>
                         <option value="300">300 dpi (slow)</option>
                     </select>
                     {% comment %} <label for="scale">Scale </label>

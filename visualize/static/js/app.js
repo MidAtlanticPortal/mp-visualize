@@ -416,7 +416,7 @@ $('#btn-print').click(function () {
   // Show Attribution if hidden:
   var attribution_state = app.wrapper.controls.getAttributionState();
   app.wrapper.controls.setAttributionState('show');
-  document.querySelector('.ol-attribution').classList.add('printable');
+  const attributionElement = document.querySelector('.ol-attribution');
   
   document.body.style.cursor = 'progress';
 
@@ -477,6 +477,19 @@ $('#btn-print').click(function () {
     const size = app.map.getSize();
     const viewResolution = app.map.getView().getResolution();
 
+    // Set up attribution to print on map
+    let halfDim = dim[0] / 2;
+    let yAttribution = dim[1] - 5;  
+    let attributionElementCanvas;
+    html2canvas(attributionElement, {
+      useCORS: true,
+    }).then(function (elCanvas) {
+      if (elCanvas) {
+        var elImg = elCanvas.toDataURL("image/png");
+        attributionElementCanvas = elImg;
+      }
+    });
+    
     app.map.once('rendercomplete', function () {
       const mapCanvas = document.createElement('canvas');
       mapCanvas.width = width;
@@ -518,6 +531,17 @@ $('#btn-print').click(function () {
         dim[1]
       );
 
+      pdf.addImage(
+        attributionElementCanvas,
+        'PNG',
+        halfDim,
+        yAttribution,
+        halfDim,
+        0,
+        '',
+        'MEDIUM'
+      );
+
       // Add the map canvas to the PDF
       canvasImages.forEach(function (anImage) {
         // Add page for each printable image
@@ -547,6 +571,7 @@ $('#btn-print').click(function () {
       exportButton.disabled = false;
       document.body.style.cursor = 'auto';
       app.wrapper.controls.setAttributionState(attribution_state);
+      $('#print-modal').modal('hide');
     });
 
     // Set print size
