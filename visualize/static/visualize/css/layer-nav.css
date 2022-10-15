@@ -4,3 +4,48 @@ body.template-visualize .layer-info .layer-text {
   border: 1px solid #CCC;
   border-radius: 0.3rem;
 }
+
+#user-content-notice {
+  position: absolute;
+  color: white;
+  top: 1rem;
+  /* left: 25vw; */
+  /* room for 420px wide left-nav + 1rem buffer on each side */
+  left: calc(2rem + 420px);
+  /* 100vw - left - 1rem margin (left, right) - controls width (38px) - controls-right (30px) */
+  width: calc(100vw - 1rem - 420px - 2rem - 38px - 30px);
+  background-color: rgba(40,40, 150, 0.75);
+  border: 1px solid white;
+  border-radius: 0.4rem;
+  padding: 1rem;
+  font-size: 1.5rem;
+  visibility: hidden; /* disclaimer relies on KOBinding, so we need to hide it by default until binding is completed. */
+}
+
+i.btn-user-gen {
+  color: var(--bright_icon);
+}
+
+td.layer-name.zoomInvisible, 
+td.layer-name.zoomInvisible td.text, 
+td.layer-name.zoomInvisible td.add-on, 
+td.layer-name.zoomInvisible td.text span.deep-blue {
+  color: #888;
+  background-color: #DDD;
+}
+
+td.layer-name.zoomInvisible {
+  padding-bottom: 10px;
+}
+
+td.layer-name.zoomInvisible td.add-on {
+  text-align: right;
+}
+
+td.add-on span.zoom-range-message {
+  color: red;
+  font-size: smaller;
+  display: block ruby;
+  margin-bottom: -20px;
+  margin-top: -5px;
+}

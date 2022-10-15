@@ -92,26 +92,28 @@ if (!app.wrapper.events.hasOwnProperty('clickOnArcRESTLayerEvent')) {
             $.each(returnJSON['fields'], function(fieldNdx, field) {
               if (field.name.indexOf('OBJECTID') === -1 && field.name.indexOf('CFR_id') === -1) {
                 var data = attributeList[field.name]
-                if (field.type === 'esriFieldTypeDate') {
-                  data = new Date(data).toDateString();
-                } else if (app.utils.isNumber(data)) {
-                  data = app.utils.formatNumber(data);
-                } else if (typeof(data) == 'string' && (data.indexOf('http') >= 0 || field.name.toLowerCase() == 'link' )) {
-                  // Make link attributes live!
-                  str_list = data.split('; ');
-                  if (str_list.length == 1) {
-                    str_list = data.split(' ');
-                  }
-                  for (var i=0; i < str_list.length; i++) {
-                    if (str_list[i].indexOf('http') < 0) {
-                      var list_addr = 'http://' + str_list[i];
-                    } else {
-                      var list_addr = str_list[i];
+                if (mp_layer.preserved_format_attributes.indexOf(field.name) < 0) {
+                  if (field.type === 'esriFieldTypeDate') {
+                    data = new Date(data).toDateString();
+                  } else if (app.utils.isNumber(data)) {
+                    data = app.utils.formatNumber(data);
+                  } else if (typeof(data) == 'string' && (data.indexOf('http') >= 0 || field.name.toLowerCase() == 'link' )) {
+                    // Make link attributes live!
+                    str_list = data.split('; ');
+                    if (str_list.length == 1) {
+                      str_list = data.split(' ');
                     }
-                    link_string = '<a href="' + list_addr + '" target="_blank">' + str_list[i] + '</a>';
-                    str_list[i] = link_string;
+                    for (var i=0; i < str_list.length; i++) {
+                      if (str_list[i].indexOf('http') < 0) {
+                        var list_addr = 'http://' + str_list[i];
+                      } else {
+                        var list_addr = str_list[i];
+                      }
+                      link_string = '<a href="' + list_addr + '" target="_blank">' + str_list[i] + '</a>';
+                      str_list[i] = link_string;
+                    }
+                    data = str_list.join(' ');
                   }
-                  data = str_list.join(' ');
                 }
                 if (data && app.utils.trim(data) !== "") {
                   attributeObjs.push({
@@ -319,13 +321,21 @@ if (!app.wrapper.events.hasOwnProperty('queryWMSFeatureInfo')) {
       report_id = app.wrapper.events.fakeSluggify(report_id);
       data = $('#' + report_id).html('<iframe class="attr_report_img" src="' + getFeatureInfoUrl +'" />');
     } else {
+      let url = '/visualize/proxy/';
+      let data = {
+        url: getFeatureInfoUrl,
+      };
+      if (mp_layer.proxy_url) {
+        // RDH 2022-06-07: This would be bad: proxying a proxy
+        //  Work has been done to craft the URL for you in the OL6+ event wrappers
+        url = getFeatureInfoUrl;
+        data = {};
+      }
       $.ajax({
         headers: { "Accept": mp_layer.wms_info_format},
         type: 'GET',
-        url: '/visualize/proxy/',
-        data: {
-          url: getFeatureInfoUrl,
-        },
+        url: url,
+        data: data,
         success: function(data, textStatus, request){
           if (mp_layer.wms_info_format.indexOf('gml') >= 0) {
             return app.wrapper.events.parseGMLFeatureInfoResponse(mp_layer, data);

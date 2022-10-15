@@ -34,6 +34,15 @@ app.state = {
 app.restoreState = {};
 
 ko.applyBindings(app.viewModel);
+
+// RDH: WAY more verbose than we need, but if more styles need 'initial' styles or settings to hold while we wait for
+// KOBindings to apply preferred styles, this seems to be an elegant place for them.
+let postKOBindingCleanup = function() {
+  $('#user-content-notice').css('visibility','unset');
+}
+
+postKOBindingCleanup();
+
 // app.viewModel.loadLayersFromServer().done(function() {
 app.viewModel.initLeftNav().done(function () {
   // app.onResize(); // RDH 20191119 - this was commented out for 2019 upgrades, but may be needed for cacheless.
@@ -69,6 +78,12 @@ app.init();
 $(document).ready(function () {
   // app.onResize();
   // $(window).resize(app.onResize);
+
+  app.map.zoom = ko.observable(app.map.getView().getZoom());
+
+  app.map.getView().on('change:resolution', (event) => {
+    app.map.zoom(app.map.getView().getZoom());
+  });
 
   //Do not display any warning for missing tiles
   // Be sure to set your map tech accordingly.
@@ -281,6 +296,19 @@ $('#bookmark-form').on('submit', function (event) {
   });
 });
 
+$('#user-layer-form').on('submit', function(event) {
+  var inputs = {},
+    $form = $(this);
+  event.preventDefault();
+  $(this).find('input, textarea').each(function(i, input) {
+    var $input = $(input);
+    inputs[$input.attr('name')] = $input.val();
+  });
+  $.post('/feedback/userLayer', inputs, function() {
+    $form.closest('.modal').modal('hide');
+  });
+});
+
 $('#feedback-form').on('submit', function (event) {
   var feedback = {}, $form = $(this);
   event.preventDefault();
@@ -315,7 +343,6 @@ $('#left-panel .panel-heading h4 a.collapse-button').click(function () {
     $('#left-panel').width('')
   }
 });
-
 
 var cloneForm = '.clone-wms-form';
 //wms layer modal

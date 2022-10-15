@@ -239,15 +239,18 @@ app.wrapper.events.clickOnVectorLayerEvent = function(layer, evt){
     var featureData = [];
     for (var i = 0; i < selectedFeatures.length; i++) {
       var feature = selectedFeatures[i];
-      if (mp_layer.isDrawingModel) {
-        feature_values = {}
-        for (var j = 0; j < mp_layer.scenarioModel.scenarioAttributes.length; j++) {
-            var report_value = mp_layer.scenarioModel.scenarioAttributes[j];
-            feature_values[report_value.title] = report_value.data;
+      var geom = feature.getGeometry();
+      if (!bufferedClickExtent || bufferedClickExtent.length == 0 ||geom.intersectsExtent(bufferedClickExtent)){
+        if (mp_layer.isDrawingModel) {
+          feature_values = {}
+          for (var j = 0; j < mp_layer.scenarioModel.scenarioAttributes.length; j++) {
+              var report_value = mp_layer.scenarioModel.scenarioAttributes[j];
+              feature_values[report_value.title] = report_value.data;
+          }
+          featureData.push(feature_values);
+        } else {
+          featureData.push(feature.values_);
         }
-        featureData.push(feature_values);
-      } else {
-        featureData.push(feature.values_);
       }
     }
     app.wrapper.events.generateAttributeReport(mp_layer, featureData);
@@ -284,7 +287,7 @@ app.wrapper.events.clickOnWMSLayerEvent = function(layer, evt){
     var view = app.map.getView();
     var viewResolution = view.getResolution();
     var viewProjection = view.projection_.code_;
-    var getFeatureInfoUrl = wmsSource.getFeatureInfoUrl( evt.coordinate,
+    let getFeatureInfoUrl = wmsSource.getFeatureInfoUrl( evt.coordinate,
       viewResolution, viewProjection,
       {
         'INFO_FORMAT': mp_layer.wms_info_format,
@@ -292,6 +295,14 @@ app.wrapper.events.clickOnWMSLayerEvent = function(layer, evt){
         'LAYERS': mp_layer.wms_slug
       }
     );
+    if (layer.proxy_url) {
+      // RDH 2022-06-07: This would be bad: proxying a proxy (queryWMSFeatureInfo will likely proxy this)
+      // So, let's be sure to enforce only a single layer of proxy and make it easy to parse:
+      let url_split = layer.url.split(encodeURLComponent('?'));
+      let report_querystring = getFeatureInfoUrl.split('&proxy_params=true')[1];
+      url_split[0] = url_split[0] + encodeURLComponent('?') + encodeURIComponent(report_querystring);
+      getFeatureInfoUrl = url_split.join('');
+    }
     app.wrapper.events.queryWMSFeatureInfo(mp_layer, getFeatureInfoUrl);
   }
 };
@@ -444,7 +455,7 @@ app.wrapper.events.cleanupDrawing = function() {
 app.wrapper.events.formatAttributeReportValue = function(value) {
   // TODO: implement comma-formatted large numbers when appropriate
   // report_attr.data = app.utils.numberWithCommas(report_attr.data);
-  if (value.precision != null) {
+  if (value && value.hasOwnProperty('precision') && value.precision != null) {
     return report_attr.data.toFixed(value.precision);
   } else {
     // format common data types:

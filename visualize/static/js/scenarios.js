@@ -74,8 +74,6 @@ var madrona = {
                 }
             });
 
-
-
             app.viewModel.scenarios.scenarioForm(false);
             app.viewModel.scenarios.loadingMessage("Creating Design");
 
@@ -85,7 +83,11 @@ var madrona = {
                 type: 'POST',
                 dataType: 'json',
                 success: function(result) {
-                    app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
+                    if (result['X-Madrona-Show'].indexOf('visualize_userlayer_') >= 0) {
+                        app.viewModel.userLayers.finishAddingUserLayer(result);
+                    } else {
+                        app.viewModel.scenarios.addScenarioToMap(null, {uid: result['X-Madrona-Show']});
+                    }
                     app.viewModel.scenarios.loadingMessage(false);
                     clearInterval(barTimer);
                 },
@@ -1279,6 +1281,8 @@ function scenariosModel(options) {
     self.drawingForm = ko.observable(false);
     self.loadingDrawingForm = ko.observable(false);
 
+    self.userLayerForm = ko.observable(false);
+
     /** return true if normal MyPlanner content should be shown, false
         otherwise (when a form is active and assuming control of MyPlanner's
         space).
@@ -1289,9 +1293,10 @@ function scenariosModel(options) {
         return !(self.scenarioForm() ||
                  self.reportsVisible() ||
                  self.drawingForm() ||
-                 // This is awkward, but bookmarks aren't really scenarios,
+                 // This is awkward, but bookmarks and user layers aren't really scenarios,
                  // and they live in their own place.
                  app.viewModel.addBookmarksDialogVisible() ||
+                 self.userLayerForm() ||
                  self.selectionForm());
     }
 
@@ -1546,10 +1551,17 @@ function scenariosModel(options) {
             self.removeDrawingForm(obj);
         }
 
+        //clean up drawing form
+        if (self.userLayerForm() || app.viewModel.userLayers.userLayerForm()) {
+            app.viewModel.userLayers.removeUserLayerForm(obj);
+        }
+
         //remove the key/value pair from aggregatedAttributes
         app.viewModel.removeFromAggregatedAttributes(self.leaseblockLayer().name);
         app.viewModel.updateAttributeLayers();
     };
+
+    
 
     self.removeDrawingForm = function(obj) {
         self.drawingFormModel.cleanUp();
@@ -1774,6 +1786,8 @@ function scenariosModel(options) {
                     scenario.active(true);
                     scenario.visible(true);
 
+                    app.viewModel.layerIndex[scenario.id] = scenario;
+
                     //get attributes
                     $.ajax( {
                         url: '/scenario/get_attributes/' + scenarioId + '/',
@@ -1872,16 +1886,24 @@ function scenariosModel(options) {
 
     // activate any lingering designs not shown during loadCompressedState
     self.showUnloadedDesigns = function() {
-        var designs = app.viewModel.unloadedDesigns;
+        var designs = {};
+        var design_ids = [];
+        if (app.viewModel.unloadedDesigns) {
+            for (var design_index = 0; design_index < app.viewModel.unloadedDesigns.length; design_index++) {
+                var id = app.viewModel.unloadedDesigns[design_index].id;
+                design_ids.push(id);
+                designs[id] = app.viewModel.unloadedDesigns[design_index];
+            }
+        }
 
-        if (designs && designs.length) {
+        if (design_ids.length > 0) {
             //the following delay might help solve what appears to be a race condition
             //that prevents the design in the layer list from displaying the checked box icon after loadin
             setTimeout( function() {
-                for (var x=0; x < designs.length; x=x+1) {
-                    var id = designs[x].id,
-                        opacity = designs[x].opacity,
-                        isVisible = designs[x].isVisible;
+                for (var x=0; x < design_ids.length; x=x+1) {
+                    var id = design_ids[x],
+                        opacity = designs[id].opacity,
+                        isVisible = designs[id].isVisible;
 
                     if (app.viewModel.layerIndex[id]) {
                         app.viewModel.layerIndex[id].activateLayer();
@@ -2003,7 +2025,9 @@ function scenariosModel(options) {
                 sharedByName: drawing.shared_by_name,
                 sharingGroups: drawing.sharing_groups
             });
-            self.drawingList.push(drawingViewModel);
+            if (drawing.owned_by_user) {
+                self.drawingList.push(drawingViewModel);
+            }
             app.viewModel.layerIndex[drawing.uid] = drawingViewModel;
         });
         self.drawingList.sort(self.alphabetizeByName);
@@ -2137,6 +2161,9 @@ $('#designsTab').on('show.bs.tab', function (e) {
 
         // load the drawing
         app.viewModel.scenarios.loadDrawingsFromServer();
+
+        // load the user-imported layers
+        app.viewModel.userLayers.getUserLayers();
 
         // load the leaseblocks
         $.ajax({

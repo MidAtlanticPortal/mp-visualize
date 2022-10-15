@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render
 from django.template import RequestContext
 from querystring_parser import parser
 import json
+from json import dumps
 from features.registry import user_sharing_groups
 from functools import cmp_to_key
 import locale
@@ -20,7 +21,32 @@ from visualize import settings as viz_settings
 import urllib
 
 def proxy_request(request):
-    url = request.GET['url']
+    content = ''
+    mimetype = 'text/plain'
+    status_code = 400
+    try:
+        url = request.GET['url']
+        proxy = request.GET['proxy_params']
+        layer_id = request.GET['layer_id']
+        layer = Layer.objects.get(pk=layer_id)
+        if proxy and layer_id and layer:
+            params = request.build_absolute_uri().split('&proxy_params=true')[1]
+            url_domain = urllib.parse.urlparse(url).netloc
+            layer_domain = urllib.parse.urlparse(layer.url).netloc
+            if len(params) > 0:
+                if url_domain == layer_domain:
+                    url = "{}?{}".format(url, params)
+                else:
+                    url = "{}?{}".format(layer.url, params)
+            while '??' in url:
+                url = '?'.join(url.split('??'))
+    except Exception as e:
+        # This handles proxy layers, not ogc wms proxied requets, so we'll pass and see if it can't sort itself out
+        if len(content) > 0:
+            content = '; '.join([content, str(e)])
+        else:
+            content = str(e)
+        pass
     try:
         proxied_request = urllib.request.urlopen(url)
         status_code = proxied_request.code
@@ -28,6 +54,21 @@ def proxy_request(request):
         content = proxied_request.read()
     except urllib.error.HTTPError as e:
         return HttpResponse(e.msg, status=e.code, content_type='text/plain')
+    except TimeoutError as e:
+        return HttpResponse(e, status=408, content_type='text/plain')
+    except urllib.error.URLError as e:
+        # This is most likely a timeout error. Not sure why the above doesn't apply.
+        if hasattr(e, 'reason') and 'Connection timed out' in str(e.reason):
+            return HttpResponse(e.reason, status=408, content_type='text/plain')
+        return HttpResponse(e, status=500, content_type='text/plain')
+    except UnboundLocalError as e:
+        if len(content) > 0:
+            content = '; '.join([content, str(e)])
+        else:
+            content = str(e)
+        return HttpResponse(content, status=status_code, content_type=mimetype)
+    except Exception as e:
+        return HttpResponse(e, status=500, content_type='text/plain')
     else:
         return HttpResponse(content, status=status_code, content_type=mimetype)
 
@@ -42,6 +83,11 @@ def show_planner(request, template='visualize/planner.html'):
         'body': False,
         'decline_url': False
     }
+
+    if len(Content.objects.filter(name='disclaimer_continue_button',live=True)) > 0:
+        disclaimer_content['continueButtonText'] = Content.objects.filter(name='disclaimer_continue_button',live=True)[0].content
+    elif settings.DISCLAIMER_BUTTON_DEFAULT:
+        disclaimer_content['continueButtonText'] = settings.DISCLAIMER_BUTTON_DEFAULT
 
     if len(Content.objects.filter(name='disclaimer_body',live=True)) > 0:
         #There should be only one content named 'disclaimer_body' - assume the first
@@ -109,6 +155,8 @@ def show_planner(request, template='visualize/planner.html'):
         'proxy_time_layer': settings.WMS_PROXY_TIME_LAYER,
         'show_watermark': viz_settings.SHOW_WATERMARK,
         'MAP_LIBRARY': settings.MAP_LIBRARY,
+        'USER_GEN_PREFIX': settings.USER_GEN_PREFIX,
+        'USER_GEN_NOTICE': settings.USER_GEN_NOTICE,
     }
 
     if request.user.is_authenticated:
@@ -128,3 +176,78 @@ def show_mafmc_map(request, template='mafmc.html'):
 def show_mobile_map(request, template='mobile-map.html'):
     context = {'MEDIA_URL': settings.MEDIA_URL}
     return render(request, template, context)
+
+# RDH 2022-04-21: The below view is nice, but isn't used currently. Use get_user_layers in rpc.py instead!
+def get_user_layers(request):
+    json = []
+
+    layers = UserLayer.objects.filter(user=request.user.id).order_by('date_created')
+    for layer in layers:
+        # Allow for "sharing groups" without an associated MapGroup, for "special" cases
+        sharing_groups = [
+            group.mapgroup_set.get().name
+            for group in layer.sharing_groups.all()
+            if group.mapgroup_set.exists()
+        ]
+        public_groups = [
+            group.name
+            for group in Group.objects.filter(name__in=settings.SHARING_TO_PUBLIC_GROUPS)
+            if group in layer.sharing_groups.all()
+        ]
+        all_shared_groups = sharing_groups + public_groups
+
+        json.append({
+            'id': layer.id,
+            'uid': layer.uid,
+            'name': layer.name,
+            'description': layer.description,
+            # 'attributes': layer.serialize_attributes(),
+            'sharing_groups': all_shared_groups,
+            'shared_to_groups': sharing_groups,
+            'owned_by_user': True
+        })
+
+    try:
+        shared_layers = UserLayer.objects.shared_with_user(request.user)
+    except Exception as e:
+        shared_layers = UserLayer.objects.filter(pk=-1)
+        pass
+    for layer in shared_layers:
+        if layer not in layers:
+            username = layer.user.username
+            actual_name = layer.user.first_name + ' ' + layer.user.last_name
+
+            try:
+                permission_groups = [x.map_group.permission_group for x in request.user.mapgroupmember_set.all()]
+            except AttributeError as e:
+                # likely anonymous user, who will not have 'mapgroupmember_set'
+                permission_groups = []
+                pass
+            sharing_groups = [
+                group.mapgroup_set.get().name
+                for group in layer.sharing_groups.all()
+                if group.mapgroup_set.exists() and group in permission_groups
+            ]
+            owned_by_user = True if len(sharing_groups) > 0 else False
+            public_groups = [
+                group.name
+                for group in Group.objects.filter(name__in=settings.SHARING_TO_PUBLIC_GROUPS)
+                if group in layer.sharing_groups.all()
+            ]
+            all_shared_groups = sharing_groups + public_groups
+
+            json.append({
+                'id': layer.id,
+                'uid': layer.uid,
+                'name': layer.name,
+                'description': layer.description,
+                # 'attributes': layer.serialize_attributes(),
+                'shared': True,
+                'shared_by_username': username,
+                'shared_by_name': actual_name,
+                'sharing_groups': all_shared_groups,
+                'shared_to_groups': sharing_groups,
+                'owned_by_user': owned_by_user
+            })
+
+    return HttpResponse(dumps(json))

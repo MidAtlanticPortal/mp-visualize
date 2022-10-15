@@ -5,7 +5,10 @@
           <div style="margin:0;padding:0;width:40.5px;height:33px">
             <a class="btn btn-info-sign" data-bind="visible: hasInfo(), click: toggleDescription, css: { 'active': infoActive()}" data-toggle="tooltip" data-placement="right" data-title="More Info">
                 <i class="fa fa-info-circle"></i>
-            </a>
+              </a>
+              <!-- ko if: isUserGenerated -->
+                <i class="btn btn-user-gen btn-info-sign fa fa-user-edit" data-toggle="tooltip" data-placement="right" data-title="User-generated content"></i>
+            <!-- /ko -->
           </div>
         <!-- /ko -->
         <!-- ko if: $data.hasOwnProperty('isMDAT') && $data.isMDAT && $data.parentMDATDirectory -->
@@ -13,6 +16,7 @@
                   <i class="fa fa-info-circle"></i>
               </a>
         <!-- /ko -->
+       
         </td>
         <!-- ko if: $data instanceof layerModel -->
         <td class="slider-button" data-bind="visible: (active() && app.viewModel.showSliderButtons() && $data.hasOwnProperty('is_multilayer_parent') && $data.is_multilayer_parent())">
@@ -23,18 +27,22 @@
         </td>
         <!-- /ko -->
 
-        <td class="layer-name">
+        <td class="layer-name" data-bind="css: {zoomInvisible: !isVisibleAtZoom()}">
             <a class="btn btn-layer" data-bind='click: {% block "nameAction" %}toggleActive{% endblock %}'>
               <table>
                 <tr>
                   <td class="text">
                     {% block "text-pre" %}
                     {% endblock %}
+                    
                     <!-- ko if: hasOwnProperty('subLayers') && subLayers.length > 0 -->
                       <i class="fa deep-blue" data-bind="css: { 'fa-caret-down': showSublayers() , 'fa-caret-right': !showSublayers()  }"></i>
                     <!-- /ko -->
                     <!-- ko if: hasOwnProperty('dateRangeDirectory') && dateRangeDirectory != null -->
                       <span class="deep-blue" data-bind="text: dateRangeDirectory.name"></span>
+                    <!-- /ko -->
+                    <!-- ko if: isUserGenerated -->
+                      <span class="deep-blue uppercase"><b><u>{{ USER_GEN_PREFIX }}</u></b></span>
                     <!-- /ko -->
                     <span class="deep-blue uppercase" data-bind="text: name"></span>
                   </td>
@@ -44,9 +52,15 @@
                     <i class="fas fa-spinner fa-spin"  data-bind="visible: $data.loadStatus()=='loading'"></i>
                     <i style="color:red" title="error loading layer" class="fas fa-times-circle"  data-bind="visible: $data.loadStatus()=='error'"></i>
                     -->
+                    <!-- ko if: isVisibleAtZoom -->
                      <i class="fa fa-check-circle" data-bind="visible: !loadStatus(), css: { 'fa-check-circle': active() && visible(), 'fa': active() && visible(), 'fa-circle': !(active() && visible()), 'far': !(active() && visible()) }"  data-toggle="tooltip" data-placement="left" title="" data-original-title="Toggle Visibility"></i>
                      <i class="fas fa-spinner fa-spin"  data-bind="visible: $data.loadStatus()=='loading'"></i>
                      <i style="color:red" title="error loading layer" class="fas fa-times-circle"  data-bind="visible: $data.loadStatus()=='error'"></i>
+                     <!-- /ko -->
+                     <!-- ko ifnot: isVisibleAtZoom -->
+                     <i title="Out of zoom range." class="fa fa-eye-slash"></i>
+                     <span class="zoom-range-message">Out of Range</span>
+                     <!-- /ko -->
                   </td>
                 </tr>
               </table>

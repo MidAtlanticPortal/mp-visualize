@@ -46,6 +46,9 @@ function layerModel(options, parent) {
     self.source = ko.observable(options.source || null);
     self.hasInfo = ko.observable(false);
 
+    self.minZoom = 0;
+    self.maxZoom = 24;
+
     // if layer is loaded from hash, preserve opacity, etc...
     self.override_defaults = ko.observable(null);
 
@@ -55,7 +58,17 @@ function layerModel(options, parent) {
       self.name = options.name || null;
       self.featureAttributionName = self.name;
       self.order = options.order;
+      self.type = options.type || null
       self.url = options.url || null;
+      if (self.url && ["ArcRest",].indexOf(self.type) >= 0 && self.url.toLowerCase().indexOf("/export") == -1) {
+        let url_split =  self.url.split('?');
+        let export_flag = '/export';
+        if (url_split[0][url_split[0].length-1] == "/") {
+          export_flag = 'export';
+        }
+        url_split[0] = url_split[0] + export_flag;
+        self.url = url_split.join('?');
+      }
       self.data_url(options.data_url || null);
       self.arcgislayers = options.arcgis_layers || 0;
       self.wms_slug = options.wms_slug || null;
@@ -68,7 +81,6 @@ function layerModel(options, parent) {
       self.wms_additional = options.wms_additional || null;
       self.wms_info = options.wms_info || false;
       self.wms_info_format = options.wms_info_format || null;
-      self.type = options.type || null
       self.utfurl = options.utfurl || false;
       self.legend = options.legend || false;
 
@@ -99,13 +111,43 @@ function layerModel(options, parent) {
       self.label_field = options.label_field || false;
       self.attributes = options.attributes ? options.attributes.attributes : [];
       self.compress_attributes = options.attributes ? options.attributes.compress_attributes : false;
+      self.preserved_format_attributes = options.attributes ? options.attributes.preserved_format_attributes : [];
       self.attributeEvent = options.attributes ? options.attributes.event : [];
       self.mouseoverAttribute = options.attributes ? options.attributes.mouseover_attribute : false;
       self.lookupField = options.lookups ? options.lookups.field : null;
       self.lookupDetails = options.lookups ? options.lookups.details : [];
-      self.color = options.color || "#ee9900";
+      self.minZoom = options.minZoom || 0;
+      self.maxZoom = options.maxZoom || 24;
+      self.custom_style = options.custom_style || null;
+      if (self.custom_style == null || self.custom_style.length == 0) {
+        self.color = options.color || "#ee9900";
+      } else {
+        self.color = 'custom:' + self.custom_style;
+      }
+      self.override_color = options.color || false;
       self.outline_color = options.outline_color || self.color;
+      self.override_outline = options.outline_color || false;
       self.fillOpacity = options.fill_opacity || 0.0;
+      self.proxy_url = options.proxy_url || false;
+      if (self.proxy_url) {
+        // RDH 2022-06-07: Proxies are hard.
+        //  * we include the layer_id to provide security -- does the requested URL domain match the layer's domain in the DB?
+        //  * We encode the URL -- this means we also need to re-write all logic that parses the URL (like legend, export, and query)
+        //  * finally, we add proxy_params=true -- this gives us a nice pattern to break on (anything appended is assumed to be meant for 'url')
+        self.url = "/visualize/proxy?layer_id=" + self.id + "&url=" + encodeURIComponent(self.url) + "%3F&proxy_params=true";
+        if (self.type == "XYZ" || self.type == "VectorTile") {
+          // RDH 2022-06-07: Proxies get harder
+          //  XYZ templates are interpreted client-side by OpenLayers, so they CAN'T be encoded, or OL will never recognize them.
+          //  This block restores them back to an un-encoded format.
+          let templates = ["{x}", "{X}","{y}","{Y}","{z}","{Z}"];
+          for (var i = 0; i < templates.length; i++) {
+            let encoded_template = encodeURIComponent(templates[i]);
+            if (self.url.indexOf(encoded_template) >= 0) {
+              self.url = self.url.split(encoded_template).join(templates[i]);
+            }
+          }
+        }
+      }
       self.query_by_point = options.query_by_point || false;
       self.disable_click = options.disable_arcgis_attributes || false;
 
@@ -123,6 +165,7 @@ function layerModel(options, parent) {
       }
       self.outline_opacity = options.outline_opacity || self.defaultOpacity;
       self.outline_width = options.outline_width || 1;  // This was removed in one branch (RDH: 2020-08-25)
+      self.override_outline_width = options.outline_width || false;
       self.point_radius = options.point_radius || 5;
       self.graphic = options.graphic || null;
       self.graphic_scale = options.graphic_scale || null;  // This was removed in one branch (RDH: 2020-08-25)
@@ -298,33 +341,67 @@ function layerModel(options, parent) {
 
     self.setOptions(options, parent);
 
+    self.isUserGenerated = ko.computed(function() {
+      if (self.id && typeof(self.id) == "string") {
+        return (self.id.indexOf('visualize_userlayer_') == 0 || self.id.indexOf('drawing_aoi_') == 0);
+      }
+      return false;
+    });
+
+    self.isVisibleAtZoom = ko.pureComputed(function() {
+      if (self.hasOwnProperty('minZoom') && self.hasOwnProperty('maxZoom')){
+        if (self.minZoom || self.maxZoom) {
+          if (self.minZoom > app.map.zoom() || self.maxZoom < app.map.zoom()) {
+            return false;
+          }
+        }
+      }
+      return true;
+    })
 
 
     getArcGISJSONLegend = function(self, protocol) {
-
+      let legend_url = self.url;
+      let export_flag = "/export";
+      let path_separator = "/";
+      let query_string_start = "?";
+      let query_string_assignment = "=";
+      let query_string_separator = "&";
+      let protocol_separator = ":";
+      if (self.proxy_url) {
+        export_flag = "%2Fexport";
+        path_separator = "%2F";
+        query_string_start = "%3F";
+        query_string_assignment = "%3D";
+        query_string_separator = "%26";
+        protocol_separator = "%3A";
+      }
       // Append /export if it doesn't exist
-      if (self.url.toLowerCase().indexOf('/export') < 0) {
-          var url_split = self.url.split('?');
-          if (url_split[0][url_split[0].length-1] == '/') {
-            url_split[0] = url_split[0] + "export";
-          } else {
-            url_split[0] = url_split[0] + "/export";
-          }
-          self.url = url_split.join('?');
+      if (legend_url.toLowerCase().indexOf(export_flag.toLowerCase()) < 0) {
+        var url_split = legend_url.split(query_string_start);
+        if (url_split[0][url_split[0].length-1] == path_separator) {
+          url_split[0] = url_split[0] + "export";
+        } else {
+          url_split[0] = url_split[0] + export_flag;
+        }
+        legend_url = url_split.join(query_string_start);
       }
-
+      
+      let legend_url_suffix = path_separator+'legend'+path_separator+query_string_start+'f'+query_string_assignment+'pjson';
+      
       // Remove tile templating if using ArcGIS TileServer
-      if (self.url.toLowerCase().indexOf('/tile/{z}/{y}/{x}') >= 0) {
-        self.url = self.url.split('/tile/{z}/{y}/{x}').join('');
+      let tile_template = path_separator+['tile','{z}','{y}','{x}'].join(path_separator);
+      if (legend_url.toLowerCase().indexOf(tile_template) >= 0) {
+        legend_url = legend_url.split(tile_template).join('');
       }
 
-      if (self.url.indexOf('?') < 0) {
-        var url = self.url.replace('/export', '/legend/?f=pjson');
+      if (legend_url.indexOf(query_string_start) < 0) {
+        var url = legend_url.replace(export_flag, legend_url_suffix);
       } else {
-        var url = self.url.split('?').join('&').replace('/export', '/legend/?f=pjson');
+        var url = legend_url.split(query_string_start).join(query_string_separator).replace(export_flag, legend_url_suffix);
       }
-      if (protocol == "https:") {
-        url = url.replace('http:', 'https:');
+      if (protocol == "https"+protocol_separator) {
+        url = url.replace('http'+protocol_separator, 'https'+protocol_separator);
       }
       $.ajax({
           dataType: "json",
@@ -335,14 +412,18 @@ function layerModel(options, parent) {
               // append '/export' if missing:
               //    RDH 2020-09-17: I'm not sure why self.url wasn't already modified earlier in this function, but this step is necessary
               //        as the '/export' seems to get dropped (a timeout may also have fixed the problem, but this is more absolute).
-              if (self.url.toLowerCase().indexOf('/export') < 0) {
-                  var url_split = self.url.split('?');
-                  if (url_split[0][url_split[0].length-1] == '/') {
+              let export_flag = "/export";
+              if (self.proxy_url) {
+                export_flag = "%2Fexport";
+              }
+              if (legend_url.toLowerCase().indexOf(export_flag.toLowerCase()) < 0) {
+                  var url_split = legend_url.split(query_string_start);
+                  if (url_split[0][url_split[0].length-1] == path_separator) {
                     url_split[0] = url_split[0] + "export";
                   } else {
-                    url_split[0] = url_split[0] + "/export";
+                    url_split[0] = url_split[0] + export_flag;
                   }
-                  self.url = url_split.join('?');
+                  legend_url = url_split.join(query_string_start);
               }
 
               if (data['layers']) {
@@ -360,13 +441,13 @@ function layerModel(options, parent) {
                     var requested_layers = self.arcgislayers;
                   }
 
+                  // Prime layer with empty legend
+                  self.legend = {'elements': []};
+
                   $.each(data['layers'], function(i, layerobj) {
                       for (var i=0; i< requested_layers.length; i++) {
                         var arc_layer = requested_layers[i];
                         if (parseInt(layerobj['layerId'], 10) === parseInt(arc_layer, 10)) {
-                            if (!self.legend || !self.legend.hasOwnProperty('elements')) {
-                              self.legend = {'elements': []};
-                            }
                             $.each(layerobj['legend'], function(j, legendobj) {
                               var swatchId = '';
                               if (legendobj.hasOwnProperty('url')) {
@@ -374,7 +455,7 @@ function layerModel(options, parent) {
                               } else if (legendobj.hasOwnProperty('imageData')) {
                                 swatchId = legendobj['imageData'];
                               }
-                              var swatchURL = self.url.replace('/export', '/'+arc_layer+'/images/'+swatchId),
+                              var swatchURL = legend_url.replace(export_flag, path_separator+arc_layer+path_separator+'images'+path_separator+swatchId),
                                 label = legendobj['label'];
                               if (j < 1 && label === "") {
                                   label = layerobj['layerName'];
@@ -396,9 +477,21 @@ function layerModel(options, parent) {
     }
 
     getArcGISJSONDescription = function(self, protocol) {
-      var url = self.url.replace('/export', '/'+self.arcgislayers) + '?f=pjson';
-      if (protocol == "https:") {
-        url = url.replace('http:', 'https:');
+      let export_flag = "/export";
+      let path_separator = "/";
+      let protocol_separator = ":";
+      let query_string_start = "?";
+      let query_string_assignment = "=";
+      if (self.proxy_url) {
+        export_flag = "%2Fexport";
+        path_separator = "%2F";
+        protocol_separator = "%3A";
+        query_string_start = "%3F";
+        query_string_assignment = "%3D";
+      }
+      var url = self.url.replace(export_flag, path_separator+self.arcgislayers) + query_string_start + 'f' + query_string_assignment + 'pjson';
+      if (protocol == "https"+protocol_separator) {
+        url = url.replace('http'+protocol_separator, 'https'+protocol_separator);
       }
       $.ajax({
           dataType: "jsonp",
@@ -423,7 +516,19 @@ function layerModel(options, parent) {
     }
 
     getArcGISFeatureServerLegend = function(self, protocol) {
-      var request_url = self.url + self.arcgislayers + '?f=json';
+      let request_url = self.url + self.arcgislayers;
+      if (self.proxy_url) {
+        let url_split = self.url.split(encodeURIComponent('?'));
+        url_split[0] = url_split[0] + self.arcgislayers;
+        request_url = url_split.join(encodeURIComponent('?'));
+      }
+      if (request_url.indexOf('?') == -1) {
+        request_url = request_url + '?f=json';
+      } else {
+        request_url = request_url + '&f=json';
+      }
+
+
       $.ajax({
         dataType: "jsonp",
         url: request_url,
@@ -1447,6 +1552,9 @@ function layerModel(options, parent) {
       var layer = this;
       if (layer.isMDAT || layer.isVTR || layer.isDrawingModel || layer.isSelectionModel || layer.hasOwnProperty('wmsSession') && layer.wmsSession()) {
         layer.fullyLoaded = true;
+        if (app.map.hasOwnProperty('zoom')){
+          app.map.zoom.valueHasMutated();
+        }
         layer.performAction(callbackType, evt);
       } else {
 
@@ -1471,6 +1579,9 @@ function layerModel(options, parent) {
 
             layer.setOptions(data, parent);
             layer.fullyLoaded = true;
+            if (app.map.hasOwnProperty('zoom')){
+              app.map.zoom.valueHasMutated();
+            }
             layer.performAction(callbackType, evt);
             app.viewModel.layerIndex[layer.id.toString()] = layer;
 
@@ -1966,11 +2077,27 @@ ExportGeometry.prototype.closeDialog = function() {
     this.dialog.modal('hide');
 }
 
+function AlertModal() {
+  this.dialog = $('#alert-modal');
+}
+AlertModal.prototype.showDialog = function(title, content){
+  app.viewModel.alert.title(title);
+  app.viewModel.alert.content(content);
+  this.dialog.modal('show');
+}
+AlertModal.prototype.closeDialog = function() {
+  app.viewModel.alert.title(null);
+  app.viewModel.alert.content(null);
+  this.dialog.modal('hide');
+}
 
 function viewModel() {
     var self = this;
 
     this.exportGeometry = new ExportGeometry();
+    this.alert = new AlertModal();
+    this.alert.title = ko.observable('');
+    this.alert.content = ko.observable('');
 
     // list of (func, unlessTarget) for $(doc).mouseDown
     self._outsideClicks = [];
@@ -1995,9 +2122,31 @@ function viewModel() {
         });
     });
 
+    self.userContentVisible = ko.observable(false);
+
+    self.updateUserContentWarning = function() {
+      var visible_layers = self.visibleLayers();
+      var user_content_found = false;
+      for (var i = 0; i < visible_layers.length; i++) {
+        if (typeof visible_layers[i].id == "string" && 
+          (
+            visible_layers[i].id.indexOf('visualize_userlayer_') >= 0 ||
+            visible_layers[i].id.indexOf('drawing_aoi_') >= 0
+          )
+        ) {
+          user_content_found = true;
+          break;
+        }
+      }
+      self.userContentVisible(user_content_found);
+    }
+
     self.visibleLayers.subscribe( function() {
         self.updateAttributeLayers();
+        self.updateUserContentWarning();
     });
+
+
 
     // Legends relied on 'visibleLayers' to determine what to show.
     // Multilayers are left out of 'visibleLayers' so that they don't appear
@@ -2127,6 +2276,31 @@ function viewModel() {
 
         if (self.isBookmarksOpen()) {
           app.viewModel.bookmarks.getBookmarks();
+        }
+      }
+    } catch(err) {
+      console.log(err);
+    }
+
+    try {
+      self.userLayers = new userLayersModel();
+      self.isUserLayersOpen = ko.observable(false);
+      // self.userLayerEmail = ko.observable();
+      self.toggleUserLayersOpen = function(force) {
+        $('#designsTab').tab('show');
+
+        if (force == 'open') {
+          self.isUserLayersOpen(true);
+        }
+        else if (force == 'close') {
+          self.isUserLayersOpen(false);
+        }
+        else {
+          self.isUserLayersOpen(!self.isUserLayersOpen());
+        }
+
+        if (self.isUserLayersOpen()) {
+          app.viewModel.userLayers.getUserLayers();
         }
       }
     } catch(err) {
@@ -2486,6 +2660,41 @@ function viewModel() {
         self.bookmarks.newBookmarkDescription(null);
     }
 
+
+    self.hideUserLayersForm = function() {
+        app.viewModel.userLayers.getUserLayers()
+        self.userLayers.userLayerForm(false);
+        self.scenarios.userLayerForm(false);
+    }
+
+    /** Create a new userlayer from the userlayer form */
+    self.addUserLayer = function(form) {
+        var name = $(form).find('#new_user_layer_name').val();
+        var description = $(form).find('#new_user_layer_description').val();
+        if (name.length == 0) {
+            return false;
+        }
+        //if a user layer name exists, break out
+        var match = $.grep(self.userLayers.userLayersList(), function(bkm) {
+            return bkm.name.indexOf(name) > -1
+        });
+        if (match.length > 0) {
+            //display duplication text
+            self.userLayers.duplicateUserLayer(true);
+            $('.dupe-userlayer').effect("highlight", {}, 1000);
+            return false;
+        }
+
+        var layer_type = $(form).find('#new_user_layer_type').val();
+        var url = $(form).find('#new_user_layer_url').val();
+        var arcgis_layers = $(form).find('#new_user_layer_arcgis_layers').val();
+
+        self.userLayers.addUserLayer(name, description, url, layer_type, arcgis_layers);
+        self.hideUserLayersForm();
+        self.userLayers.newUserLayerName(null);
+        self.userLayers.newUserLayerDescription(null);
+    }
+
     self.showMapLinks = function() {
         app.updateUrl();
         self.mapLinks.shrinkURL(true);
@@ -2498,6 +2707,13 @@ function viewModel() {
       $('#designsTab').click();
       if ($('#drawings-header').is(":visible") && $('#drawings-header').find('a.create-new-button').is(":visible") && !app.viewModel.scenarios.loadingDrawingForm()) {
         app.viewModel.scenarios.createPolygonDesign();
+      }
+    }
+
+    self.startNewLayerImport = function() {
+      $('#designsTab').click();
+      if ($('#user-layers-header').is(":visible") && $('#user-layers-header').find('a.create-new-button').is(":visible") && !app.viewModel.userLayers.loadingUserLayerForm()) {
+        app.viewModel.userLayers.createUserLayer();
       }
     }
 
@@ -2550,12 +2766,17 @@ function viewModel() {
             return false;
         }
 
+        let export_flag = "/export";
+        if (layer.proxy_url) {
+          export_flag = "%2Fexport";
+        }
+
         var mdatObj = {
             type: 'ArcRest',
             name: layer.name,
             isMDAT: true,
             parentDirectory: layer.parentDirectory,
-            url: layer.url+'/export',
+            url: layer.url+export_flag,
             arcgis_layers: layer.id
         };
 
@@ -2620,12 +2841,19 @@ function viewModel() {
             return false;
         }
 
+        let export_flag = "/export";
+        let path_separator = "/";
+        if (layer.proxy_url) {
+          export_flag = "%2Fexport";
+          path_separator = "%2F";
+        }
+
         var vtrObj = {
             type: 'ArcRest',
             name: layer.name,
             isVTR: true,
             dateRangeDirectory: layer.dateRangeDirectory,
-            url: layer.url+'/MapServer/export',
+            url: layer.url+path_separator+'MapServer'+export_flag,
             arcgis_layers: layer.id
         };
 
@@ -2914,7 +3142,7 @@ function viewModel() {
     self.activeLayers.subscribe(function() {
         // initial index
         var index = 300;
-        if (!app.state.activeLayers){
+        if (app.state && !app.state.activeLayers){
           app.state.activeLayers = [];
         }
 
@@ -2990,6 +3218,10 @@ function viewModel() {
             }
           }
         });
+
+        setTimeout(function() {
+          $('[data-toggle="tooltip"]').tooltip();
+        }, 300);
 
     });
 

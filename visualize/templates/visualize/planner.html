@@ -4,6 +4,12 @@
 {% block title %}{{ REGION.name }} Data Portal - Marine Planner{% endblock %}
 
 {% block extra_css %}
+        <style>
+            :root {
+                --marco_green: #00a564;
+                --bright_icon: var(--marco_green);
+            }
+        </style>
         <link href="{% static 'visualize/css/print.css' %}" rel="stylesheet" media="print">
         <link href="{% static 'visualize/css/scalebar-thin.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/multilayer.css' %}" rel="stylesheet">
@@ -20,6 +26,7 @@
         <link href="{% static 'visualize/css/modals.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/layer-nav.css' %}" rel="stylesheet">
         <link href="{% static 'visualize/css/basemap.css' %}" rel="stylesheet">
+        <link href="{% static 'visualize/css/my-planner.css' %}" rel="stylesheet">
         {% if MAP_LIBRARY == 'ol5' %}
           <link rel="stylesheet" href="https://cdn.rawgit.com/openlayers/openlayers.github.io/master/en/v5.3.0/css/ol.css" type="text/css">
           <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
@@ -80,11 +87,11 @@
                           </a>
                           {% if user.is_authenticated %}
                           <!-- Draw Button-->
-                          <a id="draw-button" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="New Drawing" data-bind="click: startNewDrawing">
+                          <a id="draw-button" class="btn quick-button" data-toggle="tooltip" data-placement="left" title="New Shape" data-bind="click: startNewDrawing">
                               <i class="fa fa-draw-polygon"></i>
                           </a>
                           <!-- Session Layer Button-->
-                          <a id="wms-button" class="btn quick-button img-icon" data-toggle="tooltip" data-placement="left" title="Add an ArcRest Layer ">
+                          <a id="wms-button" class="btn quick-button img-icon" data-toggle="tooltip" data-placement="left" title="Import an External Layer "  data-bind="click: startNewLayerImport">
                             <img src="{% static 'visualize/img/add_layer.svg' %}" class='quick-launch-icon'/>
                           </a>
                           {% endif %}
@@ -342,8 +349,21 @@
 
                                                       <div data-bind="foreach: activeLegendLayers">
                                                       <!--<div data-bind="foreach: { data: activeLegendLayers, afterRender: updateScrollBars }">-->
-                                                          <div class="printable" style="padding-bottom: 18px;">
+
+                                                          <div  class="printable"style="padding-bottom: 18px;" data-bind="css: {zoomInvisible: !isVisibleAtZoom()}">
+                                                              <!-- ko if: isUserGenerated -->
+                                                                <span class="pagination-centered legend-title"><b><u>{{ USER_GEN_PREFIX }}</u></b></span>
+                                                              <!-- /ko -->
+
                                                               <span class="pagination-centered legend-title" data-bind="html: legendTitle ? legendTitle : name"></span>
+
+                                                              <!-- ko ifnot: isVisibleAtZoom -->
+                                                                <span class="invisible-status">
+                                                                    <i title="Out of zoom range." class="fa fa-eye-slash"></i>
+                                                                    <span class="zoom-range-message">Out of Range</span>
+                                                                </span>
+                                                              <!-- /ko -->
+
                                                               <p class="legend-subtitle" data-bind="visible: legendSubTitle, html: legendSubTitle"></p>
                                                               <span data-bind="if: legend">
                                                                   <div data-bind="if: legend['elements']">
@@ -382,6 +402,10 @@
                     {% endblock left_panel_body %}
                   </div>
                 {% endblock left_panel %}
+
+                {% block notices %}
+                {% include "visualize/includes/user-content-notice.html" %}
+                {% endblock notices %}
             </div>
             <span class="timestamp" data-bind="visible: mapTitle"><span data-bind="text: new Date().toString('M/d/yyyy HH:mm')"></span></span>
         </div>
@@ -489,6 +513,7 @@
     -->
     {% block ADDITIONAL_APP_JAVASCRIPT %}
       <script src="{% static 'js/bookmarks.js' %}"></script>
+      <script src="{% static 'js/userlayers.js' %}"></script>
       <script src="{% static 'js/scenarios.js' %}"></script>
       <script src="{% static 'js/reports.js' %}"></script>
       <script src="{% static 'js/drawing.js' %}"></script>
