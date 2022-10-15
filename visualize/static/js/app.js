@@ -478,8 +478,8 @@ $('#btn-print').click(function () {
     const viewResolution = app.map.getView().getResolution();
 
     // Set up attribution to print on map
-    let halfDim = dim[0] / 2;
-    let yAttribution = dim[1] - 5;  
+    let attributionHeight = 6;
+    let yAttribution = dim[1] - 6;  
     let attributionElementCanvas;
     html2canvas(attributionElement, {
       useCORS: true,
@@ -534,10 +534,10 @@ $('#btn-print').click(function () {
       pdf.addImage(
         attributionElementCanvas,
         'PNG',
-        halfDim,
-        yAttribution,
-        halfDim,
         0,
+        yAttribution,
+        0,
+        attributionHeight,
         '',
         'MEDIUM'
       );
@@ -549,8 +549,8 @@ $('#btn-print').click(function () {
         pdf.addImage(
           anImage,
           'PNG',
-          0,
-          0,
+          10,
+          10,
           legendWidth,
           0,
           '',
