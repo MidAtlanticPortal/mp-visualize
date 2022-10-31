@@ -2688,8 +2688,11 @@ function viewModel() {
         var layer_type = $(form).find('#new_user_layer_type').val();
         var url = $(form).find('#new_user_layer_url').val();
         var arcgis_layers = $(form).find('#new_user_layer_arcgis_layers').val();
+        var wms_slug = $(form).find('#new_user_layer_wms_slug').val();
+        var wms_srs = $(form).find('#new_user_layer_wms_srs').val();
+        var wms_params = $(form).find('#new_user_layer_wms_params').val();
 
-        self.userLayers.addUserLayer(name, description, url, layer_type, arcgis_layers);
+        self.userLayers.addUserLayer(name, description, url, layer_type, arcgis_layers, wms_slug, wms_srs, wms_params);
         self.hideUserLayersForm();
         self.userLayers.newUserLayerName(null);
         self.userLayers.newUserLayerDescription(null);

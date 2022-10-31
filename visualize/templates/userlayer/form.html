@@ -58,7 +58,6 @@
                     "radio",
                     "checkbox",
                     "placeholder",
-                    "WMS",  // Too hard for now...
                 ];
                 for (var i = 0; i < hidden_options.length; i++) {
                     $('option[value="' + hidden_options[i] + '"]').css({'display':'none',});
@@ -239,6 +238,50 @@
                         {{ form.arcgis_layers }}
                     </div>
                 </div>
+            </div>
+
+            <div class="wms-fields">
+
+                <div id="wms-help-field">
+                    <!-- <p class="instructions">Populate Field Options:</p> -->
+                    <div class="step1-inputs">
+                        <div class="step1-param">
+                            <label for="wms_help">Populate Field Options:</label>
+                            <input type="checkbox" id="wms_help" name="wms_help" onclick="importWmsOptions">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="wms-layer-field">
+                    <p class="instructions">Layer Name:</p>
+                    <div class="step1-inputs">
+                        <div class="step1-param">
+                            {{ form.wms_slug.errors }}
+                            {{ form.wms_slug }}
+                        </div>
+                    </div>
+                </div>
+
+                <div id="wms-proj-field">
+                    <p class="instructions">Projection/CRS:</p>
+                    <div class="step1-inputs">
+                        <div class="step1-param">
+                            {{ form.wms_srs.errors }}
+                            {{ form.wms_srs }}
+                        </div>
+                    </div>
+                </div>
+
+                <div id="wms-extra-params-field">
+                    <p class="instructions">Extra Parameters ("&FOO=BAR..."):</p>
+                    <div class="step1-inputs">
+                        <div class="step1-param">
+                            {{ form.wms_params.errors }}
+                            {{ form.wms_params }}
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 
