@@ -75,6 +75,12 @@
                 } else {
                     $('#arcgis-layer-field').css({'display':'none',});
                 }
+
+                if (layer_type_selected == 'WMS') {
+                    $('#wms-fields').css({'display': 'inherit',});
+                } else {
+                    $('#wms-fields').css({'display': 'none',});
+                }
             })
 
             $('#button_prev').click( function() { wizard('prev'); });
@@ -240,7 +246,7 @@
                 </div>
             </div>
 
-            <div class="wms-fields">
+            <div id="wms-fields">
 
                 <div id="wms-help-field">
                     <!-- <p class="instructions">Populate Field Options:</p> -->
