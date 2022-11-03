@@ -25,6 +25,9 @@ function userLayerModel(options) {
     self.wms_slug = options.wms_slug || null;
     self.wms_srs = options.wms_srs || null;
     self.wms_params = options.wms_params || null;
+    self.wms_version = options.wms_version || null;
+    self.wms_format = options.wms_format || null;
+    self.wms_styles = options.wms_styles || null;
 
     self.shared = ko.observable();
     self.sharedByName = options.sharedByName || null;
@@ -196,6 +199,9 @@ function userLayersModel(options) {
         lyrObj.wms_slug = userLayer.wms_slug;
         lyrObj.wms_srs = userLayer.wms_srs;
         lyrObj.wms_params = userLayer.wms_params;
+        lyrObj.wms_version = userLayer.wms_version;
+        lyrObj.wms_format = userLayer.wms_format;
+        lyrObj.wms_styles = userLayer.wms_styles;
   
         lyrObj.type = userLayer.layer_type;
         lyrObj.wmsSession = true;
@@ -281,7 +287,7 @@ function userLayersModel(options) {
                   {complete: self.getUserLayers});
     };
 
-    self.addUserLayer = function(name, description, layer_type, url, arcgis_layers, wms_slug, wms_srs, wms_params) {
+    self.addUserLayer = function(name, description, layer_type, url, arcgis_layers, wms_slug, wms_srs, wms_params, wms_version, wms_format, wms_styles) {
         $.jsonrpc('add_user_layer', 
             [
                 name,
@@ -291,7 +297,10 @@ function userLayersModel(options) {
                 arcgis_layers,
                 wms_slug,
                 wms_srs,
-                wms_params
+                wms_params,
+                wms_version,
+                wms_format,
+                wms_styles,
             ],
             {complete: self.getUserLayers}
         );
@@ -331,6 +340,9 @@ function userLayersModel(options) {
                     'wms_slug': existingUserLayers[i].wms_slug,
                     'wms_srs': existingUserLayers[i].wms_srs,
                     'wms_params': existingUserLayers[i].wms_params,
+                    'wms_version': existingUserLayers[i].wms_version,
+                    'wms_format': existingUserLayers[i].wms_format,
+                    'wms_styles': existingUserLayers[i].wms_styles,
                 });
             }
         }
@@ -358,6 +370,9 @@ function userLayersModel(options) {
                         wms_slug: user_layers[i].wms_slug,
                         wms_srs: user_layers[i].wms_srs,
                         wms_params: user_layers[i].wms_params,
+                        wms_version: user_layers[i].wms_version,
+                        wms_format: user_layers[i].wms_format,
+                        wms_styles: user_layers[i].wms_styles,
                     });
                     self.userLayersList.push(user_layer);
                 }

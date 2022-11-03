@@ -156,6 +156,9 @@ def add_user_layer(name, description, url, layer_type, arcgis_layers, **kwargs):
         'wms_slug': userLayer.wms_slug,
         'wms_srs': userLayer.wms_srs,
         'wms_params': userLayer.wms_params,
+        'wms_version': userLayer.wms_version,
+        'wms_format': userLayer.wms_format,
+        'wms_styles': userLayer.wms_styles,
     }]
     return content
 
@@ -205,6 +208,9 @@ def get_user_layers(**kwargs):
             'wms_slug': userLayer.wms_slug,
             'wms_srs': userLayer.wms_srs,
             'wms_params': userLayer.wms_params,
+            'wms_version': userLayer.wms_version,
+            'wms_format': userLayer.wms_format,
+            'wms_styles': userLayer.wms_styles,
         })
 
     try:
@@ -254,6 +260,9 @@ def get_user_layers(**kwargs):
                 'wms_slug': userLayer.wms_slug,
                 'wms_srs': userLayer.wms_srs,
                 'wms_params': userLayer.wms_params,
+                'wms_version': userLayer.wms_version,
+                'wms_format': userLayer.wms_format,
+                'wms_styles': userLayer.wms_styles,
             })
     return content
 
@@ -275,7 +284,10 @@ def load_user_layer(user_layer_id, **kwargs):
         # 'sharing_groups': sharing_groups,
         'wms_slug': userLayer.wms_slug,
         'wms_srs': userLayer.wms_srs,
-        'wms_params': userLayer.wms_params
+        'wms_params': userLayer.wms_params,
+        'wms_version': userLayer.wms_version,
+        'wms_format': userLayer.wms_format,
+        'wms_styles': userLayer.wms_styles,
     }]
     return content
 

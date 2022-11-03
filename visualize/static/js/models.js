@@ -2691,8 +2691,11 @@ function viewModel() {
         var wms_slug = $(form).find('#new_user_layer_wms_slug').val();
         var wms_srs = $(form).find('#new_user_layer_wms_srs').val();
         var wms_params = $(form).find('#new_user_layer_wms_params').val();
+        var wms_version = $(form).find('#new_user_layer_wms_version').val();
+        var wms_format = $(form).find('#new_user_layer_wms_format').val();
+        var wms_styles = $(form).find('#new_user_layer_wms_styles').val();
 
-        self.userLayers.addUserLayer(name, description, url, layer_type, arcgis_layers, wms_slug, wms_srs, wms_params);
+        self.userLayers.addUserLayer(name, description, url, layer_type, arcgis_layers, wms_slug, wms_srs, wms_params, wms_version, wms_format, wms_styles);
         self.hideUserLayersForm();
         self.userLayers.newUserLayerName(null);
         self.userLayers.newUserLayerDescription(null);
