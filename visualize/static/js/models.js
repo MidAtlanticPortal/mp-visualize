@@ -224,6 +224,9 @@ function layerModel(options, parent) {
 
       //legends for actual WMS LAYERS
       if (!self.legend && self.url && self.type=='WMS' && self.wms_slug && self.wms_version) {
+        if (self.url.indexOf('?') < 0) {
+          self.url = self.url + '?';
+        }
         self.legend = self.url + 'SERVICE=WMS&VERSION=' +
         self.wms_version + '&layer=' +
         self.wms_slug +

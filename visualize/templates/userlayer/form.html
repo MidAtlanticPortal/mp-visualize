@@ -116,7 +116,7 @@
 
                 if (event.target.checked){
                     //  Start spinner
-                    $('body').css("cursor:wait");
+                    $('body').css("cursor", "wait");
                     //  Get URL
                     url = $("#id_url").val();
                     //  AJAX GetCapabilities
@@ -156,16 +156,13 @@
 
                         },
                         error: function(data) {
-                            window.alert("Error getting WMS capabilities: please check your URL.")
-                            //      FAIL
-                            //          Print meaningful error message to screen
-                            //              NOT WMS?
-                            //              MISSING REQUIRED PARAM?
-
+                            var get_cap_url = url + 'SERVICE=WMS&REQUEST=GetCapabilities';
+                            window.alert('Error getting WMS capabilities: please check your URL and that you get a response at: ' + get_cap_url);
+                            $("body").css("cursor", "unset");
                         }
                     }).done(function() {
                         //          Kill Spinner
-                        $("body").css("cursor:unset");
+                        $("body").css("cursor", "unset");
                     });
 
                 } else {
