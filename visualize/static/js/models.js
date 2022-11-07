@@ -2125,6 +2125,12 @@ function viewModel() {
         });
     });
 
+    self.clearAllLayersRUS = function() {
+      if (window.confirm("Do you wish to remove all active layers?")) {
+        self.clearAllLayers();
+      }
+    }
+
     self.clearAllLayers = function() {
       // Copy array by value: https://stackoverflow.com/a/7486130/706797
       var activeLayers = app.viewModel.activeLayers().slice();
