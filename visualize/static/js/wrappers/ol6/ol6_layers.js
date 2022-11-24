@@ -80,8 +80,6 @@ app.wrapper.layers['ocean_labels'] = new ol.layer.VectorTile({
   declutter: true,
   useInterimTilesOnError: false,
 });
-app.wrapper.layers['ocean_labels'].set('name', 'ocean_labels');
-app.wrapper.layers['ocean_labels'].setVisible(false);
 
 
 app.wrapper.map.defaultBaseLayer = new ol.layer.Tile({
