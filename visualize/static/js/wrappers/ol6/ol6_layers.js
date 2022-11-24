@@ -68,6 +68,22 @@ for (var i = 0; i < keys.length; i++) {
   baseLayers.push(app.wrapper.layers[keys[i]]);
 }
 
+// ADD OCEAN LABELS LAYER
+app.wrapper.layers['ocean_labels'] = new ol.layer.VectorTile({
+  source: new ol.source.VectorTile({
+      attributions: "Sources: Esri, HERE, Garmin, FAO, NOAA, USGS, © OpenStreetMap contributors, and the GIS User Community",
+      format: new ol.format.MVT(),
+      url: 'https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/{z}/{y}/{x}.pbf',
+      // zDirection: 0,
+  }),
+  style: oceanLabelStyleFunction,
+  declutter: true,
+  useInterimTilesOnError: false,
+});
+app.wrapper.layers['ocean_labels'].set('name', 'ocean_labels');
+app.wrapper.layers['ocean_labels'].setVisible(false);
+
+
 app.wrapper.map.defaultBaseLayer = new ol.layer.Tile({
   source: new ol.source.XYZ({
     attributions: 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' +
