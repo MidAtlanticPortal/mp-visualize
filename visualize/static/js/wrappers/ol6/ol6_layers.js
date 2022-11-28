@@ -76,6 +76,7 @@ app.wrapper.layers['ocean_labels'] = new ol.layer.VectorTile({
       url: 'https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/{z}/{y}/{x}.pbf',
       // zDirection: 0,
   }),
+  maxZoom: 13,
   style: oceanLabelStyleFunction,
   declutter: true,
   useInterimTilesOnError: false,
