@@ -72,7 +72,7 @@ for (var i = 0; i < keys.length; i++) {
 app.wrapper.layers['ocean_labels'] = new ol.layer.VectorTile({
   source: new ol.source.VectorTile({
       attributions: "Sources: Esri, HERE, Garmin, FAO, NOAA, USGS, © OpenStreetMap contributors, and the GIS User Community",
-      format: new ol.format.MVT(),
+      format: new ol.format.MVT({featureClass: ol.Feature}),
       url: 'https://basemaps.arcgis.com/arcgis/rest/services/World_Basemap_v2/VectorTileServer/tile/{z}/{y}/{x}.pbf',
       // zDirection: 0,
   }),
