@@ -244,6 +244,13 @@ app.wrapper.map.setBasemap = function(layer) {
   current_basemap.setVisible(false);
   layer.setVisible(true);
 
+  if (layer == app.wrapper.layers['ocean']) {
+    app.wrapper.layers['ocean_labels'].setVisible(true);
+  } else {
+    app.wrapper.layers['ocean_labels'].setVisible(false);
+  }
+
+
   //testing
   var match_found = false;
   var name_match_found = false;
