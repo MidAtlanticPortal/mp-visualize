@@ -910,6 +910,12 @@ app.wrapper.map.getLayerStyle = function(feature) {
           var outline_width = 0;
         }  
       }
+      // RDH 20221202: some logic must be testing against width - a 0 value is resulting in all features re-rendered after
+      //  a selected feture gets an outline. For now: use a non-zero number with an invisible outline.
+      if (outline_width == 0) {
+        outline_width = 0.01;
+        outline_color = 'rgba(0,0,0,0)';
+      }
       var stroke_style = new ol.style.Stroke({
         color: outline_color,
         width: outline_width
