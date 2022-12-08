@@ -887,7 +887,8 @@ function layerModel(options, parent) {
         gtag('event', 'Layers Activated', {
           'layer_type': layer_type,
           'layer_name': action,
-          'layer_id': layer_id
+          'layer_id': layer_id,
+          'layer_info': `${action}:${layer_id}`
         })
     };
 
