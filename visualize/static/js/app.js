@@ -567,6 +567,12 @@ function printPage() {
   window.print();
 }
 
+$('.quick-button').click(function(event) {
+  gtag('event', 'Quick Button Click', {
+    'quick_button_name': this.dataset.originalTitle
+  });
+});
+
 $(document).mousedown(function (e) {
 
   // Process "outside" clicks
