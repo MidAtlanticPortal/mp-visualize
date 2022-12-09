@@ -281,6 +281,20 @@ $(document).ready(function () {
     setTimeout(function () {
       app.updateUrl();
     }, 100);
+    if (e.currentTarget.attributes.getNamedItem('data-tab').nodeValue) {
+      const dataTabValue = e.currentTarget.attributes.getNamedItem('data-tab').nodeValue;
+      let dataTabName = dataTabValue;
+      switch(dataTabName) {
+        case 'designs':
+          dataTabName = 'myplanner';
+          break;
+        default:
+          dataTabName = dataTabValue;
+      }
+      gtag('event', 'Nav Tab Selected', {
+        'Tab': dataTabName,
+      });
+    }
   });
 
   $('[data-toggle="tooltip"]').tooltip();
