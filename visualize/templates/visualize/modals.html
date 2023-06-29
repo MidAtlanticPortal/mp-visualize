@@ -222,9 +222,9 @@
             </div>
             <div class="modal-footer">
                 {% if disclaimer.continueButtonText %}
-                <button type="button" class="btn btn-default" data-dismiss="modal">{{ disclaimer.continueButtonText|safe|escape }}</button>
+                <button type="button" class="btn btn-default" data-decline="false" data-dismiss="modal">{{ disclaimer.continueButtonText|safe|escape }}</button>
                 {% else %}
-                <button type="button" class="btn btn-default" data-dismiss="modal">Agree</button>
+                <button type="button" class="btn btn-default" data-decline="false" data-dismiss="modal">Agree</button>
                 {% endif %}
                 {% if disclaimer.decline_url %}
                 <a href="{{ disclaimer.decline_url }}" class="btn btn-cancel">Decline</a>
